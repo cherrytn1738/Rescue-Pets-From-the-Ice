@@ -37,3 +37,12 @@ __pycache__/
 
 # Playtest screenshots (kept locally)
 screenshots/
+
+# Temporary files for long runs (kept out of Git)
+tmp/
+
+# Voxel pet build output: keep the sheets, loop GIFs, .blend files, the roster's three views; the rest
+# rebuilds with python tools/pets/build_pet.py all
+store-assets/creatures/*/render/*
+!store-assets/creatures/*/render/view_q34_ol.png
+!store-assets/creatures/*/render/variant_*_ol.png

@@ -56,6 +56,8 @@ def collect_sources() -> dict:
     sources, owners = {}, {}
     for folder in ("src", "tests"):
         for path in sorted((ROOT / folder).rglob("*.luau")):
+            if "Pets/Models" in path.as_posix():
+                continue  # the generated voxel pet models (large data; no spec needs them)
             name = module_name(path)
             text = path.read_text(encoding="utf-8")
             kind = next((k for k in ("server", "client") if path.name.endswith(f".{k}.luau")), None)
