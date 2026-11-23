@@ -67,13 +67,20 @@ return function(sources)
 	check(buildingUpgrades == 40 and string.find(text, "five per building (40 in all)", 1, true), "40 building upgrades")
 
 	-- Ice upgrades.
-	local ice = doc:Table({ "Upgrade", "Effect", "Tiers", "First cost" })
+	local ice = doc:Table({ "Upgrade", "Effect", "Tiers", "Tier costs (crystals)" })
 	check(#ice == #UpgradeConfig.IceUpgrades, "three ice upgrades")
 	for index, row in ice do
 		local upgrade = UpgradeConfig.IceUpgrades[index]
 		check(upgrade.Name == row.Upgrade and upgrade.Id == DesignDoc.IdOf(row.Upgrade), "ice upgrade " .. index .. " is " .. row.Upgrade)
 		check(upgrade.Tiers == DesignDoc.Number(row.Tiers), row.Upgrade .. " has " .. row.Tiers .. " tiers")
-		check(upgrade.FirstCost == DesignDoc.Number(row["First cost"]), row.Upgrade .. " first costs " .. row["First cost"])
+		local costs = {}
+		for cell in string.gmatch(row["Tier costs (crystals)"], "[^/]+") do
+			table.insert(costs, DesignDoc.Number(cell))
+		end
+		check(#costs == upgrade.Tiers and table.concat(costs, ",") == table.concat(upgrade.Costs, ","), row.Upgrade .. " tiers cost " .. row["Tier costs (crystals)"])
+		for tier, cost in costs do
+			check(UpgradeConfig.Get(upgrade.Id .. tier).Cost == cost, upgrade.Id .. tier .. " costs " .. cost)
+		end
 	end
 	local burst = {}
 	for seconds in string.gmatch(ice[1].Effect, "(%d+)") do
@@ -89,10 +96,7 @@ return function(sources)
 		check(not ids[upgrade.Id] and UpgradeConfig.Get(upgrade.Id) == upgrade, "upgrade ids are unique and findable: " .. upgrade.Id)
 		ids[upgrade.Id] = true
 		total += 1
-		check(upgrade.Cost == nil or upgrade.Cost > 0, upgrade.Id .. " has a positive cost")
-		if upgrade.Cost == nil then
-			check(upgrade.Kind == "Ice" and upgrade.Tier > 1, upgrade.Id .. ": only later ice tiers have no cost yet (an open question)")
-		end
+		check(type(upgrade.Cost) == "number" and upgrade.Cost > 0, upgrade.Id .. " has a positive cost")
 	end
 	check(total >= 50 and total <= 70 and string.find(text, "About 60 in all at launch", 1, true), "about 60 upgrades in all (" .. total .. ")")
 	check(UpgradeConfig.Get("IcePick1") == nil, "the wooden pick is the start, not an upgrade")

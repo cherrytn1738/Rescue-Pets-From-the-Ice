@@ -51,7 +51,7 @@ The player never leaves their plot. When a new layer starts, the ground shakes, 
 | 3. Ancient Ice | 21–30 | Deep blue with trapped bubbles | 50% | 30% | 15% | 5% | – | – |
 | 4. Crystal Ice | 31–40 | Faceted, sparkling | 45% | 30% | 16% | 7% | 2% | – |
 | 5. Primordial Ice | 41–50 | Dark teal with glowing veins | 40% | 30% | 18% | 8.5% | 3% | 0.5% |
-| 6. Frozen Core | Opened at rebirth 3 | Black ice lit from inside | 35% | 28% | 20% | 11% | 5% | 1% |
+| 6. Frozen Core | 51–60 (opened at rebirth 3) | Black ice lit from inside | 35% | 28% | 20% | 11% | 5% | 1% |
 
 &#91;image: The five ice layers: Fresh Snow, Blue Ice, Ancient Ice, Crystal Ice and Primordial Ice\]
 
@@ -223,11 +223,11 @@ Upgrades are one-time purchases in the Upgrades panel. There are three kinds: th
 
 **Ice upgrades:**
 
-| Upgrade | Effect | Tiers | First cost |
+| Upgrade | Effect | Tiers | Tier costs (crystals) |
 | --- | --- | --- | --- |
-| Bigger Burst | Rescue fountain worth 30 → 45 → 60 seconds of income | 2 | 5,000 |
-| Crystal Yield | +10% crystals per point of damage, per tier | 3 | 20,000 |
-| Fast Sled | The next block arrives 1 second sooner, per tier | 2 | 2,000 |
+| Bigger Burst | Rescue fountain worth 30 → 45 → 60 seconds of income | 2 | 5,000 / 250,000 |
+| Crystal Yield | +10% crystals per point of damage, per tier | 3 | 20,000 / 1M / 50M |
+| Fast Sled | The next block arrives 1 second sooner, per tier | 2 | 2,000 / 100,000 |
 
 Upgrades reset on rebirth. Costs are starting values for the economy simulation.
 

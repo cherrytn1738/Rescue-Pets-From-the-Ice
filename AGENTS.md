@@ -87,7 +87,7 @@ Keep placeholder balance values configurable, in config modules under `src/repli
 - `UpgradeConfig`: ice pick tiers, Frost Touch, building upgrades, ice upgrades, and `Upgrades` (every upgrade's saved id and cost).
 - `RebirthConfig`: Frost Cores (`FrostCoresFor`), ranks, pet slots and layers they open, what a rebirth resets.
 
-The specs `tests/<Name>Config.spec.luau` read the design doc's own tables (`tests/DesignDoc.luau`; the runner sends `docs/*.md` as sources), so a config and the doc can't drift apart silently: when the doc's numbers change, change the config in the same commit. Ids (creatures, buildings, upgrades, layers) are saved: never rename one. Working defaults the doc doesn't settle are marked `Default:` in the config.
+The specs `tests/<Name>Config.spec.luau` read the design doc's own tables (`tests/DesignDoc.luau`; the runner sends `docs/*.md` as sources), so a config and the doc can't drift apart silently: when the doc's numbers change, change the config in the same commit. Ids (creatures, buildings, upgrades, layers) are saved: never rename one.
 
 ## Architecture Principles
 

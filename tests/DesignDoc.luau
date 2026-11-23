@@ -93,7 +93,7 @@ end
 
 -- Same as Number, but for cells that may hold a range ("1–10"): both ends.
 function DesignDoc.Range(text: string): (number?, number?)
-	local low, high = string.match(text, "^(%d+)%D+(%d+)$") -- (the dash is a multi-byte en dash)
+	local low, high = string.match(text, "^(%d+)%D+(%d+)") -- (the dash is a multi-byte en dash)
 	return tonumber(low), tonumber(high)
 end
 

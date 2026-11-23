@@ -25,11 +25,10 @@ return function(sources)
 		local low, high = DesignDoc.Range(row["Block levels"])
 		if low then
 			check(layer.MinLevel == low and layer.MaxLevel == high, `{name} covers levels {low}-{high}`)
-			check(layer.RequiresRebirths == nil, `{name} needs no rebirths`)
+			local rebirths = tonumber(string.match(row["Block levels"], "rebirth (%d+)"))
+			check(layer.RequiresRebirths == rebirths, `{name} opens at rebirth {tostring(rebirths)}`)
 		else
-			local rebirths = DesignDoc.Number(row["Block levels"])
-			check(layer.RequiresRebirths == rebirths, `{name} opens at rebirth {rebirths}`)
-			check(layer.MinLevel == LayerConfig.Layers[index - 1].MaxLevel + 1, `{name} starts right below the layer above (a working default)`)
+			check(false, `{name}'s block levels can be read from the doc`)
 		end
 		local total = 0
 		for _, rarity in RARITIES do

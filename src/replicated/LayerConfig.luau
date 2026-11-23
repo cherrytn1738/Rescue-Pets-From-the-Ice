@@ -28,8 +28,7 @@ LayerConfig.Layers = {
 		Odds = { Common = 45, Uncommon = 30, Rare = 16, Epic = 7, Legendary = 2 } },
 	{ Number = 5, Id = "PrimordialIce", Name = "Primordial Ice", MinLevel = 41, MaxLevel = 50, Look = "Dark teal with glowing veins", IceLookId = nil,
 		Odds = { Common = 40, Uncommon = 30, Rare = 18, Epic = 8.5, Legendary = 3, Mythic = 0.5 } },
-	-- Opened at rebirth 3 (RebirthConfig). Default: levels 51-60, the next ten levels below the floor;
-	-- the design doc only says "Opened at rebirth 3".
+	-- Opened at rebirth 3 (RebirthConfig).
 	{ Number = 6, Id = "FrozenCore", Name = "Frozen Core", MinLevel = 51, MaxLevel = 60, Look = "Black ice lit from inside", IceLookId = nil,
 		RequiresRebirths = 3,
 		Odds = { Common = 35, Uncommon = 28, Rare = 20, Epic = 11, Legendary = 5, Mythic = 1 } },

@@ -14,9 +14,6 @@ Three kinds:
 
 Upgrades (built below) lists every upgrade with a saved Id (never rename one), Kind, Name and Cost;
 ById finds one. The save's Upgrades field holds these ids.
-
-Open question (not in the design doc): the ice upgrades only have a first cost. Their later tiers
-have Cost = nil until the economy simulation sets them, and can't be bought until then.
 ]]
 local BuildingConfig = require(script.Parent.BuildingConfig)
 
@@ -44,11 +41,11 @@ UpgradeConfig.BuildingUpgrades = {
 }
 
 UpgradeConfig.IceUpgrades = {
-	{ Id = "BiggerBurst", Name = "Bigger Burst", Tiers = 2, FirstCost = 5_000,
+	{ Id = "BiggerBurst", Name = "Bigger Burst", Tiers = 2, Costs = { 5_000, 250_000 },
 		BurstSeconds = { 30, 45, 60 } }, -- the rescue fountain is worth this many seconds of income (no tier, tier 1, tier 2)
-	{ Id = "CrystalYield", Name = "Crystal Yield", Tiers = 3, FirstCost = 20_000,
+	{ Id = "CrystalYield", Name = "Crystal Yield", Tiers = 3, Costs = { 20_000, 1_000_000, 50_000_000 },
 		YieldPerTier = 0.10 }, -- +10% crystals per point of damage, per tier
-	{ Id = "FastSled", Name = "Fast Sled", Tiers = 2, FirstCost = 2_000,
+	{ Id = "FastSled", Name = "Fast Sled", Tiers = 2, Costs = { 2_000, 100_000 },
 		SecondsSoonerPerTier = 1 }, -- the next block arrives 1 second sooner, per tier
 }
 
@@ -90,7 +87,7 @@ for _, ice in UpgradeConfig.IceUpgrades do
 			Name = ice.Name .. " " .. tier,
 			Upgrade = ice.Id,
 			Tier = tier,
-			Cost = if tier == 1 then ice.FirstCost else nil, -- later tiers: not set yet (see the header)
+			Cost = ice.Costs[tier],
 		})
 	end
 end
