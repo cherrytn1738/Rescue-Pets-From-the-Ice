@@ -1,0 +1,44 @@
+{
+  "name": "RescuePetsFromTheIce",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "$path": "src/replicated",
+
+      "DebugRequest": {
+        "$className": "RemoteFunction"
+      },
+      "AdminRequest": {
+        "$className": "RemoteFunction"
+      },
+      "PurchaseRequest": {
+        "$className": "RemoteFunction"
+      },
+      "RedeemCode": {
+        "$className": "RemoteFunction"
+      },
+      "ShopVisit": {
+        "$className": "RemoteEvent"
+      },
+      "PurchaseNotice": {
+        "$className": "RemoteEvent"
+      }
+    },
+
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "$path": "src/server"
+    },
+
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "$path": "src/player"
+      }
+    }
+  }
+}
