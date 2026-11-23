@@ -297,6 +297,38 @@ local function validate(record)
 	end
 	data.BookSeen = book
 
+	-- More Creature Book state, all display or rewards that are worked out again from it, so nothing
+	-- here fails the load: BookGolden { [creature id] = true } (a Golden version was ever made: the
+	-- Golden page), BookNew (creature ids with a "New!" badge not yet viewed).
+	local golden = {}
+	if type(data.BookGolden) == "table" then
+		for id, value in data.BookGolden do
+			if CreatureConfig.Get(id) and value == true then
+				golden[id] = true
+			end
+		end
+	end
+	data.BookGolden = golden
+	local fresh = {}
+	if type(data.BookNew) == "table" then
+		for _, id in data.BookNew do
+			if CreatureConfig.Get(id) and book[id] and not table.find(fresh, id) then
+				table.insert(fresh, id)
+			end
+		end
+	end
+	data.BookNew = fresh
+
+	-- The daily chest: the day number (os.time() // 86400, UTC) it was last opened, 0 = never.
+	data.DailyClaimDay = if isInteger(data.DailyClaimDay, 0, MAX_AMOUNT) then data.DailyClaimDay else 0
+
+	-- Settings (the gear button): music and sound volume 0-1, and reduced effects for low-end phones.
+	local settings = if type(data.Settings) == "table" then data.Settings else {}
+	local function volume(value)
+		return if type(value) == "number" and value == value then math.clamp(value, 0, 1) else 1
+	end
+	data.Settings = { Music = volume(settings.Music), Sounds = volume(settings.Sounds), ReducedEffects = settings.ReducedEffects == true }
+
 	-- Tutorial: a new player starts it; a step that can't be read counts as done.
 	if isNew then
 		data.TutorialStep = TUTORIAL_FIRST
@@ -452,6 +484,26 @@ local function publish(player, session)
 	player:SetAttribute("BlockLevel", data.BlockLevel)
 	player:SetAttribute("Rebirths", data.Rebirths)
 	player:SetAttribute("FrostCores", data.FrostCores)
+	-- Everything the panels show (Build, Upgrades, Pets, Book, Rebirth), as one JSON copy. The client
+	-- works prices out from it with the same rules (EconomyRules); the server checks every request.
+	player:SetAttribute("Progress", HttpService:JSONEncode({
+		Buildings = data.Buildings,
+		Upgrades = data.Upgrades,
+		Pets = data.Pets,
+		Equipped = data.Equipped,
+		BookSeen = data.BookSeen,
+		BookNew = data.BookNew,
+		BookGolden = data.BookGolden,
+		BlockLevel = data.BlockLevel,
+		MaxLayerOpened = data.MaxLayerOpened,
+		FrostCores = data.FrostCores,
+		Rebirths = data.Rebirths,
+		CrystalsThisRun = data.CrystalsThisRun,
+		CreaturesRescued = data.CreaturesRescued,
+		TutorialStep = data.TutorialStep,
+		Settings = data.Settings,
+		DailyClaimDay = data.DailyClaimDay,
+	}))
 end
 
 -- A session that can't be trusted stops: no gameplay, and it never saves.
@@ -513,6 +565,20 @@ local function gameFieldsValid(data): boolean
 	end
 	for id, count in data.BookSeen do
 		if not CreatureConfig.Get(id) or not isInteger(count, 1, MAX_AMOUNT) then
+			return false
+		end
+	end
+	if type(data.BookGolden) ~= "table" or type(data.BookNew) ~= "table" or type(data.Settings) ~= "table"
+		or not isInteger(data.DailyClaimDay, 0, MAX_AMOUNT) then
+		return false
+	end
+	for id, value in data.BookGolden do
+		if not CreatureConfig.Get(id) or value ~= true then
+			return false
+		end
+	end
+	for _, id in data.BookNew do
+		if not CreatureConfig.Get(id) then
 			return false
 		end
 	end

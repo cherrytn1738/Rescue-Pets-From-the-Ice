@@ -1,0 +1,148 @@
+--[[
+Economy: crystals on the server (docs/GAME_DESIGN.md, "Economy" and "Technical design"). Server only.
+
+ - Grant(player, amount): adds crystals (and to this run's and all-time totals).
+ - Multiplier(player): EconomyRules.Multiplier from the save, times the server-only extras (game
+   passes, Frost Rush, the group bonus): other systems register those with AddExtra.
+ - The server tick (GameConfig.TicksPerSecond): every building's damage goes into the player's block
+   (IceBlockService.Damage, which pays the crystals), and the display attributes are refreshed:
+   Crystals and CrystalsPerSecond (building damage/s plus the player's recent tapping, times the
+   multiplier).
+ - Offline earnings: building income only, at OfflineEarningsRules.Settings (50%, 2 hours).
+ - Tap rate: RecordTaps(player, taps) keeps the last few seconds of taps for crystals/s.
+]]
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local EconomyRules = require(ReplicatedStorage.EconomyRules)
+local GameConfig = require(ReplicatedStorage.GameConfig)
+local OfflineEarningsRules = require(ReplicatedStorage.OfflineEarningsRules)
+local OfflineEarnings = require(script.Parent.OfflineEarnings)
+local PlayerData = require(script.Parent.PlayerData)
+
+local Economy = {}
+
+local extras = {} -- { function(player) -> multiplier }
+local tapLog = {} -- [player] = { { time, taps } }
+local tickListeners = {}
+
+-- A server-only crystal multiplier source: callback(player) -> number (1 = none).
+function Economy.AddExtra(callback)
+	table.insert(extras, callback)
+end
+
+function Economy.ExtraMultiplier(player: Player): number
+	local total = 1
+	for _, callback in extras do
+		local ok, value = pcall(callback, player)
+		if ok and type(value) == "number" and value == value and value > 0 and value < math.huge then
+			total *= value
+		end
+	end
+	return total
+end
+
+function Economy.Multiplier(player: Player, data): number
+	return EconomyRules.Multiplier(data, Economy.ExtraMultiplier(player))
+end
+
+-- Adds crystals to the live save. amount must be a real, non-negative number.
+function Economy.Grant(player: Player, data, amount: number)
+	if type(amount) ~= "number" or amount ~= amount or amount <= 0 or amount == math.huge then
+		return
+	end
+	data.Crystals += amount
+	data.CrystalsThisRun += amount
+	data.CrystalsAllTime += amount
+end
+
+-- Spends crystals. Returns false (and spends nothing) if the player can't afford it.
+function Economy.Spend(data, cost: number): boolean
+	if type(cost) ~= "number" or cost ~= cost or cost < 0 or data.Crystals < cost then
+		return false
+	end
+	data.Crystals = math.max(0, data.Crystals - cost)
+	return true
+end
+
+function Economy.RecordTaps(player: Player, taps: number)
+	local log = tapLog[player]
+	if not log then
+		log = {}
+		tapLog[player] = log
+	end
+	table.insert(log, { os.clock(), taps })
+end
+
+-- Taps per second over the last RateWindowSeconds.
+function Economy.TapRate(player: Player): number
+	local log = tapLog[player]
+	if not log then
+		return 0
+	end
+	local window = GameConfig.Taps.RateWindowSeconds
+	local since = os.clock() - window
+	while log[1] and log[1][1] < since do
+		table.remove(log, 1)
+	end
+	local taps = 0
+	for _, entry in log do
+		taps += entry[2]
+	end
+	return taps / window
+end
+
+-- What the HUD shows as crystals per second.
+function Economy.CrystalsPerSecond(player: Player, data): number
+	local damage = EconomyRules.TotalBuildingDps(data) + Economy.TapRate(player) * EconomyRules.TapDamage(data)
+	return damage * Economy.Multiplier(player, data)
+end
+
+-- callback(player, data, dt) runs every tick for every ready player (IceBlockService applies the
+-- building damage here).
+function Economy.OnTick(callback)
+	table.insert(tickListeners, callback)
+end
+
+local function tick(dt: number)
+	for _, player in Players:GetPlayers() do
+		local data = PlayerData.Edit(player)
+		if data then
+			for _, callback in tickListeners do
+				local ok, err = pcall(callback, player, data, dt)
+				if not ok then
+					warn("[Economy] tick failed: " .. tostring(err))
+				end
+			end
+			player:SetAttribute("Crystals", data.Crystals)
+			player:SetAttribute("CrystalsPerSecond", Economy.CrystalsPerSecond(player, data))
+		end
+	end
+end
+
+function Economy.Start()
+	Players.PlayerRemoving:Connect(function(player)
+		tapLog[player] = nil
+	end)
+	-- Offline: building income only (taps don't earn while away), at the settings' rate and cap.
+	OfflineEarnings.SetEarner(function(player, data, secondsAway, settings)
+		local income = EconomyRules.TotalBuildingDps(data) * Economy.Multiplier(player, data)
+		local amount = OfflineEarningsRules.Earnings(income, secondsAway, settings)
+		if amount > 0 then
+			Economy.Grant(player, data, amount)
+		end
+		return amount, "crystals"
+	end)
+	task.spawn(function()
+		local step = 1 / GameConfig.TicksPerSecond
+		local last = os.clock()
+		while true do
+			task.wait(step)
+			local now = os.clock()
+			tick(math.min(now - last, 1))
+			last = now
+		end
+	end)
+end
+
+return Economy

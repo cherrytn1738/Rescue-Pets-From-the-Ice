@@ -2,11 +2,9 @@
   "name": "RescuePetsFromTheIce",
   "tree": {
     "$className": "DataModel",
-
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
       "$path": "src/replicated",
-
       "DebugRequest": {
         "$className": "RemoteFunction"
       },
@@ -24,17 +22,29 @@
       },
       "PurchaseNotice": {
         "$className": "RemoteEvent"
+      },
+      "GameEvent": {
+        "$className": "RemoteEvent"
+      },
+      "TapBatch": {
+        "$className": "RemoteEvent"
+      },
+      "BuyBuilding": {
+        "$className": "RemoteFunction"
+      },
+      "BuyUpgrade": {
+        "$className": "RemoteFunction"
+      },
+      "PetRequest": {
+        "$className": "RemoteFunction"
       }
     },
-
     "ServerScriptService": {
       "$className": "ServerScriptService",
       "$path": "src/server"
     },
-
     "StarterPlayer": {
       "$className": "StarterPlayer",
-
       "StarterPlayerScripts": {
         "$className": "StarterPlayerScripts",
         "$path": "src/player"

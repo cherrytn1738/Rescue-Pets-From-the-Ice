@@ -15,8 +15,8 @@ return function(sources)
 
 	local R = assert(loadstring(sources.OfflineEarningsRules))()
 	local settings = { Rate = 1.0, CapSeconds = 406 } -- test numbers (the shipped ones are placeholders)
-	check(type(R.Settings.Rate) == "number" and R.Settings.Rate > 0 and type(R.Settings.CapSeconds) == "number" and R.Settings.CapSeconds > 0,
-		"the shipped settings have a rate and a cap")
+	check(R.Settings.Rate == 0.5 and R.Settings.CapSeconds == 3600, "the shipped settings: 50% of income, at most 2 hours away (the doc)")
+	check(not R.IsCapped(7200, R.Settings) and R.IsCapped(7201, R.Settings), "...earning stops after 2 hours away")
 
 	-- One income source ------------------------------------------------------------------------------
 	check(R.Earnings(1, 100, settings) == 100, "1/s away 100 s earns 100")
@@ -146,7 +146,8 @@ return function(sources)
 	local ben = newPlayer("Ben")
 	join(ben, now - 100)
 	local shown = popup(ben)
-	check(dataOf[ben].Points == 200 and shown and shown.Amount == 200 and shown.Seconds == 100 and shown.Label == "points" and shown.Capped == false and shown.At == now,
+	-- (the shipped settings: 50% while away, so 2 points/s for 100 s pays 100)
+	check(dataOf[ben].Points == 100 and shown and shown.Amount == 100 and shown.Seconds == 100 and shown.Label == "points" and shown.Capped == false and shown.At == now,
 		"away 100 s: the earner pays it, and the popup attribute says how much, how long and what")
 	check(important == 1, "...and an important save is asked for")
 	join(ben, nil)
@@ -161,7 +162,7 @@ return function(sources)
 	workspaceAttributes.StudioTimeAway = 30
 	local dan = newPlayer("Dan")
 	join(dan, now - 5000)
-	check(popup(dan).Seconds == 30 and dataOf[dan].Points == 60, "StudioTimeAway: counts as away that long")
+	check(popup(dan).Seconds == 30 and dataOf[dan].Points == 30, "StudioTimeAway: counts as away that long")
 	local eve = newPlayer("Eve")
 	join(eve, nil)
 	check(eve:GetAttribute("OfflineEarnings") == nil, "...but never for a new player")
@@ -173,7 +174,7 @@ return function(sources)
 	workspaceAttributes.StudioTimeAway = nil
 
 	-- Pay directly (the debug menu), and earners that misbehave.
-	check(OfflineEarnings.Pay(ana, 50) == 100 and dataOf[ana].Points == 100, "debug: Pay as if away N seconds")
+	check(OfflineEarnings.Pay(ana, 50) == 50 and dataOf[ana].Points == 50, "debug: Pay as if away N seconds (at 50%)")
 	check(OfflineEarnings.Pay(ana, 0) == 0 and OfflineEarnings.Pay(ana, -5) == 0 and OfflineEarnings.Pay(ana, 0 / 0) == 0, "no time away: nothing")
 	check(OfflineEarnings.Pay(newPlayer("NoData"), 50) == 0, "data not ready: nothing")
 	OfflineEarnings.SetEarner(function() error("boom") end)

@@ -207,9 +207,13 @@ return function(sources)
 		Gifting = { Prepare = record("Prepare"), PromptFinished = record("PromptFinished") },
 		OfflineEarnings = { Pay = record("Pay") },
 		Receipts = { Simulate = record("Simulate") },
+		IceBlockService = { Shatter = record("Shatter"), ForceNextCreature = record("ForceNextCreature"), Reroll = record("Reroll") },
+		PetService = { Give = record("Give") },
+		PlotService = { SendHome = record("SendHome") },
 	}
 	local replicated = {
 		AnalyticsConfig = { Onboarding = {} },
+		CreatureConfig = { Creatures = { { Id = "SnowBunny", Name = "Snow Bunny", Rarity = "Common" } } },
 		AnalyticsRules = { New = function()
 			return { Onboarding = 0, Waiting = {} }
 		end },

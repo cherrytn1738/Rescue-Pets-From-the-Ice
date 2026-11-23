@@ -40,7 +40,10 @@ LayerConfig.Block = {
 	HpGrowth = 1.5,
 	CrackStages = { 20, 40, 60, 80, 100 }, -- percent damage at each crack stage (100 = it shatters)
 	HeightAtFirstLevel = 14, -- studs, at level 1 (about 2.5 avatars)
-	HeightAtLevel50 = 20, -- studs, by level 50
+	HeightAtLevel50 = 20, -- studs, by level 50 (and after)
+	-- The next block's sled ride after a rescue, in seconds (Fast Sled takes 1 s off per tier). The doc
+	-- sets no base time; 4 s is our starting value.
+	ArriveSeconds = 4,
 }
 
 function LayerConfig.BlockHp(level: number): number

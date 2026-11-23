@@ -2,7 +2,8 @@
 -- symbol, or add a function for the game's own currency, once the design names it.)
 local NumberFormat = {}
 
-local SUFFIXES = { "", "K", "M", "B", "T", "Qa", "Qi" }
+-- The design's suffixes ("Technical design": K, M, B, T, Qa, Qi, Sx, Sp, Oc, No, Dc).
+local SUFFIXES = { "", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc" }
 
 function NumberFormat.Short(value: number): string
 	value = math.floor(value)
@@ -29,6 +30,15 @@ function NumberFormat.Short(value: number): string
 		text = (text:gsub("%.$", ""))
 	end
 	return text .. SUFFIXES[index]
+end
+
+-- A rate or a small amount with one decimal below 100 ("0.4", "12.5"), else Short.
+function NumberFormat.Rate(value: number): string
+	if math.abs(value) < 100 then
+		local text = string.format("%.1f", value)
+		return (string.gsub(text, "%.0$", ""))
+	end
+	return NumberFormat.Short(value)
 end
 
 function NumberFormat.Money(value: number): string

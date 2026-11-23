@@ -23,6 +23,9 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
 local CodeService = require(script.Parent.CodeService)
+local IceBlockService = require(script.Parent.IceBlockService)
+local PetService = require(script.Parent.PetService)
+local PlotService = require(script.Parent.PlotService)
 local GamePasses = require(script.Parent.GamePasses)
 local Gifting = require(script.Parent.Gifting)
 local OfflineEarnings = require(script.Parent.OfflineEarnings)
@@ -30,6 +33,7 @@ local PlayerData = require(script.Parent.PlayerData)
 local Receipts = require(script.Parent.Receipts)
 local AnalyticsConfig = require(ReplicatedStorage.AnalyticsConfig)
 local AnalyticsRules = require(ReplicatedStorage.AnalyticsRules)
+local CreatureConfig = require(ReplicatedStorage.CreatureConfig)
 local MonetizationConfig = require(ReplicatedStorage.MonetizationConfig)
 
 local NONE = "__none" -- the placeholder choice of an empty list
@@ -60,6 +64,12 @@ for _, product in MonetizationConfig.Products do
 end
 passChoices = choicesOr(passChoices, "(no game passes in MonetizationConfig yet)")
 productChoices = choicesOr(productChoices, "(no products in MonetizationConfig yet)")
+
+local creatureChoices = {}
+for _, creature in CreatureConfig.Creatures do
+	table.insert(creatureChoices, { Value = creature.Id, Label = `{creature.Name} ({creature.Rarity})` })
+end
+creatureChoices = choicesOr(creatureChoices, "(no creatures)")
 
 local lastSimulated = {} -- [buyer] = { product, gift, purchaseId }: the "duplicate receipt" action replays it
 
@@ -171,6 +181,50 @@ local ACTIONS = {
 			PlayerData.Publish(target)
 			PlayerData.MarkImportant(target)
 			return `{target.Name} is at block level {args.Level}`
+		end,
+	},
+	-- Ice block and pets
+	{
+		Id = "ForceRescue", Group = "Ice block", Label = "Force a rescue (break the current block now)",
+		Run = function(target)
+			dataOf(target)
+			if not IceBlockService.Shatter(target) then
+				fail("No block on the mound right now (the sled is still bringing it)")
+			end
+			return `{target.Name}'s block broke`
+		end,
+	},
+	{
+		Id = "PickCreature", Group = "Ice block", Label = "Pick the creature inside (a new block rolls with it now)",
+		Params = { { Name = "Creature", Label = "Creature", Kind = "choice", Choices = creatureChoices, Default = creatureChoices[1].Value } },
+		Run = function(target, args)
+			dataOf(target)
+			IceBlockService.ForceNextCreature(target, args.Creature)
+			IceBlockService.Reroll(target)
+			return `{target.Name}'s block now holds a {args.Creature}`
+		end,
+	},
+	{
+		Id = "GivePet", Group = "Ice block", Label = "Give a pet",
+		Params = {
+			{ Name = "Creature", Label = "Creature", Kind = "choice", Choices = creatureChoices, Default = creatureChoices[1].Value },
+			{ Name = "Golden", Label = "Golden", Kind = "choice", Choices = onOff, Default = "Off" },
+		},
+		Run = function(target, args)
+			dataOf(target)
+			if not PetService.Give(target, args.Creature, args.Golden == "On") then
+				fail("Couldn't give it (inventory full?)")
+			end
+			return `{target.Name} got a {if args.Golden == "On" then "Golden " else ""}{args.Creature}`
+		end,
+	},
+	{
+		Id = "SendHome", Group = "Player", Label = "Send to their plot",
+		Run = function(target)
+			if not PlotService.SendHome(target) then
+				fail(`{target.Name} has no plot or no character`)
+			end
+			return `{target.Name} is home`
 		end,
 	},
 	{

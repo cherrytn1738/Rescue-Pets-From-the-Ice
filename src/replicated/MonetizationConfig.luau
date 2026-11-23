@@ -40,7 +40,14 @@ Example (not live: copy it into a list and replace the ids):
 local MonetizationConfig = {}
 
 -- Game passes: bought once per account; Roblox's ownership record is the truth (GamePasses).
-MonetizationConfig.Passes = {}
+-- PetSlots: equip slots the pass adds (docs/GAME_DESIGN.md, "Pets" and "Monetization"; PetService).
+-- Not created on the Creator Hub yet (Id = 0): in Studio they can be given from the debug menu.
+MonetizationConfig.Passes = {
+	{ Key = "ExtraPetSlot", Name = "Extra Pet Slot", Id = 0, ExpectedPrice = 449, PetSlots = 1,
+		Description = "One more pet follows you." },
+	{ Key = "PetSquad", Name = "Pet Squad", Id = 0, ExpectedPrice = 899, PetSlots = 2,
+		Description = "Two more pets follow you (with Extra Pet Slot, +3 in all)." },
+}
 
 -- Developer products: bought any number of times.
 MonetizationConfig.Products = {}

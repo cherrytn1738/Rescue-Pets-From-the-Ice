@@ -12,11 +12,12 @@ only turn "income per second" and "seconds away" into an amount, with the rate a
 ]]
 local OfflineEarningsRules = {}
 
--- The tuning. PLACEHOLDER values: set them from docs/GAME_DESIGN.md once the game earns anything.
---  Rate        the share of normal income earned while away (1.0 = all of it).
---  CapSeconds  each income source earns for at most this many seconds of its own income.
+-- The tuning (docs/GAME_DESIGN.md, "Technical design": building income only, at 50%, capped at 2 hours).
+--  Rate        the share of normal income earned while away (0.5 = half).
+--  CapSeconds  each income source earns for at most this many seconds of its own income: 2 hours
+--              away at 50% is 3,600 seconds of income, so the time away stops counting after 2 hours.
 OfflineEarningsRules.Settings = {
-	Rate = 1.0,
+	Rate = 0.5,
 	CapSeconds = 3600,
 }
 

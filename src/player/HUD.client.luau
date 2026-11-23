@@ -1,4 +1,4 @@
--- The HUD shell: the menu buttons down the left edge, nothing else yet.
+-- The HUD: the menu buttons down the left edge (BUILD, UPGRADES, SHOP, CODES) and the crystal counter.
 --
 --   Menu (left edge): a grid of big square buttons, two to a row: SHOP (the Robux shop) and CODES.
 --     Each window finds its button by name (UIKit.MenuButton("Shop") finds "ShopButton") and opens
@@ -23,6 +23,8 @@ local COLUMNS = 2
 -- Each button: its name (the window looks for <Name>Button), its picture (a UITheme.Icons key; the
 -- word alone until the icon is uploaded), its caption and its card palette.
 local MENU = {
+	{ Name = "Build", Icon = "Build", Text = "BUILD", Palette = "Orange" },
+	{ Name = "Upgrades", Icon = "Upgrades", Text = "UPGRADES", Palette = "Green" },
 	{ Name = "Shop", Icon = "Shop", Text = "SHOP", Palette = "Glacier" },
 	{ Name = "Codes", Icon = "Codes", Text = "CODES", Palette = "Purple" },
 }
@@ -60,11 +62,53 @@ for order, def in MENU do
 	button.LayoutOrder = order
 end
 
+-- The crystal counter (top centre): crystals and crystals per second, counting smoothly toward the
+-- server's display copies (the Crystals and CrystalsPerSecond attributes, ~4 updates a second).
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local NumberFormat = require(ReplicatedStorage.NumberFormat)
+local localPlayer = Players.LocalPlayer
+
+local counter = Instance.new("Frame")
+counter.Name = "Counter"
+counter.BackgroundTransparency = 1
+counter.AnchorPoint = Vector2.new(0.5, 0)
+counter.Position = UDim2.new(0.5, 0, 0, 6)
+counter.Size = UDim2.fromOffset(420, 104)
+counter.Parent = root
+local counterScale = Instance.new("UIScale")
+counterScale.Parent = counter
+local crystalsLabel = UIKit.Label(counter, "Crystals", "0", 56)
+crystalsLabel.Size = UDim2.new(1, 0, 0, 62)
+crystalsLabel.TextXAlignment = Enum.TextXAlignment.Center
+local rateLabel = UIKit.Label(counter, "Rate", "+0/s", 30, UIKit.Colors.Gold)
+rateLabel.Position = UDim2.fromOffset(0, 62)
+rateLabel.Size = UDim2.new(1, 0, 0, 34)
+rateLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+local shown = nil
+RunService.RenderStepped:Connect(function(dt)
+	local target = localPlayer:GetAttribute("Crystals")
+	if type(target) ~= "number" then
+		return
+	end
+	local rate = localPlayer:GetAttribute("CrystalsPerSecond") or 0
+	-- count toward the target; a spend (target below) drops at once
+	if not shown or target < shown then
+		shown = target
+	else
+		shown = math.min(target, shown + math.max((target - shown) * math.min(1, dt * 8), rate * dt))
+	end
+	crystalsLabel.Text = "💎 " .. NumberFormat.Short(shown)
+	rateLabel.Text = "+" .. NumberFormat.Rate(rate) .. "/s"
+end)
+
 -- Layout ------------------------------------------------------------------------------------------
 
 local function layout()
 	local scale = UIKit.HudScale()
 	menuScale.Scale = scale
+	counterScale.Scale = scale
 	local touch = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
 	if touch or UIKit.IsPretendScreen() then
 		-- Touch: the top left, clear of the thumbstick (bottom left) and the jump button (bottom right).

@@ -54,11 +54,14 @@ return function(sources)
 	end
 	local Config, Rules = modules.MonetizationConfig, modules.MonetizationRules
 
-	-- The real config ships empty and valid.
-	check(#Config.Passes == 0 and #Config.Products == 0, "the game's MonetizationConfig has no items yet (none of the old game's)")
-	check(Config.GetProduct("Anything") == nil and Config.GetPass("Anything") == nil and Config.FindByProductId(1) == nil, "...so nothing is found")
+	-- The real config: only the two pet-slot passes, both without ids yet (none of the old game's items).
+	check(#Config.Passes == 2 and #Config.Products == 0, "the game's MonetizationConfig has only the pet-slot passes")
+	check(Config.GetPass("ExtraPetSlot").PetSlots == 1 and Config.GetPass("PetSquad").PetSlots == 2, "...Extra Pet Slot adds 1 slot and Pet Squad 2")
+	check(Config.GetPass("ExtraPetSlot").ExpectedPrice == 449 and Config.GetPass("PetSquad").ExpectedPrice == 899, "...at the doc's prices")
+	check(not Config.IsLive(Config.GetPass("ExtraPetSlot")) and not Config.IsLive(Config.GetPass("PetSquad")), "...and neither has a real id yet")
+	check(Config.GetProduct("Anything") == nil and Config.GetPass("Anything") == nil and Config.FindByProductId(1) == nil, "...so nothing else is found")
 	local priced, hidden = Config.AllPriced()
-	check(#priced == 0 and hidden == 0, "...and PriceCheck has nothing to check")
+	check(#priced == 0 and hidden == 2, "...and PriceCheck has nothing to check (2 hidden)")
 
 	-- Config checks catch mistakes at load.
 	local function invalid(config)
