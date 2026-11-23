@@ -17,7 +17,8 @@ behind, and Rojo doesn't need to be running. Specs use fakes (tests/FakeDataStor
 players); they never touch a real DataStore or purchase.
 
 Names follow Rojo: src/server/PlayerData.luau -> "PlayerData", ServerMain.server.luau ->
-"ServerMain", tests/FakeDataStore.luau -> "FakeDataStore", tests/Codes.spec.luau -> "CodesSpec".
+"ServerMain", tests/FakeDataStore.luau -> "FakeDataStore", tests/Codes.spec.luau -> "CodesSpec",
+and each docs/*.md under its file name: docs/GAME_DESIGN.md -> "GAME_DESIGN.md".
 """
 import argparse
 import json
@@ -68,6 +69,10 @@ def collect_sources() -> dict:
                 else:
                     raise SystemExit(f"two modules map to the name {name!r}: rename one ({path})")
             sources[name], owners[name] = text, kind
+    # The docs too, under their file names (sources["GAME_DESIGN.md"]), so specs can check that the
+    # config modules still match the design doc's tables (tests/DesignDoc.luau reads them).
+    for path in sorted((ROOT / "docs").glob("*.md")):
+        sources[path.name] = path.read_text(encoding="utf-8")
     return sources
 
 

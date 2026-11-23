@@ -7,7 +7,9 @@ clock). No live save, player or Instance is touched. Run: python tools/run_specs
 setfenv swaps the module's globals (game, workspace, os, task, require) for fakes, so the module
 needs no test hooks. The game's MonetizationConfig and AnalyticsConfig are empty until this game
 adds its products and onboarding steps, so the spec gives PlayerData test versions of both: one
-test product and ten onboarding steps. A failed check errors with its message.
+test product and ten onboarding steps. The game configs (CreatureConfig, BuildingConfig,
+UpgradeConfig, LayerConfig) are the real ones, and the save's fields are checked against the design
+doc's "Data and code structure" table. A failed check errors with its message.
 ]]
 return function(sources)
 	local passed = 0
@@ -61,6 +63,11 @@ return function(sources)
 	local AnalyticsRules = loadShared("AnalyticsRules")
 	testReplicated.MonetizationRules = MonetizationRules
 	testReplicated.AnalyticsRules = AnalyticsRules
+	-- The game's real configs (the save checks ids against them).
+	for _, name in { "LayerConfig", "CreatureConfig", "BuildingConfig", "UpgradeConfig" } do
+		testReplicated[name] = loadShared(name)
+	end
+	local CreatureConfig, LayerConfig = testReplicated.CreatureConfig, testReplicated.LayerConfig
 	local realHttp = game:GetService("HttpService")
 
 	-- A fake clock: task.wait moves time on instantly.
@@ -229,6 +236,139 @@ return function(sources)
 	newbie = join(1)
 	check(PlayerData.Get(newbie).Codes[1] == "WELCOME", "rejoining loads the saved data")
 	leave(newbie)
+
+	-- The game's fields (docs/GAME_DESIGN.md, "Data and code structure"): defaults for a new player.
+	local starter = join(30)
+	data = PlayerData.Get(starter)
+	check(data.Crystals == 0 and data.CrystalsThisRun == 0 and data.CrystalsAllTime == 0, "a new player has no crystals")
+	check(data.BlockLevel == 1 and data.CurrentBlock == nil, "...starts at block level 1 with no block rolled yet")
+	check(next(data.Buildings) == nil and #data.Upgrades == 0, "...with no buildings or upgrades")
+	check(#data.Pets == 0 and #data.Equipped == 0 and next(data.BookSeen) == nil, "...no pets, none equipped, an empty Creature Book")
+	check(data.FrostCores == 0 and data.Rebirths == 0 and data.CreaturesRescued == 0, "...no Frost Cores, rebirths or rescues")
+	check(data.MaxLayerOpened == LayerConfig.FloorLayer, "...and every layer down to the floor layer (" .. LayerConfig.FloorLayer .. ") open")
+	check(data.TutorialStep == 1, "...on the tutorial's first step")
+	check(starter:GetAttribute("Crystals") == 0 and starter:GetAttribute("BlockLevel") == 1, "display attributes are published")
+
+	-- Every field of the design doc's table is in a new save (under this code's PascalCase names; the
+	-- doc's codesRedeemed, lastOnline and purchaseIds are Codes, LeftAt and Receipts).
+	local DesignDoc = assert(loadstring(sources.DesignDoc))()
+	local doc = DesignDoc.new(sources["GAME_DESIGN.md"])
+	local renamed = { codesRedeemed = "Codes", lastOnline = "LeftAt", purchaseIds = "Receipts" }
+	local fieldRows = doc:Table({ "Field", "Type", "Reset on rebirth" })
+	check(#fieldRows == 14, "the doc's save table has its 14 rows")
+	for _, row in fieldRows do
+		for docName in string.gmatch(row.Field, "[%a]+") do
+			local name = renamed[docName] or (string.upper(string.sub(docName, 1, 1)) .. string.sub(docName, 2))
+			local present = data[name] ~= nil or name == "CurrentBlock" or name == "LeftAt"
+			check(present, "the save has the doc's field " .. docName .. " (as " .. name .. ")")
+		end
+	end
+
+	-- Progress is saved and comes back.
+	local live = PlayerData.Edit(starter)
+	live.Crystals, live.CrystalsThisRun, live.CrystalsAllTime = 1234.5, 2000, 1e40
+	live.BlockLevel, live.CurrentBlock = 24, { CreatureId = "FrostDragonHatchling", HpLeft = 31.25 }
+	live.Buildings.IcePickPost, live.Buildings.HeatLamp = 12, 3
+	table.insert(live.Upgrades, "IcePick2")
+	table.insert(live.Upgrades, "IcePickPostUpgrade1")
+	table.insert(live.Pets, { Uid = "pet-1", CreatureId = "SnowBunny", Golden = false })
+	table.insert(live.Pets, { Uid = "pet-2", CreatureId = "AuroraFox", Golden = true })
+	table.insert(live.Equipped, "pet-2")
+	live.BookSeen.SnowBunny, live.BookSeen.AuroraFox = 6, 1
+	live.FrostCores, live.Rebirths, live.MaxLayerOpened, live.CreaturesRescued, live.TutorialStep = 7, 3, 6, 9, 5
+	leave(starter)
+	local saved = record(30)
+	check(saved.Crystals == 1234.5 and saved.CrystalsAllTime == 1e40 and saved.BlockLevel == 24, "crystals (fractional and huge) and the block level are saved")
+	check(saved.CurrentBlock.CreatureId == "FrostDragonHatchling" and saved.CurrentBlock.HpLeft == 31.25, "the block in progress is saved with its creature and HP")
+	check(saved.Buildings.IcePickPost == 12 and saved.Buildings.HeatLamp == 3, "building counts are saved")
+	starter = join(30)
+	data = PlayerData.Get(starter)
+	check(data.Crystals == 1234.5 and data.CrystalsThisRun == 2000 and data.BlockLevel == 24 and data.CurrentBlock.HpLeft == 31.25,
+		"rejoining loads the crystals, level and block")
+	check(data.Buildings.HeatLamp == 3 and data.Upgrades[2] == "IcePickPostUpgrade1" and #data.Pets == 2 and data.Pets[2].Golden == true,
+		"...the buildings, upgrades and pets")
+	check(data.Equipped[1] == "pet-2" and data.BookSeen.SnowBunny == 6 and data.FrostCores == 7 and data.Rebirths == 3
+		and data.MaxLayerOpened == 6 and data.CreaturesRescued == 9 and data.TutorialStep == 5, "...and the rest")
+	check(starter:GetAttribute("Crystals") == 1234.5 and starter:GetAttribute("Rebirths") == 3, "the attributes show the loaded values")
+	leave(starter)
+
+	-- Loading cleans what it can: unknown ids are dropped, a broken block is rolled again.
+	put(31, {
+		SchemaVersion = 1,
+		CurrentBlock = { CreatureId = "Dinosaur", HpLeft = 10 },
+		Buildings = { IcePickPost = 2, RetiredBuilding = 4, HeatLamp = 0 },
+		Upgrades = { "IcePick2", "IcePick2", "NoSuchUpgrade", 5 },
+		Pets = {
+			{ Uid = "a", CreatureId = "SealPup", Golden = "yes" },
+			{ Uid = "a", CreatureId = "SealPup" },
+			{ Uid = "b", CreatureId = "Dinosaur" },
+			{ Uid = "", CreatureId = "SealPup" },
+			"junk",
+			{ Uid = "c", CreatureId = "MiniYeti", Golden = true },
+		},
+		Equipped = { "c", "c", "b", "nope", 7, "a" },
+		BookSeen = { SealPup = 3, MiniYeti = "lots", Dinosaur = 2 },
+		TutorialStep = 99,
+	})
+	local messyGame = join(31)
+	data = PlayerData.Get(messyGame)
+	check(PlayerData.IsReady(messyGame) and data.CurrentBlock == nil, "a block with an unknown creature is rolled again")
+	check(data.Buildings.IcePickPost == 2 and data.Buildings.RetiredBuilding == nil and data.Buildings.HeatLamp == nil, "unknown buildings and zero counts are dropped")
+	check(#data.Upgrades == 1 and data.Upgrades[1] == "IcePick2", "unknown, repeated and junk upgrades are dropped")
+	check(#data.Pets == 2 and data.Pets[1].Uid == "a" and data.Pets[1].Golden == false and data.Pets[2].Uid == "c",
+		"pets: repeated uids, unknown creatures, empty uids and junk are dropped; Golden is a boolean")
+	check(#data.Equipped == 2 and data.Equipped[1] == "c" and data.Equipped[2] == "a", "equipped: only owned pets, each once")
+	check(data.BookSeen.SealPup == 3 and data.BookSeen.MiniYeti == 1 and data.BookSeen.Dinosaur == nil, "the book keeps seen creatures (an unreadable count is 1) and drops unknown ones")
+	check(data.TutorialStep == 5, "a tutorial step that can't be read counts as done")
+	leave(messyGame)
+	local tooMany = {}
+	for index = 1, CreatureConfig.Pets.InventorySize + 5 do
+		table.insert(tooMany, { Uid = "p" .. index, CreatureId = "SnowBunny" })
+	end
+	local allUids = {}
+	for index = 1, 10 do
+		table.insert(allUids, "p" .. index)
+	end
+	put(32, { SchemaVersion = 1, Pets = tooMany, Equipped = allUids })
+	local hoarderPets = join(32)
+	data = PlayerData.Get(hoarderPets)
+	check(#data.Pets == CreatureConfig.Pets.InventorySize and #data.Equipped == CreatureConfig.Pets.MaxEquipSlots,
+		"at most a full inventory (" .. CreatureConfig.Pets.InventorySize .. ") and the maximum equip slots (" .. CreatureConfig.Pets.MaxEquipSlots .. ")")
+	leave(hoarderPets)
+
+	-- Progress that can't be read fails closed, untouched.
+	local broken = {
+		{ Crystals = -5 }, { Crystals = "lots" }, { CrystalsThisRun = true }, { CrystalsAllTime = { 5 } },
+		{ BlockLevel = 0 }, { BlockLevel = 2.5 }, { FrostCores = -1 }, { Rebirths = "3" }, { MaxLayerOpened = 0 },
+		{ CreaturesRescued = 1.5 }, { Buildings = "oops" }, { Buildings = { IcePickPost = 2.5 } }, { Upgrades = "oops" },
+		{ Pets = "oops" }, { Equipped = 5 }, { BookSeen = "oops" },
+	}
+	for index, fields in broken do
+		local userId = 200 + index
+		local stored = { SchemaVersion = 1 }
+		local field, value = next(fields)
+		stored[field] = value
+		put(userId, stored)
+		local player = join(userId)
+		check(not PlayerData.IsReady(player) and player.KickReason ~= nil, `unreadable {field} ({tostring(value)}) fails closed`)
+		leave(player)
+		check(record(userId).Session == nil and record(userId)[field] ~= nil, `...and the record is left as it was`)
+	end
+
+	-- Invalid game data at runtime is never saved.
+	local nextRuntimeId = 40
+	for name, breakIt in {
+		negativeCrystals = function(d) d.Crystals = -1 end,
+		unknownBuilding = function(d) d.Buildings.Volcano = 1 end,
+		equippedNotOwned = function(d) table.insert(d.Equipped, "ghost") end,
+		badBlock = function(d) d.CurrentBlock = { CreatureId = "SnowBunny", HpLeft = -3 } end,
+	} do
+		nextRuntimeId += 1
+		local player = join(nextRuntimeId)
+		breakIt(PlayerData.Edit(player))
+		check(not PlayerData.SaveNow(player) and player.KickReason ~= nil, "a runtime save with " .. name .. " is refused")
+		leave(player)
+	end
 
 	-- Loading keeps what it doesn't know (the game's own fields until this code knows them).
 	put(2, { SchemaVersion = 1, ExtraField = "keep me", Nested = { A = 1 } })

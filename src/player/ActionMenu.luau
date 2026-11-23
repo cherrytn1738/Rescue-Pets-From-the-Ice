@@ -31,6 +31,32 @@ local CONFIRM_SECONDS = 4
 
 local ActionMenu = {}
 
+-- Every menu built on this client (the debug menu and the admin window share this module). The
+-- right-edge toggle buttons slide left of whichever right-side window is open, so a button never
+-- sits on top of an open window; on a screen too narrow for that, they hide until it closes.
+local EDGE_MARGIN = 8
+local BUTTON_WIDTH = 64
+local menus = {}
+
+local function placeEdgeButtons()
+	local openWidth = nil
+	for _, menu in menus do
+		if not menu.left and menu.panel.Visible then
+			openWidth = math.max(openWidth or 0, menu.panel.Size.X.Offset) -- (layout() sizes it in pixels)
+		end
+	end
+	local camera = Workspace.CurrentCamera
+	local viewportWidth = if camera then camera.ViewportSize.X else 1280
+	for _, menu in menus do
+		if not menu.left then
+			local shift = if openWidth then openWidth + EDGE_MARGIN else 0
+			local fits = viewportWidth - EDGE_MARGIN - shift - BUTTON_WIDTH >= 0
+			menu.toggleButton.Visible = fits
+			menu.toggleButton.Position = UDim2.new(1, -EDGE_MARGIN - shift, menu.buttonY, 0)
+		end
+	end
+end
+
 function ActionMenu.Build(options)
 	local TOGGLE_KEY = options.toggleKey
 	local ACCENT = options.accent
@@ -79,8 +105,8 @@ function ActionMenu.Build(options)
 		toggleButton.Size = options.buttonSize or UDim2.fromOffset(64, 30)
 	else
 		toggleButton.AnchorPoint = Vector2.new(1, 0.5)
-		toggleButton.Position = UDim2.new(1, -8, options.buttonY, 0)
-		toggleButton.Size = UDim2.fromOffset(64, 30)
+		toggleButton.Position = UDim2.new(1, -EDGE_MARGIN, options.buttonY, 0)
+		toggleButton.Size = UDim2.fromOffset(BUTTON_WIDTH, 30)
 	end
 	toggleButton.TextSize = 14
 
@@ -366,6 +392,7 @@ function ActionMenu.Build(options)
 		layout()
 		closePicker()
 		panel.Visible = open
+		placeEdgeButtons()
 	end
 
 	toggleButton.Activated:Connect(function()
@@ -383,8 +410,14 @@ function ActionMenu.Build(options)
 		end))
 	end
 	if Workspace.CurrentCamera then
-		table.insert(connections, Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(layout))
+		table.insert(connections, Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
+			layout()
+			placeEdgeButtons()
+		end))
 	end
+
+	local menu = { panel = panel, toggleButton = toggleButton, left = left, buttonY = options.buttonY }
+	table.insert(menus, menu)
 
 	return {
 		gui = gui,
@@ -392,6 +425,7 @@ function ActionMenu.Build(options)
 			for _, connection in connections do
 				connection:Disconnect()
 			end
+			table.remove(menus, table.find(menus, menu))
 			gui:Destroy()
 		end,
 	}

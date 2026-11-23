@@ -149,6 +149,31 @@ local ACTIONS = {
 		end,
 	},
 	{
+		Id = "AddCrystals", Group = "Save", Label = "Add crystals (this run and all time too)",
+		Params = { amountParam("Amount", "Crystals", 1, 1e15, 1000) },
+		Run = function(target, args)
+			local data = dataOf(target)
+			data.Crystals += args.Amount
+			data.CrystalsThisRun += args.Amount
+			data.CrystalsAllTime += args.Amount
+			PlayerData.Publish(target)
+			PlayerData.MarkImportant(target)
+			return `{target.Name} now has {data.Crystals} crystals`
+		end,
+	},
+	{
+		Id = "SetBlockLevel", Group = "Save", Label = "Set block level (the next block rolls again)",
+		Params = { amountParam("Level", "Block level", 1, 1000, 21) },
+		Run = function(target, args)
+			local data = dataOf(target)
+			data.BlockLevel = args.Level
+			data.CurrentBlock = nil
+			PlayerData.Publish(target)
+			PlayerData.MarkImportant(target)
+			return `{target.Name} is at block level {args.Level}`
+		end,
+	},
+	{
 		Id = "ShowSave", Group = "Save", Label = "Show the save (all of it goes to Output)",
 		Run = function(target)
 			dataOf(target)

@@ -27,8 +27,12 @@ local RunService = game:GetService("RunService")
 
 local AnalyticsConfig = require(ReplicatedStorage.AnalyticsConfig)
 local AnalyticsRules = require(ReplicatedStorage.AnalyticsRules)
+local BuildingConfig = require(ReplicatedStorage.BuildingConfig)
+local CreatureConfig = require(ReplicatedStorage.CreatureConfig)
+local LayerConfig = require(ReplicatedStorage.LayerConfig)
 local MonetizationConfig = require(ReplicatedStorage.MonetizationConfig)
 local MonetizationRules = require(ReplicatedStorage.MonetizationRules)
+local UpgradeConfig = require(ReplicatedStorage.UpgradeConfig)
 
 local LIVE_STORE = "IcePets_PlayerData"
 local STUDIO_STORE = "IcePets_PlayerData_Studio" -- Studio's default: test progress never reaches live saves
@@ -52,6 +56,17 @@ local MAX_CODES = 200 -- redeemed codes kept (the most recent)
 local CODE_PATTERN = "^[A-Z0-9]+$" -- a redeemed code as saved: CodeRules.Normalize's form
 local MAX_CODE_TEXT = 32
 
+-- The game's own fields (docs/GAME_DESIGN.md, "Data and code structure").
+local MAX_AMOUNT = 1e300 -- crystals: a Luau number reaches about 1e308 (the design's "big numbers")
+local MAX_LEVEL = 1_000_000 -- block levels
+local MAX_OWNED = 1_000_000 -- copies of one building
+local MAX_REBIRTHS = 1_000_000
+local MAX_LAYER = 100
+local MAX_UID_TEXT = 64 -- a pet's uid (a GUID)
+local TUTORIAL_FIRST, TUTORIAL_DONE = 1, 5 -- the design's five tutorial steps; 5 = done (the code shown)
+local INVENTORY_SIZE = CreatureConfig.Pets.InventorySize
+local MAX_EQUIPPED = CreatureConfig.Pets.MaxEquipSlots
+
 local PlayerData = {}
 PlayerData.SCHEMA_VERSION = SCHEMA_VERSION
 
@@ -73,6 +88,32 @@ local function deepCopy(value)
 		copy[key] = deepCopy(item)
 	end
 	return copy
+end
+
+-- A crystal amount: a finite, non-negative number (crystals can be fractional: damage × multipliers).
+local function isAmount(value)
+	return type(value) == "number" and value == value and value >= 0 and value <= MAX_AMOUNT
+end
+
+-- Game fields ------------------------------------------------------------------------------------
+
+-- The block in progress: { CreatureId, HpLeft }, or nil (the server rolls a new block). It isn't
+-- paid for, so one that can't be read is simply rolled again.
+local function cleanBlock(block)
+	if type(block) ~= "table" or not CreatureConfig.Get(block.CreatureId) or not isAmount(block.HpLeft) then
+		return nil
+	end
+	return { CreatureId = block.CreatureId, HpLeft = block.HpLeft }
+end
+
+-- One pet: { Uid, CreatureId, Golden }. A pet whose creature this game doesn't know, or with an
+-- unreadable uid, is dropped.
+local function cleanPet(pet)
+	if type(pet) ~= "table" or type(pet.Uid) ~= "string" or #pet.Uid == 0 or #pet.Uid > MAX_UID_TEXT
+		or not CreatureConfig.Get(pet.CreatureId) then
+		return nil
+	end
+	return { Uid = pet.Uid, CreatureId = pet.CreatureId, Golden = pet.Golden == true }
 end
 
 -- Purchase bookkeeping --------------------------------------------------------------------------
@@ -129,13 +170,21 @@ local function cleanIntent(intent)
 end
 
 -- Schema history (bump SCHEMA_VERSION and add a step for every change once the game is live):
---   1  Robux bookkeeping: Receipts ({ Id, Product, At, For }), PendingGifts ({ [product key] = intent }),
+--   1  The game (docs/GAME_DESIGN.md, "Data and code structure"): Crystals, CrystalsThisRun,
+--        CrystalsAllTime, BlockLevel, CurrentBlock ({ CreatureId, HpLeft } or none), Buildings
+--        ({ [building id] = count }), Upgrades (upgrade ids), Pets ({ Uid, CreatureId, Golden }),
+--        Equipped (pet uids), BookSeen ({ [creature id] = rescue count }), FrostCores, Rebirths,
+--        MaxLayerOpened, CreaturesRescued, TutorialStep. The doc's codesRedeemed is Codes, lastOnline is
+--        LeftAt and purchaseIds is Receipts (below). Pass ownership is never saved (GamePasses).
+--      Robux bookkeeping: Receipts ({ Id, Product, At, For }), PendingGifts ({ [product key] = intent }),
 --        GiftInbox (store only: gifts other players sent, not given yet), ReceivedGifts (gift ids given);
 --        Codes (redeemed promo codes, CodeRules.Normalize's form); Funnels (how far the one-time
 --        analytics funnels are logged, AnalyticsRules); LeftAt (store only: the server's os.time() at
 --        the last save, for offline earnings). Plus Session and LastWriteId (lease bookkeeping).
---      The game's own fields (docs/GAME_DESIGN.md, "Data and code structure") join schema 1 while
---      nothing is live yet; after launch every change bumps the version.
+--      Nothing is live yet, so changes still go into schema 1; after launch every change bumps it.
+-- Rules: progress that can't be read fails closed (never rewritten with a default); unknown ids
+-- (a creature, building or upgrade that no longer exists) are dropped; a missing field gets its
+-- default.
 -- Returns a clean record, or nil and a reason (the load then FAILS and nothing is overwritten).
 -- Only a missing record (nil) is a new player.
 local function validate(record)
@@ -149,6 +198,110 @@ local function validate(record)
 	-- fails: never rewrite data you can't read.
 	if not isInteger(version, 1, SCHEMA_VERSION) then
 		return nil, "unsupported schema version " .. tostring(version)
+	end
+
+	-- Crystals: amounts. Missing starts at 0; anything else that isn't an amount fails closed.
+	for _, field in { "Crystals", "CrystalsThisRun", "CrystalsAllTime" } do
+		if data[field] == nil then
+			data[field] = 0
+		elseif not isAmount(data[field]) then
+			return nil, "invalid " .. field
+		end
+	end
+
+	-- Whole-number progress: missing gets its default; unreadable fails closed.
+	local counters = {
+		{ "BlockLevel", 1, 1, MAX_LEVEL },
+		{ "FrostCores", 0, 0, MAX_AMOUNT },
+		{ "Rebirths", 0, 0, MAX_REBIRTHS },
+		{ "MaxLayerOpened", LayerConfig.FloorLayer, 1, MAX_LAYER },
+		{ "CreaturesRescued", 0, 0, MAX_AMOUNT },
+	}
+	for _, counter in counters do
+		local field, default, min, max = counter[1], counter[2], counter[3], counter[4]
+		if data[field] == nil then
+			data[field] = default
+		elseif not isInteger(data[field], min, max) then
+			return nil, "invalid " .. field
+		end
+	end
+
+	-- The block in progress: rolled again if it can't be read.
+	data.CurrentBlock = cleanBlock(data.CurrentBlock)
+
+	-- Buildings: { [id] = count }. Not a table fails closed; unknown buildings are dropped; a count
+	-- that isn't a whole number fails closed (they were paid for); zero counts are dropped.
+	if data.Buildings ~= nil and type(data.Buildings) ~= "table" then
+		return nil, "invalid Buildings"
+	end
+	local buildings = {}
+	for id, count in data.Buildings or {} do
+		if BuildingConfig.Get(id) then
+			if not isInteger(count, 0, MAX_OWNED) then
+				return nil, "invalid Buildings count for " .. tostring(id)
+			end
+			if count > 0 then
+				buildings[id] = count
+			end
+		end
+	end
+	data.Buildings = buildings
+
+	-- Upgrades: a list of ids. Not a list fails closed; unknown and repeated ids are dropped.
+	if data.Upgrades ~= nil and type(data.Upgrades) ~= "table" then
+		return nil, "invalid Upgrades"
+	end
+	local upgrades = {}
+	for _, id in data.Upgrades or {} do
+		if UpgradeConfig.Get(id) and not table.find(upgrades, id) then
+			table.insert(upgrades, id)
+		end
+	end
+	data.Upgrades = upgrades
+
+	-- Pets: not a list fails closed; unreadable pets and repeated uids are dropped; at most a full
+	-- inventory. Equipped: uids of owned pets, no repeats, at most the maximum slots.
+	if data.Pets ~= nil and type(data.Pets) ~= "table" then
+		return nil, "invalid Pets"
+	end
+	if data.Equipped ~= nil and type(data.Equipped) ~= "table" then
+		return nil, "invalid Equipped"
+	end
+	local pets, uids = {}, {}
+	for _, entry in data.Pets or {} do
+		local pet = cleanPet(entry)
+		if pet and not uids[pet.Uid] and #pets < INVENTORY_SIZE then
+			uids[pet.Uid] = true
+			table.insert(pets, pet)
+		end
+	end
+	data.Pets = pets
+	local equipped = {}
+	for _, uid in data.Equipped or {} do
+		if type(uid) == "string" and uids[uid] and not table.find(equipped, uid) and #equipped < MAX_EQUIPPED then
+			table.insert(equipped, uid)
+		end
+	end
+	data.Equipped = equipped
+
+	-- The Creature Book: { [creature id] = rescue count }. Not a table fails closed; unknown creatures
+	-- are dropped; a seen creature whose count can't be read stays seen, with a count of 1.
+	if data.BookSeen ~= nil and type(data.BookSeen) ~= "table" then
+		return nil, "invalid BookSeen"
+	end
+	local book = {}
+	for id, count in data.BookSeen or {} do
+		if CreatureConfig.Get(id) then
+			book[id] = if isInteger(count, 1, MAX_AMOUNT) then count else 1
+		end
+	end
+	data.BookSeen = book
+
+	-- Tutorial: a new player starts it; a step that can't be read counts as done.
+	if isNew then
+		data.TutorialStep = TUTORIAL_FIRST
+	elseif not isInteger(data.TutorialStep, TUTORIAL_FIRST, TUTORIAL_DONE) then
+		data.TutorialStep = TUTORIAL_DONE
 	end
 
 	-- Purchases: missing (a new player) starts empty. They guard paid grants, so a field that isn't a
@@ -292,8 +445,14 @@ function PlayerData.IsReady(player)
 end
 
 -- Display copies for clients: the HUD reads player attributes, never the save, and the server never
--- reads them back. Schema 1 has nothing to show yet; the game's own fields add their attributes here.
-local function publish(_player, _session) end
+-- reads them back. (The server tick will refresh Crystals about 4 times a second.)
+local function publish(player, session)
+	local data = session.data
+	player:SetAttribute("Crystals", data.Crystals)
+	player:SetAttribute("BlockLevel", data.BlockLevel)
+	player:SetAttribute("Rebirths", data.Rebirths)
+	player:SetAttribute("FrostCores", data.FrostCores)
+end
 
 -- A session that can't be trusted stops: no gameplay, and it never saves.
 local function fail(player, session, reason)
@@ -309,8 +468,62 @@ local function fail(player, session, reason)
 end
 
 -- What this session writes: a checked deep copy of its data, or nil if the runtime state is invalid.
+local function gameFieldsValid(data): boolean
+	if not (isAmount(data.Crystals) and isAmount(data.CrystalsThisRun) and isAmount(data.CrystalsAllTime)
+		and isInteger(data.BlockLevel, 1, MAX_LEVEL) and isInteger(data.FrostCores, 0, MAX_AMOUNT)
+		and isInteger(data.Rebirths, 0, MAX_REBIRTHS) and isInteger(data.MaxLayerOpened, 1, MAX_LAYER)
+		and isInteger(data.CreaturesRescued, 0, MAX_AMOUNT) and isInteger(data.TutorialStep, TUTORIAL_FIRST, TUTORIAL_DONE)) then
+		return false
+	end
+	if data.CurrentBlock ~= nil and cleanBlock(data.CurrentBlock) == nil then
+		return false
+	end
+	if type(data.Buildings) ~= "table" or type(data.Upgrades) ~= "table" or type(data.Pets) ~= "table"
+		or type(data.Equipped) ~= "table" or type(data.BookSeen) ~= "table" then
+		return false
+	end
+	for id, count in data.Buildings do
+		if not BuildingConfig.Get(id) or not isInteger(count, 0, MAX_OWNED) then
+			return false
+		end
+	end
+	local seenUpgrades = {}
+	for _, id in data.Upgrades do
+		if not UpgradeConfig.Get(id) or seenUpgrades[id] then
+			return false
+		end
+		seenUpgrades[id] = true
+	end
+	if #data.Pets > INVENTORY_SIZE or #data.Equipped > MAX_EQUIPPED then
+		return false
+	end
+	local uids = {}
+	for _, pet in data.Pets do
+		if cleanPet(pet) == nil or uids[pet.Uid] or (pet.Golden ~= true and pet.Golden ~= false) then
+			return false
+		end
+		uids[pet.Uid] = true
+	end
+	local seenEquipped = {}
+	for _, uid in data.Equipped do
+		if not uids[uid] or seenEquipped[uid] then
+			return false
+		end
+		seenEquipped[uid] = true
+	end
+	for id, count in data.BookSeen do
+		if not CreatureConfig.Get(id) or not isInteger(count, 1, MAX_AMOUNT) then
+			return false
+		end
+	end
+	return true
+end
+
 local function snapshot(session)
 	local data = session.data
+	if not gameFieldsValid(data) then
+		return nil
+	end
 	if type(data.Receipts) ~= "table" or #data.Receipts > MonetizationRules.MaxReceipts
 		or type(data.PendingGifts) ~= "table" or type(data.ReceivedGifts) ~= "table" then
 		return nil

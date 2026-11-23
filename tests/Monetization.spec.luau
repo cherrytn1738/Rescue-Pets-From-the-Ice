@@ -45,7 +45,11 @@ return function(sources)
 		modules[name] = chunk()
 		return modules[name]
 	end
-	for _, name in { "MonetizationConfig", "MonetizationRules", "AnalyticsConfig", "AnalyticsRules" } do
+	for _, name in {
+		"MonetizationConfig", "MonetizationRules", "AnalyticsConfig", "AnalyticsRules",
+		-- the game configs PlayerData checks saved ids against
+		"LayerConfig", "CreatureConfig", "BuildingConfig", "UpgradeConfig",
+	} do
 		loadPure(name)
 	end
 	local Config, Rules = modules.MonetizationConfig, modules.MonetizationRules
