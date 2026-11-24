@@ -28,13 +28,18 @@ The concept renders in this doc show the intended look: chunky voxel shapes, bri
 
 **Gameplay view.** A player at level 24 in Ancient Ice taps a block with a Legendary creature inside (gold glow, 68% cracked). Buildings ring the ice, three pets follow the player (a player with rebirths and a slot pass), and the HUD shows crystals per second, the layer, a Frost Rush timer and the Shatter Now offer.
 
-&#91;image: Gameplay view: a player taps a glowing block of Ancient Ice with a Legendary creature inside, surrounded by buildings, pets and the HUD\]
+[Concept image in the Claude doc: Gameplay view: a player taps a glowing block of Ancient Ice with a Legendary creature inside, surrounded by buildings, pets and the HUD\]
 
 ## Core loop
 
 Tapping the ice earns crystals, crystals build machines that crack it faster, and every block ends in a rescue whose pet makes the next block go faster still.
 
-&#91;embedded content: core loop · tap, earn, build, hatch, rebirth\]
+```
+Core loop (diagram in the Claude doc):
+Tap the ice -> Crystals fly off (1 per damage) -> Build machines (and upgrades) -> Cracks faster (damage grows)
+Cracks faster -> HP reaches zero -> Creature freed (a pet + a new block) -> pet bonus speeds up every hit -> Tap the ice
+Crystals -> at the rebirth cost -> Rebirth (+5% per Frost Core) -> restart stronger -> Tap the ice
+```
 
 The short loop (tap, crystals, buildings) runs every few seconds; a rescue lands every 1–3 minutes, slowing to 4–6 minutes past level 30 so players feel the pull to rebirth; rebirth comes after about 30–40 minutes and restarts the run with a permanent bonus.
 
@@ -53,7 +58,7 @@ The player never leaves their plot. When a new layer starts, the ground shakes, 
 | 5. Primordial Ice | 41–50 | Dark teal with glowing veins | 40% | 30% | 18% | 8.5% | 3% | 0.5% |
 | 6. Frozen Core | 51–60 (opened at rebirth 3) | Black ice lit from inside | 35% | 28% | 20% | 11% | 5% | 1% |
 
-&#91;image: The five ice layers: Fresh Snow, Blue Ice, Ancient Ice, Crystal Ice and Primordial Ice\]
+[Concept image in the Claude doc: The five ice layers: Fresh Snow, Blue Ice, Ancient Ice, Crystal Ice and Primordial Ice\]
 
 - **Layer 5 is the floor** until rebirths open deeper layers. Blocks past level 50 stay Primordial Ice, with HP still rising.
 - **Each layer adds its own creatures** to the pool (see Creature roster), so a full Creature Book means going deep.
@@ -92,7 +97,7 @@ This is a starting value. The economy simulation tunes it so a rescue comes ever
 | 80% | It wiggles inside, the glow gets brighter, a heartbeat sound starts |
 | 100% | The ice shatters and the creature breaks free |
 
-&#91;image: Crack stages: an Epic Mini Yeti gets clearer at 20, 40, 60 and 80 percent, then breaks free at 100 percent\]
+[Concept image in the Claude doc: Crack stages: an Epic Mini Yeti gets clearer at 20, 40, 60 and 80 percent, then breaks free at 100 percent\]
 
 **Every hit.** Ice chips fly, a "+N" number floats up, crystals spray out, and a crunch plays. Its pitch rises slightly during fast tapping streaks.
 
@@ -137,16 +142,30 @@ All numbers are starting values. The economy simulation should hit three targets
 
 Each building has one pad and grows through five looks as the player owns more copies. Its upgrades show as better parts on the same model, so the plot always shows what the player has bought. Detail levels, below, combine both into one score per building.
 
-| Building | 1 owned | 10 | 25 | 50 | 100 | Upgrade parts (in order) |
-| --- | --- | --- | --- | --- | --- | --- |
-| Ice Pick Post | One post | Three posts | Five posts on a stone base | Bigger base, gear on top | Golden base | Stone, iron, gold, diamond pick heads |
-| Heat Lamp | One lamp | Lamp cluster | Lamps on a pole frame | Floodlight rig | Golden sun lamp | Brighter bulbs, orange, red, white-hot glow |
-| Chisel Mill | Small wheel, 2 chisels | 4 chisels | Bigger wheel, 6 chisels | Twin wheels | Golden mill | Iron, steel, gold, crystal chisels |
-| Ice Drill | Hand drill on a frame | Motor drill | Twin drills | Drill tower | Golden drill tower | Bigger bits, spiral bits, diamond bits, plasma bit |
-| Wrecking Crane | Small crane | Taller boom | Two balls | Heavy-duty crane | Golden crane | Iron, spiked, steel, molten ball |
-| Flamethrower Turret | One nozzle | Twin nozzles | Rotating turret | Quad turret | Golden turret | Orange, blue, purple, white flame |
-| Lava Pump | Small pump, one hose | Two hoses | Lava pool beside it | Lava fountain | Golden pump | Hotter lava colours, bigger splashes |
-| Sun Mirror Tower | One mirror | Mirror ring | Taller tower | Twin towers | Golden tower | Wider beam, double beam, rainbow beam |
+**Every tier is a transformation, not a bigger copy.** Each count milestone moves a building one step along the same fantasy arc, so a new tier always looks like a new, cooler thing:
+
+| Tier | Owned | Theme | Look |
+| --- | --- | --- | --- |
+| 1 | 1 | Scrappy | Wood, rope, nails, hand-made |
+| 2 | 10 | Workshop | Brass and iron, gears, steam, rivets |
+| 3 | 25 | Frost-tech | Blue crystals power it, glowing coils, ice-blue light |
+| 4 | 50 | Enchanted | Parts float, rune rings spin, gems glow |
+| 5 | 100 | Legendary | A creature or monument with a personality: eyes, a face, a crown, gold and aurora light |
+
+Each tier changes the silhouette, the materials and the glow, so players can tell tiers apart from across the plaza. Reaching a tier plays an evolution moment: the building shakes, glows white and bursts into its new form with a banner ("Your Ice Drill evolved!"). The Build card shows the next tier as a glowing silhouette, so players always know what they're chasing.
+
+| Building | 1: Scrappy | 10: Workshop | 25: Frost-tech | 50: Enchanted | 100: Legendary |
+| --- | --- | --- | --- | --- | --- |
+| Ice Pick Post | Wooden post with a pick | Brass clockwork hammer arm | Crystal-tipped piston picks with blue coils | Enchanted picks orbiting a rune pillar | Frost Golem: a giant ice-golem fist pounding the ice |
+| Heat Lamp | Camping lantern | Brass street lamp | Crystal heat-coil tower | A floating sun orb inside spinning rune rings | Captive Star: a tiny sun in a golden cage |
+| Chisel Mill | Wooden water wheel | Brass gear mill | Crystal turbine with glowing water | A waterwheel spinning in mid-air under a waterfall from nowhere | Kraken Mill: tentacles holding chisels |
+| Ice Drill | Hand drill on an A-frame | Steam drill rig with a brass boiler | Crystal drill tower with glowing coils | Floating drill inside rune rings | Mecha Mole Titan: a giant robot mole with a drill nose and glowing eyes |
+| Wrecking Crane | Small wooden crane | Steampunk crane | Crystal magnet crane on an energy chain | A floating crane arm swinging a storm-cloud ball | Titan Arm: a golem arm swinging a meteor |
+| Flamethrower Turret | Torch on a stand | Brass flamethrower | Blue-flame crystal cannon | Enchanted brazier with fire spirits | Dragon Turret: a dragon statue breathing fire |
+| Lava Pump | Hand pump and bucket | Steam pump and pipes | Crystal-cooled lava pipes | Volcano altar with floating lava orbs | Volcano Forge: a mini volcano with a lava heart |
+| Sun Mirror Tower | Polished shield on a pole | Brass telescope tower | Crystal prism tower splitting light | Mirrors orbiting a column of light | Celestial Observatory: a sun disk with orbiting planets |
+
+Upgrade parts for every building follow one pattern; see "Upgrade parts per building" under Detail levels. At higher tiers the same upgrade takes the tier's look: warning lamps become glowing gems, steam becomes magic sparkles.
 
 - **Placement:** small buildings sit at the front pads, big ones at the back (see Plot and map layout).
 - **Model budget:** five station models per building (40 in all), each with swappable upgrade parts. One model is shown per pad, never one per copy.
@@ -158,25 +177,38 @@ Every building has a detail level from 0 to 10, and every point adds something v
 
 | Track | Points come from | What each point adds |
 | --- | --- | --- |
-| Structure | Owning 1, 10, 25, 50 and 100 copies | Base model, then a bigger frame, a base platform with a second unit, a taller structure, then gold trim |
+| Structure | Owning 1, 10, 25, 50 and 100 copies | A new themed form each time: Scrappy, Workshop, Frost-tech, Enchanted, then Legendary |
 | Parts and effects | Buying each of the 5 building upgrades | A better material on the working part, then lights, moving extras (gears, pistons, steam), hit particles, then a signature flourish |
 
 **Example: the Ice Drill from detail 1 to 10.**
 
 | Detail | Reached by | The Ice Drill gains |
 | --- | --- | --- |
-| 1 | 1 owned | A hand drill on a small frame |
-| 2 | 1st upgrade | A steel drill bit |
-| 3 | 10 owned | A motor housing and a taller frame |
-| 4 | 2nd upgrade | Warning lights that blink on every hit |
-| 5 | 25 owned | A stone base platform and a second drill |
-| 6 | 3rd upgrade | Spinning gears and a puff of steam on every hit |
-| 7 | 50 owned | A lattice drill tower with a smoke stack and a ladder |
-| 8 | 4th upgrade | Ice chips and sparks flying on every hit |
-| 9 | 100 owned | Gold trim and a crest on the tower |
-| 10 | 5th upgrade | Diamond bits that leave a crystal trail: a Masterwork |
+| 1 | 1 owned | Scrappy: a hand drill on a wooden A-frame |
+| 2 | 1st upgrade | Steel bits |
+| 3 | 10 owned | Workshop: a steam drill rig with a brass boiler |
+| 4 | 2nd upgrade | Warning lamps (glowing gems from Frost-tech on) |
+| 5 | 25 owned | Frost-tech: a crystal drill tower with glowing coils |
+| 6 | 3rd upgrade | Spinning gears and steam (magic sparkles from Enchanted on) |
+| 7 | 50 owned | Enchanted: the drill floats inside spinning rune rings |
+| 8 | 4th upgrade | Ice chips and sparks on every hit |
+| 9 | 100 owned | Legendary: Mecha Mole Titan, a giant robot mole with a drill nose and glowing eyes |
+| 10 | 5th upgrade | Diamond bits with a crystal trail: a Masterwork |
 
-&#91;image: The Ice Drill at detail 1, 3, 5, 7 and 10: from a small wooden frame to a gold-trimmed Masterwork tower with twin drills, a smoke stack and a crystal trail\]
+**Upgrade parts per building.** Every building's five upgrades follow the same pattern: a better working part, then lights, then a moving extra, then a hit effect, then a signature flourish that completes the Masterwork.
+
+| Building | 1st: better part | 2nd: lights | 3rd: moving extra | 4th: hit effect | 5th: signature |
+| --- | --- | --- | --- | --- | --- |
+| Ice Pick Post | Steel pick heads | Lantern on the post | Spring that bounces with each swing | Ice chips | Diamond picks with a frost trail |
+| Heat Lamp | Brighter bulbs | Orange beacon | Turning reflector | Heat shimmer and sparks | White-hot sun bulb with light rays |
+| Chisel Mill | Steel chisels | Lamps on the frame | Faster wheel with splashing water | Chips and sparks | Crystal chisels and glowing water |
+| Ice Drill | Steel bits | Warning lamps | Gears and steam | Chips and sparks | Diamond bits with a crystal trail |
+| Wrecking Crane | Spiked steel ball | Cab lights and beacon | Swinging counterweight and pulleys | Shockwave ring on impact | Molten ball with a lava trail |
+| Flamethrower Turret | Steel nozzles | Pilot lights | Rotating turret and fuel gauges | Blue-hot flame | White-purple plasma flame |
+| Lava Pump | Reinforced hoses | Warning lamps | Pumping pistons | Lava splashes | Lava fountain with glowing rocks |
+| Sun Mirror Tower | Polished mirror | Beacon on top | Mirrors that turn to track the sun | Brighter beam with heat glow | Rainbow beam |
+
+**Pet size.** Following pets are about 3 studs tall (about half an avatar), and Legendary and Mythic pets are 20% bigger. Inside the ice the creature is shown much larger, filling about 60% of the block's height, and it shrinks to follow size with a pop as it runs to the player.
 
 **Masterwork.** At detail 10 a building becomes a Masterwork: a soft sparkle aura, an idle animation between hits, a name plate with the player's name, and a star on its Build card. A Masterwork also deals +10% damage (a starting value for the economy simulation), so maxing a building is worth chasing.
 
@@ -187,6 +219,41 @@ Every building has a detail level from 0 to 10, and every point adds something v
 - Order matters only for timing: the two tracks can be filled in any order, and the model always shows whatever has been earned.
 
 **How it's built.** Each building is one structure model per count milestone (5 per building, as before) with named attachment points. Each upgrade is a small part set that snaps onto those points, so the tracks combine automatically without a model for every combination. Lights, moving parts and particles run on the client; other players' plots show structure and lights but skip particles past 60 studs, and the reduced-effects setting turns hit particles off.
+
+## Effects and auras
+
+Higher tiers don't just look different, they feel alive: each tier adds a layer of effects on top of the one before, and every Legendary form gets a signature aura of its own. Effects are what make a maxed plot glow from across the plaza.
+
+| Tier | Ambient effects (always on) | On every hit |
+| --- | --- | --- |
+| 1: Scrappy | None | A puff of dust |
+| 2: Workshop | Steam puffs, a warm lantern light | Dust and a few sparks |
+| 3: Frost-tech | Cold mist at the base, ice sparkles, pulsing blue light on coils and screens | Ice chips and blue sparks |
+| 4: Enchanted | A soft aura ring on the ground in the building's colour, floating crystal motes, slowly orbiting rune particles, light beams from gems | A rune flash and sparkle burst |
+| 5: Legendary | The building's signature aura (below), a glowing ground ring, an idle animation (blinking, breathing, turning) and a slow light pulse | A big themed burst and a small shockwave ring |
+| Masterwork | Adds a golden sparkle aura and floating gold motes on top of the Legendary effects | Gold sparks mixed into every hit |
+
+**Signature auras for the Legendary forms.**
+
+| Building | Legendary form | Signature aura |
+| --- | --- | --- |
+| Ice Pick Post | Frost Golem | Swirling snow flurries and a frost ring that creeps across the ground |
+| Heat Lamp | Captive Star | Sun rays turning slowly, heat shimmer and orbiting embers |
+| Chisel Mill | Kraken Mill | Water droplets and bubbles spiralling around it in a teal mist |
+| Ice Drill | Mecha Mole Titan | Steam venting from its back, sparks from its claws and cyan energy rings around the drill |
+| Wrecking Crane | Titan Arm | Small rocks orbiting the meteor and a dust storm at its base |
+| Flamethrower Turret | Dragon Turret | Drifting embers, curling smoke and an ember ring on the ground |
+| Lava Pump | Volcano Forge | Lava sparks shooting up, heat haze and glowing smoke |
+| Sun Mirror Tower | Celestial Observatory | Twinkling stars, a slow aurora ribbon and orbiting mini planets that glow |
+
+**How it's built.** Effects are Roblox particle emitters, beams, trails and lights placed on each tier's named attachment points, all described in an `EffectsConfig` (per building and tier: emitter textures, colours, rates, sizes and lights). Particle textures (soft glow, sparkle, snowflake, ember, smoke puff, rune glyphs, star) are a small shared set uploaded to the group.
+
+**Performance rules.**
+
+- Effects run on the client only.
+- Your own plot shows everything; other plots show ambient effects at half rate within 60 studs and none beyond.
+- At most 2 lights per building, and hit effects are capped per second so a fast tick doesn't flood the screen.
+- The reduced-effects setting turns off hit effects and halves ambient particles.
 
 ## Upgrades in detail
 
@@ -286,7 +353,7 @@ Eighteen creatures at launch: cute and fantasy snow animals, and no dinosaurs or
 
 The Creature Book is the long-term goal: every creature in the game, shown as a dark silhouette until the player rescues one. It is kept through rebirths and gives permanent rewards for filling it.
 
-&#91;image: Creature Book: a completed Common page and an Uncommon page with two creatures found, one marked New, and two silhouettes\]
+[Concept image in the Claude doc: Creature Book: a completed Common page and an Uncommon page with two creatures found, one marked New, and two silhouettes\]
 
 - **Pages:** one page per rarity, plus a Golden page. Each entry shows the creature, its first layer, how many have been rescued, and a "New!" badge until viewed.
 - **First rescue moment:** the first time a creature is freed, the book flies open on screen, the page flips and the silhouette fills in with colour.
@@ -348,7 +415,7 @@ The ice block shows how far you have come, buildings show what is earning for yo
 
 Each plot is a 100 × 100 stud square of snow with the ice block in the middle, eight building pads in a ring, and an open front facing the plaza. Small buildings sit at the front, big ones at the back, so a maxed plot looks impressive from the plaza.
 
-&#91;image: Plot layout: the ice block in the centre, eight numbered building pads, the fence of old ice pick posts and the open front toward the plaza\]
+[Concept image in the Claude doc: Plot layout: the ice block in the centre, eight numbered building pads, the fence of old ice pick posts and the open front toward the plaza\]
 
 **The plot** (positions in studs from the centre of the ice; +Z is the open front toward the plaza):
 
@@ -483,7 +550,7 @@ Every screen at launch, so the UI can be built from one list. All use the showca
 | Codes | Codes board in the plaza | Code entry and result |
 | Settings | Gear button | Music, sound effects, reduced effects for low-end phones |
 
-&#91;image: Build panel: eight building cards with owned counts, damage per second, income bars and prices, the next building highlighted and two locked\]
+[Concept image in the Claude doc: Build panel: eight building cards with owned counts, damage per second, income bars and prices, the next building highlighted and two locked\]
 
 Phones: side buttons on the left edge, nothing near the jump button or the bottom edge; every panel closes with a big X and by tapping outside.
 
