@@ -1,0 +1,1951 @@
+{
+ "id": "SunMirrorTower",
+ "name": "Sun Mirror Tower",
+ "pad": 16,
+ "tiers": [
+  {
+   "tier": 1,
+   "theme": "Scrappy",
+   "form": "Polished shield on a pole",
+   "meshes": [
+    [
+     "SunMirrorTowerT1Planks",
+     900
+    ],
+    [
+     "SunMirrorTowerT1Pole",
+     1530
+    ],
+    [
+     "SunMirrorTowerT1Ropes",
+     258
+    ],
+    [
+     "SunMirrorTowerT1Yoke",
+     736
+    ],
+    [
+     "SunMirrorTowerT1Shield",
+     1512
+    ],
+    [
+     "SunMirrorTowerT1ShieldGlow",
+     140
+    ],
+    [
+     "SunMirrorTowerT1Crank",
+     720
+    ],
+    [
+     "SunMirrorTowerT1Junk",
+     684
+    ],
+    [
+     "SunMirrorTowerT1BeamGlow",
+     48
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "SunMirrorTowerT1U1PolishedMirror",
+       960
+      ],
+      [
+       "SunMirrorTowerT1U1PolishedMirrorGlow",
+       340
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "SunMirrorTowerT1U2Beacon1",
+       296
+      ],
+      [
+       "SunMirrorTowerT1U2Beacon1Glow",
+       48
+      ],
+      [
+       "SunMirrorTowerT1U2Beacon2",
+       296
+      ],
+      [
+       "SunMirrorTowerT1U2Beacon2Glow",
+       48
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "SunMirrorTowerT1U3Tracker1",
+       718
+      ],
+      [
+       "SunMirrorTowerT1U3Tracker1Glow",
+       60
+      ],
+      [
+       "SunMirrorTowerT1U3Tracker2",
+       718
+      ],
+      [
+       "SunMirrorTowerT1U3Tracker2Glow",
+       60
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "SunMirrorTowerT1U5RainbowLens",
+       612
+      ],
+      [
+       "SunMirrorTowerT1U5RainbowLensGlow",
+       24
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "SunMirrorTowerT1FxHotBeamGlow",
+     48
+    ],
+    [
+     "SunMirrorTowerT1FxHeatGlow",
+     480
+    ],
+    [
+     "SunMirrorTowerT1FxHit",
+     140
+    ],
+    [
+     "SunMirrorTowerT1FxHitGlow",
+     40
+    ],
+    [
+     "SunMirrorTowerT1FxRainbowGlow",
+     144
+    ]
+   ],
+   "size": [
+    5.92,
+    10.2,
+    7.84
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      6.25,
+      -0.342
+     ],
+     "out": [
+      -0.0,
+      -0.33,
+      -0.944
+     ],
+     "up": [
+      -0.0,
+      0.944,
+      -0.33
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -0.0,
+      7.84,
+      0.5
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -2.0,
+      0.9,
+      1.2
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      2.5,
+      0.77,
+      -1.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -2.5,
+      0.77,
+      -1.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      2.2,
+      0.8,
+      0.8
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      3.71,
+      -7.6
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      6.25,
+      -0.342
+     ],
+     "out": [
+      -0.0,
+      -0.33,
+      -0.944
+     ],
+     "up": [
+      -0.0,
+      0.944,
+      -0.33
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.4,
+      -1.7
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.3,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      7.84,
+      0.5
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 2,
+   "theme": "Workshop",
+   "form": "Brass telescope tower",
+   "meshes": [
+    [
+     "SunMirrorTowerT2Deck",
+     1488
+    ],
+    [
+     "SunMirrorTowerT2Tower",
+     1736
+    ],
+    [
+     "SunMirrorTowerT2Braces",
+     1248
+    ],
+    [
+     "SunMirrorTowerT2Platform",
+     996
+    ],
+    [
+     "SunMirrorTowerT2Telescope",
+     1560
+    ],
+    [
+     "SunMirrorTowerT2TelescopeGlow",
+     80
+    ],
+    [
+     "SunMirrorTowerT2TelescopeGear",
+     516
+    ],
+    [
+     "SunMirrorTowerT2Mirror",
+     832
+    ],
+    [
+     "SunMirrorTowerT2MirrorGlow",
+     140
+    ],
+    [
+     "SunMirrorTowerT2MirrorFork",
+     628
+    ],
+    [
+     "SunMirrorTowerT2Engine",
+     988
+    ],
+    [
+     "SunMirrorTowerT2BeamGlow",
+     48
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "SunMirrorTowerT2U1PolishedMirror",
+       960
+      ],
+      [
+       "SunMirrorTowerT2U1PolishedMirrorGlow",
+       340
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "SunMirrorTowerT2U2Beacon1",
+       408
+      ],
+      [
+       "SunMirrorTowerT2U2Beacon1Glow",
+       96
+      ],
+      [
+       "SunMirrorTowerT2U2Beacon2",
+       408
+      ],
+      [
+       "SunMirrorTowerT2U2Beacon2Glow",
+       96
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "SunMirrorTowerT2U3Tracker1",
+       1176
+      ],
+      [
+       "SunMirrorTowerT2U3Tracker1Glow",
+       60
+      ],
+      [
+       "SunMirrorTowerT2U3Tracker2",
+       1176
+      ],
+      [
+       "SunMirrorTowerT2U3Tracker2Glow",
+       60
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "SunMirrorTowerT2U5RainbowLens",
+       612
+      ],
+      [
+       "SunMirrorTowerT2U5RainbowLensGlow",
+       24
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "SunMirrorTowerT2FxHotBeamGlow",
+     48
+    ],
+    [
+     "SunMirrorTowerT2FxHeatGlow",
+     480
+    ],
+    [
+     "SunMirrorTowerT2FxHit",
+     140
+    ],
+    [
+     "SunMirrorTowerT2FxHitGlow",
+     40
+    ],
+    [
+     "SunMirrorTowerT2FxRainbowGlow",
+     144
+    ]
+   ],
+   "size": [
+    8.0,
+    11.64,
+    12.55
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      9.1,
+      -2.892
+     ],
+     "out": [
+      -0.0,
+      -0.33,
+      -0.944
+     ],
+     "up": [
+      -0.0,
+      0.944,
+      -0.33
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      1.9,
+      10.42,
+      1.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -1.768,
+      8.54,
+      1.768
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      3.5,
+      0.5,
+      -1.6
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -3.5,
+      0.5,
+      1.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -2.4,
+      3.7,
+      -1.5
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      7.452,
+      -7.6
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      9.1,
+      -2.892
+     ],
+     "out": [
+      -0.0,
+      -0.33,
+      -0.944
+     ],
+     "up": [
+      -0.0,
+      0.944,
+      -0.33
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.25,
+      -4.0
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.5,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      12.172,
+      2.304
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 3,
+   "theme": "Frost-tech",
+   "form": "Crystal prism tower splitting light",
+   "meshes": [
+    [
+     "SunMirrorTowerT3Deck",
+     2240
+    ],
+    [
+     "SunMirrorTowerT3DeckGlow",
+     560
+    ],
+    [
+     "SunMirrorTowerT3Column",
+     2920
+    ],
+    [
+     "SunMirrorTowerT3ColumnGlowGlow",
+     936
+    ],
+    [
+     "SunMirrorTowerT3ColumnGlow",
+     560
+    ],
+    [
+     "SunMirrorTowerT3Prism",
+     212
+    ],
+    [
+     "SunMirrorTowerT3PrismGlow",
+     472
+    ],
+    [
+     "SunMirrorTowerT3Mirror",
+     216
+    ],
+    [
+     "SunMirrorTowerT3MirrorGlow",
+     212
+    ],
+    [
+     "SunMirrorTowerT3Arm",
+     1136
+    ],
+    [
+     "SunMirrorTowerT3RaysGlow",
+     96
+    ],
+    [
+     "SunMirrorTowerT3Pods",
+     1816
+    ],
+    [
+     "SunMirrorTowerT3PodsGlow",
+     1072
+    ],
+    [
+     "SunMirrorTowerT3Cables",
+     1000
+    ],
+    [
+     "SunMirrorTowerT3DeckCrystals",
+     320
+    ],
+    [
+     "SunMirrorTowerT3DeckCrystalsGlow",
+     960
+    ],
+    [
+     "SunMirrorTowerT3BeamGlow",
+     52
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "SunMirrorTowerT3U1PolishedMirror",
+       144
+      ],
+      [
+       "SunMirrorTowerT3U1PolishedMirrorGlow",
+       412
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "SunMirrorTowerT3U2Beacon1",
+       300
+      ],
+      [
+       "SunMirrorTowerT3U2Beacon1Glow",
+       64
+      ],
+      [
+       "SunMirrorTowerT3U2Beacon2",
+       300
+      ],
+      [
+       "SunMirrorTowerT3U2Beacon2Glow",
+       64
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "SunMirrorTowerT3U3Tracker1",
+       336
+      ],
+      [
+       "SunMirrorTowerT3U3Tracker1Glow",
+       288
+      ],
+      [
+       "SunMirrorTowerT3U3Tracker2",
+       336
+      ],
+      [
+       "SunMirrorTowerT3U3Tracker2Glow",
+       288
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "SunMirrorTowerT3U5RainbowLens",
+       636
+      ],
+      [
+       "SunMirrorTowerT3U5RainbowLensGlow",
+       24
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "SunMirrorTowerT3FxHotBeamGlow",
+     52
+    ],
+    [
+     "SunMirrorTowerT3FxHeatGlow",
+     528
+    ],
+    [
+     "SunMirrorTowerT3FxHit",
+     140
+    ],
+    [
+     "SunMirrorTowerT3FxHitGlow",
+     40
+    ],
+    [
+     "SunMirrorTowerT3FxRainbowGlow",
+     144
+    ]
+   ],
+   "size": [
+    11.22,
+    13.21,
+    14.26
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      7.35,
+      -3.742
+     ],
+     "out": [
+      -0.0,
+      -0.33,
+      -0.944
+     ],
+     "up": [
+      -0.0,
+      0.944,
+      -0.33
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -0.0,
+      14.2,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      4.3,
+      1.1,
+      4.2
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      4.0,
+      1.25,
+      -3.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -4.0,
+      1.25,
+      -3.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -3.3,
+      1.1,
+      4.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      6.0,
+      -7.6
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      7.35,
+      -3.742
+     ],
+     "out": [
+      -0.0,
+      -0.33,
+      -0.944
+     ],
+     "up": [
+      -0.0,
+      0.944,
+      -0.33
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.4,
+      -5.55
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      1.1,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      14.2,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 4,
+   "theme": "Enchanted",
+   "form": "Mirrors orbiting a column of light",
+   "meshes": [
+    [
+     "SunMirrorTowerT4Dais",
+     2588
+    ],
+    [
+     "SunMirrorTowerT4DaisGlow",
+     1128
+    ],
+    [
+     "SunMirrorTowerT4DaisCrystals",
+     400
+    ],
+    [
+     "SunMirrorTowerT4DaisCrystalsGlow",
+     960
+    ],
+    [
+     "SunMirrorTowerT4Pedestal",
+     276
+    ],
+    [
+     "SunMirrorTowerT4PedestalGlow",
+     192
+    ],
+    [
+     "SunMirrorTowerT4ColumnGlow",
+     1352
+    ],
+    [
+     "SunMirrorTowerT4RuneRingA",
+     920
+    ],
+    [
+     "SunMirrorTowerT4RuneRingAGlow",
+     432
+    ],
+    [
+     "SunMirrorTowerT4RuneRingB",
+     920
+    ],
+    [
+     "SunMirrorTowerT4RuneRingBGlow",
+     432
+    ],
+    [
+     "SunMirrorTowerT4RuneRingC",
+     920
+    ],
+    [
+     "SunMirrorTowerT4RuneRingCGlow",
+     432
+    ],
+    [
+     "SunMirrorTowerT4Crown",
+     812
+    ],
+    [
+     "SunMirrorTowerT4CrownGlow",
+     352
+    ],
+    [
+     "SunMirrorTowerT4MirrorB",
+     808
+    ],
+    [
+     "SunMirrorTowerT4MirrorBGlow",
+     492
+    ],
+    [
+     "SunMirrorTowerT4OrbitsGlow",
+     900
+    ],
+    [
+     "SunMirrorTowerT4MirrorC",
+     808
+    ],
+    [
+     "SunMirrorTowerT4MirrorCGlow",
+     492
+    ],
+    [
+     "SunMirrorTowerT4MirrorD",
+     808
+    ],
+    [
+     "SunMirrorTowerT4MirrorDGlow",
+     492
+    ],
+    [
+     "SunMirrorTowerT4Mirror",
+     1088
+    ],
+    [
+     "SunMirrorTowerT4MirrorGlow",
+     684
+    ],
+    [
+     "SunMirrorTowerT4MirrorRing",
+     920
+    ],
+    [
+     "SunMirrorTowerT4MirrorRingGlow",
+     504
+    ],
+    [
+     "SunMirrorTowerT4RuneStones",
+     768
+    ],
+    [
+     "SunMirrorTowerT4RuneStonesGlow",
+     120
+    ],
+    [
+     "SunMirrorTowerT4BeamGlow",
+     60
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "SunMirrorTowerT4U1PolishedMirror",
+       840
+      ],
+      [
+       "SunMirrorTowerT4U1PolishedMirrorGlow",
+       692
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "SunMirrorTowerT4U2Beacon1Glow",
+       384
+      ],
+      [
+       "SunMirrorTowerT4U2Beacon1",
+       320
+      ],
+      [
+       "SunMirrorTowerT4U2Beacon2Glow",
+       384
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "SunMirrorTowerT4U3Tracker1",
+       1340
+      ],
+      [
+       "SunMirrorTowerT4U3Tracker1Glow",
+       604
+      ],
+      [
+       "SunMirrorTowerT4U3Tracker2",
+       1340
+      ],
+      [
+       "SunMirrorTowerT4U3Tracker2Glow",
+       604
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "SunMirrorTowerT4U5RainbowLens",
+       884
+      ],
+      [
+       "SunMirrorTowerT4U5RainbowLensGlow",
+       24
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "SunMirrorTowerT4FxSparkleGlow",
+     60
+    ],
+    [
+     "SunMirrorTowerT4FxHotBeamGlow",
+     60
+    ],
+    [
+     "SunMirrorTowerT4FxHeatGlow",
+     750
+    ],
+    [
+     "SunMirrorTowerT4FxHit",
+     140
+    ],
+    [
+     "SunMirrorTowerT4FxHitGlow",
+     40
+    ],
+    [
+     "SunMirrorTowerT4FxRainbowGlow",
+     144
+    ]
+   ],
+   "size": [
+    10.7,
+    12.53,
+    18.47
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      7.55,
+      -3.442
+     ],
+     "out": [
+      -0.0,
+      -0.33,
+      -0.944
+     ],
+     "up": [
+      -0.0,
+      0.944,
+      -0.33
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -0.0,
+      18.0,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -3.0,
+      0.8,
+      1.6
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      3.4,
+      0.8,
+      -2.7
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -3.4,
+      0.8,
+      -2.7
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -0.0,
+      15.4,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      6.095,
+      -7.6
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      7.55,
+      -3.442
+     ],
+     "out": [
+      -0.0,
+      -0.33,
+      -0.944
+     ],
+     "up": [
+      -0.0,
+      0.944,
+      -0.33
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.4,
+      -4.55
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.8,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      18.0,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 5,
+   "theme": "Legendary",
+   "form": "Celestial Observatory: a sun disk with orbiting planets",
+   "meshes": [
+    [
+     "SunMirrorTowerT5Platform",
+     1624
+    ],
+    [
+     "SunMirrorTowerT5Trim",
+     140
+    ],
+    [
+     "SunMirrorTowerT5TrimGlow",
+     280
+    ],
+    [
+     "SunMirrorTowerT5PlatformGlow",
+     368
+    ],
+    [
+     "SunMirrorTowerT5Drum",
+     2530
+    ],
+    [
+     "SunMirrorTowerT5DrumGlow",
+     420
+    ],
+    [
+     "SunMirrorTowerT5WindowsGlow",
+     1504
+    ],
+    [
+     "SunMirrorTowerT5Windows",
+     1600
+    ],
+    [
+     "SunMirrorTowerT5Door",
+     890
+    ],
+    [
+     "SunMirrorTowerT5DoorGlow",
+     28
+    ],
+    [
+     "SunMirrorTowerT5Dome",
+     923
+    ],
+    [
+     "SunMirrorTowerT5DomeGlow",
+     392
+    ],
+    [
+     "SunMirrorTowerT5Telescope",
+     1056
+    ],
+    [
+     "SunMirrorTowerT5TelescopeGlow",
+     44
+    ],
+    [
+     "SunMirrorTowerT5Gears",
+     3816
+    ],
+    [
+     "SunMirrorTowerT5Column",
+     1112
+    ],
+    [
+     "SunMirrorTowerT5Armillary",
+     480
+    ],
+    [
+     "SunMirrorTowerT5Sun",
+     770
+    ],
+    [
+     "SunMirrorTowerT5Eyes",
+     104
+    ],
+    [
+     "SunMirrorTowerT5EyesGlow",
+     296
+    ],
+    [
+     "SunMirrorTowerT5Face",
+     804
+    ],
+    [
+     "SunMirrorTowerT5Rays",
+     256
+    ],
+    [
+     "SunMirrorTowerT5RaysGlow",
+     512
+    ],
+    [
+     "SunMirrorTowerT5CoronaGlow",
+     528
+    ],
+    [
+     "SunMirrorTowerT5Orbits",
+     1056
+    ],
+    [
+     "SunMirrorTowerT5Planets",
+     1248
+    ],
+    [
+     "SunMirrorTowerT5Mirror",
+     1820
+    ],
+    [
+     "SunMirrorTowerT5MirrorGlow",
+     280
+    ],
+    [
+     "SunMirrorTowerT5Gimbal",
+     1292
+    ],
+    [
+     "SunMirrorTowerT5SunRayGlow",
+     52
+    ],
+    [
+     "SunMirrorTowerT5BeamGlow",
+     52
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "SunMirrorTowerT5U1PolishedMirror",
+       624
+      ],
+      [
+       "SunMirrorTowerT5U1PolishedMirrorGlow",
+       676
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "SunMirrorTowerT5U2Beacon1",
+       652
+      ],
+      [
+       "SunMirrorTowerT5U2Beacon1Glow",
+       104
+      ],
+      [
+       "SunMirrorTowerT5U2Beacon2",
+       436
+      ],
+      [
+       "SunMirrorTowerT5U2Beacon2Glow",
+       104
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "SunMirrorTowerT5U3Tracker1",
+       588
+      ],
+      [
+       "SunMirrorTowerT5U3Tracker1Glow",
+       140
+      ],
+      [
+       "SunMirrorTowerT5U3Tracker2",
+       588
+      ],
+      [
+       "SunMirrorTowerT5U3Tracker2Glow",
+       140
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "SunMirrorTowerT5U5RainbowLens",
+       636
+      ],
+      [
+       "SunMirrorTowerT5U5RainbowLensGlow",
+       24
+      ],
+      [
+       "SunMirrorTowerT5U5NamePlate",
+       344
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "SunMirrorTowerT5FxSparkleGlow",
+     60
+    ],
+    [
+     "SunMirrorTowerT5FxHotBeamGlow",
+     52
+    ],
+    [
+     "SunMirrorTowerT5FxHeatGlow",
+     528
+    ],
+    [
+     "SunMirrorTowerT5FxHit",
+     140
+    ],
+    [
+     "SunMirrorTowerT5FxHitGlow",
+     40
+    ],
+    [
+     "SunMirrorTowerT5FxRainbowGlow",
+     144
+    ],
+    [
+     "SunMirrorTowerT5FxSparklesGlow",
+     80
+    ],
+    [
+     "SunMirrorTowerT5FxStarsGlow",
+     448
+    ],
+    [
+     "SunMirrorTowerT5FxAuroraRibbonGlow",
+     256
+    ],
+    [
+     "SunMirrorTowerT5FxGlowPlanetsGlow",
+     768
+    ],
+    [
+     "SunMirrorTowerT5FxAuraGroundGlow",
+     424
+    ]
+   ],
+   "size": [
+    14.5,
+    14.88,
+    22.26
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      7.55,
+      -5.142
+     ],
+     "out": [
+      -0.0,
+      -0.33,
+      -0.944
+     ],
+     "up": [
+      -0.0,
+      0.944,
+      -0.33
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -0.0,
+      21.55,
+      0.7
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -0.0,
+      11.15,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      5.6,
+      1.2,
+      -5.2
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -5.6,
+      1.2,
+      -5.2
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      1.419,
+      13.074,
+      -0.297
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      6.69,
+      -7.6
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      7.55,
+      -5.142
+     ],
+     "out": [
+      -0.0,
+      -0.33,
+      -0.944
+     ],
+     "up": [
+      -0.0,
+      0.944,
+      -0.33
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.45,
+      -7.22
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      1.2,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      21.5,
+      0.8
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Crown": {
+     "position": [
+      -0.0,
+      19.4,
+      0.8
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Eyes": {
+     "position": [
+      -0.0,
+      16.679,
+      0.204
+     ],
+     "out": [
+      -0.0,
+      -0.119,
+      -0.993
+     ],
+     "up": [
+      -0.0,
+      0.993,
+      -0.119
+     ]
+    }
+   }
+  }
+ ]
+}
