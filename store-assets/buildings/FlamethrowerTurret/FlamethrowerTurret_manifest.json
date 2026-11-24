@@ -1,0 +1,2150 @@
+{
+ "id": "FlamethrowerTurret",
+ "name": "Flamethrower Turret",
+ "pad": 12,
+ "tiers": [
+  {
+   "tier": 1,
+   "theme": "Scrappy",
+   "form": "Torch on a stand",
+   "meshes": [
+    [
+     "FlamethrowerTurretT1Planks",
+     1120
+    ],
+    [
+     "FlamethrowerTurretT1Stand",
+     1712
+    ],
+    [
+     "FlamethrowerTurretT1Torch",
+     852
+    ],
+    [
+     "FlamethrowerTurretT1Head",
+     432
+    ],
+    [
+     "FlamethrowerTurretT1Barrel",
+     1240
+    ],
+    [
+     "FlamethrowerTurretT1Junk",
+     548
+    ],
+    [
+     "FlamethrowerTurretT1FlameGlow",
+     640
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "FlamethrowerTurretT1U1Nozzle",
+       576
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "FlamethrowerTurretT1U2Lamp1",
+       296
+      ],
+      [
+       "FlamethrowerTurretT1U2Lamp1Glow",
+       48
+      ],
+      [
+       "FlamethrowerTurretT1U2Lamp2",
+       296
+      ],
+      [
+       "FlamethrowerTurretT1U2Lamp2Glow",
+       48
+      ],
+      [
+       "FlamethrowerTurretT1U2Pilot",
+       32
+      ],
+      [
+       "FlamethrowerTurretT1U2PilotGlow",
+       640
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "FlamethrowerTurretT1U3Gear1",
+       1104
+      ],
+      [
+       "FlamethrowerTurretT1U3Gauges",
+       304
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "FlamethrowerTurretT1U5PlasmaGlow",
+       256
+      ],
+      [
+       "FlamethrowerTurretT1U5Plasma",
+       560
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "FlamethrowerTurretT1FxSmoke1",
+     240
+    ],
+    [
+     "FlamethrowerTurretT1FxSmoke2",
+     240
+    ],
+    [
+     "FlamethrowerTurretT1FxBlueFlameGlow",
+     640
+    ],
+    [
+     "FlamethrowerTurretT1FxHit",
+     140
+    ],
+    [
+     "FlamethrowerTurretT1FxHitGlow",
+     680
+    ],
+    [
+     "FlamethrowerTurretT1FxPlasmaFlameGlow",
+     640
+    ],
+    [
+     "FlamethrowerTurretT1FxTrailGlow",
+     80
+    ]
+   ],
+   "size": [
+    5.18,
+    5.78,
+    4.0
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      2.305,
+      -1.988
+     ],
+     "out": [
+      -0.0,
+      -0.371,
+      -0.928
+     ],
+     "up": [
+      -0.0,
+      0.928,
+      -0.371
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      1.85,
+      1.0,
+      -0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -1.75,
+      1.45,
+      1.17
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -0.42,
+      3.3,
+      0.5
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gauge1": {
+     "position": [
+      -1.95,
+      0.75,
+      0.74
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -0.0,
+      3.144,
+      -1.264
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      -2.15,
+      2.25,
+      1.53
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      0.5,
+      -5.5
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      2.305,
+      -1.988
+     ],
+     "out": [
+      -0.0,
+      -0.371,
+      -0.928
+     ],
+     "up": [
+      -0.0,
+      0.928,
+      -0.371
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.3,
+      -1.75
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.3,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      4.057,
+      1.893
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 2,
+   "theme": "Workshop",
+   "form": "Brass flamethrower",
+   "meshes": [
+    [
+     "FlamethrowerTurretT2Deck",
+     1368
+    ],
+    [
+     "FlamethrowerTurretT2Frame",
+     832
+    ],
+    [
+     "FlamethrowerTurretT2WheelL",
+     1240
+    ],
+    [
+     "FlamethrowerTurretT2WheelR",
+     1240
+    ],
+    [
+     "FlamethrowerTurretT2Tanks",
+     2264
+    ],
+    [
+     "FlamethrowerTurretT2Pump",
+     604
+    ],
+    [
+     "FlamethrowerTurretT2Mount",
+     800
+    ],
+    [
+     "FlamethrowerTurretT2Gun",
+     1804
+    ],
+    [
+     "FlamethrowerTurretT2FlameGlow",
+     640
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "FlamethrowerTurretT2U1Nozzle",
+       752
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "FlamethrowerTurretT2U2Lamp1",
+       408
+      ],
+      [
+       "FlamethrowerTurretT2U2Lamp1Glow",
+       96
+      ],
+      [
+       "FlamethrowerTurretT2U2Lamp2",
+       408
+      ],
+      [
+       "FlamethrowerTurretT2U2Lamp2Glow",
+       96
+      ],
+      [
+       "FlamethrowerTurretT2U2Pilot",
+       32
+      ],
+      [
+       "FlamethrowerTurretT2U2PilotGlow",
+       640
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "FlamethrowerTurretT2U3Gear1",
+       1296
+      ],
+      [
+       "FlamethrowerTurretT2U3Gauges",
+       864
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "FlamethrowerTurretT2U5PlasmaGlow",
+       256
+      ],
+      [
+       "FlamethrowerTurretT2U5Plasma",
+       560
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "FlamethrowerTurretT2FxSmoke1",
+     240
+    ],
+    [
+     "FlamethrowerTurretT2FxSmoke2",
+     240
+    ],
+    [
+     "FlamethrowerTurretT2FxBlueFlameGlow",
+     640
+    ],
+    [
+     "FlamethrowerTurretT2FxHit",
+     140
+    ],
+    [
+     "FlamethrowerTurretT2FxHitGlow",
+     680
+    ],
+    [
+     "FlamethrowerTurretT2FxPlasmaFlameGlow",
+     640
+    ],
+    [
+     "FlamethrowerTurretT2FxTrailGlow",
+     80
+    ]
+   ],
+   "size": [
+    7.3,
+    7.62,
+    6.18
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      2.557,
+      -3.344
+     ],
+     "out": [
+      -0.0,
+      -0.287,
+      -0.958
+     ],
+     "up": [
+      -0.0,
+      0.958,
+      -0.287
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -2.9,
+      2.2,
+      -2.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      2.9,
+      2.2,
+      -2.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -0.0,
+      2.2,
+      -0.7
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gauge1": {
+     "position": [
+      1.35,
+      3.25,
+      0.77
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gauge2": {
+     "position": [
+      -1.35,
+      3.25,
+      0.77
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -0.0,
+      6.2,
+      2.25
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      -1.35,
+      4.6,
+      1.5
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      0.5,
+      -5.5
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      2.557,
+      -3.344
+     ],
+     "out": [
+      -0.0,
+      -0.287,
+      -0.958
+     ],
+     "up": [
+      -0.0,
+      0.958,
+      -0.287
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.86,
+      -2.52
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      1.26,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      6.2,
+      2.25
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 3,
+   "theme": "Frost-tech",
+   "form": "Blue-flame crystal cannon",
+   "meshes": [
+    [
+     "FlamethrowerTurretT3Deck",
+     1980
+    ],
+    [
+     "FlamethrowerTurretT3DeckGlow",
+     560
+    ],
+    [
+     "FlamethrowerTurretT3Pedestal",
+     1112
+    ],
+    [
+     "FlamethrowerTurretT3PedestalGlow",
+     316
+    ],
+    [
+     "FlamethrowerTurretT3Turret",
+     604
+    ],
+    [
+     "FlamethrowerTurretT3TurretGlow",
+     280
+    ],
+    [
+     "FlamethrowerTurretT3Cannon",
+     1308
+    ],
+    [
+     "FlamethrowerTurretT3CannonCoilsGlow",
+     432
+    ],
+    [
+     "FlamethrowerTurretT3CannonGlow",
+     144
+    ],
+    [
+     "FlamethrowerTurretT3Chamber",
+     240
+    ],
+    [
+     "FlamethrowerTurretT3ChamberGlow",
+     192
+    ],
+    [
+     "FlamethrowerTurretT3Pylons",
+     2768
+    ],
+    [
+     "FlamethrowerTurretT3PylonsGlow",
+     256
+    ],
+    [
+     "FlamethrowerTurretT3Cables",
+     1308
+    ],
+    [
+     "FlamethrowerTurretT3CannonFins",
+     1436
+    ],
+    [
+     "FlamethrowerTurretT3CannonFinsGlow",
+     92
+    ],
+    [
+     "FlamethrowerTurretT3DeckCrystals",
+     160
+    ],
+    [
+     "FlamethrowerTurretT3DeckCrystalsGlow",
+     480
+    ],
+    [
+     "FlamethrowerTurretT3FlameGlow",
+     640
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "FlamethrowerTurretT3U1Nozzle",
+       216
+      ],
+      [
+       "FlamethrowerTurretT3U1NozzleGlow",
+       240
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "FlamethrowerTurretT3U2Lamp1",
+       300
+      ],
+      [
+       "FlamethrowerTurretT3U2Lamp1Glow",
+       64
+      ],
+      [
+       "FlamethrowerTurretT3U2Lamp2",
+       300
+      ],
+      [
+       "FlamethrowerTurretT3U2Lamp2Glow",
+       64
+      ],
+      [
+       "FlamethrowerTurretT3U2Pilot",
+       32
+      ],
+      [
+       "FlamethrowerTurretT3U2PilotGlow",
+       640
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "FlamethrowerTurretT3U3Gear1",
+       1112
+      ],
+      [
+       "FlamethrowerTurretT3U3Gauges",
+       1376
+      ],
+      [
+       "FlamethrowerTurretT3U3GaugesGlow",
+       184
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "FlamethrowerTurretT3U5PlasmaGlow",
+       288
+      ],
+      [
+       "FlamethrowerTurretT3U5Plasma",
+       560
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "FlamethrowerTurretT3FxSmoke1",
+     240
+    ],
+    [
+     "FlamethrowerTurretT3FxSmoke2",
+     240
+    ],
+    [
+     "FlamethrowerTurretT3FxBlueFlameGlow",
+     640
+    ],
+    [
+     "FlamethrowerTurretT3FxHit",
+     140
+    ],
+    [
+     "FlamethrowerTurretT3FxHitGlow",
+     680
+    ],
+    [
+     "FlamethrowerTurretT3FxPlasmaFlameGlow",
+     640
+    ],
+    [
+     "FlamethrowerTurretT3FxTrailGlow",
+     80
+    ]
+   ],
+   "size": [
+    9.82,
+    8.89,
+    7.56
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      3.541,
+      -2.386
+     ],
+     "out": [
+      -0.0,
+      -0.305,
+      -0.952
+     ],
+     "up": [
+      -0.0,
+      0.952,
+      -0.305
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -1.02,
+      5.0,
+      0.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      1.02,
+      5.0,
+      0.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -0.65,
+      1.85,
+      -1.12
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gauge1": {
+     "position": [
+      3.4,
+      1.4,
+      1.89
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gauge2": {
+     "position": [
+      -3.4,
+      1.4,
+      1.89
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      3.4,
+      7.5,
+      2.6
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      -3.4,
+      7.5,
+      2.6
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      0.5,
+      -5.5
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      3.541,
+      -2.386
+     ],
+     "out": [
+      -0.0,
+      -0.305,
+      -0.952
+     ],
+     "up": [
+      -0.0,
+      0.952,
+      -0.305
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      2.4,
+      0.4,
+      -4.32
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      1.1,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -3.4,
+      7.5,
+      2.6
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 4,
+   "theme": "Enchanted",
+   "form": "Enchanted brazier with fire spirits",
+   "meshes": [
+    [
+     "FlamethrowerTurretT4Dais",
+     1668
+    ],
+    [
+     "FlamethrowerTurretT4DaisRunes",
+     920
+    ],
+    [
+     "FlamethrowerTurretT4DaisRunesGlow",
+     696
+    ],
+    [
+     "FlamethrowerTurretT4DaisCrystals",
+     320
+    ],
+    [
+     "FlamethrowerTurretT4DaisCrystalsGlow",
+     768
+    ],
+    [
+     "FlamethrowerTurretT4DaisGlow",
+     384
+    ],
+    [
+     "FlamethrowerTurretT4Column",
+     850
+    ],
+    [
+     "FlamethrowerTurretT4ColumnGlowGlow",
+     120
+    ],
+    [
+     "FlamethrowerTurretT4Brazier",
+     2088
+    ],
+    [
+     "FlamethrowerTurretT4BrazierGlow",
+     448
+    ],
+    [
+     "FlamethrowerTurretT4BrazierFireGlow",
+     720
+    ],
+    [
+     "FlamethrowerTurretT4Orbit",
+     920
+    ],
+    [
+     "FlamethrowerTurretT4OrbitGlow",
+     624
+    ],
+    [
+     "FlamethrowerTurretT4CrownGlow",
+     48
+    ],
+    [
+     "FlamethrowerTurretT4Crown",
+     300
+    ],
+    [
+     "FlamethrowerTurretT4Horn",
+     874
+    ],
+    [
+     "FlamethrowerTurretT4HornGlow",
+     256
+    ],
+    [
+     "FlamethrowerTurretT4HornRing",
+     920
+    ],
+    [
+     "FlamethrowerTurretT4HornRingGlow",
+     504
+    ],
+    [
+     "FlamethrowerTurretT4Obelisks",
+     656
+    ],
+    [
+     "FlamethrowerTurretT4ObelisksGlowGlow",
+     60
+    ],
+    [
+     "FlamethrowerTurretT4SpiritA",
+     392
+    ],
+    [
+     "FlamethrowerTurretT4SpiritAGlow",
+     720
+    ],
+    [
+     "FlamethrowerTurretT4SpiritB",
+     392
+    ],
+    [
+     "FlamethrowerTurretT4SpiritBGlow",
+     720
+    ],
+    [
+     "FlamethrowerTurretT4SpiritC",
+     392
+    ],
+    [
+     "FlamethrowerTurretT4SpiritCGlow",
+     720
+    ],
+    [
+     "FlamethrowerTurretT4FlameGlow",
+     640
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "FlamethrowerTurretT4U1Nozzle",
+       240
+      ],
+      [
+       "FlamethrowerTurretT4U1NozzleGlow",
+       616
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "FlamethrowerTurretT4U2Lamp1Glow",
+       384
+      ],
+      [
+       "FlamethrowerTurretT4U2Lamp2Glow",
+       384
+      ],
+      [
+       "FlamethrowerTurretT4U2Pilot",
+       32
+      ],
+      [
+       "FlamethrowerTurretT4U2PilotGlow",
+       640
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "FlamethrowerTurretT4U3Gear1",
+       1280
+      ],
+      [
+       "FlamethrowerTurretT4U3Gauges",
+       672
+      ],
+      [
+       "FlamethrowerTurretT4U3GaugesGlow",
+       128
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "FlamethrowerTurretT4U5PlasmaGlow",
+       400
+      ],
+      [
+       "FlamethrowerTurretT4U5Plasma",
+       560
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "FlamethrowerTurretT4FxSmoke1Glow",
+     60
+    ],
+    [
+     "FlamethrowerTurretT4FxSmoke2Glow",
+     60
+    ],
+    [
+     "FlamethrowerTurretT4FxBlueFlameGlow",
+     640
+    ],
+    [
+     "FlamethrowerTurretT4FxHit",
+     140
+    ],
+    [
+     "FlamethrowerTurretT4FxHitGlow",
+     680
+    ],
+    [
+     "FlamethrowerTurretT4FxPlasmaFlameGlow",
+     640
+    ],
+    [
+     "FlamethrowerTurretT4FxTrailGlow",
+     80
+    ]
+   ],
+   "size": [
+    10.5,
+    9.67,
+    11.41
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      4.712,
+      -3.376
+     ],
+     "out": [
+      -0.0,
+      -0.447,
+      -0.894
+     ],
+     "up": [
+      -0.0,
+      0.894,
+      -0.447
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -3.4,
+      3.26,
+      1.4
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      3.4,
+      3.26,
+      1.4
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -0.0,
+      2.6,
+      0.4
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gauge1": {
+     "position": [
+      3.4,
+      1.5,
+      0.99
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gauge2": {
+     "position": [
+      -3.4,
+      1.5,
+      0.99
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -0.0,
+      9.0,
+      1.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      -0.0,
+      5.5,
+      -3.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      0.5,
+      -5.5
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      4.712,
+      -3.376
+     ],
+     "out": [
+      -0.0,
+      -0.447,
+      -0.894
+     ],
+     "up": [
+      -0.0,
+      0.894,
+      -0.447
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.4,
+      -4.45
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.8,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      11.45,
+      1.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 5,
+   "theme": "Legendary",
+   "form": "Dragon Turret: a dragon statue breathing fire",
+   "meshes": [
+    [
+     "FlamethrowerTurretT5Platform",
+     1576
+    ],
+    [
+     "FlamethrowerTurretT5Trim",
+     140
+    ],
+    [
+     "FlamethrowerTurretT5TrimGlow",
+     140
+    ],
+    [
+     "FlamethrowerTurretT5PlatformGlow",
+     256
+    ],
+    [
+     "FlamethrowerTurretT5Drum",
+     2176
+    ],
+    [
+     "FlamethrowerTurretT5TurretRing",
+     1236
+    ],
+    [
+     "FlamethrowerTurretT5Armour",
+     1776
+    ],
+    [
+     "FlamethrowerTurretT5Tanks",
+     1864
+    ],
+    [
+     "FlamethrowerTurretT5Body",
+     1596
+    ],
+    [
+     "FlamethrowerTurretT5Neck",
+     540
+    ],
+    [
+     "FlamethrowerTurretT5NeckScales",
+     1120
+    ],
+    [
+     "FlamethrowerTurretT5NeckSpikes",
+     224
+    ],
+    [
+     "FlamethrowerTurretT5NeckArmour",
+     704
+    ],
+    [
+     "FlamethrowerTurretT5Legs",
+     1896
+    ],
+    [
+     "FlamethrowerTurretT5Tail",
+     580
+    ],
+    [
+     "FlamethrowerTurretT5Head",
+     2216
+    ],
+    [
+     "FlamethrowerTurretT5Jaw",
+     1736
+    ],
+    [
+     "FlamethrowerTurretT5Mouth",
+     80
+    ],
+    [
+     "FlamethrowerTurretT5Teeth",
+     288
+    ],
+    [
+     "FlamethrowerTurretT5Eyes",
+     416
+    ],
+    [
+     "FlamethrowerTurretT5EyesGlow",
+     232
+    ],
+    [
+     "FlamethrowerTurretT5Horns",
+     800
+    ],
+    [
+     "FlamethrowerTurretT5Frills",
+     256
+    ],
+    [
+     "FlamethrowerTurretT5Crown",
+     564
+    ],
+    [
+     "FlamethrowerTurretT5CrownGlow",
+     320
+    ],
+    [
+     "FlamethrowerTurretT5Nozzle",
+     288
+    ],
+    [
+     "FlamethrowerTurretT5FlameGlow",
+     640
+    ],
+    [
+     "FlamethrowerTurretT5Hoses",
+     984
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "FlamethrowerTurretT5U1Nozzle",
+       608
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "FlamethrowerTurretT5U2Lamp1",
+       408
+      ],
+      [
+       "FlamethrowerTurretT5U2Lamp1Glow",
+       96
+      ],
+      [
+       "FlamethrowerTurretT5U2Lamp2",
+       408
+      ],
+      [
+       "FlamethrowerTurretT5U2Lamp2Glow",
+       96
+      ],
+      [
+       "FlamethrowerTurretT5U2Pilot",
+       32
+      ],
+      [
+       "FlamethrowerTurretT5U2PilotGlow",
+       640
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "FlamethrowerTurretT5U3Gear1Big",
+       564
+      ],
+      [
+       "FlamethrowerTurretT5U3Gear1Small",
+       444
+      ],
+      [
+       "FlamethrowerTurretT5U3Gear2Big",
+       564
+      ],
+      [
+       "FlamethrowerTurretT5U3Gear2Small",
+       444
+      ],
+      [
+       "FlamethrowerTurretT5U3Gauges",
+       992
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "FlamethrowerTurretT5U5PlasmaGlow",
+       256
+      ],
+      [
+       "FlamethrowerTurretT5U5Plasma",
+       560
+      ],
+      [
+       "FlamethrowerTurretT5U5CrownGem",
+       224
+      ],
+      [
+       "FlamethrowerTurretT5U5CrownGemGlow",
+       64
+      ],
+      [
+       "FlamethrowerTurretT5U5NamePlate",
+       344
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "FlamethrowerTurretT5FxSmoke1",
+     240
+    ],
+    [
+     "FlamethrowerTurretT5FxSmoke2",
+     240
+    ],
+    [
+     "FlamethrowerTurretT5FxBlueFlameGlow",
+     640
+    ],
+    [
+     "FlamethrowerTurretT5FxHit",
+     140
+    ],
+    [
+     "FlamethrowerTurretT5FxHitGlow",
+     680
+    ],
+    [
+     "FlamethrowerTurretT5FxPlasmaFlameGlow",
+     640
+    ],
+    [
+     "FlamethrowerTurretT5FxTrailGlow",
+     80
+    ],
+    [
+     "FlamethrowerTurretT5FxSparklesGlow",
+     80
+    ],
+    [
+     "FlamethrowerTurretT5FxAuraRingGlow",
+     528
+    ],
+    [
+     "FlamethrowerTurretT5FxAuraEmbersGlow",
+     160
+    ],
+    [
+     "FlamethrowerTurretT5FxAuraSmoke",
+     960
+    ]
+   ],
+   "size": [
+    11.5,
+    11.57,
+    12.74
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      9.219,
+      -2.714
+     ],
+     "out": [
+      -0.0,
+      -0.417,
+      -0.909
+     ],
+     "up": [
+      -0.0,
+      0.909,
+      -0.417
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -4.2,
+      5.35,
+      4.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      4.2,
+      5.35,
+      4.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -3.83,
+      2.6,
+      0.6
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      3.83,
+      2.6,
+      0.6
+     ],
+     "out": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gauge1": {
+     "position": [
+      4.2,
+      3.3,
+      3.08
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gauge2": {
+     "position": [
+      -4.2,
+      3.3,
+      3.08
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -0.322,
+      10.28,
+      -4.643
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      0.322,
+      10.28,
+      -4.643
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      1.25,
+      -5.5
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      9.219,
+      -2.714
+     ],
+     "out": [
+      -0.0,
+      -0.417,
+      -0.909
+     ],
+     "up": [
+      -0.0,
+      0.909,
+      -0.417
+     ]
+    },
+    "Crown": {
+     "position": [
+      -0.0,
+      11.385,
+      -2.062
+     ],
+     "out": [
+      -0.0,
+      0.976,
+      -0.218
+     ],
+     "up": [
+      -0.0,
+      0.218,
+      0.976
+     ]
+    },
+    "Eyes": {
+     "position": [
+      0.828,
+      10.547,
+      -4.109
+     ],
+     "out": [
+      0.432,
+      0.064,
+      -0.9
+     ],
+     "up": [
+      -0.116,
+      0.993,
+      0.015
+     ]
+    },
+    "Eyes2": {
+     "position": [
+      -0.828,
+      10.547,
+      -4.109
+     ],
+     "out": [
+      -0.432,
+      0.064,
+      -0.9
+     ],
+     "up": [
+      0.116,
+      0.993,
+      0.015
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.45,
+      -5.72
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      1.2,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      12.114,
+      -2.225
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  }
+ ]
+}
