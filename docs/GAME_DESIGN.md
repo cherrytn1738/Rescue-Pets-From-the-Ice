@@ -36,7 +36,7 @@ Tapping the ice earns crystals, crystals build machines that crack it faster, an
 
 &#91;embedded content: core loop · tap, earn, build, hatch, rebirth\]
 
-The short loop (tap, crystals, buildings) runs every few seconds; a rescue lands every 1–3 minutes; rebirth comes after about 30–40 minutes and restarts the run with a permanent bonus.
+The short loop (tap, crystals, buildings) runs every few seconds; a rescue lands every 1–3 minutes, slowing to 4–6 minutes past level 30 so players feel the pull to rebirth; rebirth comes after about 30–40 minutes and restarts the run with a permanent bonus.
 
 ## Glacier depth: how players progress
 
