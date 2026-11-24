@@ -187,7 +187,14 @@ function actions.CombineGolden(player, data, uid)
 		return false, `You need {CreatureConfig.Pets.GoldenCombineCount} of the same pet (not Golden).`
 	end
 	local target = findPet(data, uid)
-	local equippedAt = table.find(data.Equipped, uid)
+	-- if any of the five was equipped, the Golden one takes that slot
+	local equippedAt = nil
+	for _, member in group do
+		local at = table.find(data.Equipped, member)
+		if at and (not equippedAt or at < equippedAt) then
+			equippedAt = at
+		end
+	end
 	for _, member in group do
 		local _, index = findPet(data, member)
 		table.remove(data.Pets, index)

@@ -1,4 +1,4 @@
--- The HUD: the menu buttons down the left edge (BUILD, UPGRADES, SHOP, CODES) and the crystal counter.
+-- The HUD: the menu buttons down the left edge (BUILD, UPGRADES, PETS, BOOK, SHOP, CODES) and the crystal counter.
 --
 --   Menu (left edge): a grid of big square buttons, two to a row: SHOP (the Robux shop) and CODES.
 --     Each window finds its button by name (UIKit.MenuButton("Shop") finds "ShopButton") and opens
@@ -25,6 +25,8 @@ local COLUMNS = 2
 local MENU = {
 	{ Name = "Build", Icon = "Build", Text = "BUILD", Palette = "Orange" },
 	{ Name = "Upgrades", Icon = "Upgrades", Text = "UPGRADES", Palette = "Green" },
+	{ Name = "Pets", Icon = "Pets", Text = "PETS", Palette = "Pink" },
+	{ Name = "Book", Icon = "Book", Text = "BOOK", Palette = "Teal" },
 	{ Name = "Shop", Icon = "Shop", Text = "SHOP", Palette = "Glacier" },
 	{ Name = "Codes", Icon = "Codes", Text = "CODES", Palette = "Purple" },
 }

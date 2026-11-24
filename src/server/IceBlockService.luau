@@ -156,6 +156,12 @@ local function rescue(player: Player, data)
 	for _, callback in rescueListeners do
 		task.spawn(callback, player, data, creature.Id, pet, first)
 	end
+	-- every client plays the shatter for this plot (the owner also gets the reveal from "Rescue")
+	local plot = PlotService.PlotOf(player)
+	if plot then
+		plot.Block:SetAttribute("Rescued", creature.Id)
+		plot.Block:SetAttribute("RescueCount", (plot.Block:GetAttribute("RescueCount") or 0) + 1)
+	end
 	publish(player, data)
 end
 
