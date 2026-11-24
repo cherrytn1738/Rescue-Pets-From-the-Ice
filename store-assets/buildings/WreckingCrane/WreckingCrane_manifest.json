@@ -1,0 +1,2028 @@
+{
+ "id": "WreckingCrane",
+ "name": "Wrecking Crane",
+ "pad": 12,
+ "tiers": [
+  {
+   "tier": 1,
+   "theme": "Scrappy",
+   "form": "Small wooden crane",
+   "meshes": [
+    [
+     "WreckingCraneT1Deck",
+     1120
+    ],
+    [
+     "WreckingCraneT1Mast",
+     1416
+    ],
+    [
+     "WreckingCraneT1Boom",
+     1352
+    ],
+    [
+     "WreckingCraneT1Ropes",
+     384
+    ],
+    [
+     "WreckingCraneT1Winch",
+     608
+    ],
+    [
+     "WreckingCraneT1Junk",
+     800
+    ],
+    [
+     "WreckingCraneT1Ball",
+     856
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "WreckingCraneT1U1Ball",
+       664
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "WreckingCraneT1U2Lamp1",
+       296
+      ],
+      [
+       "WreckingCraneT1U2Lamp1Glow",
+       48
+      ],
+      [
+       "WreckingCraneT1U2Lamp2",
+       408
+      ],
+      [
+       "WreckingCraneT1U2Lamp2Glow",
+       96
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "WreckingCraneT1U3Counterweight",
+       624
+      ],
+      [
+       "WreckingCraneT1U3Pulley1",
+       392
+      ],
+      [
+       "WreckingCraneT1U3Pulley2",
+       392
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "WreckingCraneT1U5Ball",
+       584
+      ],
+      [
+       "WreckingCraneT1U5BallGlow",
+       348
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "WreckingCraneT1FxHit",
+     140
+    ],
+    [
+     "WreckingCraneT1FxHitGlow",
+     40
+    ],
+    [
+     "WreckingCraneT1FxShockwave",
+     800
+    ],
+    [
+     "WreckingCraneT1FxTrailGlow",
+     180
+    ]
+   ],
+   "size": [
+    5.32,
+    7.94,
+    7.0
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      2.15,
+      -4.3
+     ],
+     "out": [
+      -0.0,
+      -0.243,
+      -0.97
+     ],
+     "up": [
+      -0.0,
+      0.97,
+      -0.243
+     ]
+    },
+    "Pivot": {
+     "position": [
+      -0.0,
+      5.1,
+      -4.3
+     ],
+     "out": [
+      -0.0,
+      -1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      -1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      0.9,
+      -5.4
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      2.15,
+      -3.4
+     ],
+     "out": [
+      -0.0,
+      0.33,
+      0.944
+     ],
+     "up": [
+      -0.0,
+      0.944,
+      -0.33
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -0.0,
+      3.04,
+      1.25
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -0.0,
+      6.0,
+      1.7
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -0.25,
+      5.1,
+      -4.0
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -0.26,
+      5.1,
+      1.7
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Counter": {
+     "position": [
+      -0.0,
+      5.4,
+      1.96
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.14,
+      -1.5
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.25,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      7.05,
+      2.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 2,
+   "theme": "Workshop",
+   "form": "Steampunk crane",
+   "meshes": [
+    [
+     "WreckingCraneT2Deck",
+     1208
+    ],
+    [
+     "WreckingCraneT2Turntable",
+     836
+    ],
+    [
+     "WreckingCraneT2Cab",
+     2068
+    ],
+    [
+     "WreckingCraneT2CabGlow",
+     112
+    ],
+    [
+     "WreckingCraneT2Boiler",
+     1212
+    ],
+    [
+     "WreckingCraneT2Counterweight",
+     712
+    ],
+    [
+     "WreckingCraneT2Gantry",
+     740
+    ],
+    [
+     "WreckingCraneT2Cables",
+     728
+    ],
+    [
+     "WreckingCraneT2Boom",
+     592
+    ],
+    [
+     "WreckingCraneT2BoomTrim",
+     716
+    ],
+    [
+     "WreckingCraneT2Sheave",
+     392
+    ],
+    [
+     "WreckingCraneT2Ball",
+     1664
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "WreckingCraneT2U1Ball",
+       792
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "WreckingCraneT2U2Lamp1",
+       408
+      ],
+      [
+       "WreckingCraneT2U2Lamp1Glow",
+       96
+      ],
+      [
+       "WreckingCraneT2U2Lamp2",
+       408
+      ],
+      [
+       "WreckingCraneT2U2Lamp2Glow",
+       96
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "WreckingCraneT2U3Counterweight",
+       1468
+      ],
+      [
+       "WreckingCraneT2U3Pulley1",
+       392
+      ],
+      [
+       "WreckingCraneT2U3Pulley2",
+       392
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "WreckingCraneT2U5Ball",
+       584
+      ],
+      [
+       "WreckingCraneT2U5BallGlow",
+       348
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "WreckingCraneT2FxSteam1",
+     60
+    ],
+    [
+     "WreckingCraneT2FxHit",
+     140
+    ],
+    [
+     "WreckingCraneT2FxHitGlow",
+     40
+    ],
+    [
+     "WreckingCraneT2FxShockwave",
+     800
+    ],
+    [
+     "WreckingCraneT2FxTrailGlow",
+     180
+    ]
+   ],
+   "size": [
+    6.4,
+    8.92,
+    8.85
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      2.3,
+      -4.6
+     ],
+     "out": [
+      -0.0,
+      -0.243,
+      -0.97
+     ],
+     "up": [
+      -0.0,
+      0.97,
+      -0.243
+     ]
+    },
+    "Pivot": {
+     "position": [
+      -0.0,
+      8.05,
+      -4.6
+     ],
+     "out": [
+      -0.0,
+      -1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      -1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      1.1,
+      -5.6
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      2.3,
+      -3.55
+     ],
+     "out": [
+      -0.0,
+      0.33,
+      0.944
+     ],
+     "up": [
+      -0.0,
+      0.944,
+      -0.33
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -1.05,
+      3.34,
+      -0.05
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -0.0,
+      7.9,
+      2.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -0.4,
+      8.35,
+      -4.25
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -1.45,
+      2.9,
+      1.6
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      0.9,
+      6.4,
+      2.55
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Counter": {
+     "position": [
+      -0.0,
+      7.3,
+      2.3
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.25,
+      -2.1
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.5,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      8.9,
+      -4.25
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 3,
+   "theme": "Frost-tech",
+   "form": "Crystal magnet crane on an energy chain",
+   "meshes": [
+    [
+     "WreckingCraneT3Deck",
+     1536
+    ],
+    [
+     "WreckingCraneT3DeckGlow",
+     560
+    ],
+    [
+     "WreckingCraneT3Tower",
+     1064
+    ],
+    [
+     "WreckingCraneT3TowerGlow",
+     488
+    ],
+    [
+     "WreckingCraneT3Cab",
+     712
+    ],
+    [
+     "WreckingCraneT3CabGlow",
+     560
+    ],
+    [
+     "WreckingCraneT3Coils",
+     2552
+    ],
+    [
+     "WreckingCraneT3CoilsGlow",
+     160
+    ],
+    [
+     "WreckingCraneT3Core",
+     80
+    ],
+    [
+     "WreckingCraneT3CoreGlow",
+     384
+    ],
+    [
+     "WreckingCraneT3Boom",
+     1256
+    ],
+    [
+     "WreckingCraneT3BoomGlow",
+     420
+    ],
+    [
+     "WreckingCraneT3Magnet",
+     380
+    ],
+    [
+     "WreckingCraneT3MagnetGlow",
+     360
+    ],
+    [
+     "WreckingCraneT3BallGlow",
+     1696
+    ],
+    [
+     "WreckingCraneT3Ball",
+     1844
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "WreckingCraneT3U1Ball",
+       1096
+      ],
+      [
+       "WreckingCraneT3U1BallGlow",
+       160
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "WreckingCraneT3U2Lamp1",
+       300
+      ],
+      [
+       "WreckingCraneT3U2Lamp1Glow",
+       64
+      ],
+      [
+       "WreckingCraneT3U2Lamp2",
+       436
+      ],
+      [
+       "WreckingCraneT3U2Lamp2Glow",
+       104
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "WreckingCraneT3U3Counterweight",
+       572
+      ],
+      [
+       "WreckingCraneT3U3CounterweightGlow",
+       668
+      ],
+      [
+       "WreckingCraneT3U3Pulley1",
+       420
+      ],
+      [
+       "WreckingCraneT3U3Pulley2",
+       420
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "WreckingCraneT3U5Ball",
+       1560
+      ],
+      [
+       "WreckingCraneT3U5BallGlow",
+       384
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "WreckingCraneT3FxSteam1",
+     60
+    ],
+    [
+     "WreckingCraneT3FxSteam2",
+     60
+    ],
+    [
+     "WreckingCraneT3FxHit",
+     140
+    ],
+    [
+     "WreckingCraneT3FxHitGlow",
+     40
+    ],
+    [
+     "WreckingCraneT3FxShockwaveGlow",
+     872
+    ],
+    [
+     "WreckingCraneT3FxTrailGlow",
+     180
+    ]
+   ],
+   "size": [
+    9.42,
+    10.73,
+    10.7
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      2.5,
+      -4.6
+     ],
+     "out": [
+      -0.0,
+      -0.243,
+      -0.97
+     ],
+     "up": [
+      -0.0,
+      0.97,
+      -0.243
+     ]
+    },
+    "Pivot": {
+     "position": [
+      -0.0,
+      9.72,
+      -4.6
+     ],
+     "out": [
+      -0.0,
+      -1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      -1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      1.2,
+      -5.7
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      2.5,
+      -3.45
+     ],
+     "out": [
+      -0.0,
+      0.33,
+      0.944
+     ],
+     "up": [
+      -0.0,
+      0.944,
+      -0.33
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -0.85,
+      8.68,
+      0.75
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -0.0,
+      10.34,
+      2.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -0.5,
+      10.4,
+      -4.55
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -1.21,
+      6.0,
+      1.6
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -1.95,
+      4.9,
+      2.4
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      1.95,
+      4.9,
+      2.4
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Counter": {
+     "position": [
+      -0.0,
+      8.5,
+      4.4
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.4,
+      -2.82
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      1.1,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      10.8,
+      -4.55
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 4,
+   "theme": "Enchanted",
+   "form": "A floating crane arm swinging a storm-cloud ball",
+   "meshes": [
+    [
+     "WreckingCraneT4Dais",
+     2444
+    ],
+    [
+     "WreckingCraneT4DaisGlow",
+     1020
+    ],
+    [
+     "WreckingCraneT4DaisCrystals",
+     320
+    ],
+    [
+     "WreckingCraneT4DaisCrystalsGlow",
+     768
+    ],
+    [
+     "WreckingCraneT4Mast",
+     120
+    ],
+    [
+     "WreckingCraneT4ColumnA",
+     440
+    ],
+    [
+     "WreckingCraneT4ColumnAGlow",
+     196
+    ],
+    [
+     "WreckingCraneT4ColumnB",
+     440
+    ],
+    [
+     "WreckingCraneT4ColumnBGlow",
+     220
+    ],
+    [
+     "WreckingCraneT4RuneRings",
+     1600
+    ],
+    [
+     "WreckingCraneT4RuneRingsGlow",
+     888
+    ],
+    [
+     "WreckingCraneT4Shoulder",
+     712
+    ],
+    [
+     "WreckingCraneT4ArmRear",
+     1012
+    ],
+    [
+     "WreckingCraneT4ArmRearGlow",
+     128
+    ],
+    [
+     "WreckingCraneT4ArmA",
+     964
+    ],
+    [
+     "WreckingCraneT4ArmAGlow",
+     128
+    ],
+    [
+     "WreckingCraneT4ArmB",
+     964
+    ],
+    [
+     "WreckingCraneT4ArmBGlow",
+     128
+    ],
+    [
+     "WreckingCraneT4ArmTip",
+     1140
+    ],
+    [
+     "WreckingCraneT4ArmTipGlow",
+     192
+    ],
+    [
+     "WreckingCraneT4ArmRingsGlow",
+     528
+    ],
+    [
+     "WreckingCraneT4BallGlow",
+     1910
+    ],
+    [
+     "WreckingCraneT4Ball",
+     2880
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "WreckingCraneT4U1Ball",
+       1512
+      ],
+      [
+       "WreckingCraneT4U1BallGlow",
+       36
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "WreckingCraneT4U2Lamp1Glow",
+       304
+      ],
+      [
+       "WreckingCraneT4U2Lamp2Glow",
+       304
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "WreckingCraneT4U3Counterweight",
+       564
+      ],
+      [
+       "WreckingCraneT4U3CounterweightGlow",
+       528
+      ],
+      [
+       "WreckingCraneT4U3Pulley1",
+       448
+      ],
+      [
+       "WreckingCraneT4U3Pulley2",
+       448
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "WreckingCraneT4U5Ball",
+       1752
+      ],
+      [
+       "WreckingCraneT4U5BallGlow",
+       420
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "WreckingCraneT4FxSteam1Glow",
+     60
+    ],
+    [
+     "WreckingCraneT4FxHit",
+     140
+    ],
+    [
+     "WreckingCraneT4FxHitGlow",
+     40
+    ],
+    [
+     "WreckingCraneT4FxShockwaveGlow",
+     1000
+    ],
+    [
+     "WreckingCraneT4FxTrailGlow",
+     180
+    ]
+   ],
+   "size": [
+    10.24,
+    10.33,
+    13.28
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      3.4,
+      -4.35
+     ],
+     "out": [
+      -0.0,
+      -0.243,
+      -0.97
+     ],
+     "up": [
+      -0.0,
+      0.97,
+      -0.243
+     ]
+    },
+    "Pivot": {
+     "position": [
+      -0.0,
+      12.1,
+      -4.35
+     ],
+     "out": [
+      -0.0,
+      -1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      -1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      1.3,
+      -5.8
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      3.4,
+      -3.05
+     ],
+     "out": [
+      -0.0,
+      0.33,
+      0.944
+     ],
+     "up": [
+      -0.0,
+      0.944,
+      -0.33
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -0.0,
+      9.5,
+      2.05
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -0.0,
+      11.2,
+      2.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -0.5,
+      12.55,
+      -4.3
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -0.72,
+      8.0,
+      2.3
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -0.0,
+      13.2,
+      -4.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Counter": {
+     "position": [
+      -0.0,
+      9.85,
+      4.05
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.4,
+      -4.35
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.8,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      13.2,
+      -4.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 5,
+   "theme": "Legendary",
+   "form": "Titan Arm: a golem arm swinging a meteor",
+   "meshes": [
+    [
+     "WreckingCraneT5Plinth",
+     764
+    ],
+    [
+     "WreckingCraneT5PlinthTrim",
+     1036
+    ],
+    [
+     "WreckingCraneT5PlinthTrimGlow",
+     516
+    ],
+    [
+     "WreckingCraneT5Rubble",
+     280
+    ],
+    [
+     "WreckingCraneT5Shoulder",
+     1728
+    ],
+    [
+     "WreckingCraneT5Pauldron",
+     1188
+    ],
+    [
+     "WreckingCraneT5UpperArmA",
+     768
+    ],
+    [
+     "WreckingCraneT5UpperArmATrim",
+     760
+    ],
+    [
+     "WreckingCraneT5UpperArmATrimGlow",
+     24
+    ],
+    [
+     "WreckingCraneT5UpperArmB",
+     768
+    ],
+    [
+     "WreckingCraneT5UpperArmBTrim",
+     696
+    ],
+    [
+     "WreckingCraneT5UpperArmBTrimGlow",
+     36
+    ],
+    [
+     "WreckingCraneT5Elbow",
+     908
+    ],
+    [
+     "WreckingCraneT5ForearmA",
+     768
+    ],
+    [
+     "WreckingCraneT5ForearmATrim",
+     696
+    ],
+    [
+     "WreckingCraneT5ForearmATrimGlow",
+     24
+    ],
+    [
+     "WreckingCraneT5ForearmB",
+     768
+    ],
+    [
+     "WreckingCraneT5ForearmBTrim",
+     632
+    ],
+    [
+     "WreckingCraneT5ForearmBTrimGlow",
+     36
+    ],
+    [
+     "WreckingCraneT5Pistons",
+     656
+    ],
+    [
+     "WreckingCraneT5Fist",
+     2464
+    ],
+    [
+     "WreckingCraneT5FistTrim",
+     572
+    ],
+    [
+     "WreckingCraneT5Ball",
+     2776
+    ],
+    [
+     "WreckingCraneT5BallGlow",
+     224
+    ],
+    [
+     "WreckingCraneT5Head",
+     3692
+    ],
+    [
+     "WreckingCraneT5Eyes",
+     96
+    ],
+    [
+     "WreckingCraneT5EyesGlow",
+     272
+    ],
+    [
+     "WreckingCraneT5HeadGlow",
+     24
+    ],
+    [
+     "WreckingCraneT5Circlet",
+     448
+    ],
+    [
+     "WreckingCraneT5CircletGlow",
+     64
+    ],
+    [
+     "WreckingCraneT5Fingers",
+     696
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "WreckingCraneT5U1Ball",
+       1624
+      ],
+      [
+       "WreckingCraneT5U1BallGlow",
+       224
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "WreckingCraneT5U2Lamp1",
+       408
+      ],
+      [
+       "WreckingCraneT5U2Lamp1Glow",
+       96
+      ],
+      [
+       "WreckingCraneT5U2Lamp2",
+       408
+      ],
+      [
+       "WreckingCraneT5U2Lamp2Glow",
+       96
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "WreckingCraneT5U3Counterweight",
+       1680
+      ],
+      [
+       "WreckingCraneT5U3Pulley1",
+       392
+      ],
+      [
+       "WreckingCraneT5U3Pulley2",
+       392
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "WreckingCraneT5U5Ball",
+       1688
+      ],
+      [
+       "WreckingCraneT5U5BallGlow",
+       348
+      ],
+      [
+       "WreckingCraneT5U5NamePlate",
+       344
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "WreckingCraneT5FxHit",
+     140
+    ],
+    [
+     "WreckingCraneT5FxHitGlow",
+     40
+    ],
+    [
+     "WreckingCraneT5FxShockwaveGlow",
+     800
+    ],
+    [
+     "WreckingCraneT5FxTrailGlow",
+     180
+    ],
+    [
+     "WreckingCraneT5FxSparklesGlow",
+     80
+    ],
+    [
+     "WreckingCraneT5FxAuraOrbitGlow",
+     316
+    ],
+    [
+     "WreckingCraneT5FxAuraRocks",
+     180
+    ],
+    [
+     "WreckingCraneT5FxAuraDust",
+     1048
+    ]
+   ],
+   "size": [
+    10.9,
+    11.79,
+    14.34
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.215,
+      3.7,
+      -4.196
+     ],
+     "out": [
+      -0.0,
+      -0.243,
+      -0.97
+     ],
+     "up": [
+      -0.0,
+      0.97,
+      -0.243
+     ]
+    },
+    "Pivot": {
+     "position": [
+      -0.215,
+      11.578,
+      -4.196
+     ],
+     "out": [
+      -0.0,
+      -1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      -1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.215,
+      1.4,
+      -5.6
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.215,
+      3.7,
+      -2.696
+     ],
+     "out": [
+      -0.0,
+      0.33,
+      0.944
+     ],
+     "up": [
+      -0.0,
+      0.944,
+      -0.33
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -2.6,
+      3.488,
+      1.746
+     ],
+     "out": [
+      -0.276,
+      0.869,
+      -0.41
+     ],
+     "up": [
+      0.651,
+      0.483,
+      0.586
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -1.5,
+      10.32,
+      1.8
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -2.62,
+      9.2,
+      1.8
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -0.38,
+      9.2,
+      1.8
+     ],
+     "out": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Counter": {
+     "position": [
+      -1.5,
+      9.2,
+      2.9
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Crown": {
+     "position": [
+      -3.162,
+      3.512,
+      -1.599
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      0.12,
+      0.0,
+      0.993
+     ]
+    },
+    "Eyes": {
+     "position": [
+      -3.334,
+      2.3,
+      -3.023
+     ],
+     "out": [
+      -0.12,
+      0.05,
+      -0.992
+     ],
+     "up": [
+      0.006,
+      0.999,
+      0.05
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.45,
+      -5.42
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      1.15,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.428,
+      14.073,
+      -3.202
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  }
+ ]
+}
