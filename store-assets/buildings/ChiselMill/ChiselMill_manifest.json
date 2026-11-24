@@ -1,0 +1,2098 @@
+{
+ "id": "ChiselMill",
+ "name": "Chisel Mill",
+ "pad": 10,
+ "tiers": [
+  {
+   "tier": 1,
+   "theme": "Scrappy",
+   "form": "Wooden water wheel",
+   "meshes": [
+    [
+     "ChiselMillT1Deck",
+     912
+    ],
+    [
+     "ChiselMillT1Tub",
+     428
+    ],
+    [
+     "ChiselMillT1Water",
+     176
+    ],
+    [
+     "ChiselMillT1Wheel",
+     896
+    ],
+    [
+     "ChiselMillT1Frame",
+     1788
+    ],
+    [
+     "ChiselMillT1Axle",
+     224
+    ],
+    [
+     "ChiselMillT1Hammer",
+     340
+    ],
+    [
+     "ChiselMillT1Flume",
+     636
+    ],
+    [
+     "ChiselMillT1Junk",
+     454
+    ],
+    [
+     "ChiselMillT1Chisels",
+     480
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "ChiselMillT1U1Chisels",
+       600
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "ChiselMillT1U2Lamp1",
+       296
+      ],
+      [
+       "ChiselMillT1U2Lamp1Glow",
+       48
+      ],
+      [
+       "ChiselMillT1U2Lamp2",
+       296
+      ],
+      [
+       "ChiselMillT1U2Lamp2Glow",
+       48
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "ChiselMillT1U3Gear1",
+       408
+      ],
+      [
+       "ChiselMillT1U3Pinion1",
+       328
+      ],
+      [
+       "ChiselMillT1U3Gear2",
+       408
+      ],
+      [
+       "ChiselMillT1U3Pinion2",
+       328
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "ChiselMillT1U5Chisels",
+       420
+      ],
+      [
+       "ChiselMillT1U5ChiselsGlow",
+       180
+      ],
+      [
+       "ChiselMillT1U5GlowWaterGlow",
+       176
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "ChiselMillT1FxSplash1",
+     416
+    ],
+    [
+     "ChiselMillT1FxSplash2",
+     416
+    ],
+    [
+     "ChiselMillT1FxHit",
+     140
+    ],
+    [
+     "ChiselMillT1FxHitGlow",
+     40
+    ]
+   ],
+   "size": [
+    8.48,
+    8.07,
+    4.75
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      0.7,
+      2.15,
+      -1.85
+     ],
+     "out": [
+      -0.0,
+      -0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      -0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      0.7,
+      2.15,
+      -1.85
+     ],
+     "out": [
+      -0.0,
+      -0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      -0.514
+     ]
+    },
+    "Hit": {
+     "position": [
+      0.7,
+      0.9,
+      -3.8
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      3.0,
+      3.56,
+      -1.75
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -1.6,
+      3.56,
+      -1.75
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      3.82,
+      2.35,
+      0.3
+     ],
+     "out": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -4.45,
+      2.35,
+      0.3
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -3.3,
+      0.66,
+      -0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      -3.3,
+      4.3,
+      0.5
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      0.75,
+      0.25,
+      -2.22
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.5,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -3.3,
+      4.7,
+      2.7
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 2,
+   "theme": "Workshop",
+   "form": "Brass gear mill",
+   "meshes": [
+    [
+     "ChiselMillT2Base",
+     280
+    ],
+    [
+     "ChiselMillT2Floor",
+     928
+    ],
+    [
+     "ChiselMillT2Race",
+     120
+    ],
+    [
+     "ChiselMillT2Water",
+     116
+    ],
+    [
+     "ChiselMillT2Wheel",
+     1704
+    ],
+    [
+     "ChiselMillT2Pedestal",
+     240
+    ],
+    [
+     "ChiselMillT2Axle",
+     48
+    ],
+    [
+     "ChiselMillT2Gearbox",
+     1152
+    ],
+    [
+     "ChiselMillT2DriveGear",
+     1104
+    ],
+    [
+     "ChiselMillT2CamHousing",
+     684
+    ],
+    [
+     "ChiselMillT2CamGear",
+     444
+    ],
+    [
+     "ChiselMillT2Pistons",
+     496
+    ],
+    [
+     "ChiselMillT2Columns",
+     348
+    ],
+    [
+     "ChiselMillT2Crosshead",
+     408
+    ],
+    [
+     "ChiselMillT2Cistern",
+     1048
+    ],
+    [
+     "ChiselMillT2Pipe",
+     760
+    ],
+    [
+     "ChiselMillT2Chisels",
+     800
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "ChiselMillT2U1Chisels",
+       800
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "ChiselMillT2U2Lamp1",
+       408
+      ],
+      [
+       "ChiselMillT2U2Lamp1Glow",
+       96
+      ],
+      [
+       "ChiselMillT2U2Lamp2",
+       408
+      ],
+      [
+       "ChiselMillT2U2Lamp2Glow",
+       96
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "ChiselMillT2U3Gear1",
+       408
+      ],
+      [
+       "ChiselMillT2U3Pinion1",
+       328
+      ],
+      [
+       "ChiselMillT2U3Gear2",
+       408
+      ],
+      [
+       "ChiselMillT2U3Pinion2",
+       328
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "ChiselMillT2U5Chisels",
+       560
+      ],
+      [
+       "ChiselMillT2U5ChiselsGlow",
+       240
+      ],
+      [
+       "ChiselMillT2U5GlowWaterGlow",
+       116
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "ChiselMillT2FxSplash1",
+     416
+    ],
+    [
+     "ChiselMillT2FxSplash2",
+     416
+    ],
+    [
+     "ChiselMillT2FxHit",
+     140
+    ],
+    [
+     "ChiselMillT2FxHitGlow",
+     40
+    ]
+   ],
+   "size": [
+    9.25,
+    7.59,
+    7.57
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      1.8,
+      2.15,
+      -2.5
+     ],
+     "out": [
+      -0.0,
+      -0.545,
+      -0.838
+     ],
+     "up": [
+      -0.0,
+      0.838,
+      -0.545
+     ]
+    },
+    "Trail": {
+     "position": [
+      1.8,
+      2.15,
+      -2.5
+     ],
+     "out": [
+      -0.0,
+      -0.545,
+      -0.838
+     ],
+     "up": [
+      -0.0,
+      0.838,
+      -0.545
+     ]
+    },
+    "Hit": {
+     "position": [
+      1.8,
+      0.9,
+      -4.3
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      3.85,
+      4.65,
+      -2.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -0.25,
+      4.65,
+      -2.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -4.56,
+      3.0,
+      0.2
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      3.88,
+      1.9,
+      -0.1
+     ],
+     "out": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -3.25,
+      0.78,
+      -1.6
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      -3.25,
+      5.1,
+      0.7
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      1.0,
+      0.2,
+      -3.62
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.4,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      2.6,
+      7.5,
+      2.05
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 3,
+   "theme": "Frost-tech",
+   "form": "Crystal turbine with glowing water",
+   "meshes": [
+    [
+     "ChiselMillT3Deck",
+     1536
+    ],
+    [
+     "ChiselMillT3DeckGlow",
+     420
+    ],
+    [
+     "ChiselMillT3Shroud",
+     2082
+    ],
+    [
+     "ChiselMillT3ShroudGlow",
+     560
+    ],
+    [
+     "ChiselMillT3Turbine",
+     144
+    ],
+    [
+     "ChiselMillT3TurbineGlow",
+     528
+    ],
+    [
+     "ChiselMillT3Pool",
+     140
+    ],
+    [
+     "ChiselMillT3WaterGlow",
+     122
+    ],
+    [
+     "ChiselMillT3EngineLegs",
+     240
+    ],
+    [
+     "ChiselMillT3Engine",
+     2252
+    ],
+    [
+     "ChiselMillT3EngineGlow",
+     836
+    ],
+    [
+     "ChiselMillT3Shaft",
+     156
+    ],
+    [
+     "ChiselMillT3ShaftGlow",
+     208
+    ],
+    [
+     "ChiselMillT3Tank",
+     2140
+    ],
+    [
+     "ChiselMillT3TankGlow",
+     256
+    ],
+    [
+     "ChiselMillT3TankGlassGlow",
+     88
+    ],
+    [
+     "ChiselMillT3MainGlow",
+     370
+    ],
+    [
+     "ChiselMillT3MainCollars",
+     348
+    ],
+    [
+     "ChiselMillT3MainCollarsGlow",
+     140
+    ],
+    [
+     "ChiselMillT3Coils",
+     756
+    ],
+    [
+     "ChiselMillT3CoilsGlow",
+     80
+    ],
+    [
+     "ChiselMillT3Chisels",
+     800
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "ChiselMillT3U1Chisels",
+       800
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "ChiselMillT3U2Lamp1",
+       300
+      ],
+      [
+       "ChiselMillT3U2Lamp1Glow",
+       64
+      ],
+      [
+       "ChiselMillT3U2Lamp2",
+       300
+      ],
+      [
+       "ChiselMillT3U2Lamp2Glow",
+       64
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "ChiselMillT3U3Gear1",
+       408
+      ],
+      [
+       "ChiselMillT3U3Pinion1",
+       328
+      ],
+      [
+       "ChiselMillT3U3Gear2",
+       408
+      ],
+      [
+       "ChiselMillT3U3Pinion2",
+       328
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "ChiselMillT3U5Chisels",
+       560
+      ],
+      [
+       "ChiselMillT3U5ChiselsGlow",
+       240
+      ],
+      [
+       "ChiselMillT3U5GlowWaterGlow",
+       580
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "ChiselMillT3FxSplash1",
+     144
+    ],
+    [
+     "ChiselMillT3FxSplash1Glow",
+     288
+    ],
+    [
+     "ChiselMillT3FxSplash2",
+     144
+    ],
+    [
+     "ChiselMillT3FxSplash2Glow",
+     288
+    ],
+    [
+     "ChiselMillT3FxHit",
+     140
+    ],
+    [
+     "ChiselMillT3FxHitGlow",
+     40
+    ]
+   ],
+   "size": [
+    9.42,
+    7.72,
+    8.75
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      1.1,
+      2.1,
+      -2.2
+     ],
+     "out": [
+      -0.0,
+      -0.482,
+      -0.876
+     ],
+     "up": [
+      -0.0,
+      0.876,
+      -0.482
+     ]
+    },
+    "Trail": {
+     "position": [
+      1.1,
+      2.1,
+      -2.2
+     ],
+     "out": [
+      -0.0,
+      -0.482,
+      -0.876
+     ],
+     "up": [
+      -0.0,
+      0.876,
+      -0.482
+     ]
+    },
+    "Hit": {
+     "position": [
+      1.1,
+      1.0,
+      -4.2
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      3.1,
+      3.88,
+      -1.6
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -0.8,
+      3.88,
+      -1.6
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -3.95,
+      3.5,
+      -0.3
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      3.66,
+      2.3,
+      -1.1
+     ],
+     "out": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -2.9,
+      1.07,
+      -3.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      2.6,
+      8.85,
+      1.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.36,
+      -3.82
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.95,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      2.6,
+      8.85,
+      1.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 4,
+   "theme": "Enchanted",
+   "form": "A waterwheel spinning in mid-air under a waterfall from nowhere",
+   "meshes": [
+    [
+     "ChiselMillT4Dais",
+     1776
+    ],
+    [
+     "ChiselMillT4DaisRunes",
+     1104
+    ],
+    [
+     "ChiselMillT4DaisRunesGlow",
+     792
+    ],
+    [
+     "ChiselMillT4DaisCrystals",
+     480
+    ],
+    [
+     "ChiselMillT4DaisCrystalsGlow",
+     1152
+    ],
+    [
+     "ChiselMillT4DaisGlow",
+     384
+    ],
+    [
+     "ChiselMillT4Pool",
+     1096
+    ],
+    [
+     "ChiselMillT4PoolWaterGlow",
+     168
+    ],
+    [
+     "ChiselMillT4Wheel",
+     2160
+    ],
+    [
+     "ChiselMillT4WheelGems",
+     544
+    ],
+    [
+     "ChiselMillT4WheelGemsGlow",
+     128
+    ],
+    [
+     "ChiselMillT4RuneRing",
+     1704
+    ],
+    [
+     "ChiselMillT4RuneRingGlow",
+     744
+    ],
+    [
+     "ChiselMillT4OrbitGlow",
+     192
+    ],
+    [
+     "ChiselMillT4Portal",
+     1224
+    ],
+    [
+     "ChiselMillT4PortalGlow",
+     798
+    ],
+    [
+     "ChiselMillT4PortalCrownGlow",
+     208
+    ],
+    [
+     "ChiselMillT4PortalCrown",
+     572
+    ],
+    [
+     "ChiselMillT4WaterfallGlow",
+     376
+    ],
+    [
+     "ChiselMillT4Foam",
+     480
+    ],
+    [
+     "ChiselMillT4Islands",
+     384
+    ],
+    [
+     "ChiselMillT4IslandsGlow",
+     72
+    ],
+    [
+     "ChiselMillT4Holder",
+     564
+    ],
+    [
+     "ChiselMillT4HolderGlow",
+     128
+    ],
+    [
+     "ChiselMillT4ChiselRunesGlow",
+     1440
+    ],
+    [
+     "ChiselMillT4Chisels",
+     800
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "ChiselMillT4U1Chisels",
+       800
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "ChiselMillT4U2Lamp1Glow",
+       448
+      ],
+      [
+       "ChiselMillT4U2Lamp2Glow",
+       448
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "ChiselMillT4U3Gear1",
+       408
+      ],
+      [
+       "ChiselMillT4U3Pinion1",
+       328
+      ],
+      [
+       "ChiselMillT4U3Gear2",
+       408
+      ],
+      [
+       "ChiselMillT4U3Pinion2",
+       328
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "ChiselMillT4U5Chisels",
+       560
+      ],
+      [
+       "ChiselMillT4U5ChiselsGlow",
+       240
+      ],
+      [
+       "ChiselMillT4U5GlowWaterGlow",
+       544
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "ChiselMillT4FxSplash1",
+     240
+    ],
+    [
+     "ChiselMillT4FxSplash1Glow",
+     288
+    ],
+    [
+     "ChiselMillT4FxSplash2",
+     240
+    ],
+    [
+     "ChiselMillT4FxSplash2Glow",
+     288
+    ],
+    [
+     "ChiselMillT4FxHit",
+     140
+    ],
+    [
+     "ChiselMillT4FxHitGlow",
+     40
+    ]
+   ],
+   "size": [
+    9.1,
+    7.98,
+    13.01
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      3.0,
+      -2.5
+     ],
+     "out": [
+      -0.0,
+      -0.6,
+      -0.8
+     ],
+     "up": [
+      -0.0,
+      0.8,
+      -0.6
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      3.0,
+      -2.5
+     ],
+     "out": [
+      -0.0,
+      -0.6,
+      -0.8
+     ],
+     "up": [
+      -0.0,
+      0.8,
+      -0.6
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      0.9,
+      -4.3
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      3.3,
+      4.62,
+      -1.2
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -3.3,
+      4.62,
+      -1.2
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -0.0,
+      6.0,
+      0.18
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -0.0,
+      6.0,
+      1.62
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -1.0,
+      1.1,
+      0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      -1.25,
+      11.5,
+      0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.4,
+      -3.85
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.8,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -1.25,
+      13.0,
+      0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 5,
+   "theme": "Legendary",
+   "form": "Kraken Mill: tentacles holding chisels",
+   "meshes": [
+    [
+     "ChiselMillT5Platform",
+     976
+    ],
+    [
+     "ChiselMillT5PlatformTrim",
+     32
+    ],
+    [
+     "ChiselMillT5PlatformGlow",
+     192
+    ],
+    [
+     "ChiselMillT5PlatformTrimGlow",
+     280
+    ],
+    [
+     "ChiselMillT5Water",
+     632
+    ],
+    [
+     "ChiselMillT5Body",
+     2160
+    ],
+    [
+     "ChiselMillT5Spots",
+     560
+    ],
+    [
+     "ChiselMillT5Eyes",
+     288
+    ],
+    [
+     "ChiselMillT5EyesGlow",
+     80
+    ],
+    [
+     "ChiselMillT5Goggles",
+     1140
+    ],
+    [
+     "ChiselMillT5Bands",
+     1088
+    ],
+    [
+     "ChiselMillT5TempleHub",
+     976
+    ],
+    [
+     "ChiselMillT5GearHub",
+     540
+    ],
+    [
+     "ChiselMillT5Crown",
+     1020
+    ],
+    [
+     "ChiselMillT5CrownGlow",
+     448
+    ],
+    [
+     "ChiselMillT5Wheel",
+     1944
+    ],
+    [
+     "ChiselMillT5Axle",
+     112
+    ],
+    [
+     "ChiselMillT5MillFrame",
+     840
+    ],
+    [
+     "ChiselMillT5Belt",
+     280
+    ],
+    [
+     "ChiselMillT5Siphon",
+     900
+    ],
+    [
+     "ChiselMillT5LampPost",
+     336
+    ],
+    [
+     "ChiselMillT5TentacleFL",
+     1024
+    ],
+    [
+     "ChiselMillT5Mallets",
+     984
+    ],
+    [
+     "ChiselMillT5TentacleML",
+     1096
+    ],
+    [
+     "ChiselMillT5TentacleFR",
+     1024
+    ],
+    [
+     "ChiselMillT5TentacleMR",
+     1096
+    ],
+    [
+     "ChiselMillT5TentacleSide",
+     976
+    ],
+    [
+     "ChiselMillT5TentacleBack",
+     2000
+    ],
+    [
+     "ChiselMillT5TentacleBack2",
+     1000
+    ],
+    [
+     "ChiselMillT5Chisels",
+     200
+    ],
+    [
+     "ChiselMillT5Chisels2",
+     200
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "ChiselMillT5U1Chisels",
+       200
+      ],
+      [
+       "ChiselMillT5U1Chisels2",
+       200
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "ChiselMillT5U2Lamp1",
+       408
+      ],
+      [
+       "ChiselMillT5U2Lamp1Glow",
+       96
+      ],
+      [
+       "ChiselMillT5U2Lamp2",
+       408
+      ],
+      [
+       "ChiselMillT5U2Lamp2Glow",
+       96
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "ChiselMillT5U3Gear1",
+       408
+      ],
+      [
+       "ChiselMillT5U3Pinion1",
+       328
+      ],
+      [
+       "ChiselMillT5U3Gear2",
+       408
+      ],
+      [
+       "ChiselMillT5U3Pinion2",
+       328
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "ChiselMillT5U5Chisels",
+       140
+      ],
+      [
+       "ChiselMillT5U5ChiselsGlow",
+       60
+      ],
+      [
+       "ChiselMillT5U5Chisels2",
+       140
+      ],
+      [
+       "ChiselMillT5U5Chisels2Glow",
+       60
+      ],
+      [
+       "ChiselMillT5U5GlowWaterGlow",
+       184
+      ],
+      [
+       "ChiselMillT5U5NamePlate",
+       344
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "ChiselMillT5FxSplash1",
+     128
+    ],
+    [
+     "ChiselMillT5FxSplash1Glow",
+     288
+    ],
+    [
+     "ChiselMillT5FxSplash2",
+     128
+    ],
+    [
+     "ChiselMillT5FxSplash2Glow",
+     288
+    ],
+    [
+     "ChiselMillT5FxHit",
+     140
+    ],
+    [
+     "ChiselMillT5FxHitGlow",
+     40
+    ],
+    [
+     "ChiselMillT5FxHit2",
+     140
+    ],
+    [
+     "ChiselMillT5FxHit2Glow",
+     40
+    ],
+    [
+     "ChiselMillT5FxSparklesGlow",
+     80
+    ]
+   ],
+   "size": [
+    9.52,
+    9.49,
+    12.26
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      1.25,
+      2.95,
+      -3.0
+     ],
+     "out": [
+      -0.0,
+      -0.573,
+      -0.819
+     ],
+     "up": [
+      -0.0,
+      0.819,
+      -0.573
+     ]
+    },
+    "Work2": {
+     "position": [
+      -1.25,
+      2.95,
+      -3.0
+     ],
+     "out": [
+      -0.0,
+      -0.573,
+      -0.819
+     ],
+     "up": [
+      -0.0,
+      0.819,
+      -0.573
+     ]
+    },
+    "Trail": {
+     "position": [
+      1.25,
+      2.95,
+      -3.0
+     ],
+     "out": [
+      -0.0,
+      -0.573,
+      -0.819
+     ],
+     "up": [
+      -0.0,
+      0.819,
+      -0.573
+     ]
+    },
+    "Hit": {
+     "position": [
+      1.25,
+      1.3,
+      -4.85
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Hit2": {
+     "position": [
+      -1.25,
+      1.3,
+      -4.85
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -4.45,
+      3.24,
+      1.8
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      3.25,
+      3.37,
+      -3.15
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -3.358,
+      7.75,
+      0.6
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      3.208,
+      7.75,
+      0.6
+     ],
+     "out": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -3.35,
+      0.95,
+      0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      -3.35,
+      4.7,
+      2.1
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Eyes": {
+     "position": [
+      -0.0,
+      6.05,
+      -1.619
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Crown": {
+     "position": [
+      -0.1,
+      10.972,
+      0.55
+     ],
+     "out": [
+      -0.119,
+      0.991,
+      -0.059
+     ],
+     "up": [
+      0.886,
+      0.133,
+      0.443
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.42,
+      -4.639
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.9,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.1,
+      12.272,
+      0.55
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  }
+ ]
+}

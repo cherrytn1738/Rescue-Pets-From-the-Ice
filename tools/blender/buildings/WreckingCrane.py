@@ -748,6 +748,7 @@ def tier_titan(b):
         "Lamp1": paul @ frame((1.3, -0.7, 0.75), out=(0.3, -0.3, 1)), "Lamp2": up_(E + V(0, 0, 1.12)),
         "Gear1": frame(E + V(1.12, 0, 0), out=(1, 0, 0)), "Gear2": frame(E + V(-1.12, 0, 0), out=(-1, 0, 0)),
         "Counter": frame(E + V(0, 1.1, 0), out=(0, 1, 0)), "Crown": crown, "Eyes": eyes,
+        "Steam1": up_(E + V(0, 0.6, 0.9)),  # (the elbow joint vents: Workshop-and-up steam rises from here)
         "NamePlate": front((0, -5.42, 0.45)), "Aura": up_((0, 0, 1.15)), "Top": up_(F + V(0, 0, 1.3))})
 
 

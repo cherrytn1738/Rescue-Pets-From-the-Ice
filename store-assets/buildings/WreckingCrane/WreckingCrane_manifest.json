@@ -1745,6 +1745,10 @@
    ],
    "fx": [
     [
+     "WreckingCraneT5FxSteam1Glow",
+     60
+    ],
+    [
      "WreckingCraneT5FxHit",
      140
     ],
@@ -1763,18 +1767,6 @@
     [
      "WreckingCraneT5FxSparklesGlow",
      80
-    ],
-    [
-     "WreckingCraneT5FxAuraOrbitGlow",
-     316
-    ],
-    [
-     "WreckingCraneT5FxAuraRocks",
-     180
-    ],
-    [
-     "WreckingCraneT5FxAuraDust",
-     1048
     ]
    ],
    "size": [
@@ -1969,6 +1961,23 @@
       0.006,
       0.999,
       0.05
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -1.5,
+      10.1,
+      2.4
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
      ]
     },
     "NamePlate": {
