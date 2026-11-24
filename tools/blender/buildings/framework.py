@@ -245,12 +245,17 @@ def build_building(module, bid):
             ub.finish()
             upgrades.append({"upgrade": u, "meshes": counts(ub.made)})
             ub.root.parent = b.root
-        if t == 5:
-            module["AURA"](atts, fx)
         fx.finish()
         fx.root.parent = b.root
         for obj in fx.made:
             obj["fx"] = True
+        if t == 5:  # the signature aura: its own group, shown in the line-up without the upgrade effects
+            aura = Builder("%sT%dAura" % (bid, t), ucoll)
+            module["AURA"](atts, aura)
+            aura.finish()
+            aura.root.parent = b.root
+            for obj in aura.made:
+                obj["aura"] = True
         manifest["tiers"].append({
             "tier": t, "theme": theme, "form": CONFIG[bid]["Stations"][t - 1],
             "meshes": counts(b.made), "upgrades": upgrades, "fx": counts(fx.made),
@@ -301,11 +306,12 @@ def roots_of(bid):
     return [bpy.data.objects["%sT%d" % (bid, t)] for t in range(1, 6)]
 
 
-def show_tier(root, upgrades=False, fx=False):
+def show_tier(root, upgrades=False, fx=False, aura=False):
     for o in tree(root):
         is_upgrade = re.search(r"T\dU\d", o.name) is not None
         is_fx = "Fx" in o.name or o.get("fx")
-        on = (not is_upgrade or upgrades) and (not is_fx or fx)
+        is_aura = o.get("aura") is not None or re.search(r"T\dAura$", o.name) is not None
+        on = (not is_upgrade or upgrades) and (not is_fx or fx) and (not is_aura or aura)
         o.hide_render = not on
         o.hide_set(not on)
 
@@ -319,7 +325,7 @@ def render_lineup(bid, path, aura=True):
     rig, avatar = reference_of(bid)
     x, gap, labels = 0.0, 2.2, []
     for t, root in enumerate(roots, start=1):
-        show_tier(root, fx=(aura and t == 5))
+        show_tier(root, aura=(aura and t == 5))
         root.location = (0, 0, 0)
         root.rotation_euler = (0, 0, math.radians(-22))
         bpy.context.view_layer.update()
@@ -341,7 +347,7 @@ def render_lineup(bid, path, aura=True):
         bpy.data.objects.remove(lab, do_unlink=True)
     for root in roots:
         root.location, root.rotation_euler = (0, 0, 0), (0, 0, 0)
-        show_tier(root, upgrades=True, fx=True)
+        show_tier(root, upgrades=True, fx=True, aura=True)
 
 
 def render_masterwork(bid, path, eye=(0.78, -1.0, 0.5), lens=50):
@@ -353,7 +359,7 @@ def render_masterwork(bid, path, eye=(0.78, -1.0, 0.5), lens=50):
         visible(tree(root), False)
     root = roots[4]
     visible(tree(root), True)
-    show_tier(root, upgrades=True, fx=True)
+    show_tier(root, upgrades=True, fx=True, aura=True)
     root.location, root.rotation_euler = (0, 0, 0), (0, 0, 0)
     bpy.context.view_layer.update()
     lo, hi = bounds_of([o for o in tree(root) if o.type == "MESH" and not o.hide_render])
