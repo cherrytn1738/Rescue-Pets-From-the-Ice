@@ -12,8 +12,8 @@ T1_DIR = Vector((0, -1, -0.4)).normalized()
 T2_DIR = Vector((0, -1, -0.3)).normalized()
 T3_DIR = Vector((0, -1, -0.32)).normalized()
 T4_DIR = Vector((0, -1, -0.5)).normalized()
-HEAD_PITCH = 0.22           # the dragon's head tilts down this much (radians)
-JAW_OPEN = 0.42             # and its lower jaw hangs open this much
+HEAD_PITCH = 0.5            # the dragon's head bends down this much toward the ice (radians)
+JAW_OPEN = 0.72             # and its lower jaw hangs wide open round the nozzle
 FLAME = {1: (0.3, 1.3, "FlameOrange", "FlameYellow"), 2: (0.36, 1.6, "FlameOrange", "FlameYellow"),
          3: (0.4, 1.8, "GlacierBlue", "CrystalCyan"), 4: (0.42, 1.9, "MagicPink", "FlameYellow"),
          5: (0.55, 2.4, "FlameOrange", "FlameYellow")}
@@ -563,9 +563,9 @@ def tier_dragon(b):
         n = Vector((0, -1, (z - 5.15) * 0.8)).normalized()
         b.add("Body", ball((0, 0, 0), (0.95 - 0.08 * abs(k - 1.5), 0.26, 0.14), "Cream", 2), frame((0, bs.front(0, z) + 0.06, z), out=n, up=(0, 0, 1)))
     b.add("Body", place(riveted_plate(1.6, 1.3, 0.08, "Gunmetal", "Gold", 0.5), frame((0, 2.62, 5.75), out=(0, 1, 0.8))))
-    head_m = Matrix.Translation((0, -0.9, 9.3)) @ Matrix.Rotation(HEAD_PITCH, 4, "X")
+    head_m = Matrix.Translation((0, -0.35, 8.85)) @ Matrix.Rotation(HEAD_PITCH, 4, "X")
     neck_end = head_m @ Vector((0, 0.35, 0.15))
-    neck = spline([(0, 1.15, 5.5), (0, 1.05, 6.7), (0, 0.6, 7.9), neck_end + V(0, 0.45, -0.4), neck_end], 4)
+    neck = spline([(0, 1.15, 5.5), (0, 1.15, 6.7), (0, 0.85, 7.8), neck_end + V(0, 0.5, -0.3), neck_end], 4)
     b.add("Neck", tube(neck, 0.98, 0.66, "WarnRedDark", 16), organic=True)
     for i, p in enumerate(neck):
         t = i / (len(neck) - 1)
@@ -614,7 +614,7 @@ def tier_dragon(b):
     js = Surface(jaw)
     b.add("Jaw", [(jaw, "WarnRedDark", 0.0, False)], head_m @ JAW_M, organic=True)
     b.add("Jaw", ball((0, -0.25, 0.22), (0.55, 1.05, 0.12), "Blush", 2), head_m @ JAW_M)
-    b.add("Mouth", ball((0, -0.75, -0.25), (0.78, 0.95, 0.42), "Rubber", 2), head_m)
+    b.add("Mouth", ball((0, -0.9, -0.45), (0.8, 1.15, 0.62), "Rubber", 2), head_m)
     for x, y, big in ((0.6, -2.75, True), (0.62, -2.25, False), (0.68, -1.75, False)):
         for sx in (-1, 1):
             zb = hs.bottom(sx * x, y)
@@ -663,11 +663,18 @@ def tier_dragon(b):
         crown += place(cut_gem(0.07, "MagicPink" if k == 0 else "AuroraCyan"), frame((0.6 * math.cos(a), 0.6 * math.sin(a), 0.2), out=(math.cos(a), math.sin(a), 0)))
     b.add("Crown", crown, head_m @ crown_at)
     # the nozzle inside the throat: a gunmetal barrel with a gold muzzle ring, aimed out of the mouth
-    nm = frame(V(0, -0.85, -0.3), out=MOUTH_DIR)
-    b.add("Nozzle", flare([(0, -0.2), (0.4, -0.2), (0.42, 0.4), (0.5, 0.62), (0.44, 0.66), (0.28, 0.5), (0, 0.48)], "Gunmetal", 16), head_m @ nm)
-    b.add("Nozzle", ring(nm @ M((0, 0, 0.6)), 0.45, 0.06, "Gold", 16), head_m)
-    work = head_m @ nm @ M((0, 0, 0.68))
-    b.add("Flame", the_flame(5), work)
+    nm = frame(V(0, -0.55, -0.4), out=MOUTH_DIR)
+    BARREL = 2.55
+    b.add("Nozzle", flare([(0, -0.2), (0.44, -0.2), (0.44, BARREL - 0.55), (0.36, BARREL - 0.4), (0.36, BARREL - 0.2),
+                           (0.56, BARREL), (0.62, BARREL + 0.18), (0.5, BARREL + 0.2), (0.3, BARREL + 0.02), (0, BARREL)], "Gunmetal", 18), head_m @ nm)
+    for z, rr, sw in ((0.55, 0.5, "Gold"), (1.15, 0.5, "Gold"), (BARREL - 0.6, 0.49, "Brass"), (BARREL + 0.1, 0.62, "Gold")):
+        b.add("Nozzle", ring(nm @ M((0, 0, z)), rr, 0.07, sw, 18), head_m)
+    for k in range(6):  # rivets round the barrel
+        a = k * math.pi / 3 + math.pi / 6
+        b.add("Nozzle", place(rivet(0.05, "Gold"), nm @ frame((0.45 * math.cos(a), 0.45 * math.sin(a), 0.85), out=(math.cos(a), math.sin(a), 0))), head_m)
+    b.add("NozzleGlow", ring(nm @ M((0, 0, BARREL + 0.05)), 0.4, 0.06, "FlameYellow", 16, True), head_m)  # the hot muzzle
+    work = head_m @ nm @ M((0, 0, BARREL + 0.2))
+    b.add("Flame", the_flame(5, 1.05, length=1.3), work)
     top = head_m @ Vector((0, -0.55, hs.top(0, -0.55) + 0.55))
     # the dragon statue is 15% bigger than it was modelled, grown from the drum top
     S = Matrix.Translation((0, cy, 4.0)) @ Matrix.Diagonal((1.15, 1.15, 1.15, 1)) @ Matrix.Translation((0, -cy, -4.0))

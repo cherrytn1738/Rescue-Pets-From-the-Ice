@@ -157,6 +157,9 @@ EffectsConfig.Signatures = {
 			Lifetime = { 2, 3 }, Speed = { 0.5, 1 }, Spread = 180, Orbit = true, R = 2, Spin = 120 },
 		{ Name = "DustStorm", Attachment = "Aura", Texture = "SmokePuff", Color = { rgb(210, 190, 160), rgb(170, 150, 130) }, Rate = 8, Size = { 2, 4 },
 			Lifetime = { 1.5, 2.5 }, Speed = { 2, 4 }, Spread = 90, Transparency = { 0.5, 1 }, Orbit = true, R = 4 },
+		-- the meteor's molten trail: the particles stay where they're made, so a swinging meteor leaves a streak
+		{ Name = "MeteorTrail", Attachment = "Work", Texture = "Ember", Color = { rgb(255, 210, 90), rgb(255, 90, 30) }, Rate = 14, Size = { 1.2, 0.2 },
+			Lifetime = { 0.6, 1 }, Speed = { 0, 0.4 }, Spread = 40, LightEmission = 1 },
 	},
 	FlamethrowerTurret = { -- Dragon Turret: drifting embers, curling smoke and an ember ring on the ground
 		{ Name = "Embers", Attachment = "Top", Texture = "Ember", Color = { rgb(255, 200, 90), rgb(255, 80, 30) }, Rate = 8, Size = { 0.3, 0.1 },

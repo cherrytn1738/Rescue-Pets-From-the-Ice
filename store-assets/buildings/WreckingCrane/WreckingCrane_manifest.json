@@ -1546,7 +1546,7 @@
    "meshes": [
     [
      "WreckingCraneT5Plinth",
-     764
+     664
     ],
     [
      "WreckingCraneT5PlinthTrim",
@@ -1557,24 +1557,52 @@
      516
     ],
     [
+     "WreckingCraneT5PlinthGlow",
+     120
+    ],
+    [
      "WreckingCraneT5Rubble",
-     280
+     320
     ],
     [
-     "WreckingCraneT5Shoulder",
-     1728
+     "WreckingCraneT5Head",
+     2928
     ],
     [
-     "WreckingCraneT5Pauldron",
-     1188
+     "WreckingCraneT5Eyes",
+     96
+    ],
+    [
+     "WreckingCraneT5EyesGlow",
+     560
+    ],
+    [
+     "WreckingCraneT5HeadGlow",
+     116
+    ],
+    [
+     "WreckingCraneT5Snow",
+     80
+    ],
+    [
+     "WreckingCraneT5Crown",
+     520
+    ],
+    [
+     "WreckingCraneT5CrownGlow",
+     64
+    ],
+    [
+     "WreckingCraneT5UpperArmATrim",
+     380
+    ],
+    [
+     "WreckingCraneT5UpperArmAGlow",
+     228
     ],
     [
      "WreckingCraneT5UpperArmA",
      768
-    ],
-    [
-     "WreckingCraneT5UpperArmATrim",
-     760
     ],
     [
      "WreckingCraneT5UpperArmATrimGlow",
@@ -1586,7 +1614,11 @@
     ],
     [
      "WreckingCraneT5UpperArmBTrim",
-     696
+     188
+    ],
+    [
+     "WreckingCraneT5UpperArmBGlow",
+     36
     ],
     [
      "WreckingCraneT5UpperArmBTrimGlow",
@@ -1594,7 +1626,11 @@
     ],
     [
      "WreckingCraneT5Elbow",
-     908
+     320
+    ],
+    [
+     "WreckingCraneT5ElbowGlow",
+     384
     ],
     [
      "WreckingCraneT5ForearmA",
@@ -1602,7 +1638,11 @@
     ],
     [
      "WreckingCraneT5ForearmATrim",
-     696
+     188
+    ],
+    [
+     "WreckingCraneT5ForearmAGlow",
+     36
     ],
     [
      "WreckingCraneT5ForearmATrimGlow",
@@ -1614,55 +1654,35 @@
     ],
     [
      "WreckingCraneT5ForearmBTrim",
-     632
+     188
+    ],
+    [
+     "WreckingCraneT5ForearmBGlow",
+     36
     ],
     [
      "WreckingCraneT5ForearmBTrimGlow",
      36
     ],
     [
-     "WreckingCraneT5Pistons",
-     656
+     "WreckingCraneT5Bracer",
+     520
     ],
     [
      "WreckingCraneT5Fist",
      2464
     ],
     [
-     "WreckingCraneT5FistTrim",
-     572
+     "WreckingCraneT5FistGlow",
+     28
     ],
     [
      "WreckingCraneT5Ball",
-     2776
+     2936
     ],
     [
      "WreckingCraneT5BallGlow",
-     224
-    ],
-    [
-     "WreckingCraneT5Head",
-     3692
-    ],
-    [
-     "WreckingCraneT5Eyes",
-     96
-    ],
-    [
-     "WreckingCraneT5EyesGlow",
-     272
-    ],
-    [
-     "WreckingCraneT5HeadGlow",
-     24
-    ],
-    [
-     "WreckingCraneT5Circlet",
-     448
-    ],
-    [
-     "WreckingCraneT5CircletGlow",
-     64
+     424
     ],
     [
      "WreckingCraneT5Fingers",
@@ -1675,11 +1695,11 @@
      "meshes": [
       [
        "WreckingCraneT5U1Ball",
-       1624
+       1592
       ],
       [
        "WreckingCraneT5U1BallGlow",
-       224
+       368
       ]
      ]
     },
@@ -1688,19 +1708,19 @@
      "meshes": [
       [
        "WreckingCraneT5U2Lamp1",
-       408
+       248
       ],
       [
        "WreckingCraneT5U2Lamp1Glow",
-       96
+       192
       ],
       [
        "WreckingCraneT5U2Lamp2",
-       408
+       248
       ],
       [
        "WreckingCraneT5U2Lamp2Glow",
-       96
+       192
       ]
      ]
     },
@@ -1710,6 +1730,10 @@
       [
        "WreckingCraneT5U3Counterweight",
        1680
+      ],
+      [
+       "WreckingCraneT5U3CounterweightGlow",
+       72
       ],
       [
        "WreckingCraneT5U3Pulley1",
@@ -1730,7 +1754,7 @@
      "meshes": [
       [
        "WreckingCraneT5U5Ball",
-       1688
+       2360
       ],
       [
        "WreckingCraneT5U5BallGlow",
@@ -1771,16 +1795,16 @@
    ],
    "size": [
     10.9,
-    11.79,
-    14.34
+    10.91,
+    12.52
    ],
    "fitsPad": true,
    "attachments": {
     "Work": {
      "position": [
-      -0.215,
-      3.7,
-      -4.196
+      2.928,
+      4.974,
+      -3.585
      ],
      "out": [
       -0.0,
@@ -1795,9 +1819,9 @@
     },
     "Pivot": {
      "position": [
-      -0.215,
-      11.578,
-      -4.196
+      2.078,
+      9.924,
+      -2.835
      ],
      "out": [
       -0.0,
@@ -1812,7 +1836,7 @@
     },
     "Hit": {
      "position": [
-      -0.215,
+      2.928,
       1.4,
       -5.6
      ],
@@ -1829,9 +1853,9 @@
     },
     "Trail": {
      "position": [
-      -0.215,
-      3.7,
-      -2.696
+      2.928,
+      4.974,
+      -2.085
      ],
      "out": [
       -0.0,
@@ -1846,26 +1870,26 @@
     },
     "Lamp1": {
      "position": [
-      -2.6,
-      3.488,
-      1.746
+      -4.35,
+      1.15,
+      -4.1
      ],
      "out": [
-      -0.276,
-      0.869,
-      -0.41
+      -0.0,
+      1.0,
+      0.0
      ],
      "up": [
-      0.651,
-      0.483,
-      0.586
+      -0.0,
+      0.0,
+      1.0
      ]
     },
     "Lamp2": {
      "position": [
-      -1.5,
-      10.32,
-      1.8
+      4.35,
+      1.15,
+      3.6
      ],
      "out": [
       -0.0,
@@ -1880,9 +1904,9 @@
     },
     "Gear1": {
      "position": [
-      -2.62,
-      9.2,
-      1.8
+      -4.55,
+      9.1,
+      1.35
      ],
      "out": [
       -1.0,
@@ -1897,9 +1921,9 @@
     },
     "Gear2": {
      "position": [
-      -0.38,
-      9.2,
-      1.8
+      -2.15,
+      9.1,
+      1.35
      ],
      "out": [
       1.0,
@@ -1914,9 +1938,9 @@
     },
     "Counter": {
      "position": [
-      -1.5,
-      9.2,
-      2.9
+      -3.35,
+      9.1,
+      2.5
      ],
      "out": [
       -0.0,
@@ -1931,9 +1955,9 @@
     },
     "Crown": {
      "position": [
-      -3.162,
-      3.512,
-      -1.599
+      0.479,
+      6.242,
+      0.957
      ],
      "out": [
       -0.0,
@@ -1941,33 +1965,33 @@
       0.0
      ],
      "up": [
-      0.12,
+      -0.0,
       0.0,
-      0.993
+      1.0
      ]
     },
     "Eyes": {
      "position": [
-      -3.334,
-      2.3,
-      -3.023
+      -0.75,
+      3.8,
+      -0.573
      ],
      "out": [
-      -0.12,
-      0.05,
-      -0.992
+      -0.0,
+      0.0,
+      -1.0
      ],
      "up": [
-      0.006,
-      0.999,
-      0.05
+      -0.0,
+      1.0,
+      0.0
      ]
     },
     "Steam1": {
      "position": [
-      -1.5,
-      10.1,
-      2.4
+      -3.35,
+      10.0,
+      1.95
      ],
      "out": [
       -0.0,
@@ -2016,9 +2040,9 @@
     },
     "Top": {
      "position": [
-      -0.428,
-      14.073,
-      -3.202
+      1.544,
+      12.641,
+      -2.424
      ],
      "out": [
       -0.0,

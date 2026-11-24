@@ -607,7 +607,7 @@ def t4_enchanted(b):
 def golem_fist(kind="base"):
     """The raised forearm and fist along +Z from the elbow (the working part)."""
     pieces = []
-    pieces += limb((0, 0, 0.2), (0, 0, 2.0), 0.62, 0.7, "IceBlue", seed=4.0)
+    pieces += limb((0, 0, 0.2), (0, 0, 2.0), 0.62, 0.7, "DeepIce", seed=4.0)
     pieces += trim_ring(0.78, 1.95, "Gold", minor=0.13, segments=18)
     pieces += place(rivet_ring(0.82, 6, 0.07, "Gold"), M((0, 0, 1.75)))
     pieces += trim_ring(0.72, 0.65, "Gunmetal", minor=0.08, segments=18)
@@ -617,14 +617,14 @@ def golem_fist(kind="base"):
             v.co.x *= 1.1
     fist = rock((1.75, 1.45, 1.55), 1, 2, 0.35, fist_shape, 0.05, 2.0)
     fist.transform(M((0, 0, 2.85)))
-    pieces.append((fist, "StoneLight", 0.0, False))
+    pieces.append((fist, "NavyIce", 0.0, False))
     for k in range(4):  # finger rolls over the front of the fist
         roll = bmesh.new()
         blob(roll, (-0.6 + 0.4 * k, 0.05, 3.55), (0.2, 0.55, 0.22), 2)
-        pieces.append((roll, "Stone", 0.0, False))
+        pieces.append((roll, "Iron", 0.0, False))
     thumb = bmesh.new()
     blob(thumb, (0.88, -0.2, 3.05), (0.24, 0.42, 0.45), 2, rotation=(0.4, 0, 0))
-    pieces.append((thumb, "Stone", 0.0, False))
+    pieces.append((thumb, "Iron", 0.0, False))
     pieces += place(trim_strip((-0.85, 0.55, 3.0), (0.85, 0.55, 3.0), 0.16, "Gold"), Matrix())  # a gold knuckle band
     for x in (-0.6, 0.0, 0.6):
         pieces += place(rivet(0.06, "Gunmetal"), frame((x, 0.64, 3.0), out=(0, 1, 0)))
@@ -651,14 +651,14 @@ def t5_golem(b):
     # legs: rock thighs, gold-banded knee joints with gears, big rock feet with stone toes
     for sx in (-1, 1):
         x = cx + sx * 1.2
-        b.add("Legs", limb((x, cy, 1.7), (x, cy, 3.4 + H), 0.86, 0.8, "IceBlue", seed=sx), organic=True)
+        b.add("Legs", limb((x, cy, 1.7), (x, cy, 3.4 + H), 0.86, 0.8, "DeepIce", seed=sx), organic=True)
         foot = rock((1.95, 2.3, 0.8), 1, 2, 0.5, None, 0.05, sx * 2.0)
         foot.transform(M((x, cy - 0.15, 1.42)))
-        b.add("Legs", [(foot, "StoneLight", 0.0, False)], organic=True)
+        b.add("Legs", [(foot, "NavyIce", 0.0, False)], organic=True)
         for k in (-1, 0, 1):
             toe = bmesh.new()
             blob(toe, (x + k * 0.55, cy - 1.25, 1.32), (0.28, 0.27, 0.24), 1)
-            b.add("Legs", [(toe, "Stone", 0.0, False)])
+            b.add("Legs", [(toe, "Iron", 0.0, False)])
         knee = 2.55 + H / 2
         b.add("Joints", place(cyl(0.9, 0.5, "Gunmetal", 16), M((x, cy, knee - 0.25))))
         for dz in (-0.25, 0.25):
@@ -686,21 +686,36 @@ def t5_golem(b):
     torso = rock((3.9, 2.9, 4.0), 2, 2, 0.55, torso_shape, 0.05, 1.0)
     torso.transform(M((cx, cy, 5.6 + H)))
     ts = Surface(torso)
-    b.add("Torso", [(torso, "IceBlue", 0.0, False)], organic=True)
+    b.add("Torso", [(torso, "GlacierBlue", 0.0, False)], organic=True)
     for sx in (-1, 1):
         plate = bmesh.new()
         blob(plate, (cx + sx * 0.95, ts.front(cx + sx * 0.95, 6.4 + H) + 0.18, 6.4 + H), (0.75, 0.28, 0.65), 2, rotation=(0.1, 0, sx * 0.25))
-        b.add("TorsoRock", [(plate, "StoneLight", 0.0, False)])
+        b.add("TorsoRock", [(plate, "NavyIce", 0.0, False)])
         belly = bmesh.new()
         blob(belly, (cx + sx * 0.7, ts.front(cx + sx * 0.7, 4.6 + H) + 0.2, 4.6 + H), (0.6, 0.25, 0.5), 1, rotation=(0, 0, sx * 0.3))
-        b.add("TorsoRock", [(belly, "Stone", 0.0, False)])
+        b.add("TorsoRock", [(belly, "DeepIce", 0.0, False)])
         snow = bmesh.new()
         blob(snow, (cx + sx * 1.55, cy + 0.1, 7.45 + H), (0.85, 0.85, 0.28), 2)
         b.add("TorsoRock", [(snow, "SnowWhite", 0.0, False)])
     core_y = ts.front(cx, 5.9 + H)
     core = frame((cx, core_y + 0.05, 5.9 + H), out=(0, -1, 0.05))
-    b.add("Core", place(gem_setting(0.42, "AuroraCyan", "Gold", 6), core))
-    b.add("Core", place(trim_ring(0.68, 0, "Gold", minor=0.1, segments=20), core @ M((0, 0, 0.08))))
+    b.add("Core", place(gem_setting(0.5, "CrystalCyan", "Gold", 6), core))
+    halo = bmesh.new()
+    torus(halo, core @ M((0, 0, 0.02)), 0.9, 0.09, 24, 4)
+    b.add("Core", [(halo, "AuroraCyan", 0.0, True)])
+    for k in range(6):  # glowing frost cracks from the core across the chest
+        a = k * math.pi / 3 + 0.35
+        pts = []
+        for j in range(5):
+            rr = 0.95 + 0.2 * j
+            aa = a + 0.18 * math.sin(j * 2.1 + k)
+            x = cx + rr * math.cos(aa)
+            z = 5.9 + H + rr * math.sin(aa) * 0.85
+            pts.append(Vector((x, ts.front(x, z, 0.3) + 0.03, z)))
+        crack = bmesh.new()
+        sweep(crack, pts, 0.06, 4, radius_end=0.02)
+        b.add("Core", [(crack, "AuroraCyan", 0.0, True)])
+    b.add("Core", place(trim_ring(0.72, 0, "Gold", minor=0.1, segments=20), core @ M((0, 0, 0.08))))
     b.add("Core", place(rivet_ring(0.68, 6, 0.06, "Gunmetal"), core @ M((0, 0, 0.16))))
     b.add("Core", place(snowflake(0.35, "Diamond"), core @ M((0, 0, 0.62))))
     # crystals growing out of the back and shoulders
@@ -732,8 +747,8 @@ def t5_golem(b):
         b.add("Joints", place(gear(0.38, 8, 0.16, 0.09, "Brass", "Gold"), out @ M((0, 0, 0.32))))
     # the right arm leans on its knuckles on the plinth
     sL, eL, wL = shoulders[1], Vector((cx + 2.8, cy - 0.3, 4.75 + H * 0.6)), Vector((cx + 2.6, cy - 1.15, 2.9))
-    b.add("ArmRest", limb(sL, eL, 0.7, 0.62, "IceBlue", seed=5.0), organic=True)
-    b.add("ArmRest", limb(eL, wL, 0.62, 0.72, "IceBlue", seed=6.0), organic=True)
+    b.add("ArmRest", limb(sL, eL, 0.7, 0.62, "GlacierBlue", seed=5.0), organic=True)
+    b.add("ArmRest", limb(eL, wL, 0.62, 0.72, "DeepIce", seed=6.0), organic=True)
     elbow = bmesh.new()
     blob(elbow, eL, (0.6, 0.6, 0.6), 2)
     b.add("ArmRest", [(elbow, "Gunmetal", 0.0, False)])
@@ -741,14 +756,14 @@ def t5_golem(b):
     b.add("ArmRest", place(trim_ring(0.72, 0, "Gold", minor=0.11, segments=16), Matrix.Translation(wL) @ align_z(wL - eL)))
     fistL = rock((1.5, 1.35, 1.3), 1, 2, 0.4, None, 0.05, 3.0)
     fistL.transform(M((wL.x + 0.05, wL.y - 0.35, 1.72)))
-    b.add("ArmRest", [(fistL, "StoneLight", 0.0, False)], organic=True)
+    b.add("ArmRest", [(fistL, "NavyIce", 0.0, False)], organic=True)
     for k in range(4):
         roll = bmesh.new()
         blob(roll, (wL.x - 0.5 + 0.33 * k, wL.y - 0.95, 1.45), (0.17, 0.2, 0.3), 1)
-        b.add("ArmRest", [(roll, "Stone", 0.0, False)])
+        b.add("ArmRest", [(roll, "Iron", 0.0, False)])
     # the left arm: the upper arm raised high, a hydraulic piston along it
     sR, eR = shoulders[-1], Vector((cx - 3.0, cy + 0.5, 11.6))
-    b.add("ArmRaised", limb(sR, eR, 0.66, 0.58, "IceBlue", seed=7.0), organic=True)
+    b.add("ArmRaised", limb(sR, eR, 0.66, 0.58, "GlacierBlue", seed=7.0), organic=True)
     elbow = bmesh.new()
     blob(elbow, eR, (0.64, 0.64, 0.64), 2)
     b.add("ArmRaised", [(elbow, "Gunmetal", 0.0, False)])
@@ -768,7 +783,7 @@ def t5_golem(b):
     head = rock((2.7, 2.3, 2.35), 2, 2, 0.6, head_shape, 0.05, 9.0)
     head.transform(M((cx, cy - 0.3, hz)))
     hs = Surface(head)
-    b.add("Head", [(head, "StoneLight", 0.0, False)], organic=True)
+    b.add("Head", [(head, "GlacierBlue", 0.0, False)], organic=True)
     b.add("Neck", place(cyl(0.85, 0.6, "Gunmetal", 16), M((cx, cy - 0.1, 7.35 + H))))
     b.add("Neck", place(trim_ring(0.88, 7.62 + H, "Gold", minor=0.1, segments=18), M((cx, cy - 0.1, 0))))
     eye_z = hz + 0.25
@@ -776,18 +791,22 @@ def t5_golem(b):
         ex = cx + sx * 0.56
         ey = hs.front(ex, eye_z)
         socket = bmesh.new()
-        blob(socket, (ex, ey + 0.08, eye_z), (0.42, 0.14, 0.36), 2)
-        b.add("Head", [(socket, "NavyIce", 0.0, False)])
-        b.add("Eyes", place(cartoon_eye(0.32, "CrystalCyan", look=(-sx * 0.08, -0.12)), frame((ex, ey - 0.02, eye_z), out=(0, -1, 0.05))))
+        blob(socket, (ex, ey + 0.08, eye_z), (0.5, 0.14, 0.44), 2)
+        b.add("Head", [(socket, "EyeDark", 0.0, False)])
+        eye_m = frame((ex, ey - 0.02, eye_z), out=(0, -1, 0.05))
+        b.add("Eyes", place(cartoon_eye(0.4, "AuroraCyan", look=(-sx * 0.08, -0.12)), eye_m))
+        glow_ring = bmesh.new()
+        torus(glow_ring, eye_m @ M((0, 0, 0.04)), 0.45, 0.075, 16, 4)
+        b.add("Eyes", [(glow_ring, "AuroraCyan", 0.0, True)])
         brow_rock = bmesh.new()
         blob(brow_rock, (cx + sx * 0.6, hs.front(cx + sx * 0.6, hz + 0.75) - 0.02, hz + 0.72), (0.55, 0.24, 0.17), 2, rotation=(0, -sx * 0.3, 0))
-        b.add("Head", [(brow_rock, "Stone", 0.0, False)])
+        b.add("Head", [(brow_rock, "NavyIce", 0.0, False)])
         cheek = bmesh.new()
         blob(cheek, (cx + sx * 1.05, hs.front(cx + sx * 1.05, hz - 0.3) + 0.12, hz - 0.3), (0.35, 0.18, 0.25), 1)
         b.add("Head", [(cheek, "IceBlue", 0.0, False)])
     nose = bmesh.new()
     blob(nose, (cx, hs.front(cx, hz) - 0.05, hz - 0.05), (0.24, 0.22, 0.3), 2)
-    b.add("Head", [(nose, "Stone", 0.0, False)])
+    b.add("Head", [(nose, "DeepIce", 0.0, False)])
     mouth_z = hz - 0.6
     b.add("Head", place(grin(1.05, 0.16, "NavyIce", "FrostLight", 4), frame((cx, hs.front(cx, mouth_z) + 0.02, mouth_z), out=(0, -1, -0.15))))
     for k, dx in enumerate((-0.45, 0.0, 0.42)):  # icicles hanging from the chin

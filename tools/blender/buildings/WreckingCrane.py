@@ -584,56 +584,45 @@ def tier_enchanted(b):
 
 
 # ---------- tier 5: Legendary, the Titan Arm ----------
+#
+# A rock golem bursting up through the plinth. Its head is the great shoulder boulder (a face with glowing
+# eyes, heavy brows, a stone grin and a little gold crown), and its one huge arm rises from the boulder's
+# top and swings a molten, cratered meteor on a chain toward the ice. Glowing cyan cracks and runes run
+# through the stone; gold bands and an iron bracer are its only metal.
 
-def golem_head(b, center, turn):
-    """A stone golem head peeking out of the ground: glowing eyes, heavy brows, a grin, a gold circlet."""
-    cage = cage_box((3.5, 3.0, 3.1), 2)
-    radii = Vector((1.75, 1.5, 1.55))
-    for i, v in enumerate(cage.verts):
-        unit = Vector((v.co.x / radii.x, v.co.y / radii.y, v.co.z / radii.z))
-        if unit.length > 1e-6:
-            unit.normalize()
-            v.co = v.co.lerp(Vector((unit.x * radii.x, unit.y * radii.y, unit.z * radii.z)) * 1.05, 0.55)
-        v.co += Vector((_hash(i, 7), _hash(i, 8), _hash(i, 9))) * 0.12
-        if v.co.y < -0.6 and v.co.z < -0.2:  # a jutting jaw
-            v.co.y -= 0.18
-    head = subsurf(cage, 2)
-    pts = [v.co.copy() for v in head.verts]
-    H = M(center, (0, 0, turn))
-
-    def fy(x, z, reach=0.3):
-        return min(p.y for p in pts if abs(p.x - x) < reach and abs(p.z - z) < reach)
-
-    b.add("Head", place([(head, "StoneLight", 0.0, False)], H), organic=True)
-    for sx in (-1, 1):
-        eye = frame((sx * 0.62, fy(sx * 0.62, 0.3) + 0.12, 0.3), out=(sx * 0.1, -1, 0.05))
-        b.add("Head", place(ring_at(Matrix(), 0.46, 0.1, "StoneDark", segs=14), H @ eye @ M((0, 0, 0.02))))
-        b.add("Eyes", place(cartoon_eye(0.46, "AuroraCyan", look=(-0.3, 0.05)), H @ eye))
-        b.add("Head", place(stone_cube((1.05, 0.34, 0.5), "StoneDark"), H @ frame((sx * 0.64, fy(sx * 0.64, 1.0) + 0.05, 1.0), out=(0, -1, 0.25)) @ M((0, 0, 0), (0, 0, sx * 0.28))))
-        b.add("Head", place(riveted_plate(0.55, 0.7, 0.05, "Gunmetal", "Gold", 0.3), H @ frame((sx * 1.45, -0.3, 0.0), out=(sx, -0.25, 0))))
-    nose_p, _ = hewn((0.45, 0.4, 0.55), Matrix(), "StoneDark", 50, cuts=0, levels=2, rough=0.1)
-    b.add("Head", place(nose_p, H @ M((0, fy(0, -0.15) - 0.05, -0.15))), organic=True)
-    b.add("Head", place(grin(1.3, 0.28, "EyeDark", "StoneLight", 4), H @ frame((0, fy(0, -0.65) + 0.05, -0.65), out=(0, -1, 0.1))))
-    b.add("Head", place(rune_glyph(0.4, 3, "AuroraCyan", 0.03), H @ frame((0, fy(0, 1.3) + 0.02, 1.3), out=(0, -1, 0.35))))
-    # the gold circlet with a gem at the front
-    ring = [p for p in pts if abs(p.z - 1.0) < 0.15]
-    rx, ry = max(abs(p.x) for p in ring), max(abs(p.y) for p in ring)
-    b.add("Circlet", place(ring_at(Matrix.Diagonal((rx + 0.05, ry + 0.05, 1, 1)), 1.0, 0.1, "Gold", segs=28), H @ M((0, 0, 1.0))))
-    b.add("Circlet", place(gem_setting(0.18, "MagicPink", "Gold", 4), H @ frame((0, -ry - 0.08, 1.05), out=(0, -1, 0.2))))
-    top = max(p.z for p in pts)
-    return H, top, fy(0, 0.3)
+RUNE_GLOW = "AuroraCyan"
 
 
 def stone_cube(size, swatch):
-    """A chunky bevelled stone block centred on the origin (knuckles, fingers)."""
+    """A chunky bevelled stone block centred on the origin (knuckles, fingers, brows)."""
     bm = bmesh.new()
     rounded_block(bm, size, Matrix(), corner=min(size[:2]) * 0.3, edge=min(size) * 0.22)
     return [(bm, swatch, 0.0, False)]
 
 
-def golem_block(b, role, p0, p1, size, seed, swatch="Stone", rune=None, plate=True):
-    """One hewn stone segment of the arm from p0 to p1 (+Y of its frame leans to the back): a gold band
-    at its top end, a riveted plate on the front and a glowing rune on the outer side."""
+def front_y(points, x, z, reach=0.45):
+    near = [p.y for p in points if abs(p.x - x) < reach and abs(p.z - z) < reach]
+    return min(near) if near else None
+
+
+def glow_crack(points, path, swatch=RUNE_GLOW, radius=0.07, lift=0.03):
+    """A glowing crack across a stone's front (-Y) face: path is (x, z) points; each is pushed onto the
+    surface found in `points` (the stone's vertices, in the same space)."""
+    pts = []
+    for x, z in path:
+        y = front_y(points, x, z)
+        if y is not None:
+            pts.append(Vector((x, y - lift, z)))
+    if len(pts) < 2:
+        return []
+    bm = bmesh.new()
+    sweep(bm, pts, radius, 4, radius_end=radius * 0.45)
+    return [(bm, swatch, 0.0, True)]
+
+
+def golem_block(b, role, p0, p1, size, seed, swatch="Stone", rune=None):
+    """One hewn stone segment of the arm from p0 to p1 (+Y of its frame leans to the back): a gold band at
+    its top end, a glowing crack down its front and a glowing rune on the outer side."""
     p0, p1 = Vector(p0), Vector(p1)
     L = (p1 - p0).length
     m = frame((p0 + p1) / 2, out=p1 - p0, up=(0, 1, 0))
@@ -641,64 +630,107 @@ def golem_block(b, role, p0, p1, size, seed, swatch="Stone", rune=None, plate=Tr
     b.add(role, place(pieces, m), organic=True)
     b.add(role + "Trim", place(band(local, L / 2 - 0.4, 0.3, "Gold"), m))
     hx, hy = half_extent(local, 0.0)
-    if plate:
-        b.add(role + "Trim", place(riveted_plate(size[0] * 0.5, L * 0.36, 0.05, "Gunmetal", "Gold", 0.35), m @ frame((0, -hy - 0.01, -L * 0.08), out=(0, -1, 0), up=(0, 0, 1))))
+    w = size[0] * 0.3
+    path = [(w * (0.55 if k % 2 else -0.45) * (1 - 0.12 * k) + 0.12 * _hash(seed, k), -L * 0.4 + k * L * 0.17) for k in range(5)]
+    b.add(role, place(glow_crack(local, path), m))
     if rune is not None:
-        b.add(role + "Trim", place(rune_glyph(0.5, rune, "AuroraCyan", 0.04), m @ frame((hx, 0, -L * 0.1), out=(1, 0, 0), up=(0, 0, 1))))
+        b.add(role + "Trim", place(rune_glyph(0.55, rune, RUNE_GLOW, 0.04), m @ frame((hx, 0, -L * 0.1), out=(1, 0, 0), up=(0, 0, 1))))
     return m, local
 
 
 def tier_titan(b):
-    # the stone plinth: a gold trim, glowing runes on the front, gems on the corners, cracks and rubble
+    # the stone plinth: a gold trim, glowing runes on the front, gems on the corners
     b.add("Plinth", block((10.8, 10.8, 0.9), "StoneDark", corner=1.0, edge=0.25))
     b.add("Plinth", place(block((10.2, 10.2, 0.25), "Stone", corner=0.8, edge=0.1), M((0, 0, 0.9))))
     b.add("PlinthTrim", place(block((10.9, 10.9, 0.16), "Gold", corner=1.02, edge=0.06), M((0, 0, 0.62))))
     b.add("PlinthTrim", trim_strip((-3.6, -5.42, 0.32), (3.6, -5.42, 0.32), 0.12, "AuroraGreen", True))
     for k, x in enumerate((-3.0, -1.8, 1.8, 3.0)):
-        b.add("PlinthTrim", place(rune_glyph(0.38, k + 1, "AuroraCyan", 0.04), front((x, -5.4, 0.72))))
+        b.add("PlinthTrim", place(rune_glyph(0.38, k + 1, RUNE_GLOW, 0.04), front((x, -5.4, 0.72))))
     for sx in (-1, 1):
         for sy in (-1, 1):
             b.add("PlinthTrim", place(gem_setting(0.2, "AuroraCyan", "Gold", 4), M((sx * 4.65, sy * 4.65, 1.15))))
-    sh = V(1.3, 2.7, 1.5)
-    for k in range(5):  # cracks across the top, running out from the shoulder
-        a = 1.2 + k * 0.62
-        p0 = V(sh.x + 2.0 * math.cos(a), sh.y + 1.7 * math.sin(a), 1.16)
-        pts = [p0, p0 + V(math.cos(a) * 0.8, math.sin(a) * 0.8, 0) + V(0.2 * _hash(k), 0.2 * _hash(k, 1), 0),
-               p0 + V(math.cos(a + 0.3) * 1.6, math.sin(a + 0.3) * 1.6, 0)]
-        b.add("Plinth", rope(pts, 0.05, "Gunmetal", 4))
-    for k in range(9):
-        a = k * 2 * math.pi / 9 + 0.2
-        b.add("Rubble", rock((0.42, 0.36, 0.3), (sh.x + 2.35 * math.cos(a), sh.y + 1.9 * math.sin(a), 1.25), k + 20, "StoneDark" if k % 2 else "Stone", (0, 0, a)))
-    # the shoulder: a great boulder breaking out of the ground, with a riveted steel pauldron
-    sp, _ = hewn((4.4, 3.8, 3.6), M(sh), "Stone", 11, cuts=2, levels=2, rough=0.1)
-    b.add("Shoulder", sp, organic=True)
-    paul = frame((sh.x, sh.y - 0.15, 2.85), out=(0, -0.15, 1))
-    pauldron = bmesh.new()
-    lathe(pauldron, [(0, 0), (1.95, 0), (1.9, 0.3), (1.55, 0.75), (0.9, 1.05), (0, 1.1)], 18, paul)
-    b.add("Pauldron", [(pauldron, "Gunmetal", 0.0, False)])
-    b.add("Pauldron", place(trim_ring(1.93, 0.12, "Gold", minor=0.1, segments=18), paul))
-    for k in range(8):
-        a = k * math.pi / 4 + math.pi / 8
-        b.add("Pauldron", place(rivet(0.09, "Gold"), paul @ frame((1.6 * math.cos(a), 1.6 * math.sin(a), 0.62), out=(math.cos(a), math.sin(a), 1.2))))
-    b.add("Pauldron", place(riveted_plate(1.1, 1.1, 0.06, "Gunmetal", "Gold", 0.35), frame((sh.x - 1.75, sh.y - 0.6, 1.85), out=(-1, -0.5, 0.1))))
-    # the arm: hewn stone blocks to the elbow and on to the wrist, gold bands, plates, runes and pistons
-    S, E, W = V(1.3, 2.5, 3.3), V(1.5, 1.8, 9.2), V(0.6, -2.4, 12.2)
+    C = V(0.75, 1.45, 3.3)  # the boulder head's centre
+    # glowing cracks running out across the plinth from where the golem broke through, and rubble
+    for k in range(6):
+        a = math.pi * (1.08 + 0.168 * k)
+        p0 = V(C.x + 2.75 * math.cos(a), C.y + 2.05 * math.sin(a), 1.17)
+        pts = [p0, p0 + V(math.cos(a + 0.25) * 0.7, math.sin(a + 0.25) * 0.7, 0), p0 + V(math.cos(a - 0.2) * 1.4, math.sin(a - 0.2) * 1.4, 0)]
+        crack = bmesh.new()
+        sweep(crack, pts, 0.07, 4, radius_end=0.03)
+        b.add("Plinth", [(crack, RUNE_GLOW, 0.0, True)])
+    for k in range(11):
+        a = k * 2 * math.pi / 11 + 0.3
+        b.add("Rubble", rock((0.46, 0.38, 0.32), (C.x + 2.95 * math.cos(a), C.y + 2.15 * math.sin(a), 1.25), k + 20, "StoneDark" if k % 2 else "Stone", (0, 0, a)))
+    # the boulder head
+    hp, hl = hewn((5.5, 3.9, 4.9), M(C), "Stone", 11, cuts=2, levels=2, rough=0.09)
+    b.add("Head", hp, organic=True)
+    face = [C + p for p in hl]
+
+    def fy(x, z):
+        return front_y(face, x, z)
+
+    def top_at(x, y, reach=0.6):
+        return max(p.z for p in face if abs(p.x - x) < reach and abs(p.y - y) < reach)
+
+    eye_z = C.z + 0.5
+    for sx in (-1, 1):
+        ex = C.x + sx * 0.98
+        ey = fy(ex, eye_z)
+        socket = bmesh.new()
+        blob(socket, (ex, ey + 0.1, eye_z), (0.72, 0.2, 0.62), 2)
+        b.add("Head", [(socket, "EyeDark", 0.0, False)])
+        em = frame((ex, ey - 0.04, eye_z), out=(sx * 0.12, -1, 0.0))
+        b.add("Eyes", place(cartoon_eye(0.6, RUNE_GLOW, look=(-0.32, -0.25)), em))
+        b.add("Eyes", ring_at(em @ M((0, 0, 0.05)), 0.64, 0.07, RUNE_GLOW, True, 18))
+        bx = C.x + sx * 0.95  # a heavy brow ledge, its inner end lower (determined)
+        b.add("Head", place(stone_cube((1.55, 0.55, 0.6), "StoneDark"), frame((bx, fy(bx, eye_z + 0.92) - 0.12, eye_z + 0.9), out=(0, -1, 0.3)) @ M((0, 0, 0), (0, 0, sx * 0.3))), organic=True)
+        # glowing cracks running down the cheeks like markings
+        b.add("Head", glow_crack(face, [(ex + sx * 0.55, eye_z - 0.45), (ex + sx * 0.8, eye_z - 0.9), (ex + sx * 0.62, eye_z - 1.35), (ex + sx * 0.9, eye_z - 1.85)], radius=0.08))
+        # a rune on each side of the head
+        side = [p for p in face if abs(p.y - C.y) < 0.5 and abs(p.z - C.z) < 0.5]
+        sxv = (max if sx > 0 else min)(p.x for p in side)
+        b.add("Head", place(rune_glyph(0.7, 2 + sx, RUNE_GLOW, 0.05), frame((sxv + sx * 0.02, C.y, C.z), out=(sx, 0, 0), up=(0, 0, 1))))
+    nose, _ = hewn((0.75, 0.6, 0.8), Matrix(), "StoneDark", 50, cuts=0, levels=2, rough=0.1)
+    b.add("Head", place(nose, M((C.x, fy(C.x, C.z - 0.2) - 0.18, C.z - 0.2))), organic=True)
+    mz = C.z - 1.0
+    b.add("Head", place(grin(2.1, 0.4, "EyeDark", "StoneLight", 5), frame((C.x, fy(C.x, mz) + 0.04, mz), out=(0, -1, 0.1))))
+    # snow on the back of the head, and the little gold crown on top
+    snow = bmesh.new()
+    blob(snow, (C.x - 0.3, C.y + 0.9, top_at(C.x - 0.3, C.y + 0.9) - 0.12), (1.5, 1.0, 0.32), 2)
+    b.add("Snow", [(snow, "SnowWhite", 0.0, False)], organic=True)
+    kx, ky = C.x - 1.05, C.y - 0.35
+    cm = frame((kx, ky, top_at(kx, ky) - 0.15), out=(-0.25, -0.2, 1))
+    b.add("Crown", ring_at(cm, 0.7, 0.12, "Gold", False, 22))
+    for k in range(5):
+        a = k * 2 * math.pi / 5 - math.pi / 2
+        sp = bmesh.new()
+        lathe(sp, [(0, 0), (0.17, 0), (0.12, 0.25), (0, 0.62 if k == 0 else 0.46)], 6, cm @ M((0.7 * math.cos(a), 0.7 * math.sin(a), 0.05)))
+        b.add("Crown", [(sp, "Gold", 0.0, False)])
+    b.add("Crown", place(gem_setting(0.16, "MagicPink", "Gold", 4), cm @ frame((0, -0.82, 0.18), out=(0, -1, 0.3))))
+    crown_top = cm @ Vector((0, 0, 0.75))
+    # the arm: hewn stone blocks rising out of the boulder's top to the elbow, then on to the wrist
+    S, E, W = V(C.x + 2.0, C.y + 0.35, C.z + 1.3), V(3.35, 1.35, 9.1), V(-0.8, -1.85, 11.0)
     u = (E - S).normalized()
     mid_u = S.lerp(E, 0.5)
-    golem_block(b, "UpperArmA", S, mid_u + u * 0.15, (2.4, 2.2), 61, "Stone", 2)
-    golem_block(b, "UpperArmB", mid_u - u * 0.05, E - u * 0.5, (2.2, 2.05), 62, "StoneLight", 5)
-    b.add("Elbow", sphere(1.15, "Gunmetal", E, 18, 12))
+    base = Matrix.Translation(S + u * 0.15) @ align_z(u)
+    b.add("UpperArmATrim", ring_at(base, 1.32, 0.16, "Gold", False, 24))
+    b.add("UpperArmA", ring_at(base @ M((0, 0, -0.18)), 1.42, 0.07, RUNE_GLOW, True, 24))
+    golem_block(b, "UpperArmA", S - u * 0.35, mid_u + u * 0.15, (2.5, 2.3), 61, "Stone", 2)
+    golem_block(b, "UpperArmB", mid_u - u * 0.05, E - u * 0.5, (2.3, 2.15), 62, "StoneLight", 5)
+    b.add("Elbow", lumpy_ball(1.2, "StoneDark", E, seed=7, subdiv=3, amp=0.07), organic=True)
     for sx in (-1, 1):
-        b.add("Elbow", place(rivet_ring(0.85, 8, 0.07, "Gold"), frame(E + V(sx * 0.85, 0, 0), out=(sx, 0, 0))))
+        b.add("Elbow", ring_at(frame(E + V(sx * 0.55, 0, 0), out=(1, 0, 0)), 1.08, 0.07, RUNE_GLOW, True, 24))
     d = (W - E).normalized()
     mid_f = E.lerp(W, 0.5)
-    golem_block(b, "ForearmA", E + d * 0.55, mid_f + d * 0.15, (2.2, 2.05), 63, "StoneLight", 3)
-    golem_block(b, "ForearmB", mid_f - d * 0.05, W, (2.05, 1.95), 64, "Stone", 6)
-    back_u, back_f = V(0, 1.2, 0), V(0, 0.15, 1.05)
-    for p0, p1 in ((S + back_u + V(0, 0, 0.6), E + back_u - u * 1.0), (E + back_f + d * 0.4, E.lerp(W, 0.78) + back_f)):
-        b.add("Pistons", piston(p0, p1, 0.17, "Gunmetal", "SteelLight"))
-        for p in (p0, p1):
-            b.add("Pistons", place(cyl(0.22, 0.34, "Gold", 10), frame(p - V(0.17, 0, 0), out=(1, 0, 0))))
+    golem_block(b, "ForearmA", E + d * 0.6, mid_f + d * 0.15, (2.3, 2.1), 63, "StoneLight", 3)
+    golem_block(b, "ForearmB", mid_f - d * 0.05, W, (2.15, 2.0), 64, "Stone", 6)
+    # an iron bracer at the wrist, gold-riveted
+    br = Matrix.Translation(W - d * 0.5) @ align_z(d)
+    b.add("Bracer", ring_at(br, 1.1, 0.24, "Gunmetal", False, 22, 6))
+    for k in range(8):
+        a = k * math.pi / 4
+        n = br.to_3x3() @ Vector((math.cos(a), math.sin(a), 0))
+        b.add("Bracer", place(rivet(0.08, "Gold"), frame(br.to_translation() + n * 1.32, out=n)))
     # the fist, its fingers curled round a gold shackle; the meteor's chain hangs from it
     F = W + d * 1.0
     fm = frame(F, out=d, up=(0, 0, -1))  # local +Y points down toward the chain
@@ -707,48 +739,52 @@ def tier_titan(b):
     hx, hy = half_extent(flocal, 0.0)
     for k in range(4):  # knuckles over the front, fingers curled under
         x = -0.78 + k * 0.52
-        kp = stone_cube((0.5, 0.62, 0.6), "StoneLight")
-        b.add("Fist", place(kp, fm @ M((x, 0.15, 1.0))), organic=True)
-        fp2 = stone_cube((0.46, 0.5, 0.95), "StoneLight")
-        b.add("Fist", place(fp2, fm @ M((x, hy + 0.1, 0.45), (0.5, 0, 0))), organic=True)
+        b.add("Fist", place(stone_cube((0.5, 0.62, 0.6), "StoneLight"), fm @ M((x, 0.15, 1.0))), organic=True)
+        b.add("Fist", place(stone_cube((0.46, 0.5, 0.95), "StoneLight"), fm @ M((x, hy + 0.1, 0.45), (0.5, 0, 0))), organic=True)
     tp, _ = hewn((0.55, 0.6, 1.1), Matrix(), "StoneLight", 90, cuts=0, levels=2, rough=0.1)
     b.add("Fist", place(tp, fm @ M((hx + 0.1, 0.4, 0.3), (0.3, -0.4, 0))), organic=True)
-    b.add("FistTrim", place(riveted_plate(1.4, 0.9, 0.05, "Gunmetal", "Gold", 0.35), fm @ frame((0, -hy - 0.02, -0.1), out=(0, -1, 0), up=(0, 0, 1))))
+    b.add("Fist", place(glow_crack(flocal, [(-0.8, -0.6), (-0.3, -0.2), (0.15, -0.45), (0.7, 0.1)]), fm))
     pivot = fm @ Vector((0, hy + 0.45, 0.15))
-    # the meteor: a cratered rock with hot cracks and gold straps, on a heavy chain
+    # the meteor, caught mid-swing toward the ice: a cratered crust over a molten core, on a heavy chain
     r = BALL_R[5]
-    ball = V(pivot.x, pivot.y, 3.7)
+    swing = V(-0.85, -0.75, -4.95)
+    ball = pivot + swing
+    hang = swing.normalized()
     b.add("Ball", ring_at(Matrix.Translation(pivot + V(0, 0, 0.15)) @ Matrix.Rotation(math.pi / 2, 4, "Y"), 0.36, 0.1, "Gold", segs=12))
-    b.add("Ball", chain_between(pivot, ball + V(0, 0, r + 0.35), 0.21, "Gunmetal"))
+    b.add("Ball", chain_between(pivot, ball - hang * (r + 0.35), 0.21, "Gunmetal"))
     b.add("Ball", lumpy_ball(r, "StoneDark", ball, seed=5, subdiv=4, amp=0.1, crack=-0.3, crack_depth=0.88), organic=True)
     b.add("Ball", sphere(r * 0.93, "FlameOrange", ball, 14, 9, glow=True))
-    for turn in (0.0, math.pi / 2):
-        b.add("Ball", ring_at(Matrix.Translation(ball) @ Matrix.Rotation(turn, 4, "Z") @ Matrix.Rotation(math.pi / 2, 4, "X"), r * 1.07, 0.1, "Gold", segs=20))
-    b.add("Ball", lug(ball + V(0, 0, r * 1.05), "Gold", 0.2))
-    # the crater under the meteor where it hits, with broken ice
+    for k, dd in enumerate(fib_dirs(11)):  # craters: dark rims round molten pools
+        if (dd + hang).length < 0.75:
+            continue  # (not under the chain)
+        c = ball + dd * r * 0.99
+        b.add("Ball", ring_at(frame(c, out=dd), 0.3 + 0.07 * (k % 3), 0.09, "Stone", False, 12))
+        pool = bmesh.new()
+        blob(pool, (0, 0, 0), (0.27 + 0.07 * (k % 3), 0.27 + 0.07 * (k % 3), 0.07), 1)
+        pool.transform(frame(c - dd * 0.03, out=dd))
+        b.add("Ball", [(pool, "FlameYellow", 0.0, True)])
+    b.add("Ball", lug(ball - hang * r * 1.05, "Gold", 0.2))
+    # the crater where it lands, with broken ice
     crater = bmesh.new()
-    torus(crater, Matrix.Translation((ball.x, ball.y, 1.15)) @ Matrix.Diagonal((1.2, 0.75, 0.45, 1)), 1.3, 0.32, 16, 6)
+    torus(crater, Matrix.Translation((ball.x, ball.y + 0.3, 1.15)) @ Matrix.Diagonal((1.0, 0.7, 0.45, 1)), 1.2, 0.3, 16, 6)
     b.add("Plinth", [(crater, "StoneDark", 0.0, False)])
     for k in range(4):
         a = k * 1.6 + 0.4
-        b.add("Plinth", place(cut_crystal(0.55, 0.2, "IceBlue", (0.5 * math.cos(a), 0.5 * math.sin(a)), glow=False), M((ball.x + 1.7 * math.cos(a), ball.y + 0.85 * math.sin(a), 1.15))))
-    # the golem's head peeking out of the ground in front of its shoulder, watching its meteor,
-    # and the fingertips of its other hand breaking through on the far side
-    H, head_top, face_y = golem_head(b, (3.15, -1.5, 2.0), 0.12)
+        b.add("Plinth", place(cut_crystal(0.55, 0.2, "IceBlue", (0.5 * math.cos(a), 0.5 * math.sin(a)), glow=False), M((ball.x + 1.4 * math.cos(a), ball.y + 0.3 + 0.8 * math.sin(a), 1.15))))
+    # the fingertips of its other hand breaking through on the far side
+    for k in range(3):
+        fp3, _ = hewn((0.5, 0.52, 0.95), Matrix(), "Stone", 100 + k, cuts=0, levels=2, rough=0.1)
+        b.add("Fingers", place(fp3, M((2.6 + k * 0.6, -2.2 - 0.2 * k, 1.4), (0.5, -0.1 * k, 0))), organic=True)
+        b.add("Fingers", place(cyl(0.28, 0.12, "Gold", 10), M((2.6 + k * 0.6, -2.05 - 0.2 * k, 1.55), (0.5, -0.1 * k, 0))))
     for k in range(5):
         a = k * 1.25 + 4.0
-        b.add("Rubble", rock((0.3, 0.26, 0.22), (3.15 + 1.95 * math.cos(a), -1.5 + 1.75 * math.sin(a), 1.2), k + 40, "Stone"))
-    for k in range(3):
-        fp3, _ = hewn((0.45, 0.48, 0.9), Matrix(), "Stone", 100 + k, cuts=0, levels=2, rough=0.1)
-        b.add("Fingers", place(fp3, M((-3.9 + k * 0.55, -1.2 - 0.2 * k, 1.35), (0.5, 0.1 * k, 0))), organic=True)
-        b.add("Fingers", place(cyl(0.26, 0.12, "Gold", 10), M((-3.9 + k * 0.55, -1.05 - 0.2 * k, 1.5), (0.5, 0.1 * k, 0))))
-    eyes = H @ frame((0, face_y, 0.3), out=(0, -1, 0.05))
-    crown = H @ up_((0, -0.1, head_top))
+        b.add("Rubble", rock((0.3, 0.26, 0.22), (3.2 + 1.2 * math.cos(a), -2.4 + 0.9 * math.sin(a), 1.2), k + 40, "Stone"))
+    eyes = frame((C.x, fy(C.x, eye_z), eye_z), out=(0, -1, 0))
     return standard_atts(ball, pivot, (ball.x, -5.6, 1.4), r, {
-        "Lamp1": paul @ frame((1.3, -0.7, 0.75), out=(0.3, -0.3, 1)), "Lamp2": up_(E + V(0, 0, 1.12)),
-        "Gear1": frame(E + V(1.12, 0, 0), out=(1, 0, 0)), "Gear2": frame(E + V(-1.12, 0, 0), out=(-1, 0, 0)),
-        "Counter": frame(E + V(0, 1.1, 0), out=(0, 1, 0)), "Crown": crown, "Eyes": eyes,
-        "Steam1": up_(E + V(0, 0.6, 0.9)),  # (the elbow joint vents: Workshop-and-up steam rises from here)
+        "Lamp1": up_((4.35, -4.1, 1.15)), "Lamp2": up_((-4.35, 3.6, 1.15)),
+        "Gear1": frame(E + V(1.2, 0, 0), out=(1, 0, 0)), "Gear2": frame(E + V(-1.2, 0, 0), out=(-1, 0, 0)),
+        "Counter": frame(E + V(0, 1.15, 0), out=(0, 1, 0)), "Crown": up_(crown_top), "Eyes": eyes,
+        "Steam1": up_(E + V(0, 0.6, 0.9)),  # (the elbow vents: Workshop-and-up steam rises from here)
         "NamePlate": front((0, -5.42, 0.45)), "Aura": up_((0, 0, 1.15)), "Top": up_(F + V(0, 0, 1.3))})
 
 
@@ -788,10 +824,15 @@ def spiked_ball(t, c, r):
             blob(puff, c + V(r * 0.9 * math.cos(a), r * 0.9 * math.sin(a), -0.2), (0.45, 0.4, 0.32), 2)
             p.append((puff, "StoneDark", 0.0, False))
         p += zigzag_bolt(c + V(0, -r * 0.8, -0.4), (0.2, -0.4, -1), 0.8, "LampYellow", 0.07)
-    else:
+    else:  # the Titan Arm's meteor: obsidian spikes with molten tips
         p = lumpy_ball(r, "StoneDark", c, seed=5, subdiv=4, amp=0.1, crack=-0.5, crack_depth=0.88)
         p += sphere(r * 0.93, "FlameOrange", c, 14, 9, glow=True)
-        p += spikes(c, r, 16, 0.65, 0.2, "SteelLight", 0.7)
+        p += spikes(c, r, 14, 0.6, 0.22, "Gunmetal", 0.7)
+        for d in fib_dirs(14):
+            if d.z <= 0.7:
+                tip = bmesh.new()
+                cylinder(tip, c + d * (r * 0.85 + 0.6), 0.09, 0.28, 6, top=0.0, direction=d)
+                p.append((tip, "FlameYellow", 0.0, True))
         p += lug(c + V(0, 0, r * 1.05), "Gold", 0.2)
     return p
 
@@ -805,6 +846,10 @@ def molten_ball(t, c, r):
     p += ring_at(M(c), r * 1.08, 0.08, trim, segs=18)
     if t >= 4:
         p += ring_at(Matrix.Translation(c) @ Matrix.Rotation(math.pi / 2, 4, "X"), r * 1.08, 0.08, trim, segs=18)
+    if t == 5:  # the meteor's craters
+        for k, d in enumerate(fib_dirs(9)):
+            if d.z < 0.55:
+                p += ring_at(frame(c + d * r * 1.02, out=d), 0.26 + 0.05 * (k % 2), 0.08, "StoneDark", segs=12)
     for k in range(3):  # glowing drips under it
         a = k * 2.1
         drip = bmesh.new()
@@ -819,7 +864,7 @@ WEIGHT_LOOK = {  # beam, rope or chain, chain glows, pulley (rim, hub)
     2: ("Iron", "Iron", False, ("Brass", "Copper")),
     3: ("SteelLight", "AuroraCyan", True, ("SteelLight", "AuroraCyan")),
     4: ("Moonstone", "RuneGlow", True, ("Moonstone", "Gold")),
-    5: ("Gunmetal", "Gunmetal", False, ("Brass", "Gold")),
+    5: ("StoneDark", "Gunmetal", False, ("StoneDark", "Gold")),
 }
 
 
@@ -856,6 +901,9 @@ def counterweight(t, cw, b):
         bp, blocal = hewn((1.0, 0.9, 0.95), M(hang - Vector((0, 0, 0.5))), "StoneDark", 120, cuts=1, levels=2, rough=0.1)
         b.add("Counterweight", bp, organic=True)
         b.add("Counterweight", place(band(blocal, 0.0, 0.22, "Gold"), M(hang - Vector((0, 0, 0.5)))))
+        hx_, hy_ = half_extent(blocal, -0.2)
+        for side in (1, -1):  # a glowing rune on both faces of the rune stone
+            b.add("Counterweight", place(rune_glyph(0.45, 4, RUNE_GLOW, 0.04), frame(hang + Vector((0, side * (hy_ + 0.01), -0.7)), out=(0, side, 0), up=(0, 0, 1))))
 
 
 def shockwave(t, hit, fx):
@@ -879,6 +927,17 @@ def lava_trail(t, trail, fx):
     fx.add("Trail", place(pieces, trail))
 
 
+def rune_brazier():
+    """The Titan Arm's lights: a stone bowl with a gold rim, holding a cluster of glowing crystals."""
+    bowl = bmesh.new()
+    lathe(bowl, [(0, 0), (0.34, 0), (0.28, 0.32), (0.55, 0.5), (0.64, 0.76), (0.54, 0.8), (0, 0.62)], 12)
+    p = [(bowl, "StoneDark", 0.0, False)]
+    p += ring_at(M((0, 0, 0.76)), 0.6, 0.05, "Gold", segs=16)
+    for dx, dy, h, tilt in ((0, 0, 0.85, (0, 0)), (0.22, 0.1, 0.55, (0.35, 0.1)), (-0.2, 0.12, 0.5, (-0.3, 0.2)), (0.03, -0.22, 0.45, (0.05, -0.35))):
+        p += place(cut_crystal(h, 0.13, RUNE_GLOW, tilt, glow=True), M((dx, dy, 0.6)))
+    return p
+
+
 def UPGRADES(u, t, atts, b, fx):
     work = atts["Work"].to_translation()
     r = BALL_R[t] * 1.05
@@ -889,6 +948,8 @@ def UPGRADES(u, t, atts, b, fx):
         beacon = {1: lambda: warning_lamp(0.26, "Amber", "Iron", "RustDark"), 2: lambda: warning_lamp(0.34, "WarnRed", "Brass", "Iron"),
                   3: lambda: warning_lamp(0.34, "AuroraCyan", "SteelLight", "GlacierBlue"), 4: lambda: tier_lamp(4, "AuroraCyan"),
                   5: lambda: tier_lamp(5, "AuroraGreen")}[t]()
+        if t == 5:
+            lamp1, beacon = rune_brazier(), rune_brazier()
         b.add("Lamp1", place(lamp1, atts["Lamp1"]))
         b.add("Lamp2", place(beacon, atts["Lamp2"]))
     elif u == 3:  # a swinging counterweight and pulleys (and steam or sparkles where the tier vents)
@@ -907,7 +968,8 @@ def UPGRADES(u, t, atts, b, fx):
 
 
 def AURA(atts, fx):
-    """Titan Arm: small rocks orbiting the meteor, and a dust storm swirling at its base."""
+    """Titan Arm: small rocks orbiting the meteor, a dust storm swirling at its base, and the meteor's glowing
+    trail along its swing (EffectsConfig's MeteorTrail)."""
     c = atts["Work"].to_translation()
     orbit = Matrix.Translation(c) @ Matrix.Rotation(0.35, 4, "X") @ Matrix.Rotation(0.2, 4, "Y")
     fx.add("AuraOrbit", ring_at(orbit, 2.4, 0.03, "FlameOrange", True, 32))
@@ -919,6 +981,18 @@ def AURA(atts, fx):
             ember = bmesh.new()
             blob(ember, p + Vector((0, 0, 0.3)), (0.08, 0.08, 0.08), 1)
             fx.add("AuraOrbit", [(ember, "FlameYellow", 0.0, True)])
+    piv = atts["Pivot"].to_translation()
+    arm = c - piv
+    for k in range(11):  # the meteor's trail: molten blobs and smoke along its swing, fading behind it
+        p = piv + Matrix.Rotation(0.2 + 0.075 * k, 3, Vector((0.5, 1, 0)).normalized()) @ arm
+        s = 0.7 * (1 - k / 12)
+        blob_ = bmesh.new()
+        blob(blob_, p, (s, s, s), 1)
+        fx.add("AuraTrail", [(blob_, "FlameYellow" if k % 3 == 0 else "FlameOrange", 0.0, True)])
+        if k % 2:
+            smoke_ = bmesh.new()
+            blob(smoke_, p + Vector((0, 0.25, s * 0.9)), (s * 0.7, s * 0.7, s * 0.6), 1)
+            fx.add("AuraTrail", [(smoke_, "StoneLight", 0.0, False)])
     base = atts["Aura"].to_translation()
     for k in range(14):
         a = k * 2 * math.pi / 14
