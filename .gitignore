@@ -46,3 +46,6 @@ tmp/
 store-assets/creatures/*/render/*
 !store-assets/creatures/*/render/view_q34_ol.png
 !store-assets/creatures/*/render/variant_*_ol.png
+
+# Building style-test .blend files stay out of Git (large; rebuild with tools/blender/*.py)
+store-assets/style-test/**/*.blend
