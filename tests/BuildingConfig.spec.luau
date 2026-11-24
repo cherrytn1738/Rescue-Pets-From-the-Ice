@@ -24,15 +24,43 @@ return function(sources)
 		check(building.DamagePerSecond == DesignDoc.Number(row["Damage per second"]), row.Building .. " deals " .. row["Damage per second"] .. "/s")
 	end
 
-	-- Stations and upgrade parts.
-	local looks = doc:Table({ "Building", "1 owned", "10", "25", "50", "100" })
+	-- Tier themes, the five forms per building, upgrade parts, Legendary forms and auras.
+	local tiers = doc:Table({ "Tier", "Owned", "Theme", "Look" })
+	check(#tiers == 5 and #BuildingConfig.Tiers == 5, "five tier themes")
+	for index, row in tiers do
+		local tier = BuildingConfig.Tiers[index]
+		check(tier.Tier == DesignDoc.Number(row.Tier) and tier.Owned == DesignDoc.Number(row.Owned), "tier " .. index .. " at " .. row.Owned .. " owned")
+		check(tier.Theme == row.Theme and tier.Look == row.Look, "tier " .. index .. " is " .. row.Theme)
+		check(BuildingConfig.StationMilestones[index] == tier.Owned, "tier " .. index .. " is a station milestone")
+	end
+	local headers = { "1: Scrappy", "10: Workshop", "25: Frost-tech", "50: Enchanted", "100: Legendary" }
+	local looks = doc:Table({ "Building", headers[1], headers[2], headers[3], headers[4], headers[5] })
+	check(#looks == 8, "eight buildings in the tier table")
 	for index, row in looks do
 		local building = buildings[index]
-		check(building.Name == row.Building, "station row " .. index .. " is " .. row.Building)
-		for milestone, header in { "1 owned", "10", "25", "50", "100" } do
-			check(building.Stations[milestone] == row[header], row.Building .. " station at " .. header)
+		check(building.Name == row.Building, "tier row " .. index .. " is " .. row.Building)
+		for milestone, header in headers do
+			check(building.Stations[milestone] == row[header], row.Building .. " at " .. header)
 		end
-		check(building.UpgradeParts == row["Upgrade parts (in order)"], row.Building .. " upgrade parts")
+		check(string.find(row[headers[5]], building.LegendaryForm .. ":", 1, true) == 1, row.Building .. "'s Legendary form is " .. building.LegendaryForm)
+	end
+	local partHeaders = { "1st: better part", "2nd: lights", "3rd: moving extra", "4th: hit effect", "5th: signature" }
+	local parts = doc:Table({ "Building", partHeaders[1], partHeaders[2], partHeaders[3], partHeaders[4], partHeaders[5] })
+	check(#parts == 8, "eight buildings in the upgrade parts table")
+	for index, row in parts do
+		local building = buildings[index]
+		check(building.Name == row.Building, "upgrade parts row " .. index .. " is " .. row.Building)
+		check(#building.UpgradeParts == 5, row.Building .. " has five upgrade parts")
+		for upgrade, header in partHeaders do
+			check(building.UpgradeParts[upgrade] == row[header], row.Building .. " upgrade " .. upgrade .. ": " .. row[header])
+		end
+	end
+	local auras = doc:Table({ "Building", "Legendary form", "Signature aura" })
+	check(#auras == 8, "eight signature auras")
+	for index, row in auras do
+		local building = buildings[index]
+		check(building.Name == row.Building and building.LegendaryForm == row["Legendary form"], row.Building .. " is " .. row["Legendary form"])
+		check(building.SignatureAura == row["Signature aura"], row.Building .. "'s signature aura")
 	end
 	local milestones = doc:Table({ "Owned", "Ice Pick Post station" })
 	for index, row in milestones do
