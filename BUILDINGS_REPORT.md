@@ -17,7 +17,7 @@
 | 2 The other seven buildings | Done. 35 new tiers; every tier fits its pad. |
 | 3 Upgrade parts and the ice pick | Done. Five upgrade sets for every tier of every building (200 sets), and six picks. |
 | 4 Renders and export | Done. Line-ups, the Legendary sheet, the pick sheet, TRIANGLE_COUNTS.md, IMPORT_NOTES.md, 80 FBX files (40 stations + 40 upgrade files) and 6 pick FBX files. |
-| 5 Effects and auras | Done, except an in-game Play test (see "Not done"). |
+| 5 Effects and auras | Done. Play-tested after the Rojo reconnect (see "Play test, after the run"). |
 
 **Specs: 18, all passing, 3,899 checks.** New spec: Effects. Changed: BuildingConfig.
 Nothing was uploaded to Roblox.
@@ -115,7 +115,7 @@ then with all five upgrade sets (the budget counts the second number):
   (+10.2%). Everything else is within +-10%.
 - **Mesh size:** the largest single mesh is about 5,000 triangles, so every mesh is under 10,000.
 
-## Step 5: effects and auras (done, except a Play test)
+## Step 5: effects and auras (done)
 
 - **Particle textures** in `assets/textures/particles/`:
   - soft glow, sparkle, snowflake, ember, smoke puff, star, water droplet, and four rune glyphs.
@@ -164,17 +164,38 @@ then with all five upgrade sets (the budget counts the second number):
   - The test found a real bug, now fixed: rebuilding a station for a new tier left the old tier's
     emitters behind.
 
+## Play test, after the run
+
+After you reconnected Rojo, Studio had every module. In a Play test I used a throwaway fresh save, added
+crystals with the debug action and bought buildings through the real `BuyBuilding` remote:
+
+| Station | Owned | Tier | Emitters (on) | Lights | Beams | Hit bursts in 3 s |
+| --- | ---: | ---: | --- | ---: | ---: | ---: |
+| Ice Pick Post | 100 | 5 | 48 (44) | 2 | 1 | 5 |
+| Ice Drill | 100 | 5 | 45 (41) | 2 | 1 | 4 |
+| Lava Pump | 100 | 5 | 39 (35) | 2 | 1 | 5 |
+| Heat Lamp | 50 | 4 | 29 (26) | 2 | 1 | 4 |
+| Chisel Mill | 25 | 3 | 11 (8) | 2 | 0 | 3 |
+| Wrecking Crane | 10 | 2 | 3 (1) | 1 | 0 | 2 |
+| Flamethrower Turret | 1 | 1 | 1 (0) | 0 | 0 | 2 |
+
+"On" counts the ambient emitters; the rest are hit emitters, which fire bursts instead of a steady rate.
+
+- **Reduced effects** (set through the real `SaveSettings` remote): the Ice Drill's ambient rate went from
+  54.5 to 27.25, its hits from 5 to 0, and both came back when it was switched off.
+- **Masterwork:** buying the Ice Drill's five upgrades took it to Detail 10, which added the gold layer
+  (GoldMotes, GoldAura, GoldSparks). It still had 2 lights.
+- **Output:** no errors from the game. `rbxassetid://203785492` fails to load a few times each session,
+  but that id isn't in the repo or the place, and it also failed before this test, so it's probably a
+  Studio plugin.
+- **The look:** the particles render, but with the built-in sparkle texture and pale icy colours they
+  barely show against snow and sky. Judge the look again once the real textures and models are
+  uploaded.
+- **Not tested:** the other-plot distance rule in Play (it needs a 2-player test; it passed in Edit mode).
+- **Cleanup:** the `StudioFreshSave` switch was removed afterwards and the place wasn't saved.
+
 ## Not done, and why
 
-- **No Studio Play test of the effects.**
-  - Rojo wasn't running when the run started. I started `rojo serve`, but the Studio plugin has to be
-    reconnected by hand, and Studio's place is only half synced: ServerScriptService has the new
-    services, but ReplicatedStorage and StarterPlayerScripts are missing modules such as
-    `EconomyRules` and `IceBlocks`. Play errors out until the plugin is reconnected.
-  - Following AGENTS.md, I did not write scripts into the place by hand.
-  - Instead the effects system was tested in Edit mode on stand-in parts. That test covers the logic,
-    not how it looks in game.
-  - Nothing in Studio was saved.
 - **Effects that need uploads before they can be checked:**
   - **The particle textures:** emitters use the built-in sparkle until the PNGs are uploaded and their
     ids are in `EffectsConfig.Textures`.
@@ -236,8 +257,7 @@ tier and every Legendary is within 10%.
 
 ## What you need to do by hand
 
-1. **Reconnect the Rojo plugin in Studio** (Studio is only half synced; don't save the place as it is),
-   then Play to see the effects on the stand-ins.
+1. Done: Rojo reconnected and the effects were Play-tested (above).
 2. **Look at the renders** above and pick any building that needs another pass.
 3. **When you're happy, upload** the FBX files and the particle textures with the group tool, then:
    - put the station ids in `BuildingConfig.StationModelIds`;
