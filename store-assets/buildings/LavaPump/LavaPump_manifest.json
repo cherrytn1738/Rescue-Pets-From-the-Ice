@@ -1,0 +1,2500 @@
+{
+ "id": "LavaPump",
+ "name": "Lava Pump",
+ "pad": 14,
+ "tiers": [
+  {
+   "tier": 1,
+   "theme": "Scrappy",
+   "form": "Hand pump and bucket",
+   "meshes": [
+    [
+     "LavaPumpT1Pallet",
+     1048
+    ],
+    [
+     "LavaPumpT1PitLavaGlow",
+     132
+    ],
+    [
+     "LavaPumpT1Pit",
+     516
+    ],
+    [
+     "LavaPumpT1Pump",
+     1028
+    ],
+    [
+     "LavaPumpT1Lever",
+     272
+    ],
+    [
+     "LavaPumpT1Bucket",
+     376
+    ],
+    [
+     "LavaPumpT1BucketLavaGlow",
+     240
+    ],
+    [
+     "LavaPumpT1Hose",
+     784
+    ],
+    [
+     "LavaPumpT1Sawhorse",
+     820
+    ],
+    [
+     "LavaPumpT1Nozzle",
+     410
+    ],
+    [
+     "LavaPumpT1NozzleGlow",
+     32
+    ],
+    [
+     "LavaPumpT1Junk",
+     788
+    ],
+    [
+     "LavaPumpT1PitGlow",
+     40
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "LavaPumpT1U1Reinforce",
+       700
+      ],
+      [
+       "LavaPumpT1U1Clamps",
+       888
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "LavaPumpT1U2Lamp1",
+       266
+      ],
+      [
+       "LavaPumpT1U2Lamp1Glow",
+       36
+      ],
+      [
+       "LavaPumpT1U2Lamp2",
+       266
+      ],
+      [
+       "LavaPumpT1U2Lamp2Glow",
+       36
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "LavaPumpT1U3Piston1",
+       292
+      ],
+      [
+       "LavaPumpT1U3Piston2",
+       292
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "LavaPumpT1U5Fountain",
+       240
+      ],
+      [
+       "LavaPumpT1U5FountainGlow",
+       100
+      ],
+      [
+       "LavaPumpT1U5GlowRocks",
+       60
+      ],
+      [
+       "LavaPumpT1U5GlowRocksGlow",
+       60
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "LavaPumpT1FxSteam1",
+     60
+    ],
+    [
+     "LavaPumpT1FxSteam2",
+     60
+    ],
+    [
+     "LavaPumpT1FxHit",
+     60
+    ],
+    [
+     "LavaPumpT1FxHitGlow",
+     362
+    ],
+    [
+     "LavaPumpT1FxFountainGlow",
+     1180
+    ],
+    [
+     "LavaPumpT1FxTrailGlow",
+     120
+    ]
+   ],
+   "size": [
+    6.32,
+    5.44,
+    3.79
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -1.1,
+      1.6,
+      -1.75
+     ],
+     "out": [
+      -0.0,
+      -0.387,
+      -0.922
+     ],
+     "up": [
+      -0.0,
+      0.922,
+      -0.387
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -2.3,
+      1.44,
+      0.55
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -1.95,
+      1.45,
+      -1.75
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      2.03,
+      1.35,
+      0.9
+     ],
+     "out": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      1.37,
+      1.6,
+      1.05
+     ],
+     "out": [
+      -0.958,
+      0.0,
+      0.287
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      2.4,
+      0.3,
+      1.5
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      1.7,
+      0.75,
+      -0.78
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -1.1,
+      0.3,
+      -4.4
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -1.1,
+      1.6,
+      -1.75
+     ],
+     "out": [
+      -0.0,
+      -0.387,
+      -0.922
+     ],
+     "up": [
+      -0.0,
+      0.922,
+      -0.387
+     ]
+    },
+    "Fountain": {
+     "position": [
+      3.1,
+      0.0,
+      -1.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -1.2,
+      0.4,
+      -2.33
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.2,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      1.7,
+      3.75,
+      2.45
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "HoseA": {
+     "position": [
+      0.199,
+      0.692,
+      -0.926
+     ],
+     "out": [
+      -0.962,
+      0.126,
+      0.242
+     ],
+     "up": [
+      0.123,
+      0.992,
+      -0.031
+     ]
+    },
+    "HoseB": {
+     "position": [
+      -0.719,
+      1.34,
+      -0.949
+     ],
+     "out": [
+      -0.616,
+      0.759,
+      -0.211
+     ],
+     "up": [
+      0.718,
+      0.651,
+      0.246
+     ]
+    },
+    "HoseC": {
+     "position": [
+      -1.1,
+      1.813,
+      -1.243
+     ],
+     "out": [
+      -0.284,
+      0.111,
+      -0.952
+     ],
+     "up": [
+      0.032,
+      0.994,
+      0.106
+     ]
+    }
+   }
+  },
+  {
+   "tier": 2,
+   "theme": "Workshop",
+   "form": "Steam pump and pipes",
+   "meshes": [
+    [
+     "LavaPumpT2Deck",
+     1624
+    ],
+    [
+     "LavaPumpT2Well",
+     420
+    ],
+    [
+     "LavaPumpT2WellLavaGlow",
+     100
+    ],
+    [
+     "LavaPumpT2Posts",
+     1024
+    ],
+    [
+     "LavaPumpT2Beam",
+     804
+    ],
+    [
+     "LavaPumpT2Flywheel",
+     1040
+    ],
+    [
+     "LavaPumpT2Crank",
+     412
+    ],
+    [
+     "LavaPumpT2Engine",
+     432
+    ],
+    [
+     "LavaPumpT2Boiler",
+     1076
+    ],
+    [
+     "LavaPumpT2FireboxGlow",
+     92
+    ],
+    [
+     "LavaPumpT2Chimney",
+     312
+    ],
+    [
+     "LavaPumpT2Tank",
+     512
+    ],
+    [
+     "LavaPumpT2SightGlassGlow",
+     92
+    ],
+    [
+     "LavaPumpT2Pipes",
+     840
+    ],
+    [
+     "LavaPumpT2Turret",
+     660
+    ],
+    [
+     "LavaPumpT2Nozzle",
+     632
+    ],
+    [
+     "LavaPumpT2NozzleGlow",
+     32
+    ],
+    [
+     "LavaPumpT2Hose",
+     580
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "LavaPumpT2U1Reinforce",
+       700
+      ],
+      [
+       "LavaPumpT2U1Clamps",
+       888
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "LavaPumpT2U2Lamp1",
+       348
+      ],
+      [
+       "LavaPumpT2U2Lamp1Glow",
+       72
+      ],
+      [
+       "LavaPumpT2U2Lamp2",
+       348
+      ],
+      [
+       "LavaPumpT2U2Lamp2Glow",
+       72
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "LavaPumpT2U3Piston1",
+       516
+      ],
+      [
+       "LavaPumpT2U3Piston2",
+       516
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "LavaPumpT2U5Fountain",
+       240
+      ],
+      [
+       "LavaPumpT2U5FountainGlow",
+       100
+      ],
+      [
+       "LavaPumpT2U5GlowRocks",
+       80
+      ],
+      [
+       "LavaPumpT2U5GlowRocksGlow",
+       80
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "LavaPumpT2FxSteam1",
+     60
+    ],
+    [
+     "LavaPumpT2FxSteam2",
+     60
+    ],
+    [
+     "LavaPumpT2FxHit",
+     60
+    ],
+    [
+     "LavaPumpT2FxHitGlow",
+     362
+    ],
+    [
+     "LavaPumpT2FxFountainGlow",
+     1180
+    ],
+    [
+     "LavaPumpT2FxTrailGlow",
+     120
+    ]
+   ],
+   "size": [
+    8.5,
+    7.51,
+    8.45
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      1.0,
+      1.55,
+      -2.55
+     ],
+     "out": [
+      -0.0,
+      -0.41,
+      -0.912
+     ],
+     "up": [
+      -0.0,
+      0.912,
+      -0.41
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      2.7,
+      2.65,
+      -1.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -3.0,
+      1.78,
+      0.8
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -1.6,
+      3.2,
+      0.4
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -0.0,
+      3.2,
+      0.4
+     ],
+     "out": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      2.5,
+      8.45,
+      1.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      3.1,
+      3.9,
+      1.4
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      1.0,
+      0.3,
+      -5.8
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      1.0,
+      1.55,
+      -2.55
+     ],
+     "out": [
+      -0.0,
+      -0.41,
+      -0.912
+     ],
+     "up": [
+      -0.0,
+      0.912,
+      -0.41
+     ]
+    },
+    "Fountain": {
+     "position": [
+      -3.0,
+      0.45,
+      2.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.8,
+      0.25,
+      -3.4
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.45,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      2.5,
+      8.45,
+      1.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "HoseA": {
+     "position": [
+      1.443,
+      1.027,
+      -1.311
+     ],
+     "out": [
+      -0.706,
+      0.7,
+      -0.113
+     ],
+     "up": [
+      0.691,
+      0.715,
+      0.11
+     ]
+    },
+    "HoseB": {
+     "position": [
+      0.958,
+      1.694,
+      -1.606
+     ],
+     "out": [
+      -0.132,
+      0.544,
+      -0.828
+     ],
+     "up": [
+      0.086,
+      0.839,
+      0.538
+     ]
+    },
+    "HoseC": {
+     "position": [
+      1.0,
+      1.773,
+      -2.12
+     ],
+     "out": [
+      -0.0,
+      -0.318,
+      -0.948
+     ],
+     "up": [
+      -0.0,
+      0.948,
+      -0.318
+     ]
+    }
+   }
+  },
+  {
+   "tier": 3,
+   "theme": "Frost-tech",
+   "form": "Crystal-cooled lava pipes",
+   "meshes": [
+    [
+     "LavaPumpT3Deck",
+     1536
+    ],
+    [
+     "LavaPumpT3DeckLightsGlow",
+     700
+    ],
+    [
+     "LavaPumpT3ReactorBase",
+     468
+    ],
+    [
+     "LavaPumpT3ReactorCore",
+     72
+    ],
+    [
+     "LavaPumpT3ReactorCoreGlow",
+     580
+    ],
+    [
+     "LavaPumpT3Reactor",
+     1792
+    ],
+    [
+     "LavaPumpT3ReactorCrystals",
+     80
+    ],
+    [
+     "LavaPumpT3ReactorCrystalsGlow",
+     288
+    ],
+    [
+     "LavaPumpT3TowerA",
+     1560
+    ],
+    [
+     "LavaPumpT3TowerAGlow",
+     204
+    ],
+    [
+     "LavaPumpT3TowerACrystalGlow",
+     48
+    ],
+    [
+     "LavaPumpT3Cables",
+     1748
+    ],
+    [
+     "LavaPumpT3TowerB",
+     1560
+    ],
+    [
+     "LavaPumpT3TowerBGlow",
+     204
+    ],
+    [
+     "LavaPumpT3TowerBCrystalGlow",
+     48
+    ],
+    [
+     "LavaPumpT3LavaPipeALava",
+     40
+    ],
+    [
+     "LavaPumpT3LavaPipeA",
+     208
+    ],
+    [
+     "LavaPumpT3LavaPipeARingsGlow",
+     416
+    ],
+    [
+     "LavaPumpT3LavaPipeACrystalsGlow",
+     240
+    ],
+    [
+     "LavaPumpT3LavaPipeBLava",
+     40
+    ],
+    [
+     "LavaPumpT3LavaPipeB",
+     208
+    ],
+    [
+     "LavaPumpT3LavaPipeBRingsGlow",
+     416
+    ],
+    [
+     "LavaPumpT3LavaPipeBCrystalsGlow",
+     240
+    ],
+    [
+     "LavaPumpT3Turret",
+     680
+    ],
+    [
+     "LavaPumpT3TurretRingGlow",
+     160
+    ],
+    [
+     "LavaPumpT3Nozzle",
+     812
+    ],
+    [
+     "LavaPumpT3NozzleGlow",
+     372
+    ],
+    [
+     "LavaPumpT3Hose",
+     692
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "LavaPumpT3U1Reinforce",
+       832
+      ],
+      [
+       "LavaPumpT3U1ReinforceGlow",
+       144
+      ],
+      [
+       "LavaPumpT3U1Clamps",
+       528
+      ],
+      [
+       "LavaPumpT3U1ClampsGlow",
+       720
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "LavaPumpT3U2Lamp1",
+       300
+      ],
+      [
+       "LavaPumpT3U2Lamp1Glow",
+       64
+      ],
+      [
+       "LavaPumpT3U2Lamp2",
+       300
+      ],
+      [
+       "LavaPumpT3U2Lamp2Glow",
+       64
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "LavaPumpT3U3Piston1",
+       532
+      ],
+      [
+       "LavaPumpT3U3Piston1Glow",
+       104
+      ],
+      [
+       "LavaPumpT3U3Piston2",
+       532
+      ],
+      [
+       "LavaPumpT3U3Piston2Glow",
+       104
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "LavaPumpT3U5Fountain",
+       108
+      ],
+      [
+       "LavaPumpT3U5FountainGlow",
+       436
+      ],
+      [
+       "LavaPumpT3U5GlowRocks",
+       80
+      ],
+      [
+       "LavaPumpT3U5GlowRocksGlow",
+       80
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "LavaPumpT3FxSteam1",
+     60
+    ],
+    [
+     "LavaPumpT3FxSteam2",
+     60
+    ],
+    [
+     "LavaPumpT3FxHit",
+     60
+    ],
+    [
+     "LavaPumpT3FxHitGlow",
+     426
+    ],
+    [
+     "LavaPumpT3FxFountainGlow",
+     1180
+    ],
+    [
+     "LavaPumpT3FxTrailGlow",
+     120
+    ]
+   ],
+   "size": [
+    10.22,
+    9.2,
+    9.39
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      2.05,
+      -2.95
+     ],
+     "out": [
+      -0.0,
+      -0.33,
+      -0.944
+     ],
+     "up": [
+      -0.0,
+      0.944,
+      -0.33
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      4.1,
+      1.1,
+      -3.6
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -4.1,
+      1.1,
+      -3.6
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      4.15,
+      2.8,
+      1.4
+     ],
+     "out": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -4.15,
+      2.8,
+      1.4
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      3.3,
+      4.6,
+      2.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      -3.3,
+      4.6,
+      2.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      0.3,
+      -6.2
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      2.05,
+      -2.95
+     ],
+     "out": [
+      -0.0,
+      -0.33,
+      -0.944
+     ],
+     "up": [
+      -0.0,
+      0.944,
+      -0.33
+     ]
+    },
+    "Fountain": {
+     "position": [
+      -2.7,
+      1.1,
+      -2.7
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.35,
+      -4.55
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      1.1,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      9.4,
+      1.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "HoseA": {
+     "position": [
+      -0.0,
+      3.117,
+      -0.381
+     ],
+     "out": [
+      -0.0,
+      0.89,
+      -0.455
+     ],
+     "up": [
+      -0.0,
+      0.455,
+      0.89
+     ]
+    },
+    "HoseB": {
+     "position": [
+      -0.0,
+      3.486,
+      -0.976
+     ],
+     "out": [
+      -0.0,
+      -0.035,
+      -0.999
+     ],
+     "up": [
+      -0.0,
+      0.999,
+      -0.035
+     ]
+    },
+    "HoseC": {
+     "position": [
+      -0.0,
+      3.128,
+      -1.571
+     ],
+     "out": [
+      -0.0,
+      -0.81,
+      -0.587
+     ],
+     "up": [
+      -0.0,
+      0.587,
+      -0.81
+     ]
+    }
+   }
+  },
+  {
+   "tier": 4,
+   "theme": "Enchanted",
+   "form": "Volcano altar with floating lava orbs",
+   "meshes": [
+    [
+     "LavaPumpT4Dais",
+     1668
+    ],
+    [
+     "LavaPumpT4DaisRunes",
+     920
+    ],
+    [
+     "LavaPumpT4DaisRunesGlow",
+     744
+    ],
+    [
+     "LavaPumpT4DaisCrystals",
+     480
+    ],
+    [
+     "LavaPumpT4DaisCrystalsGlow",
+     1152
+    ],
+    [
+     "LavaPumpT4DaisGlow",
+     384
+    ],
+    [
+     "LavaPumpT4Altar",
+     156
+    ],
+    [
+     "LavaPumpT4AltarGlow",
+     192
+    ],
+    [
+     "LavaPumpT4Volcano",
+     2848
+    ],
+    [
+     "LavaPumpT4VolcanoGlow",
+     384
+    ],
+    [
+     "LavaPumpT4VolcanoLavaGlow",
+     1220
+    ],
+    [
+     "LavaPumpT4GreatOrb",
+     500
+    ],
+    [
+     "LavaPumpT4GreatOrbGlow",
+     164
+    ],
+    [
+     "LavaPumpT4OrbRing",
+     920
+    ],
+    [
+     "LavaPumpT4OrbRingGlow",
+     552
+    ],
+    [
+     "LavaPumpT4Orbs",
+     2000
+    ],
+    [
+     "LavaPumpT4OrbsGlow",
+     656
+    ],
+    [
+     "LavaPumpT4IslandA",
+     248
+    ],
+    [
+     "LavaPumpT4IslandACrystalsGlow",
+     144
+    ],
+    [
+     "LavaPumpT4IslandB",
+     248
+    ],
+    [
+     "LavaPumpT4IslandBCrystalsGlow",
+     144
+    ],
+    [
+     "LavaPumpT4Crown",
+     744
+    ],
+    [
+     "LavaPumpT4CrownGlow",
+     100
+    ],
+    [
+     "LavaPumpT4RuneStones",
+     768
+    ],
+    [
+     "LavaPumpT4RuneStonesGlow",
+     120
+    ],
+    [
+     "LavaPumpT4Horn",
+     720
+    ],
+    [
+     "LavaPumpT4HornGlow",
+     656
+    ],
+    [
+     "LavaPumpT4HornRing",
+     920
+    ],
+    [
+     "LavaPumpT4HornRingGlow",
+     504
+    ],
+    [
+     "LavaPumpT4LavaDropsGlow",
+     120
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "LavaPumpT4U1Reinforce",
+       956
+      ],
+      [
+       "LavaPumpT4U1ReinforceGlow",
+       200
+      ],
+      [
+       "LavaPumpT4U1Clamps",
+       1788
+      ],
+      [
+       "LavaPumpT4U1ClampsGlow",
+       192
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "LavaPumpT4U2Lamp1Glow",
+       384
+      ],
+      [
+       "LavaPumpT4U2Lamp2Glow",
+       384
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "LavaPumpT4U3Piston1",
+       540
+      ],
+      [
+       "LavaPumpT4U3Piston1Glow",
+       174
+      ],
+      [
+       "LavaPumpT4U3Piston2",
+       540
+      ],
+      [
+       "LavaPumpT4U3Piston2Glow",
+       174
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "LavaPumpT4U5Fountain",
+       132
+      ],
+      [
+       "LavaPumpT4U5FountainGlow",
+       322
+      ],
+      [
+       "LavaPumpT4U5GlowRocks",
+       80
+      ],
+      [
+       "LavaPumpT4U5GlowRocksGlow",
+       80
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "LavaPumpT4FxSteam1Glow",
+     60
+    ],
+    [
+     "LavaPumpT4FxSteam2Glow",
+     60
+    ],
+    [
+     "LavaPumpT4FxHit",
+     60
+    ],
+    [
+     "LavaPumpT4FxHitGlow",
+     438
+    ],
+    [
+     "LavaPumpT4FxFountainGlow",
+     1180
+    ],
+    [
+     "LavaPumpT4FxTrailGlow",
+     120
+    ]
+   ],
+   "size": [
+    10.3,
+    9.83,
+    10.9
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      3.9,
+      -2.85
+     ],
+     "out": [
+      -0.0,
+      -0.527,
+      -0.85
+     ],
+     "up": [
+      -0.0,
+      0.85,
+      -0.527
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      3.1,
+      6.45,
+      1.6
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -3.1,
+      7.45,
+      1.6
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      2.6,
+      2.6,
+      -0.3
+     ],
+     "out": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -2.6,
+      2.6,
+      -0.3
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -0.0,
+      4.4,
+      0.7
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      -0.0,
+      10.3,
+      0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      0.3,
+      -6.0
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      3.9,
+      -2.85
+     ],
+     "out": [
+      -0.0,
+      -0.527,
+      -0.85
+     ],
+     "up": [
+      -0.0,
+      0.85,
+      -0.527
+     ]
+    },
+    "Fountain": {
+     "position": [
+      -2.4,
+      0.8,
+      -2.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.4,
+      -4.37
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.8,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      10.9,
+      0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "HoseA": {
+     "position": [
+      -0.0,
+      5.7,
+      -0.7
+     ],
+     "out": [
+      -0.0,
+      0.042,
+      -0.999
+     ],
+     "up": [
+      -0.0,
+      0.999,
+      0.042
+     ]
+    },
+    "HoseB": {
+     "position": [
+      -0.0,
+      5.074,
+      -1.734
+     ],
+     "out": [
+      -0.0,
+      -0.668,
+      -0.744
+     ],
+     "up": [
+      -0.0,
+      0.744,
+      -0.668
+     ]
+    },
+    "HoseC": {
+     "position": [
+      -0.0,
+      4.482,
+      -2.267
+     ],
+     "out": [
+      -0.0,
+      -0.883,
+      -0.47
+     ],
+     "up": [
+      -0.0,
+      0.47,
+      -0.883
+     ]
+    }
+   }
+  },
+  {
+   "tier": 5,
+   "theme": "Legendary",
+   "form": "Volcano Forge: a mini volcano with a lava heart",
+   "meshes": [
+    [
+     "LavaPumpT5Plinth",
+     680
+    ],
+    [
+     "LavaPumpT5Trim",
+     140
+    ],
+    [
+     "LavaPumpT5TrimLightsGlow",
+     420
+    ],
+    [
+     "LavaPumpT5LavaCracksGlow",
+     816
+    ],
+    [
+     "LavaPumpT5Volcano",
+     3200
+    ],
+    [
+     "LavaPumpT5CraterLavaGlow",
+     188
+    ],
+    [
+     "LavaPumpT5LavaFlowsGlow",
+     2400
+    ],
+    [
+     "LavaPumpT5Ledges",
+     160
+    ],
+    [
+     "LavaPumpT5Boulders",
+     720
+    ],
+    [
+     "LavaPumpT5Basalt",
+     576
+    ],
+    [
+     "LavaPumpT5Crown",
+     1640
+    ],
+    [
+     "LavaPumpT5CrownSpikes",
+     440
+    ],
+    [
+     "LavaPumpT5CrownGlow",
+     320
+    ],
+    [
+     "LavaPumpT5Face",
+     960
+    ],
+    [
+     "LavaPumpT5Eyes",
+     96
+    ],
+    [
+     "LavaPumpT5EyesGlow",
+     272
+    ],
+    [
+     "LavaPumpT5Mouth",
+     336
+    ],
+    [
+     "LavaPumpT5MouthLavaGlow",
+     80
+    ],
+    [
+     "LavaPumpT5Cage",
+     1112
+    ],
+    [
+     "LavaPumpT5LavaHeartGlow",
+     204
+    ],
+    [
+     "LavaPumpT5Pistons",
+     888
+    ],
+    [
+     "LavaPumpT5Stacks",
+     960
+    ],
+    [
+     "LavaPumpT5Bellows",
+     1404
+    ],
+    [
+     "LavaPumpT5Anvil",
+     888
+    ],
+    [
+     "LavaPumpT5IngotGlow",
+     92
+    ],
+    [
+     "LavaPumpT5Manifold",
+     1176
+    ],
+    [
+     "LavaPumpT5Port",
+     400
+    ],
+    [
+     "LavaPumpT5Arm",
+     448
+    ],
+    [
+     "LavaPumpT5Nozzle",
+     1356
+    ],
+    [
+     "LavaPumpT5NozzleGlow",
+     32
+    ],
+    [
+     "LavaPumpT5Hose",
+     992
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "LavaPumpT5U1Reinforce",
+       788
+      ],
+      [
+       "LavaPumpT5U1ReinforceGlow",
+       128
+      ],
+      [
+       "LavaPumpT5U1Clamps",
+       1176
+      ],
+      [
+       "LavaPumpT5U1ClampsGlow",
+       192
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "LavaPumpT5U2Lamp1",
+       408
+      ],
+      [
+       "LavaPumpT5U2Lamp1Glow",
+       96
+      ],
+      [
+       "LavaPumpT5U2Lamp2",
+       408
+      ],
+      [
+       "LavaPumpT5U2Lamp2Glow",
+       96
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "LavaPumpT5U3Piston1",
+       528
+      ],
+      [
+       "LavaPumpT5U3Piston1Glow",
+       96
+      ],
+      [
+       "LavaPumpT5U3Piston2",
+       528
+      ],
+      [
+       "LavaPumpT5U3Piston2Glow",
+       96
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "LavaPumpT5U5Fountain",
+       320
+      ],
+      [
+       "LavaPumpT5U5GlowRocks",
+       120
+      ],
+      [
+       "LavaPumpT5U5GlowRocksGlow",
+       120
+      ],
+      [
+       "LavaPumpT5U5NamePlate",
+       344
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "LavaPumpT5FxSteam1Glow",
+     60
+    ],
+    [
+     "LavaPumpT5FxSteam2Glow",
+     60
+    ],
+    [
+     "LavaPumpT5FxHit",
+     60
+    ],
+    [
+     "LavaPumpT5FxHitGlow",
+     420
+    ],
+    [
+     "LavaPumpT5FxFountainGlow",
+     1180
+    ],
+    [
+     "LavaPumpT5FxTrailGlow",
+     120
+    ],
+    [
+     "LavaPumpT5FxSparklesGlow",
+     80
+    ]
+   ],
+   "size": [
+    11.8,
+    12.16,
+    11.81
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -3.5,
+      3.5,
+      -4.5
+     ],
+     "out": [
+      -0.0,
+      -0.447,
+      -0.894
+     ],
+     "up": [
+      -0.0,
+      0.894,
+      -0.447
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      5.0,
+      1.2,
+      -5.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -5.0,
+      1.2,
+      -5.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      2.805,
+      5.4,
+      -0.022
+     ],
+     "out": [
+      0.913,
+      0.183,
+      -0.365
+     ],
+     "up": [
+      -0.17,
+      0.983,
+      0.068
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -2.805,
+      5.4,
+      -0.022
+     ],
+     "out": [
+      -0.913,
+      0.183,
+      -0.365
+     ],
+     "up": [
+      0.17,
+      0.983,
+      0.068
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -0.839,
+      9.33,
+      3.284
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      0.839,
+      9.33,
+      3.284
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -3.5,
+      0.3,
+      -6.5
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -3.5,
+      3.5,
+      -4.5
+     ],
+     "out": [
+      -0.0,
+      -0.447,
+      -0.894
+     ],
+     "up": [
+      -0.0,
+      0.894,
+      -0.447
+     ]
+    },
+    "Fountain": {
+     "position": [
+      -0.0,
+      9.95,
+      0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Crown": {
+     "position": [
+      -0.0,
+      10.5,
+      0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Eyes": {
+     "position": [
+      -0.0,
+      7.25,
+      -1.668
+     ],
+     "out": [
+      -0.0,
+      0.184,
+      -0.983
+     ],
+     "up": [
+      0.0,
+      0.983,
+      0.184
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.45,
+      -5.85
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      1.2,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      12.05,
+      0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "HoseA": {
+     "position": [
+      -3.844,
+      3.422,
+      -1.915
+     ],
+     "out": [
+      -0.679,
+      -0.091,
+      -0.729
+     ],
+     "up": [
+      -0.062,
+      0.996,
+      -0.067
+     ]
+    },
+    "HoseB": {
+     "position": [
+      -4.494,
+      3.521,
+      -3.177
+     ],
+     "out": [
+      0.613,
+      0.547,
+      -0.57
+     ],
+     "up": [
+      -0.401,
+      0.837,
+      0.373
+     ]
+    },
+    "HoseC": {
+     "position": [
+      -3.43,
+      4.119,
+      -3.834
+     ],
+     "out": [
+      0.245,
+      -0.44,
+      -0.864
+     ],
+     "up": [
+      0.12,
+      0.898,
+      -0.424
+     ]
+    }
+   }
+  }
+ ]
+}
