@@ -1,6 +1,6 @@
 -- The Rebirth screen (docs/GAME_DESIGN.md, "Rebirth" and "Screens"): the Frost Cores you'd earn (and the
 -- bonus they give), what resets and what's kept, the next rank and what it opens (pet slot, layer), and
--- REBIRTH. The button lights up at Layer 3 (level 21). The server does the rebirth (RebirthRequest).
+-- REBIRTH. The button lights up at Layer 4 (level 31). The server does the rebirth (RebirthRequest).
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 

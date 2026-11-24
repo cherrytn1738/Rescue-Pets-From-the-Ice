@@ -4,7 +4,7 @@ UpgradeConfig, CreatureConfig, RebirthConfig) and the real rules (EconomyRules, 
 PetRules), and checks the design doc's targets (docs/GAME_DESIGN.md, "Economy"):
   - the first building within 30 s
   - the first rescue within 60 s
-  - the first rebirth after about 45-60 minutes
+  - the first rebirth after about 30-40 minutes (reaching Layer 4, level RebirthConfig.RequiredLevel)
 Run: python tools/economy_sim.py  (Studio open in Edit mode, like the spec runner)
 
 The simulated player:
@@ -13,7 +13,7 @@ The simulated player:
     afford it), as soon as it can afford it. "Income" counts the dead time while the sled brings the
     next block and the rescue fountain, so Fast Sled and Bigger Burst are valued too;
   - keeps every rescued pet, equips the best ones it has slots for, and combines 5 into a Golden;
-  - rebirths when it can (level 21) and the rebirth earns at least `rebirthCores` Frost Cores.
+  - (the report notes when the rebirth level is reached and how many Frost Cores it would earn).
 Pet rolls use a fixed seed, so a run repeats exactly.
 ]]
 return function(sources)
@@ -242,12 +242,6 @@ return function(sources)
 		{ name = "Normal (4 taps/s)", taps = 4, minutes = 120 },
 		{ name = "Fast (7 taps/s)", taps = 7, minutes = 120 },
 		{ name = "Capped (20 taps/s)", taps = 20, minutes = 120 },
-		-- what-if: the block HP growth (LayerConfig.Block.HpGrowth, the doc's 1.5) at the normal pace
-		{ name = "WHAT-IF HpGrowth 1.6, normal (4 taps/s)", taps = 4, minutes = 120, hpGrowth = 1.6 },
-		{ name = "WHAT-IF HpGrowth 1.65, normal (4 taps/s)", taps = 4, minutes = 120, hpGrowth = 1.65 },
-		{ name = "WHAT-IF HpGrowth 1.7, normal (4 taps/s)", taps = 4, minutes = 120, hpGrowth = 1.7 },
-		{ name = "WHAT-IF HpGrowth 1.65, relaxed (2 taps/s)", taps = 2, minutes = 120, hpGrowth = 1.65 },
-		{ name = "WHAT-IF HpGrowth 1.65, fast (7 taps/s)", taps = 7, minutes = 120, hpGrowth = 1.65 },
 	}
 	for _, scenario in scenarios do
 		local log = run(scenario)
@@ -272,7 +266,7 @@ return function(sources)
 			end
 		end
 		say("rescue pace (target 1-3 min): " .. table.concat(pace, ", "))
-		say(`rebirth unlocked (level {RebirthConfig.RequiredLevel}) {mmss(log.levelAt[RebirthConfig.RequiredLevel])}; worth 1 Frost Core {mmss(log.coresAt[1])}, 2 cores {mmss(log.coresAt[2])}, 3 cores {mmss(log.coresAt[3])}, 5 cores {mmss(log.coresAt[5])} (target: first rebirth 45-60 min)`)
+		say(`rebirth unlocked (level {RebirthConfig.RequiredLevel}) {mmss(log.levelAt[RebirthConfig.RequiredLevel])}; worth 1 Frost Core {mmss(log.coresAt[1])}, 2 cores {mmss(log.coresAt[2])}, 3 cores {mmss(log.coresAt[3])}, 5 cores {mmss(log.coresAt[5])} (target: first rebirth 30-40 min)`)
 		local owned = {}
 		for _, building in BuildingConfig.Buildings do
 			if data.Buildings[building.Id] then

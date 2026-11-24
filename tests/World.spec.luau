@@ -53,7 +53,7 @@ return function(sources)
 
 	local function save(overrides)
 		local data = {
-			Crystals = 1234, CrystalsThisRun = 8_000_000, CrystalsAllTime = 9e9, BlockLevel = 21,
+			Crystals = 1234, CrystalsThisRun = 8_000_000, CrystalsAllTime = 9e9, BlockLevel = 31,
 			CurrentBlock = { CreatureId = "SnowBunny", HpLeft = 5 }, Buildings = { IcePickPost = 40 }, Upgrades = { "IcePick2" },
 			Pets = { { Uid = "a", CreatureId = "SnowBunny", Golden = false } }, Equipped = { "a" }, BookSeen = { SnowBunny = 3 },
 			BookGolden = {}, FrostCores = 1, Rebirths = 0, MaxLayerOpened = 5, CreaturesRescued = 3, TutorialStep = 1,
@@ -68,9 +68,9 @@ return function(sources)
 	local Rebirth = loadServer("RebirthService", {
 		Analytics = {}, IceBlockService = {}, PetService = {}, PlayerData = {}, PlotService = {},
 	})
-	local data = save({ BlockLevel = 20 })
+	local data = save({ BlockLevel = 30 })
 	local cores, reason = Rebirth.Apply(data)
-	check(cores == nil and string.find(reason, "21", 1, true), "a rebirth needs level 21 (Layer 3)")
+	check(cores == nil and string.find(reason, "31", 1, true), "a rebirth needs level 31 (Layer 4)")
 	check(data.Crystals == 1234 and data.Buildings.IcePickPost == 40, "...and a refused rebirth changes nothing")
 	data = save()
 	cores = Rebirth.Apply(data)

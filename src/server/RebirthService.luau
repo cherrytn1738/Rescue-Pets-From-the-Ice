@@ -2,7 +2,7 @@
 RebirthService: rebirths and ranks (docs/GAME_DESIGN.md, "Rebirth"). Server only.
 
  - RebirthRequest (RemoteFunction): ("Rebirth") -> { ok, message, cores }. Needs block level
-   RebirthConfig.RequiredLevel (Layer 3). Grants Frost Cores = FrostCoresFor(crystals this run), resets
+   RebirthConfig.RequiredLevel (Layer 4). Grants Frost Cores = FrostCoresFor(crystals this run), resets
    RebirthConfig.ResetOnRebirth (crystals, buildings, upgrades, the block level and block) and keeps the
    rest (pets, the book, Frost Cores, rank, Robux items). Rebirth ranks open pet slots (PetService) and
    layers (MaxLayerOpened). A rebirth worth 0 Frost Cores is allowed; the Rebirth screen warns first.
@@ -40,7 +40,7 @@ end
 -- or nil and a reason.
 function RebirthService.Apply(data)
 	if data.BlockLevel < RebirthConfig.RequiredLevel then
-		return nil, `Reach level {RebirthConfig.RequiredLevel} (Layer 3: Ancient Ice) to rebirth.`
+		return nil, `Reach level {RebirthConfig.RequiredLevel} (Layer 4: Crystal Ice) to rebirth.`
 	end
 	local cores = RebirthConfig.FrostCoresFor(data.CrystalsThisRun)
 	for _, field in RebirthConfig.ResetOnRebirth do

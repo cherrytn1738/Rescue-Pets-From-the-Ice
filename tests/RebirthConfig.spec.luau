@@ -23,8 +23,8 @@ return function(sources)
 
 	-- When.
 	local layer, level = string.match(text, "once the player reaches Layer (%d+) %(%a+ %a+, level (%d+)%)")
-	check(tonumber(level) == RebirthConfig.RequiredLevel, "rebirth needs level 21")
-	check(LayerConfig.Layers[tonumber(layer)].MinLevel == RebirthConfig.RequiredLevel, "...the first level of Layer 3")
+	check(tonumber(level) == RebirthConfig.RequiredLevel, "rebirth needs level 31")
+	check(LayerConfig.Layers[tonumber(layer)].MinLevel == RebirthConfig.RequiredLevel, "...the first level of Layer 4")
 
 	-- Ranks.
 	local ranks = doc:Table({ "Rank", "Title", "Name-tag and border colour", "Opens" })

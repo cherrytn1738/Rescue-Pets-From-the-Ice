@@ -2,7 +2,7 @@
 RebirthConfig: rebirths, Frost Cores and rebirth ranks (docs/GAME_DESIGN.md, "Rebirth" and "Pets").
 Starting values for the economy simulation.
 
- * A rebirth needs block level RequiredLevel (Layer 3, Ancient Ice). It resets the run and grants
+ * A rebirth needs block level RequiredLevel (Layer 4, Crystal Ice). It resets the run and grants
    Frost Cores = floor(cube root(crystals earned this run / CrystalsPerCoreUnit)); each Frost Core adds
    FrostCoreBonus (+5%) crystals forever.
  * Ranks[n]: Rank (the rebirth count that reaches it), Title, Colour (name tag and plot border),
@@ -13,7 +13,7 @@ Starting values for the economy simulation.
 ]]
 local RebirthConfig = {}
 
-RebirthConfig.RequiredLevel = 21
+RebirthConfig.RequiredLevel = 31
 RebirthConfig.FrostCoreBonus = 0.05
 RebirthConfig.CrystalsPerCoreUnit = 1_000_000
 

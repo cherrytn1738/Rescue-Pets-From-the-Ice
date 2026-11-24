@@ -36,7 +36,7 @@ Tapping the ice earns crystals, crystals build machines that crack it faster, an
 
 &#91;embedded content: core loop · tap, earn, build, hatch, rebirth\]
 
-The short loop (tap, crystals, buildings) runs every few seconds; a rescue lands every 1–3 minutes; rebirth comes after about 45–60 minutes and restarts the run with a permanent bonus.
+The short loop (tap, crystals, buildings) runs every few seconds; a rescue lands every 1–3 minutes; rebirth comes after about 30–40 minutes and restarts the run with a permanent bonus.
 
 ## Glacier depth: how players progress
 
@@ -131,7 +131,7 @@ Crystals come from damage: every point of damage on the ice drops one crystal, t
 - **Building upgrades:** double one building's damage and give it better parts. They unlock at 1, 10, 25, 50 and 100 owned.
 - **Ice upgrades:** a bigger crystal burst on each rescue, and a little more crystals per damage.
 
-All numbers are starting values. The economy simulation should hit three targets: the first rescue within 60 seconds, the first building within 30 seconds, and the first rebirth after about 45–60 minutes.
+All numbers are starting values. The economy simulation should hit three targets: the first rescue within 60 seconds, the first building within 30 seconds, and the first rebirth after about 30–40 minutes (reaching Layer 4).
 
 ## Buildings in detail
 
@@ -385,7 +385,7 @@ A rebirth resets the run in exchange for Frost Cores, which add 5% crystals each
 | --- | --- |
 | Crystals, buildings, upgrades, block level | Pets, Frost Cores, rebirth rank, Robux items |
 
-**When:** the Rebirth button lights up once the player reaches Layer 3 (Ancient Ice, level 21). Rebirthing sends them back to level 1, but Frost Cores make every block go faster, so they pass their old depth quickly.
+**When:** the Rebirth button lights up once the player reaches Layer 4 (Crystal Ice, level 31). Rebirthing sends them back to level 1, but Frost Cores make every block go faster, so they pass their old depth quickly.
 
 **Rebirth ranks open deeper layers:**
 
