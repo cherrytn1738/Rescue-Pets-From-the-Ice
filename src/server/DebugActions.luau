@@ -23,6 +23,7 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
 local CodeService = require(script.Parent.CodeService)
+local GoldenGlacierService = require(script.Parent.GoldenGlacierService)
 local IceBlockService = require(script.Parent.IceBlockService)
 local PetService = require(script.Parent.PetService)
 local PlotService = require(script.Parent.PlotService)
@@ -34,6 +35,8 @@ local Receipts = require(script.Parent.Receipts)
 local AnalyticsConfig = require(ReplicatedStorage.AnalyticsConfig)
 local AnalyticsRules = require(ReplicatedStorage.AnalyticsRules)
 local CreatureConfig = require(ReplicatedStorage.CreatureConfig)
+local LayerConfig = require(ReplicatedStorage.LayerConfig)
+local RebirthConfig = require(ReplicatedStorage.RebirthConfig)
 local MonetizationConfig = require(ReplicatedStorage.MonetizationConfig)
 
 local NONE = "__none" -- the placeholder choice of an empty list
@@ -216,6 +219,38 @@ local ACTIONS = {
 				fail("Couldn't give it (inventory full?)")
 			end
 			return `{target.Name} got a {if args.Golden == "On" then "Golden " else ""}{args.Creature}`
+		end,
+	},
+	{
+		Id = "SpawnGolden", Group = "Ice block", Label = "Drop a Golden Glacier in the plaza now", NoTarget = true,
+		Run = function()
+			if not GoldenGlacierService.SpawnNow() then
+				fail("A Golden Glacier is already falling or standing")
+			end
+			return "A Golden Glacier is on its way"
+		end,
+	},
+	{
+		Id = "AddFrostCores", Group = "Ice block", Label = "Add Frost Cores",
+		Params = { amountParam("Amount", "Frost Cores", 1, 1000, 5) },
+		Run = function(target, args)
+			local data = dataOf(target)
+			data.FrostCores += args.Amount
+			PlayerData.Publish(target)
+			PlayerData.MarkImportant(target)
+			return `{target.Name} has {data.FrostCores} Frost Cores`
+		end,
+	},
+	{
+		Id = "SetRebirths", Group = "Ice block", Label = "Set rebirths (rank, slots, layers)",
+		Params = { amountParam("Rebirths", "Rebirths", 0, 100, 3) },
+		Run = function(target, args)
+			local data = dataOf(target)
+			data.Rebirths = args.Rebirths
+			data.MaxLayerOpened = math.max(data.MaxLayerOpened, RebirthConfig.MaxLayerFor(args.Rebirths, LayerConfig.FloorLayer, #LayerConfig.Layers))
+			PetService.Publish(target, data)
+			PlayerData.MarkImportant(target)
+			return `{target.Name} has {args.Rebirths} rebirths`
 		end,
 	},
 	{

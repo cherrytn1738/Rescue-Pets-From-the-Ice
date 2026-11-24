@@ -19,7 +19,12 @@ Example:
 	{ Code = "RELEASE", Reward = { Kind = "<kind>", Amount = 100 }, Active = true, Expires = "2027-01-31" },
 ]]
 return {
-	Codes = {},
+	-- Our picks (the doc asks for a launch code and a tutorial-completion code; names and amounts are
+	-- starting values). Crystals rewards are registered by Economy.
+	Codes = {
+		{ Code = "THAWED", Reward = { Kind = "Crystals", Amount = 250 }, Active = true }, -- shown when the tutorial is done
+		{ Code = "ICELAUNCH", Reward = { Kind = "Crystals", Amount = 500 }, Active = true }, -- the launch code
+	},
 
 	-- Attempts per player: at least MinSeconds apart, and at most PerMinute in any minute (stops
 	-- guessing codes by trying thousands).

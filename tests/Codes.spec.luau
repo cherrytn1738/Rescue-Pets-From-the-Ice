@@ -111,7 +111,10 @@ return function(sources)
 	end
 	load("CodeRules")
 	local CodesConfig = load("CodesConfig")
-	check(type(CodesConfig.Codes) == "table" and #CodesConfig.Codes == 0, "CodesConfig ships with no codes")
+	check(type(CodesConfig.Codes) == "table" and #CodesConfig.Codes == 2, "CodesConfig ships with the tutorial and launch codes")
+	for _, entry in CodesConfig.Codes do
+		check(entry.Reward.Kind == "Crystals" and entry.Reward.Amount > 0 and entry.Active, `{entry.Code} gives crystals`)
+	end
 	check(CodesConfig.RateLimit.MinSeconds == 1 and CodesConfig.RateLimit.PerMinute == 6, "the rate limit: 1 s apart, 6 a minute")
 	check(pcall(modules.CodeRules.Validate, CodesConfig), "the shipped list is valid")
 	-- Test-only codes, added before CodeService checks the list.

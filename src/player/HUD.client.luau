@@ -1,4 +1,4 @@
--- The HUD: the menu buttons down the left edge (BUILD, UPGRADES, PETS, BOOK, SHOP, CODES) and the crystal counter.
+-- The HUD: the menu buttons down the left edge (BUILD, UPGRADES, PETS, BOOK, REBIRTH, HOME, SHOP, CODES), the settings gear and the crystal counter.
 --
 --   Menu (left edge): a grid of big square buttons, two to a row: SHOP (the Robux shop) and CODES.
 --     Each window finds its button by name (UIKit.MenuButton("Shop") finds "ShopButton") and opens
@@ -27,8 +27,10 @@ local MENU = {
 	{ Name = "Upgrades", Icon = "Upgrades", Text = "UPGRADES", Palette = "Green" },
 	{ Name = "Pets", Icon = "Pets", Text = "PETS", Palette = "Pink" },
 	{ Name = "Book", Icon = "Book", Text = "BOOK", Palette = "Teal" },
+	{ Name = "Rebirth", Icon = "Rebirth", Text = "REBIRTH", Palette = "Purple" },
+	{ Name = "Home", Icon = "Home", Text = "HOME", Palette = "Ice" },
 	{ Name = "Shop", Icon = "Shop", Text = "SHOP", Palette = "Glacier" },
-	{ Name = "Codes", Icon = "Codes", Text = "CODES", Palette = "Purple" },
+	{ Name = "Codes", Icon = "Codes", Text = "CODES", Palette = "Slate" },
 }
 local Icons = UIKit.Theme.Icons
 
@@ -88,6 +90,30 @@ rateLabel.Position = UDim2.fromOffset(0, 62)
 rateLabel.Size = UDim2.new(1, 0, 0, 34)
 rateLabel.TextXAlignment = Enum.TextXAlignment.Center
 
+-- The level and layer badge, and the Frost Rush timer while one runs.
+local badge = UIKit.Label(counter, "Badge", "", 24, UIKit.Colors.Muted)
+badge.Position = UDim2.fromOffset(0, 96)
+badge.Size = UDim2.new(1, 0, 0, 28)
+badge.TextXAlignment = Enum.TextXAlignment.Center
+local rush = UIKit.Label(counter, "FrostRush", "", 28, Color3.fromRGB(140, 230, 255))
+rush.Position = UDim2.fromOffset(0, 124)
+rush.Size = UDim2.new(1, 0, 0, 32)
+rush.TextXAlignment = Enum.TextXAlignment.Center
+counter.Size = UDim2.fromOffset(420, 160)
+local LayerConfig = require(ReplicatedStorage.LayerConfig)
+local Workspace = game:GetService("Workspace")
+
+-- The settings gear, top right of the counter.
+local gear = UIKit.Button(root, "SettingsButton", "⚙", "Frost", 34)
+gear.AnchorPoint = Vector2.new(1, 0)
+gear.Position = UDim2.new(1, -12, 0, 6)
+gear.Size = UDim2.fromOffset(58, 58)
+local gearScale = Instance.new("UIScale")
+gearScale.Parent = gear
+
+-- HOME: back to your plot (the server moves you: GoHome).
+local goHome = ReplicatedStorage:WaitForChild("GoHome") :: RemoteEvent
+
 local shown = nil
 RunService.RenderStepped:Connect(function(dt)
 	local target = localPlayer:GetAttribute("Crystals")
@@ -103,6 +129,21 @@ RunService.RenderStepped:Connect(function(dt)
 	end
 	crystalsLabel.Text = "💎 " .. NumberFormat.Short(shown)
 	rateLabel.Text = "+" .. NumberFormat.Rate(rate) .. "/s"
+	local level = localPlayer:GetAttribute("BlockLevel") or 1
+	local index = localPlayer:GetAttribute("PlotIndex")
+	local plot = index and Workspace:FindFirstChild("Plots") and Workspace.Plots:FindFirstChild("Plot" .. index)
+	local layer = LayerConfig.Get(plot and plot.Block:GetAttribute("Layer") or 1)
+	badge.Text = `Level {level} · {layer and layer.Name or ""}`
+	local endsAt = localPlayer:GetAttribute("FrostRushEndsAt")
+	local left = if type(endsAt) == "number" then endsAt - Workspace:GetServerTimeNow() else 0
+	rush.Visible = left > 0
+	if left > 0 then
+		rush.Text = `❄ FROST RUSH x{localPlayer:GetAttribute("FrostRushMultiplier") or 3}  {math.floor(left // 60)}:{string.format("%02d", math.floor(left % 60))}`
+	end
+end)
+
+grid:WaitForChild("HomeButton").Activated:Connect(function()
+	goHome:FireServer()
 end)
 
 -- Layout ------------------------------------------------------------------------------------------
@@ -111,6 +152,7 @@ local function layout()
 	local scale = UIKit.HudScale()
 	menuScale.Scale = scale
 	counterScale.Scale = scale
+	gearScale.Scale = scale
 	local touch = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
 	if touch or UIKit.IsPretendScreen() then
 		-- Touch: the top left, clear of the thumbstick (bottom left) and the jump button (bottom right).

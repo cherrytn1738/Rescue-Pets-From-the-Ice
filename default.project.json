@@ -37,6 +37,18 @@
       },
       "PetRequest": {
         "$className": "RemoteFunction"
+      },
+      "RebirthRequest": {
+        "$className": "RemoteFunction"
+      },
+      "GoHome": {
+        "$className": "RemoteEvent"
+      },
+      "GoldenTap": {
+        "$className": "RemoteEvent"
+      },
+      "SaveSettings": {
+        "$className": "RemoteEvent"
       }
     },
     "ServerScriptService": {

@@ -23,7 +23,17 @@ local AnalyticsConfig = {}
 --                                         Name: what the Creator Hub chart shows (short, stable).
 -- A step with Key "Joined" is logged by Analytics itself when a player's data loads; the game logs
 -- every other step with Analytics.Onboarding(player, key).
-AnalyticsConfig.Onboarding = {}
+-- The game's first-session funnel (docs/GAME_DESIGN.md, "Technical design": Joined, First tap, First
+-- building, First rescue, First pet equipped, Tutorial done, First rebirth).
+AnalyticsConfig.Onboarding = {
+	{ Key = "Joined", Name = "Joined" },
+	{ Key = "FirstTap", Name = "First tap" },
+	{ Key = "FirstBuilding", Name = "First building" },
+	{ Key = "FirstRescue", Name = "First rescue" },
+	{ Key = "FirstPetEquipped", Name = "First pet equipped" },
+	{ Key = "TutorialDone", Name = "Tutorial done" },
+	{ Key = "FirstRebirth", Name = "First rebirth" },
+}
 
 AnalyticsConfig.Shops = {
 	-- The Robux shop window (SHOP button). Step 2 is a tap on an item's INFO button, or its buy

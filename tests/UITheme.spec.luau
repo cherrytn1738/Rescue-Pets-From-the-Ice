@@ -100,7 +100,7 @@ return function(sources)
 		for id in string.gmatch(text, "rbxassetid://%d+") do
 			check(allowed[id], file .. " uses only allowed images (" .. id .. ")")
 		end
-		for _, word in { "Safari", "Zoodex", "Rebirth", "Steal" } do
+		for _, word in { "Safari", "Zoodex", "Steal" } do -- (rebirths are this game's own too)
 			check(not string.find(text, word), file .. " has no Steal Pets name (" .. word .. ")")
 		end
 	end

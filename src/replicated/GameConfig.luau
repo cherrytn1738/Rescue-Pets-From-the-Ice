@@ -16,4 +16,41 @@ return {
 
 	-- The server tick: building damage, block HP and crystals, this many times a second.
 	TicksPerSecond = 4,
+
+	-- The Golden Glacier rush (docs/GAME_DESIGN.md, "Social and events"): every 5-8 minutes a golden
+	-- block falls into the plaza after a countdown. Everyone who taps it before it breaks gets a Frost
+	-- Rush (x3 crystals for 60 s); whoever tapped it most gets x5. Our starting values: its HP is
+	-- TapsPerPlayer taps for each player in the server, and it melts (no rush) if nobody breaks it in
+	-- ActiveSeconds. Taps count only within Radius studs of it.
+	GoldenGlacier = {
+		MinSeconds = 300,
+		MaxSeconds = 480,
+		CountdownSeconds = 10,
+		ActiveSeconds = 60,
+		TapsPerPlayer = 100,
+		RushSeconds = 60,
+		RushMultiplier = 3,
+		TopMultiplier = 5,
+		Radius = 40,
+	},
+
+	-- The daily crystal chest: once a UTC day, IncomeSeconds of the player's crystals per second (at
+	-- least Minimum). Our starting values; the doc names the chest, not the amount.
+	Daily = { IncomeSeconds = 300, Minimum = 100 },
+
+	-- The group reward: members of the game's group earn +10% crystals.
+	Group = { Id = 921449746, Bonus = 0.10 },
+
+	-- The plaza leaderboards (OrderedDataStore). Crystals are stored as floor(log10(total) * 1000)
+	-- (OrderedDataStore holds whole numbers up to about 9e18); rebirths and rescues as they are. Studio
+	-- uses its own boards. Written and read every RefreshSeconds.
+	Leaderboards = {
+		RefreshSeconds = 120,
+		Top = 10,
+		Boards = {
+			{ Id = "Crystals", Title = "All-time crystals", Field = "CrystalsAllTime", Log = true },
+			{ Id = "Rebirths", Title = "Rebirths", Field = "Rebirths" },
+			{ Id = "Rescued", Title = "Creatures rescued", Field = "CreaturesRescued" },
+		},
+	},
 }

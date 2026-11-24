@@ -79,3 +79,10 @@ box.FocusLost:Connect(function(enterPressed)
 end)
 
 UIKit.MenuButton("Codes").Activated:Connect(window.Toggle)
+
+-- The codes board in the plaza opens it too.
+game:GetService("ProximityPromptService").PromptTriggered:Connect(function(prompt)
+	if prompt.Name == "CodesPrompt" and not window.IsOpen() then
+		window.Open()
+	end
+end)

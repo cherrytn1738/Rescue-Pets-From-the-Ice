@@ -210,10 +210,15 @@ return function(sources)
 		IceBlockService = { Shatter = record("Shatter"), ForceNextCreature = record("ForceNextCreature"), Reroll = record("Reroll") },
 		PetService = { Give = record("Give") },
 		PlotService = { SendHome = record("SendHome") },
+		GoldenGlacierService = { SpawnNow = record("SpawnNow") },
 	}
 	local replicated = {
 		AnalyticsConfig = { Onboarding = {} },
 		CreatureConfig = { Creatures = { { Id = "SnowBunny", Name = "Snow Bunny", Rarity = "Common" } } },
+		LayerConfig = { FloorLayer = 5, Layers = { {}, {}, {}, {}, {}, {} } },
+		RebirthConfig = { MaxLayerFor = function()
+			return 6
+		end },
 		AnalyticsRules = { New = function()
 			return { Onboarding = 0, Waiting = {} }
 		end },
@@ -305,7 +310,7 @@ return function(sources)
 
 	-- Nothing from the old game is left in the menu.
 	local source = string.lower(sources.DebugActions)
-	for _, word in { "zoo", "steal", "rebirth", "trail", "egg", "gear", "zoodex", "tutorial", "safari", "mutation" } do
+	for _, word in { "zoo", "steal", "trail", "egg", "gear", "zoodex", "safari", "mutation" } do -- (rebirths and the tutorial are this game's own too)
 		check(string.find(source, word, 1, true) == nil, `DebugActions doesn't mention "{word}"`)
 	end
 

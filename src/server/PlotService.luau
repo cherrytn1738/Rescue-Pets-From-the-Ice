@@ -146,21 +146,7 @@ function PlotService.Start()
 		plots[index] = buildPlot(index)
 	end
 	Players.PlayerRemoving:Connect(PlotService.Release)
-	-- A player arrives at their plot, in front of the ice, whenever they spawn.
-	local function watch(player: Player)
-		player.CharacterAdded:Connect(function(character)
-			local index = PlotService.IndexOf(player)
-			if index then
-				task.defer(function()
-					character:PivotTo(PlotService.ArrivalCFrame(index))
-				end)
-			end
-		end)
-	end
-	Players.PlayerAdded:Connect(watch)
-	for _, player in Players:GetPlayers() do
-		watch(player)
-	end
+	-- (Players spawn in the plaza; the Home button and the guide line bring them here: PlazaService.)
 end
 
 -- Sends the player's character to their plot.
@@ -189,7 +175,6 @@ function PlotService.Assign(player: Player): number?
 			plot:SetAttribute("OwnerName", player.DisplayName)
 			plot.Sign.OwnerLabel.Text.Text = player.DisplayName .. "'s plot"
 			player:SetAttribute("PlotIndex", index)
-			PlotService.SendHome(player)
 			for _, callback in listeners do
 				task.spawn(callback, player, index)
 			end

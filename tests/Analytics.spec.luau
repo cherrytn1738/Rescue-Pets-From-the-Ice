@@ -17,7 +17,8 @@ return function(sources)
 	local Rules = assert(loadstring(sources.AnalyticsRules))()
 
 	-- The shipped definitions ---------------------------------------------------------------------------
-	check(type(Config.Onboarding) == "table" and #Config.Onboarding == 0, "the onboarding funnel ships empty (the game adds its steps)")
+	check(type(Config.Onboarding) == "table" and #Config.Onboarding == 7 and Config.Onboarding[1].Key == "Joined" and Config.Onboarding[7].Key == "FirstRebirth",
+		"the onboarding funnel has the doc's seven steps, Joined first and First rebirth last")
 	local function shortStableName(name)
 		return type(name) == "string" and #name > 0 and #name <= 24 and string.match(name, "^[%w ]+$") ~= nil
 	end
@@ -234,7 +235,7 @@ return function(sources)
 	Analytics.ShopOpened(ana, "Gear")
 	check(take() == "", "a shop that isn't in the config logs nothing")
 
-	-- The shipped (empty) funnel: the real config loaded into the module logs no onboarding at all.
+	-- The shipped funnel: the real config's first step (Joined) is logged as step 1.
 	services.ReplicatedStorage.AnalyticsConfig = Config
 	local emptyChunk = assert(loadstring(sources.Analytics, "Analytics"))
 	setfenv(emptyChunk, env)
@@ -242,7 +243,9 @@ return function(sources)
 	local cara = newPlayer("Cara")
 	datas[cara] = { Funnels = Rules.New() }
 	EmptyAnalytics.Onboarding(cara, "Joined")
-	check(take() == "" and datas[cara].Funnels.Onboarding == 0, "with the shipped empty funnel, onboarding logs nothing")
+	check(string.find(take(), "onboarding 1 Joined", 1, true) ~= nil and datas[cara].Funnels.Onboarding == 1, "with the shipped funnel, Joined is step 1")
+	EmptyAnalytics.Onboarding(cara, "FirstRebirth")
+	check(datas[cara].Funnels.Onboarding == 1, "...and a later step reached early waits for the ones before it")
 
 	return passed
 end

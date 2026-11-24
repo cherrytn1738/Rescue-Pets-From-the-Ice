@@ -25,6 +25,15 @@ RebirthConfig.Ranks = {
 	{ Rank = 10, Title = "Glacier Legend", Colour = "Rainbow", PetSlot = 4, OpensLayer = 7 },
 }
 
+-- The rank colours as Color3 (name tag and plot border). "Rainbow" cycles on the client.
+RebirthConfig.ColourValues = {
+	["Light blue"] = Color3.fromRGB(150, 215, 255),
+	Teal = Color3.fromRGB(60, 210, 190),
+	Purple = Color3.fromRGB(175, 110, 255),
+	Gold = Color3.fromRGB(255, 205, 60),
+	Rainbow = Color3.fromRGB(255, 120, 200),
+}
+
 -- Saved fields (PlayerData) a rebirth resets, and the ones it keeps.
 RebirthConfig.ResetOnRebirth = { "Crystals", "CrystalsThisRun", "BlockLevel", "CurrentBlock", "Buildings", "Upgrades" }
 RebirthConfig.KeptOnRebirth = { "CrystalsAllTime", "Pets", "Equipped", "BookSeen", "FrostCores", "Rebirths", "MaxLayerOpened", "CreaturesRescued" }

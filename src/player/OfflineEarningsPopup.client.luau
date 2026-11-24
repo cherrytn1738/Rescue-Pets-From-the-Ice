@@ -19,7 +19,7 @@ local icons = UIKit.Theme.Icons or {}
 
 local awayLine, amountLabel, capLine, okButton
 
-local window = ShowcaseKit.Window("OfflineEarningsWindow", "While You Were Away", {
+local window = ShowcaseKit.Window("OfflineEarningsWindow", "Welcome Back!", {
 	cornerIcon = icons.OfflineEarnings, -- (no picture until this game uploads its own icons)
 	width = 600,
 	height = 340,
@@ -41,7 +41,7 @@ amountLabel = UIKit.Label(content, "Amount", "", 80, Colors.Gold)
 amountLabel.TextXAlignment = Enum.TextXAlignment.Center
 capLine = UIKit.Label(content, "Cap", "", 20, Colors.Muted)
 capLine.TextXAlignment = Enum.TextXAlignment.Center
-okButton = UIKit.Button(content, "CollectButton", "NICE!", "Go", 34)
+okButton = UIKit.Button(content, "CollectButton", "COLLECT", "Go", 34)
 okButton.AnchorPoint = Vector2.new(0.5, 0)
 okButton.Activated:Connect(window.Close)
 

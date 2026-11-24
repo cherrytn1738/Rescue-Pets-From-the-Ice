@@ -859,6 +859,12 @@ function PlayerData.TakeLeftAt(player): number?
 	return leftAt
 end
 
+-- A throwaway record (Studio's StudioFreshSave): kept off leaderboards.
+function PlayerData.IsThrowaway(player): boolean
+	local session = sessions[player]
+	return session ~= nil and session.throwaway == true
+end
+
 -- Asks for a save on the next tick (within 5 seconds) instead of the next autosave.
 -- For anything paid for or rare.
 function PlayerData.MarkImportant(player)
