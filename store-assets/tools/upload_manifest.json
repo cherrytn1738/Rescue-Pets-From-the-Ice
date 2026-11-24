@@ -1,0 +1,61 @@
+{
+ "assets": {
+  "fbx/IcePick_T1.fbx": {
+   "assetId": "87084297887291",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "d57e905b1a535248b3936b9ec5f0f2722b908dff67f0fa87bae01c738f45ce28",
+   "updated": "2026-11-24T22:26:58+00:00"
+  },
+  "fbx/IcePick_T2.fbx": {
+   "assetId": "90204611101082",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "378666b3c95f1f9ca9ac000913388460ace7d87839e7123eb03086da0f9843a0",
+   "updated": "2026-11-24T22:45:13+00:00"
+  },
+  "fbx/IcePick_T3.fbx": {
+   "assetId": "114047905090497",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "4caee1f78e81f8ceff56bc36bcf476877d0a1e8d2cabcb4a2657787ecfc3b253",
+   "updated": "2026-11-24T22:45:20+00:00"
+  },
+  "fbx/IcePick_T4.fbx": {
+   "assetId": "112470666170458",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "c6a21c59ae5779ca9b758239fad9164992a517867db696a915f01ed82e249df4",
+   "updated": "2026-11-24T22:45:34+00:00"
+  },
+  "fbx/IcePick_T5.fbx": {
+   "assetId": "96755604294244",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "1cd6a6b89498b14250d61daa342a6e9d224dd42bfe2d6753a32dff9aaa49a31a",
+   "updated": "2026-11-24T22:45:42+00:00"
+  },
+  "fbx/IcePick_T6.fbx": {
+   "assetId": "94519841510459",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "247677059c1a2afec5780bdd84b5d88ab085652306432421ac396906bdbf7523",
+   "updated": "2026-11-24T22:45:55+00:00"
+  }
+ },
+ "creator": {
+  "groupId": "921449746"
+ }
+}

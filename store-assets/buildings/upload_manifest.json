@@ -1,0 +1,727 @@
+{
+ "assets": {
+  "ChiselMill/fbx/ChiselMill_T1.fbx": {
+   "assetId": "135392558506143",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "b2e67ce5961faecb86c9a8c4c21624c854a0569cd5d09e44202d00694aeb142a",
+   "updated": "2026-11-24T22:28:43+00:00"
+  },
+  "ChiselMill/fbx/ChiselMill_T1_Upgrades.fbx": {
+   "assetId": "80676198756740",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "64e42f0360335174bfddcc7a51c95c678348b60b0d1de2caab7755efbb34ade5",
+   "updated": "2026-11-24T22:28:51+00:00"
+  },
+  "ChiselMill/fbx/ChiselMill_T2.fbx": {
+   "assetId": "120400967343405",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "9c89c1ceb020cd4cb8ae508d53001ed74482c37cae90d5e0faa975c5597ccd53",
+   "updated": "2026-11-24T22:29:12+00:00"
+  },
+  "ChiselMill/fbx/ChiselMill_T2_Upgrades.fbx": {
+   "assetId": "111527230887389",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "158433922eee144942d8b6362db0825d3b8a66e7a81f93c64ef4e1bfbbc9fb09",
+   "updated": "2026-11-24T22:29:25+00:00"
+  },
+  "ChiselMill/fbx/ChiselMill_T3.fbx": {
+   "assetId": "82610528467020",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "4b0d5bb768b4abfd63ed64ab408cde823e72faee947c3a16df53852f24b12dcc",
+   "updated": "2026-11-24T22:29:38+00:00"
+  },
+  "ChiselMill/fbx/ChiselMill_T3_Upgrades.fbx": {
+   "assetId": "94372618778038",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "5b79757ce935b4d33706483f20c9d2fe57c9f9d69fe02e99b76091e37588f661",
+   "updated": "2026-11-24T22:29:51+00:00"
+  },
+  "ChiselMill/fbx/ChiselMill_T4.fbx": {
+   "assetId": "77932623085718",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "50b407c9d8211de4a054b91d2c359deea25a3468b3367f29ea2e8cb59a77ede9",
+   "updated": "2026-11-24T22:30:04+00:00"
+  },
+  "ChiselMill/fbx/ChiselMill_T4_Upgrades.fbx": {
+   "assetId": "81949156069452",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "767b20becd1a1bbafeb3b67df11e760e136a6cba2a9c65cfb403255fcf774cee",
+   "updated": "2026-11-24T22:30:12+00:00"
+  },
+  "ChiselMill/fbx/ChiselMill_T5.fbx": {
+   "assetId": "85139651837415",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "fe2296db303e752fa488e37a58b0f0e3fcfddd8c9c17b87863a1b84974be7c7e",
+   "updated": "2026-11-24T22:30:26+00:00"
+  },
+  "ChiselMill/fbx/ChiselMill_T5_Upgrades.fbx": {
+   "assetId": "140592689856744",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "0974b9099c780ad409f8ad490f6c49b6b46f4574c375ad1597326c3eaa5157a3",
+   "updated": "2026-11-24T22:30:34+00:00"
+  },
+  "FlamethrowerTurret/fbx/FlamethrowerTurret_T1.fbx": {
+   "assetId": "133011827609063",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "4f7f81583f94e140a406acde2d83522a4c92c2443eb4ac9dbbd7203d6844c475",
+   "updated": "2026-11-24T22:30:47+00:00"
+  },
+  "FlamethrowerTurret/fbx/FlamethrowerTurret_T1_Upgrades.fbx": {
+   "assetId": "90988173580184",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "cf1e3b1e0e587cabdedff5c361ca53c269ce18d535e5591119a1e2ae718b3acf",
+   "updated": "2026-11-24T22:31:08+00:00"
+  },
+  "FlamethrowerTurret/fbx/FlamethrowerTurret_T2.fbx": {
+   "assetId": "70729663569961",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "e00567948ffb8d9b09eb5e652a8d786e9335f054c17f02058999fc7c0fed5960",
+   "updated": "2026-11-24T22:31:16+00:00"
+  },
+  "FlamethrowerTurret/fbx/FlamethrowerTurret_T2_Upgrades.fbx": {
+   "assetId": "107291351120563",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "28b3a1c2edbcc96c523d7289eaacd3d1cd6fdfb162a38f1229a419bfcdec2793",
+   "updated": "2026-11-24T22:31:29+00:00"
+  },
+  "FlamethrowerTurret/fbx/FlamethrowerTurret_T3.fbx": {
+   "assetId": "111242108392811",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "3f07d4213846b6e169e7efe6a162a518f0584581d43232e28440f3468642d16a",
+   "updated": "2026-11-24T22:31:37+00:00"
+  },
+  "FlamethrowerTurret/fbx/FlamethrowerTurret_T3_Upgrades.fbx": {
+   "assetId": "105706881323498",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "8e17bb4d4872bde2ad39ed54bf345eacf30534e5d22206c6ba120ad9fa7060bb",
+   "updated": "2026-11-24T22:31:50+00:00"
+  },
+  "FlamethrowerTurret/fbx/FlamethrowerTurret_T4.fbx": {
+   "assetId": "86330654007601",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "e187987eaebe4c9efcde1f46f3820d463a6331216d2b69a1c2b29cf80c5d84d1",
+   "updated": "2026-11-24T22:32:11+00:00"
+  },
+  "FlamethrowerTurret/fbx/FlamethrowerTurret_T4_Upgrades.fbx": {
+   "assetId": "139915947654545",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "2c0dcdee6cb8cafc3731fe7561411cca01c950fe2f90d23c14e90c58949f13b0",
+   "updated": "2026-11-24T22:32:32+00:00"
+  },
+  "FlamethrowerTurret/fbx/FlamethrowerTurret_T5.fbx": {
+   "assetId": "140600294171747",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "f0760844b7566c134a138e34dc91bac891da732cfca84f66f99b15d60bc097b5",
+   "updated": "2026-11-24T22:32:53+00:00"
+  },
+  "FlamethrowerTurret/fbx/FlamethrowerTurret_T5_Upgrades.fbx": {
+   "assetId": "91566409512525",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "6c871ad961dc73af055717e060fb4c6f0ec3d0066a778c9c22f7d13e5dc1e845",
+   "updated": "2026-11-24T22:33:06+00:00"
+  },
+  "HeatLamp/fbx/HeatLamp_T1.fbx": {
+   "assetId": "86787464860708",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "0a9f77142802178ca24ddb9fd7ed14d717e1bbf97b6879ef4e8d5a5684ff7b88",
+   "updated": "2026-11-24T22:33:27+00:00"
+  },
+  "HeatLamp/fbx/HeatLamp_T1_Upgrades.fbx": {
+   "assetId": "139550006584555",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "37373574be76f2791c64ac5404b23965ad03f82ea6af196dfdd14100b4d777b6",
+   "updated": "2026-11-24T22:33:35+00:00"
+  },
+  "HeatLamp/fbx/HeatLamp_T2.fbx": {
+   "assetId": "111238569328139",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "c49d8751436f9011de9023d211dd1bfad282143f15141cea882c3f8fafd2d966",
+   "updated": "2026-11-24T22:33:43+00:00"
+  },
+  "HeatLamp/fbx/HeatLamp_T2_Upgrades.fbx": {
+   "assetId": "79857558955957",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "1bfd7d013cc61a5cf7096aefc51f4e69cd5162f19c49da02932824acbdc5fa72",
+   "updated": "2026-11-24T22:33:51+00:00"
+  },
+  "HeatLamp/fbx/HeatLamp_T3.fbx": {
+   "assetId": "137667280382875",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "e5b0a2a8572a736598708aaf467b3fb6f914f86f0c90b83bea18f3211db59f66",
+   "updated": "2026-11-24T22:34:05+00:00"
+  },
+  "HeatLamp/fbx/HeatLamp_T3_Upgrades.fbx": {
+   "assetId": "76221623316515",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "eb4d6846720bb61e884e50732e5271870e86de531d11b4edbb4fa215fb7730f4",
+   "updated": "2026-11-24T22:34:18+00:00"
+  },
+  "HeatLamp/fbx/HeatLamp_T4.fbx": {
+   "assetId": "121513466169438",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "ec026a7acbf21bbb005449c26fc8a7cbcb3f0e3a8a8e6c21b235c8b4341cb32a",
+   "updated": "2026-11-24T22:34:31+00:00"
+  },
+  "HeatLamp/fbx/HeatLamp_T4_Upgrades.fbx": {
+   "assetId": "111859352816185",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "a5a1a8252936b92e4a295e090b6b72f8baf9e40fedc4e8051378b6c7c213b9aa",
+   "updated": "2026-11-24T22:34:39+00:00"
+  },
+  "HeatLamp/fbx/HeatLamp_T5.fbx": {
+   "assetId": "97691136201624",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "42935637fb8b5cd8cbaf8c9272d7e7fb946507c0cc6ea45a1fbc6c977cb85c2c",
+   "updated": "2026-11-24T22:34:52+00:00"
+  },
+  "HeatLamp/fbx/HeatLamp_T5_Upgrades.fbx": {
+   "assetId": "135197624012834",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "593e9ba0e80c4bb296570ac80f6d872b29d3490dfc0fa88345581508b28dd9ad",
+   "updated": "2026-11-24T22:35:13+00:00"
+  },
+  "IceDrill/fbx/IceDrill_T1.fbx": {
+   "assetId": "80928276350038",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "fbe7d1f51395079dc79e3878d9d9b7f15abf67a226176a7c390a93cb34651453",
+   "updated": "2026-11-24T22:35:21+00:00"
+  },
+  "IceDrill/fbx/IceDrill_T1_Upgrades.fbx": {
+   "assetId": "95959372926361",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "4caf8f643e68e75ea521e12eaf0a0971c0977215a238849f71e738e213efaf4f",
+   "updated": "2026-11-24T22:35:29+00:00"
+  },
+  "IceDrill/fbx/IceDrill_T2.fbx": {
+   "assetId": "82439275780942",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "c47e544a05eb87927ceb80fc6226e0dd779d45630594c50ba0d0066ed09eff6e",
+   "updated": "2026-11-24T22:35:37+00:00"
+  },
+  "IceDrill/fbx/IceDrill_T2_Upgrades.fbx": {
+   "assetId": "106372249663018",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "204f8d58a2ae070ab167399d0728905bef76c70433af11b41758f2547c68b3e7",
+   "updated": "2026-11-24T22:35:58+00:00"
+  },
+  "IceDrill/fbx/IceDrill_T3.fbx": {
+   "assetId": "131509833064424",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "623dfe39205b7fbf0133656e72149d825eeaee96449b33b6efcc8b363e53441a",
+   "updated": "2026-11-24T22:36:19+00:00"
+  },
+  "IceDrill/fbx/IceDrill_T3_Upgrades.fbx": {
+   "assetId": "98501632381123",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "a13c1ca9b3d3de724c734dc11415bed1f2991766e28c438fa9820b9bb7e29bb1",
+   "updated": "2026-11-24T22:36:33+00:00"
+  },
+  "IceDrill/fbx/IceDrill_T4.fbx": {
+   "assetId": "95871138349581",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "107e7f15004a861aa371dc046551904d1b9cb8880a8135c7dc02196b2813bc3e",
+   "updated": "2026-11-24T22:36:46+00:00"
+  },
+  "IceDrill/fbx/IceDrill_T4_Upgrades.fbx": {
+   "assetId": "120633697314226",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "44295f407b4992406ae830f94fe84fa460dc2406c169887b1d5e10ace0c44070",
+   "updated": "2026-11-24T22:36:50+00:00"
+  },
+  "IceDrill/fbx/IceDrill_T5.fbx": {
+   "assetId": "86240502280893",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "83bb033b08048c46f024391c836da7ee03f667c0f2fc8be4c019b7cd8b8e3a80",
+   "updated": "2026-11-24T22:37:11+00:00"
+  },
+  "IceDrill/fbx/IceDrill_T5_Upgrades.fbx": {
+   "assetId": "72501282093143",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "0d4ae786be88d8882d18b5ac8448c50615c38ff4e488d9f960f47fbc0dbbcabb",
+   "updated": "2026-11-24T22:37:19+00:00"
+  },
+  "IcePickPost/fbx/IcePickPost_T1.fbx": {
+   "assetId": "77896942639386",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "8bdb2d44c3a36bf84e74b105d7932f2be5f8c7168485c2e4bd2b67ae70e145f2",
+   "updated": "2026-11-24T22:27:03+00:00"
+  },
+  "IcePickPost/fbx/IcePickPost_T1_Upgrades.fbx": {
+   "assetId": "73332373382120",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "da26402db7dc7b8e3acb65d16b298d9731cef4618e3a268415aed8a4346fbca3",
+   "updated": "2026-11-24T22:37:27+00:00"
+  },
+  "IcePickPost/fbx/IcePickPost_T2.fbx": {
+   "assetId": "81774290760543",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "40a7bfd07b14c2bd984d661082fb231b0a6cd91e5b1bf8a68995efc0243b77b6",
+   "updated": "2026-11-24T22:37:36+00:00"
+  },
+  "IcePickPost/fbx/IcePickPost_T2_Upgrades.fbx": {
+   "assetId": "113973097562768",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "eec74f3496897c6e419f771300e997745ab81b45a9489bce5e780c0c32eac8ba",
+   "updated": "2026-11-24T22:37:49+00:00"
+  },
+  "IcePickPost/fbx/IcePickPost_T3.fbx": {
+   "assetId": "87451553280636",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "25b5cb4d5aab84f1039f51e38081609aa5ad41449d6ade04e96f75adc665f053",
+   "updated": "2026-11-24T22:38:02+00:00"
+  },
+  "IcePickPost/fbx/IcePickPost_T3_Upgrades.fbx": {
+   "assetId": "84776169584701",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "3618b43d23574152552013a5f427cc3a3ca9c16ee473201fab282a3eb3a88794",
+   "updated": "2026-11-24T22:38:15+00:00"
+  },
+  "IcePickPost/fbx/IcePickPost_T4.fbx": {
+   "assetId": "91808975333990",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "97e646557fdf945c4bf580a83ebe05385d579606bb8fe8ed8e63f4ea0e0f651d",
+   "updated": "2026-11-24T22:38:20+00:00"
+  },
+  "IcePickPost/fbx/IcePickPost_T4_Upgrades.fbx": {
+   "assetId": "114662844193491",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "53da471954ffc1da6388c64bfa76fd2c7d54e09dc311a9b323068d237c22db88",
+   "updated": "2026-11-24T22:38:33+00:00"
+  },
+  "IcePickPost/fbx/IcePickPost_T5.fbx": {
+   "assetId": "96569454024866",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "af244aa492c0ebd2086cd8b93e8df28ead767346f158bb179a21666741e3a8f4",
+   "updated": "2026-11-24T22:38:41+00:00"
+  },
+  "IcePickPost/fbx/IcePickPost_T5_Upgrades.fbx": {
+   "assetId": "77479325900648",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "a481f95e532d64df2944625ef535a079e65d45db4c0e9d9c1f88c3e7d45a2d58",
+   "updated": "2026-11-24T22:38:49+00:00"
+  },
+  "LavaPump/fbx/LavaPump_T1.fbx": {
+   "assetId": "137211529329959",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "28534d8dbc4938a9f266da7952618b868b657c5d32a64b3d790d1a6ab8baf169",
+   "updated": "2026-11-24T22:38:57+00:00"
+  },
+  "LavaPump/fbx/LavaPump_T1_Upgrades.fbx": {
+   "assetId": "96775635141305",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "82fbe51b632416170fe7fdeaccd68cdafc4e8bc52c2829001f61d46ec5b19313",
+   "updated": "2026-11-24T22:39:02+00:00"
+  },
+  "LavaPump/fbx/LavaPump_T2.fbx": {
+   "assetId": "95756404098645",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "c2512a9a9ebf2e2c13582de0130999292d8711d8bfd6e717d08bca1a79973c2f",
+   "updated": "2026-11-24T22:39:15+00:00"
+  },
+  "LavaPump/fbx/LavaPump_T2_Upgrades.fbx": {
+   "assetId": "119572423964290",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "ed19dbebee75cdca3f0a34aeb09a451bd97335beb9b7c74fd4f95d752ff939a3",
+   "updated": "2026-11-24T22:39:19+00:00"
+  },
+  "LavaPump/fbx/LavaPump_T3.fbx": {
+   "assetId": "120262285848123",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "5a67a962d29853203c16e9522c90dc13574c15ba8e1d3a49a23f6f604bb93b6a",
+   "updated": "2026-11-24T22:39:27+00:00"
+  },
+  "LavaPump/fbx/LavaPump_T3_Upgrades.fbx": {
+   "assetId": "81227916179801",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "9e8762abe7c79825052d781731cc19c175f256e74dc7ce01c86de61745823516",
+   "updated": "2026-11-24T22:39:35+00:00"
+  },
+  "LavaPump/fbx/LavaPump_T4.fbx": {
+   "assetId": "132132601270787",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "1cc15cc270c17b31b723d7f5140cd1eed4f7253f5a9067594f729373b2e1f0c7",
+   "updated": "2026-11-24T22:39:40+00:00"
+  },
+  "LavaPump/fbx/LavaPump_T4_Upgrades.fbx": {
+   "assetId": "79326021444686",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "14f32a7ce0d8d440d7bfac4c28a3fac239ef8e76b133c6834d3b3717ba954518",
+   "updated": "2026-11-24T22:39:48+00:00"
+  },
+  "LavaPump/fbx/LavaPump_T5.fbx": {
+   "assetId": "127763682642017",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "fc616f77c8ef8843a29cb902dfea42b34320173246d424b8ea17e7160396d8e5",
+   "updated": "2026-11-24T22:40:09+00:00"
+  },
+  "LavaPump/fbx/LavaPump_T5_Upgrades.fbx": {
+   "assetId": "135670105298451",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "5d46697608a92e21c51214155c0c6ae9cfa5e61d0992cf034b1a92f2ce4522d2",
+   "updated": "2026-11-24T22:40:22+00:00"
+  },
+  "SunMirrorTower/fbx/SunMirrorTower_T1.fbx": {
+   "assetId": "96910763552517",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "af5c44a8a9416b4c9668c1e570973efd143346f7f9bb6139bc741e0f9450759a",
+   "updated": "2026-11-24T22:40:30+00:00"
+  },
+  "SunMirrorTower/fbx/SunMirrorTower_T1_Upgrades.fbx": {
+   "assetId": "129483413783862",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "3c9c2b94eb3f3e9e551d0e337f1f94909b475657ea66980bde2f270b09b85f2b",
+   "updated": "2026-11-24T22:40:43+00:00"
+  },
+  "SunMirrorTower/fbx/SunMirrorTower_T2.fbx": {
+   "assetId": "90549837784017",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "c522707eccb8190a33b4634159205f724d20aef87c76401c523ea4cd0525837f",
+   "updated": "2026-11-24T22:40:56+00:00"
+  },
+  "SunMirrorTower/fbx/SunMirrorTower_T2_Upgrades.fbx": {
+   "assetId": "119840698892058",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "7899b127cae873342c3329d6cfbf4fb20a3d8c4d8d469995a934c6243e79c610",
+   "updated": "2026-11-24T22:41:04+00:00"
+  },
+  "SunMirrorTower/fbx/SunMirrorTower_T3.fbx": {
+   "assetId": "129542434986560",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "6efc27a7628c73ca8784b07ac460254bc6bed1f86370efb528762389b261acc2",
+   "updated": "2026-11-24T22:41:25+00:00"
+  },
+  "SunMirrorTower/fbx/SunMirrorTower_T3_Upgrades.fbx": {
+   "assetId": "111830367406680",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "cf3b9638123512b759d9ea6b2f9106211852d5610bd73318a8f1170457b39509",
+   "updated": "2026-11-24T22:41:46+00:00"
+  },
+  "SunMirrorTower/fbx/SunMirrorTower_T4.fbx": {
+   "assetId": "104450272512752",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "a9bb08f140031968f52f4ab6d5abbc8c574d8bea3435dcfe40d22585f0b462a1",
+   "updated": "2026-11-24T22:42:07+00:00"
+  },
+  "SunMirrorTower/fbx/SunMirrorTower_T4_Upgrades.fbx": {
+   "assetId": "81176694067545",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "c9f01759e2eee6cd53aad5450ed72e9c008b6614b11dbaa07de9191a2577f993",
+   "updated": "2026-11-24T22:42:28+00:00"
+  },
+  "SunMirrorTower/fbx/SunMirrorTower_T5.fbx": {
+   "assetId": "127928225520843",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "a94c8b04882da03ef1ab91c24eabe7aa2849731ac90669a8a8d52038f785e00a",
+   "updated": "2026-11-24T22:42:49+00:00"
+  },
+  "SunMirrorTower/fbx/SunMirrorTower_T5_Upgrades.fbx": {
+   "assetId": "88381654547929",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "04e6909475cb6427d504ea617f0c5ffdf55820e9557e509b11e2f312b91efc91",
+   "updated": "2026-11-24T22:42:58+00:00"
+  },
+  "WreckingCrane/fbx/WreckingCrane_T1.fbx": {
+   "assetId": "132537428999742",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "b87742553744d933fc7d9ec352a9777fceae5431015e320d627ebfe557c26ecd",
+   "updated": "2026-11-24T22:43:18+00:00"
+  },
+  "WreckingCrane/fbx/WreckingCrane_T1_Upgrades.fbx": {
+   "assetId": "75471604422224",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "3c6a3de94e228c18ac6ad6791b223038b523d4f1f4600009cb9ad8c44f6ee749",
+   "updated": "2026-11-24T22:43:26+00:00"
+  },
+  "WreckingCrane/fbx/WreckingCrane_T2.fbx": {
+   "assetId": "133378151249537",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "8d0cffd43132d87ab1639d9aa2ce9e251e3cec86d55759c398173630a0d732a8",
+   "updated": "2026-11-24T22:43:47+00:00"
+  },
+  "WreckingCrane/fbx/WreckingCrane_T2_Upgrades.fbx": {
+   "assetId": "92960257485064",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "18819e956c4de98ed33684232044878011794e3677b80b29c70dc96baa35704d",
+   "updated": "2026-11-24T22:44:01+00:00"
+  },
+  "WreckingCrane/fbx/WreckingCrane_T3.fbx": {
+   "assetId": "123196951401525",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "2e9a253b5595db7a4bb40b83dd42f434813adc96cf678385515a5dabea326da9",
+   "updated": "2026-11-24T22:44:14+00:00"
+  },
+  "WreckingCrane/fbx/WreckingCrane_T3_Upgrades.fbx": {
+   "assetId": "100564242645735",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "11bbccd172c44ce486bd917cd03d4c8de1754d4830942f9d2fdfab1b086814df",
+   "updated": "2026-11-24T22:44:22+00:00"
+  },
+  "WreckingCrane/fbx/WreckingCrane_T4.fbx": {
+   "assetId": "111161495594855",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "b3ae5f63a7ca73462cfb1287f80894e164016013ff05ca66d44359b4bb480422",
+   "updated": "2026-11-24T22:44:30+00:00"
+  },
+  "WreckingCrane/fbx/WreckingCrane_T4_Upgrades.fbx": {
+   "assetId": "71804772009719",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "2b64858106d2a9f20b92c64f1da423be6df8479292d82178f7e33a089ad48c6c",
+   "updated": "2026-11-24T22:44:38+00:00"
+  },
+  "WreckingCrane/fbx/WreckingCrane_T5.fbx": {
+   "assetId": "127985108885640",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "980328f78e2937c10db9df40e1d377350eeac69d1db260867db1df5f5c7bd252",
+   "updated": "2026-11-24T22:44:51+00:00"
+  },
+  "WreckingCrane/fbx/WreckingCrane_T5_Upgrades.fbx": {
+   "assetId": "82504420504935",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "21e20f91b6ccbb93cd2552b43b9e781fef30ed47fdcb58ea42a822451279e751",
+   "updated": "2026-11-24T22:45:04+00:00"
+  }
+ },
+ "creator": {
+  "groupId": "921449746"
+ }
+}

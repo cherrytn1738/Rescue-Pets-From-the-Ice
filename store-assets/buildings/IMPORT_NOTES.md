@@ -1,6 +1,6 @@
 # Buildings: import notes
 
-For when these models are uploaded and brought into Roblox. Nothing has been uploaded yet.
+How these models are uploaded and brought into Roblox. All of them are uploaded (ids in `ASSET_IDS.md`).
 Source: `tools/blender/buildings/<BuildingId>.py` on `framework.py`. Rebuild one building with:
 `blender -b --factory-startup --python tools/blender/buildings/run.py -- <BuildingId> build render export`.
 
@@ -17,8 +17,9 @@ Per building, in `store-assets/buildings/<BuildingId>/`:
 - `<Id>_lineup.png` and `<Id>_Masterwork.png`: the renders.
 
 Upload with the group tool, which uploads as group 921449746:
-`python tools/upload_models.py store-assets/buildings/<Id>/fbx/*.fbx`. Then put the asset ids in
-`BuildingConfig.StationModelIds`.
+`python tools/upload_models.py --manifest store-assets/buildings/upload_manifest.json store-assets/buildings/<Id>/fbx/*.fbx`.
+Then `python tools/write_asset_ids.py` writes the ids into `BuildingConfig.ModelIds` (and `ASSET_IDS.md`), and
+`tools/studio/build_templates.luau` (Edit mode) rebuilds the Studio templates with every setting below. Save the place.
 
 ## Every MeshPart
 

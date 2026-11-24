@@ -1,0 +1,115 @@
+{
+ "assets": {
+  "BuildingPalette.png": {
+   "assetId": "132979269108969",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "77913f52ff6a7919e60c00a95c653565700b39ab8460ced1227a01c72da89af8",
+   "updated": "2026-11-24T22:45:57+00:00"
+  },
+  "particles/ember.png": {
+   "assetId": "87423984170712",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "4d9c321834703e31e71be9c054db27550b7b04fc60fc8d04b870405f007e8446",
+   "updated": "2026-11-24T22:45:59+00:00"
+  },
+  "particles/rune_1.png": {
+   "assetId": "109204774117727",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "14068877d8cc5b3f24b2cdbb6f88fdbbc484c388893b19c5f2da5d2af0846944",
+   "updated": "2026-11-24T22:46:01+00:00"
+  },
+  "particles/rune_2.png": {
+   "assetId": "80847461207119",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "bffe00c18f8a99cd665db6c1d583aabf4ef3a3ac2bb020901e4e8038c20938bb",
+   "updated": "2026-11-24T22:46:03+00:00"
+  },
+  "particles/rune_3.png": {
+   "assetId": "138045371002432",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "8d9e67fefdf6534fbdf7725694e0b3eb69716ed7f5d326bc2198e573c00d7122",
+   "updated": "2026-11-24T22:46:05+00:00"
+  },
+  "particles/rune_4.png": {
+   "assetId": "80271496086902",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "ae99c68ef03231cd730436a11f5970082ae004549f0e54366a5a02ea3ce2e50c",
+   "updated": "2026-11-24T22:46:07+00:00"
+  },
+  "particles/smoke_puff.png": {
+   "assetId": "81285118440247",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "c6fc084994b0bb012c2c818e1f2b5d069a9813261a919a8045011903ce165048",
+   "updated": "2026-11-24T22:46:09+00:00"
+  },
+  "particles/snowflake.png": {
+   "assetId": "110080508554644",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "30e7d998e7457e9bacceca49ea41373277bfa500a801e499b470e2696dc80fa1",
+   "updated": "2026-11-24T22:46:11+00:00"
+  },
+  "particles/soft_glow.png": {
+   "assetId": "91645015616512",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "8249b104db05563f5db08f961f348b4cd5521603579e5b45577752335779c8b8",
+   "updated": "2026-11-24T22:46:13+00:00"
+  },
+  "particles/sparkle.png": {
+   "assetId": "134174453753532",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "4b0bd5ccbfcbbffc159c10bb5f73e1f15d6a7b08316b6601c61a75333d3df36b",
+   "updated": "2026-11-24T22:46:16+00:00"
+  },
+  "particles/star.png": {
+   "assetId": "128627409950763",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "4e7f2be31e569a2ce3690a2c74c6692bcdb92fa5cbf7ccf6925c52bcaaa8b488",
+   "updated": "2026-11-24T22:46:18+00:00"
+  },
+  "particles/water_droplet.png": {
+   "assetId": "96936467987260",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "ec2310429ef95177a4616d1b672d81b920d0ac9c1b079977f86ae6b957217507",
+   "updated": "2026-11-24T22:46:20+00:00"
+  }
+ },
+ "creator": {
+  "groupId": "921449746"
+ }
+}

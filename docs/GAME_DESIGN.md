@@ -254,6 +254,8 @@ Higher tiers don't just look different, they feel alive: each tier adds a layer 
 - Your own plot shows everything; other plots show ambient effects at half rate within 60 studs and none beyond.
 - At most 2 lights per building, and hit effects are capped per second so a fast tick doesn't flood the screen.
 - The reduced-effects setting turns off hit effects and halves ambient particles.
+- A Legendary's ground ring is a loop of small glowing parts on its plinth, not particles, so like the lights it shows at any distance and every Legendary reads from the plaza. A faded station loses it.
+- Ambient particles use saturated, slightly dark colours so they read on snow and a pale sky; glow (light emission) is kept for embers, runes and aura rings.
 
 ## Upgrades in detail
 

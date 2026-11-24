@@ -5,14 +5,17 @@ PlotService: the players' plots (docs/GAME_DESIGN.md, "Plot and map layout"). Se
    mound for the ice, eight numbered building pads and a low border wall open at the front.
  - Gives each joining player the first free plot (player attribute PlotIndex; the plot's attributes
    Owner (user id) and OwnerName) and frees it when they leave.
- - Shows each owned building as a greybox stand-in on its pad (sized by building and by how many are
-   owned; shrunk once the next building up is owned), with a "Name x37" badge. Plain parts until the
-   building art is approved.
+ - Shows each owned building on its pad, facing the ice: the real station for its tier (a clone of
+   ServerStorage.BuildingTemplates.<Id>.T<tier>, built in Studio by tools/studio/build_templates.luau)
+   with the upgrade part sets the player owns, shrunk to 60% and without its Neon glow once the next
+   building up is owned, and a "Name x37" badge. A greybox stand-in is the fallback while a template
+   is missing.
  - Plot.Block (a Folder) carries the ice block's attributes; every client draws the block from them
    (IceBlockView.client).
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
 
 local BuildingConfig = require(ReplicatedStorage.BuildingConfig)
@@ -245,23 +248,84 @@ function PlotService.ArrivalCFrame(index: number): CFrame
 	return CFrame.lookAt(spot, ice)
 end
 
--- The greybox stand-ins -------------------------------------------------------------------------
+-- The stations ---------------------------------------------------------------------------------
+
+-- Which station tier a count of copies shows (1-5 at the StationMilestones; 0 below the first).
+local function tierFor(owned: number): number
+	local tier = 0
+	for index, milestone in BuildingConfig.StationMilestones do
+		if owned >= milestone then
+			tier = index
+		end
+	end
+	return tier
+end
+
+-- The real station for a building's tier, if its template has been built in Studio.
+local warnedMissing = {}
+local function template(id: string, tier: number): Model?
+	local folder = ServerStorage:FindFirstChild("BuildingTemplates")
+	local set = folder and folder:FindFirstChild(id)
+	local model = set and set:FindFirstChild("T" .. tier)
+	if not model and not warnedMissing[id .. tier] then
+		warnedMissing[id .. tier] = true
+		warn(`[Plot] no template BuildingTemplates.{id}.T{tier}: showing a stand-in`)
+	end
+	return model
+end
+
+-- Which of a building's five upgrades the player owns ({ [1..5] = true }) and a short key for them.
+local function ownedUpgrades(data, id: string)
+	local owned, key = {}, ""
+	for index = 1, 5 do
+		if table.find(data.Upgrades, id .. "Upgrade" .. index) then
+			owned[index] = true
+			key ..= index
+		end
+	end
+	return owned, key
+end
+
+-- Where a station stands: on its pad's top, turned so its front (-Z) faces the ice in the middle.
+local function padCFrame(plotCFrame: CFrame, pad): CFrame
+	local at = Vector3.new(pad.X, 0.6, pad.Z)
+	return plotCFrame * CFrame.lookAt(at, Vector3.new(0, 0.6, 0))
+end
+
+-- A clone of the tier's template with only the owned upgrade sets; faded ones shrink and stop glowing.
+local function realStation(source: Model, upgrades, faded: boolean): Model
+	local model = source:Clone()
+	local sets = model:FindFirstChild("Upgrades")
+	if sets then
+		for index = 1, 5 do
+			local set = sets:FindFirstChild("U" .. index)
+			if set and not upgrades[index] then
+				set:Destroy()
+			end
+		end
+	end
+	if faded then
+		for _, d in model:GetDescendants() do
+			if d:IsA("BasePart") and d.Material == Enum.Material.Neon then
+				d.Material = Enum.Material.SmoothPlastic
+			end
+		end
+		model:ScaleTo(BuildingConfig.FadedScale)
+	end
+	return model
+end
 
 -- How big a building's stand-in is: its pad, a little bigger at each count milestone; taller for
 -- buildings further up the list.
 local function standInSize(building, order: number, owned: number): Vector3
-	local milestones = 0
-	for _, milestone in BuildingConfig.StationMilestones do
-		if owned >= milestone then
-			milestones += 1
-		end
-	end
+	local milestones = tierFor(owned)
 	local footprint = building.Pad.Size * (0.45 + 0.1 * milestones)
 	local height = (3 + order * 1.6) * (0.8 + 0.12 * milestones)
 	return Vector3.new(footprint, height, footprint)
 end
 
--- Redraws the player's building stand-ins from their save.
+-- Redraws the player's stations from their save. A station is rebuilt only when its look changes
+-- (tier, owned upgrade sets, faded); otherwise just its badge and attributes update.
 function PlotService.RefreshBuildings(player: Player, data)
 	local index = PlotService.IndexOf(player)
 	if not index then
@@ -278,29 +342,52 @@ function PlotService.RefreshBuildings(player: Player, data)
 	end
 	for order, building in BuildingConfig.Buildings do
 		local owned = data.Buildings[building.Id] or 0
-		local stand = folder:FindFirstChild(building.Id)
+		local station = folder:FindFirstChild(building.Id)
 		if owned <= 0 then
-			if stand then
-				stand:Destroy()
+			if station then
+				station:Destroy()
 			end
 			continue
 		end
-		local size = standInSize(building, order, owned)
-		if order < topOrder then
-			size *= BuildingConfig.FadedScale
+		local tier = tierFor(owned)
+		local faded = order < topOrder
+		local upgrades, upgradeKey = ownedUpgrades(data, building.Id)
+		local source = template(building.Id, tier)
+		local look = `{tier}:{upgradeKey}:{faded}:{source ~= nil}`
+		if station and station:GetAttribute("Look") ~= look then
+			station:Destroy()
+			station = nil
 		end
-		if not stand then
-			stand = part(folder, building.Id, size, CFrame.identity, STAND_IN_COLOURS[building.Id], Enum.Material.SmoothPlastic)
-			stand.CanCollide = false
-			label(stand, "", Vector3.new(0, 0, 0), UDim2.fromScale(11, 2.2))
+		local height
+		if source then
+			if not station then
+				station = realStation(source, upgrades, faded)
+				station.Name = building.Id
+				station:SetAttribute("Look", look)
+				label(station.PrimaryPart, "", Vector3.zero, UDim2.fromScale(11, 2.2))
+				station:PivotTo(padCFrame(cf, building.Pad))
+				station.Parent = folder
+			end
+			height = source:GetExtentsSize().Y * (if faded then BuildingConfig.FadedScale else 1)
+		else
+			local size = standInSize(building, order, owned) * (if faded then BuildingConfig.FadedScale else 1)
+			if not station then
+				station = part(folder, building.Id, size, CFrame.identity, STAND_IN_COLOURS[building.Id], Enum.Material.SmoothPlastic)
+				station.CanCollide = false
+				station:SetAttribute("Look", look)
+				label(station, "", Vector3.zero, UDim2.fromScale(11, 2.2))
+			end
+			station.Size = size
+			station.CFrame = cf * CFrame.new(building.Pad.X, 0.6 + size.Y / 2, building.Pad.Z)
+			height = size.Y / 2 -- (the badge sits on the stand-in's centre)
 		end
-		stand.Size = size
-		stand.CFrame = cf * CFrame.new(building.Pad.X, 0.6 + size.Y / 2, building.Pad.Z)
+		local badge = if station:IsA("Model") then station.PrimaryPart.Label else station.Label
 		local detail = EconomyRules.DetailLevel(data, building.Id)
-		stand.Label.StudsOffsetWorldSpace = Vector3.new(0, size.Y / 2 + 2, 0)
-		stand.Label.Text.Text = `{building.Name} ×{owned}` .. (if detail >= BuildingConfig.MaxDetailLevel then " ★" else ` ({detail}/10)`)
-		stand:SetAttribute("Owned", owned)
-		stand:SetAttribute("Detail", detail)
+		badge.StudsOffsetWorldSpace = Vector3.new(0, height + 2, 0)
+		badge.Text.Text = `{building.Name} ×{owned}` .. (if detail >= BuildingConfig.MaxDetailLevel then " ★" else ` ({detail}/10)`)
+		station:SetAttribute("Owned", owned)
+		station:SetAttribute("Detail", detail)
+		station:SetAttribute("Faded", faded)
 	end
 end
 

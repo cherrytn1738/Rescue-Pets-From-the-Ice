@@ -1,9 +1,10 @@
 -- BuildingEffects: every building's particles, beams and lights (docs/GAME_DESIGN.md, "Effects and auras"),
 -- client only, from EffectsConfig on the stations' named attachment points (BuildingModels).
 --
--- Until the building models are uploaded, the stations are PlotService's greybox stand-ins (a Part named
--- by building id, with Owned and Detail attributes): the attachment points are mapped from the model's
--- size onto the stand-in's box, so the logic (which effects, where, how much) is the real one.
+-- A station is PlotService's clone of the real model (a Model named by building id, with Owned, Detail and
+-- Faded attributes, its named attachment points on its PrimaryPart "Root"), or, while a template is
+-- missing, a greybox stand-in Part: then the attachment points are mapped from the model's size onto the
+-- stand-in's box. A faded station (a higher building is owned) loses its ambient effects and lights.
 --
 -- Performance rules (EffectsRules): your own plot shows everything; another plot shows ambient effects at
 -- half rate within 60 studs and none beyond (lights stay); at most 2 lights per building; hit bursts are
@@ -14,6 +15,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
+local BuildingConfig = require(ReplicatedStorage.BuildingConfig)
 local BuildingModels = require(ReplicatedStorage.BuildingModels)
 local EffectsConfig = require(ReplicatedStorage.EffectsConfig)
 local EffectsRules = require(ReplicatedStorage.EffectsRules)
@@ -21,7 +23,7 @@ local EffectsRules = require(ReplicatedStorage.EffectsRules)
 local player = Players.LocalPlayer
 local RULES = EffectsConfig.Rules
 local ORBIT_POINTS = 6
-local stations = {} -- [stand-in part] = station
+local stations = {} -- [station Model or stand-in Part] = station
 local hitBucket = EffectsRules.NewHitBucket()
 
 local function numberRange(pair)
@@ -73,15 +75,15 @@ local function clear(station)
 		att:Destroy() -- (attachments must sit on the part itself, so they're tracked, not foldered)
 	end
 	station.folder, station.attachments = nil, {}
-	station.emitters, station.hits, station.lights, station.beams, station.orbits = {}, {}, {}, {}, {}
+	station.emitters, station.hits, station.lights, station.beams, station.orbits, station.ring = {}, {}, {}, {}, {}, {}
 end
 
 -- (Re)builds a station's effects for its current tier and Masterwork state.
 local function build(station)
 	clear(station)
-	local part, id = station.part, station.id
-	local owned = part:GetAttribute("Owned") or 0
-	local detail = part:GetAttribute("Detail") or 0
+	local part, id, inst = station.part, station.id, station.inst
+	local owned = inst:GetAttribute("Owned") or 0
+	local detail = inst:GetAttribute("Detail") or 0
 	local tier = EffectsRules.TierFor(owned)
 	local model = BuildingModels.Buildings[id] and BuildingModels.Buildings[id][tier]
 	station.tier, station.owned = tier, owned
@@ -95,7 +97,12 @@ local function build(station)
 	station.folder = folder
 	local points = {}
 	local function point(name)
-		if points[name] == nil then
+		if points[name] == nil and station.real then
+			points[name] = part:FindFirstChild(name) or false -- the real station's own attachment
+			if not points[name] then
+				warn(`[Effects] {id} tier {tier} has no attachment {name}`)
+			end
+		elseif points[name] == nil then
 			local a = model.Attachments[name]
 			if a then
 				local att = Instance.new("Attachment")
@@ -121,7 +128,9 @@ local function build(station)
 			return { base }
 		end
 		local ring = {}
-		local radius = (spec.R or 2) * math.min(part.Size.X, part.Size.Z) / math.max(model.Size.X, model.Size.Z, 0.1)
+		local radius = if station.real
+			then (spec.R or 2) * inst:GetScale()
+			else (spec.R or 2) * math.min(part.Size.X, part.Size.Z) / math.max(model.Size.X, model.Size.Z, 0.1)
 		for k = 1, ORBIT_POINTS do
 			local att = Instance.new("Attachment")
 			att.Name = spec.Name .. "Orbit" .. k
@@ -174,31 +183,65 @@ local function build(station)
 			table.insert(station.beams, beam)
 		end
 	end
+	-- a Legendary's ground ring: Neon segments on a circle round the Aura point, on the pad
+	local ringSet = set.Ring
+	local centre = ringSet and point(ringSet.Spec.Attachment)
+	if ringSet and centre then
+		local spec = ringSet.Spec
+		local building = BuildingConfig.Get(id)
+		local scale = if station.real then inst:GetScale() else 1
+		local radius = building.Pad.Size * spec.PadShare * scale
+		-- on the plinth, at the Aura point (the stand-in: on its base)
+		local ground = if station.real
+			then CFrame.new(centre.Position + Vector3.new(0, spec.Lift * scale, 0))
+			else CFrame.new(0, -part.Size.Y / 2 + spec.Lift, 0)
+		local length = 2 * radius * math.sin(math.pi / spec.Segments) + 0.05
+		for k = 1, spec.Segments do
+			local a = (k - 0.5) / spec.Segments * math.pi * 2
+			local at = Vector3.new(math.cos(a) * radius, 0, math.sin(a) * radius)
+			local segment = Instance.new("Part")
+			segment.Name = "LegendRing"
+			segment.Anchored = true
+			segment.CanCollide, segment.CanQuery, segment.CanTouch = false, false, false
+			segment.CastShadow = false
+			segment.Material = Enum.Material.Neon
+			segment.Color = ringSet.Color
+			segment.Size = Vector3.new(spec.Width * scale, spec.Height * scale, length)
+			segment.CFrame = part.CFrame * ground * CFrame.lookAt(at, at + Vector3.new(-math.sin(a), 0, math.cos(a)))
+			segment.Parent = folder
+			table.insert(station.ring, segment)
+		end
+	end
 	folder:SetAttribute("Tier", tier)
 	folder:SetAttribute("Masterwork", detail >= 10)
 end
 
-local function watchStation(part: BasePart, plot: Model)
-	if stations[part] then
+local function watchStation(inst: Instance, plot: Model)
+	if stations[inst] then
 		return
 	end
-	local station = { part = part, id = part.Name, plot = plot, nextHit = os.clock() + math.random() }
-	stations[part] = station
+	local real = inst:IsA("Model")
+	local part = if real then (inst :: Model).PrimaryPart or inst:WaitForChild("Root", 5) else inst
+	if not part then
+		return
+	end
+	local station = { inst = inst, part = part, real = real, id = inst.Name, plot = plot, nextHit = os.clock() + math.random() }
+	stations[inst] = station
 	clear(station)
 	local function rebuild()
-		if part.Parent then
+		if inst.Parent then
 			build(station)
 		end
 	end
-	part:GetAttributeChangedSignal("Owned"):Connect(function()
-		if EffectsRules.TierFor(part:GetAttribute("Owned") or 0) ~= station.tier then
+	inst:GetAttributeChangedSignal("Owned"):Connect(function()
+		if EffectsRules.TierFor(inst:GetAttribute("Owned") or 0) ~= station.tier then
 			rebuild()
 		end
 	end)
-	part:GetAttributeChangedSignal("Detail"):Connect(rebuild)
-	part.AncestryChanged:Connect(function()
-		if not part.Parent then
-			stations[part] = nil
+	inst:GetAttributeChangedSignal("Detail"):Connect(rebuild)
+	inst.AncestryChanged:Connect(function()
+		if not inst.Parent then
+			stations[inst] = nil
 		end
 	end)
 	rebuild()
@@ -210,13 +253,13 @@ local function watchPlot(plot: Model)
 		return
 	end
 	buildings.ChildAdded:Connect(function(child)
-		if child:IsA("BasePart") then
-			task.defer(watchStation, child, plot)
+		if child:IsA("BasePart") or child:IsA("Model") then
+			task.spawn(watchStation, child, plot)
 		end
 	end)
 	for _, child in buildings:GetChildren() do
-		if child:IsA("BasePart") then
-			watchStation(child, plot)
+		if child:IsA("BasePart") or child:IsA("Model") then
+			task.spawn(watchStation, child, plot)
 		end
 	end
 end
@@ -241,15 +284,23 @@ RunService.Heartbeat:Connect(function(dt)
 	if recheck then
 		checkAt = now + RULES.CheckSeconds
 	end
-	for part, station in stations do
+	for _, station in stations do
+		local part = station.part
 		if not station.folder then
 			continue
 		end
 		local mine = station.plot:GetAttribute("Owner") == player.UserId
 		if recheck then
 			local distance = (part.Position - here).Magnitude
-			local scale = EffectsRules.AmbientScale(mine, distance, reduced())
+			local faded = station.inst:GetAttribute("Faded") == true
+			local scale = if faded then 0 else EffectsRules.AmbientScale(mine, distance, reduced())
 			station.scale = scale
+			for _, light in station.lights do
+				light.Enabled = not faded
+			end
+			for _, segment in station.ring do
+				segment.Transparency = if faded then 1 else 0 -- (at any distance, like the lights)
+			end
 			station.hitsOn = EffectsRules.HitsAllowed(mine, distance, reduced())
 			for _, emitter in station.emitters do
 				emitter.Rate = (emitter:GetAttribute("BaseRate") or 0) * scale
@@ -279,7 +330,7 @@ RunService.Heartbeat:Connect(function(dt)
 				for _, emitter in station.hits do
 					emitter:Emit(math.max(1, math.floor((emitter:GetAttribute("Burst") or 1) * (if mine then 1 else RULES.OtherPlotRate))))
 				end
-				station.part:SetAttribute("HitsShown", (station.part:GetAttribute("HitsShown") or 0) + 1)
+				station.inst:SetAttribute("HitsShown", (station.inst:GetAttribute("HitsShown") or 0) + 1)
 			end
 		end
 	end

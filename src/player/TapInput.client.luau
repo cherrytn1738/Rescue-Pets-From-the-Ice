@@ -1,9 +1,13 @@
 -- Tapping the ice (docs/GAME_DESIGN.md, "UI and controls"): inside your plot, a tap anywhere that
 -- isn't a button swings your ice pick at the block. Phone: tap; PC: click or Space; gamepad: R2 or A.
 -- The client only counts taps and sends the total every GameConfig.Taps.BatchSeconds (TapBatch);
--- the server caps the rate, decides the damage and pays the crystals. TapFeedback shows the hit at once.
+-- the server caps the rate, decides the damage and pays the crystals. TapFeedback shows the hit at once,
+-- and the ice pick in the player's hand (PickService) swings: Roblox's default Animate script plays its
+-- slash animation when a held tool gets a "toolanim" value. The backpack bar is hidden, so the pick
+-- can't be put away.
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterGui = game:GetService("StarterGui")
 local UserInputService = game:GetService("UserInputService")
 
 local GameConfig = require(ReplicatedStorage.GameConfig)
@@ -21,6 +25,18 @@ local pending = 0
 local goldenPending = 0
 local lastTap = 0
 local MIN_GAP = 1 / TAPS.MaxPerSecond -- taps faster than the server allows don't even count here
+
+pcall(StarterGui.SetCoreGuiEnabled, StarterGui, Enum.CoreGuiType.Backpack, false)
+
+local function swingPick()
+	local tool = player.Character and player.Character:FindFirstChild("IcePick")
+	if tool and tool:IsA("Tool") and not tool:FindFirstChild("toolanim") then
+		local anim = Instance.new("StringValue")
+		anim.Name = "toolanim"
+		anim.Value = "Slash"
+		anim.Parent = tool
+	end
+end
 
 local function inOwnPlot(): boolean
 	local index = player:GetAttribute("PlotIndex")
@@ -67,6 +83,7 @@ local function tap(screenPosition: Vector2?)
 		return
 	end
 	lastTap = now
+	swingPick()
 	if mine then
 		pending += 1
 		TapFeedback.Tap(screenPosition)

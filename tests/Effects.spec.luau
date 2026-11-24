@@ -47,6 +47,10 @@ return function(sources)
 				check(station.Attachments[beam.From] ~= nil and station.Attachments[beam.To] ~= nil, `{building.Id} tier {tier}: beam {beam.Name} from {beam.From} to {beam.To}`)
 			end
 			check(#set.Lights <= Effects.Rules.MaxLightsPerBuilding, `{building.Id} tier {tier}: at most 2 lights`)
+			check((set.Ring ~= nil) == (tier == 5), `{building.Id} tier {tier}: a ground ring only on the Legendary`)
+			if set.Ring then
+				check(station.Attachments[set.Ring.Spec.Attachment] ~= nil, `{building.Id} Legendary: its ground ring's {set.Ring.Spec.Attachment} point exists`)
+			end
 			for _, group in { set.Ambient, set.Hit } do
 				for _, emitter in group do
 					check(Effects.TextureFiles[emitter.Texture] ~= nil, `{emitter.Name} uses a shared texture ({emitter.Texture})`)
