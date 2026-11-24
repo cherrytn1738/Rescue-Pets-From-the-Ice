@@ -1,0 +1,1812 @@
+{
+ "id": "IcePickPost",
+ "name": "Ice Pick Post",
+ "pad": 8,
+ "tiers": [
+  {
+   "tier": 1,
+   "theme": "Scrappy",
+   "form": "Wooden post with a pick",
+   "meshes": [
+    [
+     "IcePickPostT1Base",
+     1208
+    ],
+    [
+     "IcePickPostT1Post",
+     1348
+    ],
+    [
+     "IcePickPostT1Braces",
+     824
+    ],
+    [
+     "IcePickPostT1Pivot",
+     636
+    ],
+    [
+     "IcePickPostT1Winch",
+     724
+    ],
+    [
+     "IcePickPostT1Junk",
+     692
+    ],
+    [
+     "IcePickPostT1Pick",
+     952
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "IcePickPostT1U1PickA",
+       952
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "IcePickPostT1U2Lamp1",
+       276
+      ],
+      [
+       "IcePickPostT1U2Lamp1Glow",
+       40
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "IcePickPostT1U3Spring1",
+       816
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "IcePickPostT1U5PickA",
+       924
+      ],
+      [
+       "IcePickPostT1U5PickAGlow",
+       128
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "IcePickPostT1FxHit",
+     492
+    ],
+    [
+     "IcePickPostT1FxHitGlow",
+     40
+    ],
+    [
+     "IcePickPostT1FxTrailAGlow",
+     1180
+    ]
+   ],
+   "size": [
+    4.33,
+    5.85,
+    5.85
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      4.1,
+      0.25
+     ],
+     "out": [
+      -0.0,
+      -0.196,
+      -0.981
+     ],
+     "up": [
+      -0.0,
+      0.981,
+      -0.196
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      1.0,
+      3.37,
+      0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -0.0,
+      2.72,
+      0.55
+     ],
+     "out": [
+      -0.0,
+      0.878,
+      -0.479
+     ],
+     "up": [
+      -0.0,
+      0.479,
+      0.878
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      0.3,
+      -3.3
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      4.1,
+      0.25
+     ],
+     "out": [
+      -0.0,
+      -0.196,
+      -0.981
+     ],
+     "up": [
+      -0.0,
+      0.981,
+      -0.196
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.45,
+      -1.55
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.25,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      5.85,
+      0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 2,
+   "theme": "Workshop",
+   "form": "Brass clockwork hammer arm",
+   "meshes": [
+    [
+     "IcePickPostT2Deck",
+     1424
+    ],
+    [
+     "IcePickPostT2Rail",
+     1012
+    ],
+    [
+     "IcePickPostT2Housing",
+     1716
+    ],
+    [
+     "IcePickPostT2Tower",
+     1352
+    ],
+    [
+     "IcePickPostT2Key",
+     220
+    ],
+    [
+     "IcePickPostT2Gears",
+     2040
+    ],
+    [
+     "IcePickPostT2Pipe",
+     396
+    ],
+    [
+     "IcePickPostT2Mount",
+     568
+    ],
+    [
+     "IcePickPostT2Clutter",
+     898
+    ],
+    [
+     "IcePickPostT2Arm",
+     1112
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "IcePickPostT2U1PickA",
+       1112
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "IcePickPostT2U2Lamp1",
+       348
+      ],
+      [
+       "IcePickPostT2U2Lamp1Glow",
+       72
+      ],
+      [
+       "IcePickPostT2U2Lamp2",
+       348
+      ],
+      [
+       "IcePickPostT2U2Lamp2Glow",
+       72
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "IcePickPostT2U3Spring1",
+       808
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "IcePickPostT2U5PickA",
+       1084
+      ],
+      [
+       "IcePickPostT2U5PickAGlow",
+       128
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "IcePickPostT2FxHit",
+     492
+    ],
+    [
+     "IcePickPostT2FxHitGlow",
+     40
+    ],
+    [
+     "IcePickPostT2FxTrailAGlow",
+     1180
+    ]
+   ],
+   "size": [
+    6.8,
+    6.79,
+    8.12
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      3.3,
+      -0.35
+     ],
+     "out": [
+      -0.0,
+      -0.243,
+      -0.97
+     ],
+     "up": [
+      -0.0,
+      0.97,
+      -0.243
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      3.05,
+      2.02,
+      -2.85
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -3.05,
+      2.02,
+      -2.85
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -0.0,
+      1.95,
+      -0.15
+     ],
+     "out": [
+      -0.0,
+      0.908,
+      -0.419
+     ],
+     "up": [
+      -0.0,
+      0.419,
+      0.908
+     ]
+    },
+    "Steam1": {
+     "position": [
+      1.3,
+      6.8,
+      2.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      0.3,
+      -3.4
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      3.3,
+      -0.35
+     ],
+     "out": [
+      -0.0,
+      -0.243,
+      -0.97
+     ],
+     "up": [
+      -0.0,
+      0.97,
+      -0.243
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.25,
+      -3.17
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.45,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      8.1,
+      1.15
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 3,
+   "theme": "Frost-tech",
+   "form": "Crystal-tipped piston picks with blue coils",
+   "meshes": [
+    [
+     "IcePickPostT3Deck",
+     1512
+    ],
+    [
+     "IcePickPostT3DeckGlow",
+     560
+    ],
+    [
+     "IcePickPostT3Tower",
+     1696
+    ],
+    [
+     "IcePickPostT3TowerGlow",
+     420
+    ],
+    [
+     "IcePickPostT3Coil",
+     1580
+    ],
+    [
+     "IcePickPostT3CoilGlow",
+     80
+    ],
+    [
+     "IcePickPostT3BackCoils",
+     2880
+    ],
+    [
+     "IcePickPostT3BackCoilsGlow",
+     544
+    ],
+    [
+     "IcePickPostT3PistonA",
+     1432
+    ],
+    [
+     "IcePickPostT3PistonACoilGlow",
+     608
+    ],
+    [
+     "IcePickPostT3PickA",
+     676
+    ],
+    [
+     "IcePickPostT3PickAGlow",
+     216
+    ],
+    [
+     "IcePickPostT3PistonB",
+     1432
+    ],
+    [
+     "IcePickPostT3PistonBCoilGlow",
+     608
+    ],
+    [
+     "IcePickPostT3PickB",
+     676
+    ],
+    [
+     "IcePickPostT3PickBGlow",
+     216
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "IcePickPostT3U1PickA",
+       724
+      ],
+      [
+       "IcePickPostT3U1PickAGlow",
+       168
+      ],
+      [
+       "IcePickPostT3U1PickB",
+       724
+      ],
+      [
+       "IcePickPostT3U1PickBGlow",
+       168
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "IcePickPostT3U2Lamp1",
+       288
+      ],
+      [
+       "IcePickPostT3U2Lamp1Glow",
+       64
+      ],
+      [
+       "IcePickPostT3U2Lamp2",
+       288
+      ],
+      [
+       "IcePickPostT3U2Lamp2Glow",
+       64
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "IcePickPostT3U3Spring1",
+       720
+      ],
+      [
+       "IcePickPostT3U3Spring1Glow",
+       336
+      ],
+      [
+       "IcePickPostT3U3Spring2",
+       720
+      ],
+      [
+       "IcePickPostT3U3Spring2Glow",
+       336
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "IcePickPostT3U5PickA",
+       724
+      ],
+      [
+       "IcePickPostT3U5PickAGlow",
+       296
+      ],
+      [
+       "IcePickPostT3U5PickB",
+       724
+      ],
+      [
+       "IcePickPostT3U5PickBGlow",
+       296
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "IcePickPostT3FxHit",
+     492
+    ],
+    [
+     "IcePickPostT3FxHitGlow",
+     40
+    ],
+    [
+     "IcePickPostT3FxTrailAGlow",
+     1116
+    ],
+    [
+     "IcePickPostT3FxTrailBGlow",
+     1116
+    ]
+   ],
+   "size": [
+    7.9,
+    7.89,
+    9.65
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      1.75,
+      2.3,
+      -1.35
+     ],
+     "out": [
+      -0.0,
+      -0.8,
+      -0.6
+     ],
+     "up": [
+      -0.0,
+      0.6,
+      -0.8
+     ]
+    },
+    "Trail": {
+     "position": [
+      1.75,
+      2.3,
+      -1.35
+     ],
+     "out": [
+      -0.0,
+      -0.8,
+      -0.6
+     ],
+     "up": [
+      -0.0,
+      0.6,
+      -0.8
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      1.75,
+      5.0,
+      0.7
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      1.75,
+      3.084,
+      -0.762
+     ],
+     "out": [
+      -0.0,
+      -0.8,
+      -0.6
+     ],
+     "up": [
+      -0.0,
+      0.6,
+      -0.8
+     ]
+    },
+    "Work2": {
+     "position": [
+      -1.75,
+      2.3,
+      -1.35
+     ],
+     "out": [
+      -0.0,
+      -0.8,
+      -0.6
+     ],
+     "up": [
+      -0.0,
+      0.6,
+      -0.8
+     ]
+    },
+    "Trail2": {
+     "position": [
+      -1.75,
+      2.3,
+      -1.35
+     ],
+     "out": [
+      -0.0,
+      -0.8,
+      -0.6
+     ],
+     "up": [
+      -0.0,
+      0.6,
+      -0.8
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -1.75,
+      5.0,
+      0.7
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -1.75,
+      3.084,
+      -0.762
+     ],
+     "out": [
+      -0.0,
+      -0.8,
+      -0.6
+     ],
+     "up": [
+      -0.0,
+      0.6,
+      -0.8
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      0.3,
+      -3.4
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.38,
+      -3.86
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      9.6,
+      1.2
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -0.0,
+      9.6,
+      1.2
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 4,
+   "theme": "Enchanted",
+   "form": "Enchanted picks orbiting a rune pillar",
+   "meshes": [
+    [
+     "IcePickPostT4Dais",
+     2316
+    ],
+    [
+     "IcePickPostT4DaisGlow",
+     1008
+    ],
+    [
+     "IcePickPostT4DaisCrystals",
+     320
+    ],
+    [
+     "IcePickPostT4DaisCrystalsGlow",
+     768
+    ],
+    [
+     "IcePickPostT4Pillar",
+     2208
+    ],
+    [
+     "IcePickPostT4RunesGlow",
+     384
+    ],
+    [
+     "IcePickPostT4PillarGlow",
+     832
+    ],
+    [
+     "IcePickPostT4CrownGlow",
+     480
+    ],
+    [
+     "IcePickPostT4Crown",
+     224
+    ],
+    [
+     "IcePickPostT4Orbit",
+     1488
+    ],
+    [
+     "IcePickPostT4OrbitGlow",
+     1032
+    ],
+    [
+     "IcePickPostT4OrbitPicks",
+     1704
+    ],
+    [
+     "IcePickPostT4OrbitPicksGlow",
+     1216
+    ],
+    [
+     "IcePickPostT4RuneStones",
+     960
+    ],
+    [
+     "IcePickPostT4RuneStonesGlow",
+     156
+    ],
+    [
+     "IcePickPostT4Pedestals",
+     360
+    ],
+    [
+     "IcePickPostT4PedestalsGlow",
+     144
+    ],
+    [
+     "IcePickPostT4PickA",
+     852
+    ],
+    [
+     "IcePickPostT4PickAGlow",
+     824
+    ],
+    [
+     "IcePickPostT4PickB",
+     852
+    ],
+    [
+     "IcePickPostT4PickBGlow",
+     824
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "IcePickPostT4U1PickA",
+       900
+      ],
+      [
+       "IcePickPostT4U1PickAGlow",
+       560
+      ],
+      [
+       "IcePickPostT4U1PickB",
+       900
+      ],
+      [
+       "IcePickPostT4U1PickBGlow",
+       560
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "IcePickPostT4U2Lamp1Glow",
+       280
+      ],
+      [
+       "IcePickPostT4U2Lamp2Glow",
+       280
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "IcePickPostT4U3Spring1",
+       856
+      ],
+      [
+       "IcePickPostT4U3Spring1Glow",
+       384
+      ],
+      [
+       "IcePickPostT4U3Spring2",
+       856
+      ],
+      [
+       "IcePickPostT4U3Spring2Glow",
+       384
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "IcePickPostT4U5PickA",
+       900
+      ],
+      [
+       "IcePickPostT4U5PickAGlow",
+       560
+      ],
+      [
+       "IcePickPostT4U5PickB",
+       900
+      ],
+      [
+       "IcePickPostT4U5PickBGlow",
+       560
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "IcePickPostT4FxHit",
+     492
+    ],
+    [
+     "IcePickPostT4FxHitGlow",
+     40
+    ],
+    [
+     "IcePickPostT4FxTrailAGlow",
+     1180
+    ],
+    [
+     "IcePickPostT4FxTrailBGlow",
+     1180
+    ]
+   ],
+   "size": [
+    7.8,
+    7.04,
+    12.31
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      1.15,
+      4.3,
+      -0.9
+     ],
+     "out": [
+      -0.0,
+      -0.287,
+      -0.958
+     ],
+     "up": [
+      -0.0,
+      0.958,
+      -0.287
+     ]
+    },
+    "Trail": {
+     "position": [
+      1.15,
+      4.3,
+      -0.9
+     ],
+     "out": [
+      -0.0,
+      -0.287,
+      -0.958
+     ],
+     "up": [
+      -0.0,
+      0.958,
+      -0.287
+     ]
+    },
+    "Gear1": {
+     "position": [
+      1.15,
+      2.43,
+      -0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Work2": {
+     "position": [
+      -1.15,
+      6.4,
+      -0.9
+     ],
+     "out": [
+      -0.0,
+      -0.287,
+      -0.958
+     ],
+     "up": [
+      -0.0,
+      0.958,
+      -0.287
+     ]
+    },
+    "Trail2": {
+     "position": [
+      -1.15,
+      6.4,
+      -0.9
+     ],
+     "out": [
+      -0.0,
+      -0.287,
+      -0.958
+     ],
+     "up": [
+      -0.0,
+      0.958,
+      -0.287
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -1.15,
+      4.53,
+      -0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      2.5,
+      1.6,
+      -1.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -2.5,
+      1.6,
+      -1.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -0.0,
+      12.4,
+      0.6
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      0.3,
+      -3.4
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.4,
+      -3.27
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.8,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      12.4,
+      0.6
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 5,
+   "theme": "Legendary",
+   "form": "Frost Golem: a giant ice-golem fist pounding the ice",
+   "meshes": [
+    [
+     "IcePickPostT5Plinth",
+     1564
+    ],
+    [
+     "IcePickPostT5PlinthTrim",
+     140
+    ],
+    [
+     "IcePickPostT5PlinthTrimGlow",
+     140
+    ],
+    [
+     "IcePickPostT5PlinthGlow",
+     128
+    ],
+    [
+     "IcePickPostT5Legs",
+     3192
+    ],
+    [
+     "IcePickPostT5Joints",
+     3968
+    ],
+    [
+     "IcePickPostT5Waist",
+     824
+    ],
+    [
+     "IcePickPostT5Torso",
+     1728
+    ],
+    [
+     "IcePickPostT5TorsoRock",
+     360
+    ],
+    [
+     "IcePickPostT5Core",
+     684
+    ],
+    [
+     "IcePickPostT5CoreGlow",
+     244
+    ],
+    [
+     "IcePickPostT5Shards",
+     144
+    ],
+    [
+     "IcePickPostT5ShardsGlow",
+     144
+    ],
+    [
+     "IcePickPostT5Back",
+     1540
+    ],
+    [
+     "IcePickPostT5ArmRest",
+     2800
+    ],
+    [
+     "IcePickPostT5ArmRaised",
+     1888
+    ],
+    [
+     "IcePickPostT5Head",
+     2724
+    ],
+    [
+     "IcePickPostT5Neck",
+     248
+    ],
+    [
+     "IcePickPostT5Eyes",
+     88
+    ],
+    [
+     "IcePickPostT5EyesGlow",
+     248
+    ],
+    [
+     "IcePickPostT5Crown",
+     1336
+    ],
+    [
+     "IcePickPostT5CrownGlow",
+     448
+    ],
+    [
+     "IcePickPostT5Fist",
+     2748
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "IcePickPostT5U1SpikesA",
+       720
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "IcePickPostT5U2Lamp1",
+       380
+      ],
+      [
+       "IcePickPostT5U2Lamp1Glow",
+       88
+      ],
+      [
+       "IcePickPostT5U2Lamp2",
+       380
+      ],
+      [
+       "IcePickPostT5U2Lamp2Glow",
+       88
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "IcePickPostT5U3Spring1",
+       712
+      ],
+      [
+       "IcePickPostT5U3Spring1Glow",
+       312
+      ],
+      [
+       "IcePickPostT5U3Spring2",
+       712
+      ],
+      [
+       "IcePickPostT5U3Spring2Glow",
+       312
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "IcePickPostT5U5SpikesA",
+       720
+      ],
+      [
+       "IcePickPostT5U5SpikesAGlow",
+       256
+      ],
+      [
+       "IcePickPostT5U5NamePlate",
+       344
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "IcePickPostT5FxHit",
+     492
+    ],
+    [
+     "IcePickPostT5FxHitGlow",
+     40
+    ],
+    [
+     "IcePickPostT5FxTrailAGlow",
+     1488
+    ],
+    [
+     "IcePickPostT5FxSparklesGlow",
+     80
+    ]
+   ],
+   "size": [
+    7.9,
+    7.94,
+    12.86
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      2.7,
+      11.6,
+      1.25
+     ],
+     "out": [
+      -0.136,
+      -0.407,
+      -0.904
+     ],
+     "up": [
+      -0.06,
+      0.914,
+      -0.402
+     ]
+    },
+    "Trail": {
+     "position": [
+      2.7,
+      11.6,
+      1.25
+     ],
+     "out": [
+      -0.136,
+      -0.407,
+      -0.904
+     ],
+     "up": [
+      -0.06,
+      0.914,
+      -0.402
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      3.15,
+      1.17,
+      -3.15
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -3.15,
+      1.17,
+      -3.15
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      2.67,
+      8.6,
+      1.25
+     ],
+     "out": [
+      0.191,
+      0.97,
+      0.147
+     ],
+     "up": [
+      -0.769,
+      0.241,
+      -0.592
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -3.2,
+      8.05,
+      1.2
+     ],
+     "out": [
+      -0.159,
+      -0.981,
+      -0.106
+     ],
+     "up": [
+      -0.817,
+      0.192,
+      -0.544
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -1.014,
+      8.29,
+      2.827
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      0.414,
+      8.29,
+      2.827
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      1.55,
+      1.1,
+      -3.4
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.45,
+      -3.92
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      1.05,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Crown": {
+     "position": [
+      -0.31,
+      11.344,
+      0.442
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Eyes": {
+     "position": [
+      -0.3,
+      10.55,
+      -0.733
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.31,
+      12.894,
+      0.442
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  }
+ ]
+}
