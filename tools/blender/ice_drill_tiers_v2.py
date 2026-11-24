@@ -630,6 +630,7 @@ def bounds_of(objs):
     return lo, hi
 
 
+RENDER_TAG = globals().get("RENDER_TAG", "v2")
 ROOT_NAMES = {"Scrappy": "IceDrillScrappy", "Workshop": "IceDrillWorkshop", "Frost-tech": "IceDrillFrostTech",
               "Enchanted": "IceDrillEnchanted", "Legendary: Mecha Mole Titan": "IceDrillTitan", "Masterwork": "IceDrillTitanMW"}
 
@@ -649,7 +650,7 @@ def render_all(which=("lineup", "closeups", "masterwork")):
     if "lineup" in which:
         lineup(scene, cam, roots, rig, avatar, everything)
     if "closeups" in which:
-        closeups(scene, cam, roots, rig, everything)
+        closeups(scene, cam, roots, rig, everything, avatar)
     if "masterwork" in which:
         masterwork(scene, cam, roots, rig, avatar, everything)
     visible(everything, True)
@@ -675,15 +676,15 @@ def lineup(scene, cam, roots, rig, avatar, everything):
     labels.append(label(scene, "avatar 5.5 studs", (x + 4.4, -15.0, 0.6), 0.45))
     width = x + 6.0
     ortho(cam, (width / 2 - 0.8, 0, 5.6), 14, width + 2.0)
-    shoot(scene, os.path.join(OUT, "IceDrill_v2_lineup.png"), 3000, 1100)
+    shoot(scene, os.path.join(OUT, "IceDrill_%s_lineup.png" % RENDER_TAG), 3000, 1100)
     for lab in labels:
         bpy.data.objects.remove(lab, do_unlink=True)
     for name, *_ in TIERS:
         roots[name].location, roots[name].rotation_euler = (0, 0, 0), (0, 0, 0)
 
 
-def closeups(scene, cam, roots, rig, everything):
-    """Each tier from three-quarter, perspective, with the pet beside it for scale."""
+def closeups(scene, cam, roots, rig, everything, avatar=None):
+    """Each tier from three-quarter, perspective, with the pet and the avatar beside it for scale."""
     for name, owned, _ in TIERS:
         visible(everything, False)
         root = roots[name]
@@ -692,12 +693,15 @@ def closeups(scene, cam, roots, rig, everything):
         bpy.context.view_layer.update()
         lo, hi = bounds_of(tree(root))
         rig.location = (hi.x + 1.4, lo.y + 1.2, 0)
+        if avatar:
+            avatar.location = (hi.x + 3.6, lo.y + 2.2, 0)
+            hi = Vector((hi.x + 4.8, hi.y, max(hi.z, 5.5)))  # frame the stand-ins too
         centre = (lo + hi) / 2
-        size = max(hi.x - lo.x + 2.5, hi.z - lo.z, hi.y - lo.y)
-        eye = centre + Vector((0.72, -1.0, 0.55)).normalized() * size * 2.35
-        persp(cam, centre + Vector((0.6, 0, -0.4)), eye, 50)
+        size = max(hi.x - lo.x, hi.z - lo.z, hi.y - lo.y)
+        eye = centre + Vector((0.72, -1.0, 0.55)).normalized() * size * (2.05 if avatar else 2.35)
+        persp(cam, centre + Vector((0.6 if not avatar else 0.0, 0, -0.4)), eye, 50)
         slug = name.split(":")[0].replace("-", "").replace(" ", "")
-        shoot(scene, os.path.join(OUT, "IceDrill_v2_%s_closeup.png" % slug), 1400, 1400)
+        shoot(scene, os.path.join(OUT, "IceDrill_%s_%s_closeup.png" % (RENDER_TAG, slug)), 1400, 1400)
 
 
 def masterwork(scene, cam, roots, rig, avatar, everything):
@@ -708,10 +712,10 @@ def masterwork(scene, cam, roots, rig, avatar, everything):
     root.location, root.rotation_euler = (0, 0, 0), (0, 0, 0)
     rig.location, avatar.location = (7.6, -1.5, 0), (11.2, -1.0, 0)
     bpy.context.view_layer.update()
-    persp(cam, (2.6, -0.5, 6.0), (2.6 + 21, -0.5 - 27, 6.0 + 15), 50)
-    shoot(scene, os.path.join(OUT, "IceDrill_v2_Titan_Masterwork_threequarter.png"), 1800, 1400)
+    persp(cam, (4.2, -0.5, 5.6), (4.2 + 23, -0.5 - 30, 5.6 + 16), 50)
+    shoot(scene, os.path.join(OUT, "IceDrill_%s_Titan_Masterwork_threequarter.png" % RENDER_TAG), 1800, 1400)
     ortho(cam, (3.2, 0, 7.0), 8, 21)
-    shoot(scene, os.path.join(OUT, "IceDrill_v2_Titan_Masterwork_front.png"), 1500, 1300)
+    shoot(scene, os.path.join(OUT, "IceDrill_%s_Titan_Masterwork_front.png" % RENDER_TAG), 1500, 1300)
 
 
 if MODE == "build":

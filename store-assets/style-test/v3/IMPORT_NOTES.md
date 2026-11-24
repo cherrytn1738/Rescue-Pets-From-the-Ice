@@ -34,7 +34,7 @@ so a MeshPart turning about its bounding-box centre spins true.
 ## Export
 
 FBX per tier, with the shared settings in `tools/blender/model_helpers.py` (`export_fbx`). Every mesh
-is under 10,000 triangles (the largest is the Titan's head at 5,236), safe for FBX import. Uploads
+is under 10,000 triangles (the largest is the Titan's head at 4,980), safe for FBX import. Uploads
 always go to group 921449746 (`tools/upload_models.py`).
 
 ## Attachment points

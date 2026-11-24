@@ -24,9 +24,9 @@ MESH_LIMIT = 10000
 # Per-tier quality: smoother round shapes and rounder blocks where the budget allows.
 TIER_Q = {"Scrappy": {"round": 1.0, "minor": 1.0, "corner": 2, "edge": 2},
           "Workshop": {"round": 1.0, "minor": 1.0, "corner": 2, "edge": 2},
-          "Frost-tech": {"round": 1.25, "minor": 1.0, "corner": 2, "edge": 2},
+          "Frost-tech": {"round": 1.1, "minor": 1.0, "corner": 2, "edge": 2},
           "Enchanted": {"round": 1.5, "minor": 1.25, "corner": 3, "edge": 2},
-          "Legendary: Mecha Mole Titan": {"round": 1.25, "minor": 1.0, "corner": 2, "edge": 2}}
+          "Legendary: Mecha Mole Titan": {"round": 1.1, "minor": 1.0, "corner": 2, "edge": 2}}
 BUDGETS = {"Scrappy": 6000, "Workshop": 10000, "Frost-tech": 15000, "Enchanted": 20000, "Legendary: Mecha Mole Titan": 30000}
 
 
@@ -56,7 +56,7 @@ def tier_scrappy(coll, name="IceDrillScrappy"):
     # rope lashing and an iron bracket at the apex
     for k, tilt in enumerate((0.3, -0.4)):
         ring = bmesh.new()
-        torus(ring, Matrix.Translation(apex + V(0, 0, 0.12 + 0.12 * k)) @ Matrix.Rotation(tilt, 4, "X"), 0.4, 0.07, 14, 6)
+        torus(ring, Matrix.Translation(apex + V(0, 0, 0.12 + 0.12 * k)) @ Matrix.Rotation(tilt, 4, "X"), 0.4, 0.07, 12, 4)
         b.add("Legs", [(ring, "PineLight", 0.0, False)])
     mid = (dark_foot + apex) / 2
     b.add("Legs", place(riveted_plate(0.6, 0.7, 0.06, "PatchGreen", "RustDark", 0.6), front(mid + V(0, -0.24, 0), 0.2)))
@@ -133,10 +133,10 @@ def lantern_v3(glass="LampYellow", metal="Brass"):
 def tier_workshop(coll, name="IceDrillWorkshop"):
     b = Builder(name, coll)
     for k, y in enumerate((-2.0, -1.0, 0.0, 1.0, 2.0)):
-        b.add("Deck", place(plank(6.0, 0.96, 0.5, "Pine", "PineDark", True, k * 1.1), M((0, y, 0))))
+        b.add("Deck", place(plank(6.0, 0.96, 0.5, "Pine", "PineDark", k in (0, 4), k * 1.1), M((0, y, 0))))
     for sx in (-1, 1):
         for sy in (-1, 1):
-            b.add("Posts", grained_beam((sx * 2.4, sy * 1.9, 0.5), (sx * 2.4, sy * 1.9, 6.0), 0.5, "PineLight", "Pine", faces=(1, 3)))
+            b.add("Posts", grained_beam((sx * 2.4, sy * 1.9, 0.5), (sx * 2.4, sy * 1.9, 6.0), 0.5, "PineLight", "Pine", faces=(3,)))
             b.add("Posts", place(cyl(0.34, 0.2, "Brass", 12), M((sx * 2.4, sy * 1.9, 0.5))))
     for sy in (-1, 1):
         b.add("Posts", beam_between((-2.7, sy * 1.9, 5.85), (2.7, sy * 1.9, 5.85), 0.42, swatch="PineDark"))
@@ -161,10 +161,10 @@ def tier_workshop(coll, name="IceDrillWorkshop"):
         b.add("Roof", [(cap, "Brass", 0.0, False)])
     # the boiler: domed ends, banded and riveted, a dial and a safety valve
     boiler = bmesh.new()
-    lathe(boiler, [(0, -0.25), (0.5, -0.2), (0.78, -0.05), (0.85, 0.15), (0.85, 2.45), (0.78, 2.65), (0.5, 2.8), (0, 2.85)], 16, frame((-2.0, 0.9, 1.6), out=(1, 0, 0)))
+    lathe(boiler, [(0, -0.25), (0.5, -0.2), (0.78, -0.05), (0.85, 0.15), (0.85, 2.45), (0.78, 2.65), (0.5, 2.8), (0, 2.85)], 14, frame((-2.0, 0.9, 1.6), out=(1, 0, 0)))
     b.add("Boiler", [(boiler, "Brass", 0.0, False)])
     for x in (-1.5, -0.4):
-        b.add("Boiler", place(trim_ring(0.87, 0, "Copper", minor=0.09, segments=16), frame((x, 0.9, 1.6), out=(1, 0, 0))))
+        b.add("Boiler", place(trim_ring(0.87, 0, "Copper", minor=0.09, segments=14), frame((x, 0.9, 1.6), out=(1, 0, 0))))
         for k in range(5):
             a = 2 * math.pi * k / 5
             b.add("Boiler", place(rivet(0.05, "Copper"), frame((x + 0.16, 0.9 + 0.86 * math.cos(a), 1.6 + 0.86 * math.sin(a)), out=(0, math.cos(a), math.sin(a)))))
@@ -187,7 +187,7 @@ def tier_workshop(coll, name="IceDrillWorkshop"):
     # chimney: banded brass pipe, a cap and a spark guard
     b.add("Chimney", pipe_between((-1.4, 0.9, 2.4), (-1.4, 0.9, 8.4), 0.24, "Brass"))
     for z in (4.5, 7.4):
-        b.add("Chimney", place(trim_ring(0.26, 0, "Copper", minor=0.05, segments=14), M((-1.4, 0.9, z))))
+        b.add("Chimney", place(trim_ring(0.26, 0, "Copper", minor=0.05, segments=12), M((-1.4, 0.9, z))))
     cap = bmesh.new()
     lathe(cap, [(0, 8.4), (0.36, 8.4), (0.4, 8.55), (0.28, 8.75), (0, 8.8)], 14, M((-1.4, 0.9, 0)))
     b.add("Chimney", [(cap, "Copper", 0.0, False)])
@@ -196,10 +196,10 @@ def tier_workshop(coll, name="IceDrillWorkshop"):
     b.add("Gearbox", place(vent(0.7, 0.5, 4, "RustDark", "Brass"), frame((1.97, -0.4, 4.75), out=(1, 0, 0))))
     b.add("Gearbox", place(cyl(0.16, 2.9, "Steel", 12), M((1.3, -0.4, 1.4))))
     collar = bmesh.new()
-    torus(collar, M((1.3, -0.4, 0.55)), 0.5, 0.14, 14, 6)
+    torus(collar, M((1.3, -0.4, 0.55)), 0.5, 0.14, 12, 4)
     b.add("Gearbox", [(collar, "PineDark", 0.0, False)])
-    b.add("Gearbox", place(rivet_ring(0.36, 6, 0.06, "Brass"), M((1.3, -0.4, 0.62))))
-    b.add("Flywheel", place(spoked_gear(1.0, 12, 0.24, 0.12, 5, "Brass", "Copper"), front((-0.9, -0.55, 4.4))))
+    b.add("Gearbox", place(rivet_ring(0.36, 4, 0.06, "Brass"), M((1.3, -0.4, 0.62))))
+    b.add("Flywheel", place(spoked_gear(1.0, 10, 0.24, 0.12, 3, "Brass", "Copper"), front((-0.9, -0.55, 4.4))))
     for z0, z1 in ((5.38, 5.15), (3.42, 3.95)):
         b.add("Gearbox", trim_strip((-0.9, -0.72, z0), (1.3, -0.72, z1), 0.12, "Rubber"))
     # a hanging lantern and a toolbox on the deck
@@ -256,17 +256,17 @@ def tier_frosttech(coll, name="IceDrillFrostTech"):
             rounded_block(line, (0.16, 0.06, 1.4), M((X + sx * 1.16, 0.2, 4.3), (0, sx * 0.25, 0)), corner=0.02, edge=0.02, corner_seg=1, edge_seg=1)
             b.add(pod, [(fin, "GlacierBlue", 0.0, False), (line, "AuroraCyan", 0.0, True)])
         ring = bmesh.new()
-        torus(ring, M((X, 0, 1.15)), 0.62, 0.1, 12, 6)
+        torus(ring, M((X, 0, 1.15)), 0.62, 0.1, 12, 4)
         b.add("Deck", [(ring, "AuroraCyan", 0.0, True)])
         inner = math.copysign(0.65, X)
         b.add("Cables", pipe_between((X - math.copysign(1.1, X), 0.2, 5.0), (inner, 0.6, 5.0), 0.16, "SteelLight"))
         b.add("Cables", cable((X - math.copysign(0.6, X), 0.95, 3.4), (math.copysign(0.75, X), 0.95, 1.6), 0.35, 0.08, "NavyIce", "GlacierBlue"))
-        b.add("Cables", cable((X, 1.05, 3.6), (X + math.copysign(0.8, X), 2.6, 1.15), 0.4, 0.12, "SteelDark", "GlacierBlue", ribs=3))
+        b.add("Cables", cable((X, 1.05, 3.6), (X + math.copysign(0.8, X), 2.6, 1.15), 0.4, 0.12, "SteelDark", "GlacierBlue", ribs=2))
     # the coil spire: a vented base, stacked insulators, the wound coil and the glowing top
     b.add("Coil", place(block((1.6, 1.6, 0.8), "SteelLight", corner=0.3, edge=0.12), M((0, 0.6, 1.1))))
     b.add("Coil", place(block((1.7, 1.7, 0.1), "GlacierBlue", corner=0.32, edge=0.04), M((0, 0.6, 1.1))))
     b.add("Coil", place(vent(0.9, 0.45, 4, "GlacierBlue", "SteelLight"), front((0, -0.21, 1.45))))
-    b.add("Coil", place(coil(0.62, 5.6, turns=7, core="SteelDark", wire="IceBlue", top="AuroraCyan"), M((0, 0.6, 1.9))))
+    b.add("Coil", place(coil(0.62, 5.6, turns=6, core="SteelDark", wire="IceBlue", top="AuroraCyan"), M((0, 0.6, 1.9))))
     for z in (2.2, 2.9):
         b.add("Coil", place(cyl(0.98, 0.14, "IceBlue", 16), M((0, 0.6, z))))
     for k in range(3):
@@ -472,7 +472,7 @@ def tier_titan(coll, name="IceDrillTitan"):
         grille = bmesh.new()
         lathe(grille, [(0, 0), (0.36, 0), (0.36, 0.05), (0, 0.05)], 6, stack @ M((0, 0, 2.38)))
         b.add("Back", [(grille, "Iron", 0.0, False)])
-        b.add("Hoses", cable((sx * 1.3, 2.2, 6.4), (sx * 3.0, 0.3, 6.7), 0.55, 0.16, "Rubber", "Gold", ribs=4))
+        b.add("Hoses", cable((sx * 1.3, 2.2, 6.4), (sx * 3.0, 0.3, 6.7), 0.55, 0.16, "Rubber", "Gold", ribs=2))
     # the head: subdivided, with goggle rims, glowing eyes, brows, cheeks, ears, whiskers, buck teeth
     head = mole_head()
     head.transform(M((0, -1.0, 10.2)))
@@ -585,8 +585,8 @@ def legendary_upgrades(b, fx, atts):
         b.add("Beacon" + key[-1], place(warning_lamp(0.42, "AuroraGreen", "Gold", "Gunmetal"), atts[key]))
         b.add("Beacon" + key[-1], place(rivet_ring(0.42, 6, 0.05, "Gold"), atts[key] @ M((0, 0, 0.02))))
     for key in ("Gear1", "Gear2"):
-        b.add("Gear%sBig" % key[-1], place(spoked_gear(0.95, 12, 0.28, 0.16, 5, "Brass", "Gold"), atts[key] @ M((0, 0, 0.15))))
-        b.add("Gear%sSmall" % key[-1], place(spoked_gear(0.5, 8, 0.28, 0.13, 3, "Copper", "Gold"), atts[key] @ M((0.85, 0.85, 0.35))))
+        b.add("Gear%sBig" % key[-1], place(spoked_gear(0.95, 10, 0.28, 0.16, 4, "Brass", "Gold"), atts[key] @ M((0, 0, 0.15))))
+        b.add("Gear%sSmall" % key[-1], place(spoked_gear(0.5, 7, 0.28, 0.13, 3, "Copper", "Gold"), atts[key] @ M((0.85, 0.85, 0.35))))
     for key in ("Steam1", "Steam2"):
         for k, (dx, dz, r) in enumerate(((0.0, 0.4, 0.3), (0.2, 0.95, 0.42), (-0.15, 1.6, 0.55))):
             puff = bmesh.new()
@@ -603,8 +603,8 @@ def legendary_upgrades(b, fx, atts):
         pieces.append((spark, "LampYellow", 0.0, True))
     fx.add("Hit", place(pieces, atts["Hit"]))
     crown = []
-    crown += trim_ring(1.0, 0.1, "Gold", minor=0.16, segments=24)
-    crown += trim_ring(1.0, 0.45, "Gold", minor=0.07, segments=24)
+    crown += trim_ring(1.0, 0.1, "Gold", minor=0.16, segments=18)
+    crown += trim_ring(1.0, 0.45, "Gold", minor=0.07, segments=18)
     for k in range(5):
         a = math.pi / 2 + (k - 2) * 0.55
         spike = bmesh.new()
@@ -633,6 +633,32 @@ def legendary_upgrades(b, fx, atts):
 
 TIERS = [("Scrappy", "1 owned", tier_scrappy), ("Workshop", "10 owned", tier_workshop), ("Frost-tech", "25 owned", tier_frosttech),
          ("Enchanted", "50 owned", tier_enchanted), ("Legendary: Mecha Mole Titan", "100 owned", tier_titan)]
+
+
+def reference(coll):
+    """The game's Snow Bunny voxel pet (3 studs, as in game) and the 5.5-stud avatar stand-in."""
+    pet_blend = os.path.join(REPO, "store-assets", "creatures", "SnowBunny", "SnowBunny.blend")
+    with bpy.data.libraries.load(pet_blend, link=False) as (src, dst):
+        dst.objects = [n for n in src.objects if n in ("SnowBunny", "SnowBunnyRig")]
+    for obj in dst.objects:
+        coll.objects.link(obj)
+    rig = next(o for o in dst.objects if o.type == "ARMATURE")
+    pet = next(o for o in dst.objects if o.type == "MESH")
+    rig.name = "BunnyRig"  # (the render code finds the pet by this name)
+    bpy.context.view_layer.update()
+    zs = [(pet.matrix_world @ v.co).z for v in pet.data.vertices]
+    ys = [(pet.matrix_world @ v.co).y for v in pet.data.vertices]
+    s = PET_STUDS / max(max(zs) - min(zs), max(ys) - min(ys))
+    rig.scale = (s, s, s)
+    av = Builder("AvatarStandIn", coll)
+    for sx in (-0.5, 0.5):
+        av.add("Body", place(block((0.9, 0.9, 2.0), "SteelDark", corner=0.15, edge=0.1), M((sx, 0, 0))))
+    av.add("Body", place(block((2.0, 1.0, 2.0), "Steel", corner=0.2, edge=0.12), M((0, 0, 2.0))))
+    for sx in (-1, 1):
+        av.add("Body", place(block((0.85, 0.85, 2.0), "Steel", corner=0.15, edge=0.1), M((sx * 1.45, 0, 2.0))))
+    av.add("Body", place(block((1.15, 1.15, 1.5), "StoneLight", corner=0.3, edge=0.25), M((0, 0, 4.0))))
+    av.finish()
+    return rig, av.root, s
 
 
 def counts(objs):

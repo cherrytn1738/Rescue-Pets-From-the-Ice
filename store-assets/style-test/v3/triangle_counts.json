@@ -7,7 +7,7 @@
    ],
    [
     "IceDrillScrappyLegs",
-    1908
+    1764
    ],
    [
     "IceDrillScrappyWheel",
@@ -27,11 +27,11 @@
   "meshes": [
    [
     "IceDrillWorkshopDeck",
-    1572
+    1380
    ],
    [
     "IceDrillWorkshopPosts",
-    1616
+    1464
    ],
    [
     "IceDrillWorkshopRoof",
@@ -39,7 +39,7 @@
    ],
    [
     "IceDrillWorkshopBoiler",
-    1436
+    1364
    ],
    [
     "IceDrillWorkshopFirebox",
@@ -51,15 +51,15 @@
    ],
    [
     "IceDrillWorkshopChimney",
-    564
+    516
    ],
    [
     "IceDrillWorkshopGearbox",
-    1724
+    1588
    ],
    [
     "IceDrillWorkshopFlywheel",
-    1340
+    964
    ],
    [
     "IceDrillWorkshopLantern",
@@ -83,11 +83,11 @@
    ],
    [
     "IceDrillFrostTechDeckGlow",
-    920
+    768
    ],
    [
     "IceDrillFrostTechPodALegs",
-    916
+    892
    ],
    [
     "IceDrillFrostTechPodA",
@@ -99,15 +99,15 @@
    ],
    [
     "IceDrillFrostTechPodALid",
-    616
+    584
    ],
    [
     "IceDrillFrostTechCables",
-    2296
+    2056
    ],
    [
     "IceDrillFrostTechPodBLegs",
-    916
+    892
    ],
    [
     "IceDrillFrostTechPodB",
@@ -119,11 +119,11 @@
    ],
    [
     "IceDrillFrostTechPodBLid",
-    616
+    584
    ],
    [
     "IceDrillFrostTechCoil",
-    2172
+    2028
    ],
    [
     "IceDrillFrostTechCoilGlow",
@@ -131,11 +131,11 @@
    ],
    [
     "IceDrillFrostTechBitA",
-    686
+    674
    ],
    [
     "IceDrillFrostTechBitB",
-    686
+    674
    ]
   ]
  },
@@ -235,7 +235,7 @@
   "meshes": [
    [
     "IceDrillTitanPlatform",
-    2384
+    2336
    ],
    [
     "IceDrillTitanPlatformGlow",
@@ -243,19 +243,19 @@
    ],
    [
     "IceDrillTitanTrim",
-    740
+    668
    ],
    [
     "IceDrillTitanTrimGlow",
-    440
+    404
    ],
    [
     "IceDrillTitanLegs",
-    2064
+    2032
    ],
    [
     "IceDrillTitanBody",
-    3614
+    3444
    ],
    [
     "IceDrillTitanBodyGlow",
@@ -263,35 +263,35 @@
    ],
    [
     "IceDrillTitanBack",
-    2316
+    2124
    ],
    [
     "IceDrillTitanHoses",
-    1288
+    1000
    ],
    [
     "IceDrillTitanHead",
-    5236
+    4980
    ],
    [
     "IceDrillTitanEyes",
-    120
+    104
    ],
    [
     "IceDrillTitanEyesGlow",
-    320
+    296
    ],
    [
     "IceDrillTitanArmL",
-    2276
+    2220
    ],
    [
     "IceDrillTitanArmR",
-    2276
+    2220
    ],
    [
     "IceDrillTitanBitA",
-    602
+    590
    ]
   ]
  },
@@ -299,7 +299,7 @@
   "meshes": [
    [
     "IceDrillTitanMWPlatform",
-    2384
+    2336
    ],
    [
     "IceDrillTitanMWPlatformGlow",
@@ -307,19 +307,19 @@
    ],
    [
     "IceDrillTitanMWTrim",
-    740
+    668
    ],
    [
     "IceDrillTitanMWTrimGlow",
-    440
+    404
    ],
    [
     "IceDrillTitanMWLegs",
-    2064
+    2032
    ],
    [
     "IceDrillTitanMWBody",
-    3614
+    3444
    ],
    [
     "IceDrillTitanMWBodyGlow",
@@ -327,35 +327,35 @@
    ],
    [
     "IceDrillTitanMWBack",
-    2316
+    2124
    ],
    [
     "IceDrillTitanMWHoses",
-    1288
+    1000
    ],
    [
     "IceDrillTitanMWHead",
-    5236
+    4980
    ],
    [
     "IceDrillTitanMWEyes",
-    120
+    104
    ],
    [
     "IceDrillTitanMWEyesGlow",
-    320
+    296
    ],
    [
     "IceDrillTitanMWArmL",
-    2276
+    2220
    ],
    [
     "IceDrillTitanMWArmR",
-    2276
+    2220
    ],
    [
     "IceDrillTitanMWBitA",
-    90
+    78
    ],
    [
     "IceDrillTitanMWBitAGlow",
@@ -363,39 +363,39 @@
    ],
    [
     "IceDrillTitanMWBeacon1",
-    660
+    628
    ],
    [
     "IceDrillTitanMWBeacon1Glow",
-    120
+    104
    ],
    [
     "IceDrillTitanMWBeacon2",
-    660
+    628
    ],
    [
     "IceDrillTitanMWBeacon2Glow",
-    120
+    104
    ],
    [
     "IceDrillTitanMWGear1Big",
-    1548
+    1112
    ],
    [
     "IceDrillTitanMWGear1Small",
-    1012
+    828
    ],
    [
     "IceDrillTitanMWGear2Big",
-    1548
+    1112
    ],
    [
     "IceDrillTitanMWGear2Small",
-    1012
+    828
    ],
    [
     "IceDrillTitanMWCrown",
-    1704
+    1428
    ],
    [
     "IceDrillTitanMWCrownGlow",
