@@ -49,3 +49,7 @@ store-assets/creatures/*/render/*
 
 # Building style-test .blend files stay out of Git (large; rebuild with tools/blender/*.py)
 store-assets/style-test/**/*.blend
+
+# Building pipeline .blend files stay out of Git (rebuild with tools/blender/buildings/run.py)
+store-assets/buildings/**/*.blend
+store-assets/tools/**/*.blend

@@ -1,0 +1,1715 @@
+{
+ "id": "IceDrill",
+ "name": "Ice Drill",
+ "pad": 10,
+ "tiers": [
+  {
+   "tier": 1,
+   "theme": "Scrappy",
+   "form": "Hand drill on an A-frame",
+   "meshes": [
+    [
+     "IceDrillT1Planks",
+     900
+    ],
+    [
+     "IceDrillT1Legs",
+     1764
+    ],
+    [
+     "IceDrillT1Wheel",
+     1244
+    ],
+    [
+     "IceDrillT1Junk",
+     1724
+    ],
+    [
+     "IceDrillT1BitA",
+     568
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "IceDrillT1U1BitA",
+       696
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "IceDrillT1U2Lamp1",
+       296
+      ],
+      [
+       "IceDrillT1U2Lamp1Glow",
+       48
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "IceDrillT1U3Gear1",
+       1056
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "IceDrillT1U5BitA",
+       784
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "IceDrillT1FxSteam1",
+     60
+    ],
+    [
+     "IceDrillT1FxHit",
+     140
+    ],
+    [
+     "IceDrillT1FxHitGlow",
+     40
+    ],
+    [
+     "IceDrillT1FxTrailGlow",
+     512
+    ]
+   ],
+   "size": [
+    5.45,
+    3.91,
+    5.89
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.15,
+      1.4,
+      0.05
+     ],
+     "out": [
+      -0.0,
+      -1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -2.3,
+      1.32,
+      0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -0.15,
+      3.7,
+      -0.42
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -0.15,
+      5.3,
+      0.05
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.15,
+      0.3,
+      -0.7
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.15,
+      -0.6,
+      0.05
+     ],
+     "out": [
+      -0.0,
+      -1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.45,
+      -1.9
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.3,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.15,
+      5.3,
+      0.05
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 2,
+   "theme": "Workshop",
+   "form": "Steam drill rig with a brass boiler",
+   "meshes": [
+    [
+     "IceDrillT2Deck",
+     1380
+    ],
+    [
+     "IceDrillT2Posts",
+     1464
+    ],
+    [
+     "IceDrillT2Roof",
+     592
+    ],
+    [
+     "IceDrillT2Boiler",
+     1364
+    ],
+    [
+     "IceDrillT2Firebox",
+     1032
+    ],
+    [
+     "IceDrillT2FireboxGlow",
+     92
+    ],
+    [
+     "IceDrillT2Chimney",
+     516
+    ],
+    [
+     "IceDrillT2Gearbox",
+     1828
+    ],
+    [
+     "IceDrillT2Flywheel",
+     964
+    ],
+    [
+     "IceDrillT2Lantern",
+     728
+    ],
+    [
+     "IceDrillT2LanternGlow",
+     48
+    ],
+    [
+     "IceDrillT2BitA",
+     584
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "IceDrillT2U1BitA",
+       584
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "IceDrillT2U2Lamp1",
+       408
+      ],
+      [
+       "IceDrillT2U2Lamp1Glow",
+       96
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "IceDrillT2U3Gear1",
+       1056
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "IceDrillT2U5BitA",
+       72
+      ],
+      [
+       "IceDrillT2U5BitAGlow",
+       596
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "IceDrillT2FxSteam1",
+     60
+    ],
+    [
+     "IceDrillT2FxHit",
+     140
+    ],
+    [
+     "IceDrillT2FxHitGlow",
+     40
+    ],
+    [
+     "IceDrillT2FxTrailGlow",
+     512
+    ]
+   ],
+   "size": [
+    7.31,
+    6.46,
+    8.8
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -1.3,
+      2.0,
+      -2.15
+     ],
+     "out": [
+      -0.0,
+      -0.625,
+      -0.781
+     ],
+     "up": [
+      -0.0,
+      0.781,
+      -0.625
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -1.0,
+      5.45,
+      -0.4
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -1.3,
+      4.85,
+      -1.04
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      1.4,
+      8.85,
+      0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -1.3,
+      0.5,
+      -3.6
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -1.3,
+      2.0,
+      -2.15
+     ],
+     "out": [
+      -0.0,
+      -0.625,
+      -0.781
+     ],
+     "up": [
+      -0.0,
+      0.781,
+      -0.625
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.25,
+      -2.52
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.5,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      1.4,
+      8.85,
+      0.9
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 3,
+   "theme": "Frost-tech",
+   "form": "Crystal drill tower with glowing coils",
+   "meshes": [
+    [
+     "IceDrillT3Deck",
+     1980
+    ],
+    [
+     "IceDrillT3DeckGlow",
+     768
+    ],
+    [
+     "IceDrillT3PodALegs",
+     892
+    ],
+    [
+     "IceDrillT3PodA",
+     1544
+    ],
+    [
+     "IceDrillT3PodAGlow",
+     856
+    ],
+    [
+     "IceDrillT3PodALid",
+     584
+    ],
+    [
+     "IceDrillT3Cables",
+     2056
+    ],
+    [
+     "IceDrillT3PodBLegs",
+     892
+    ],
+    [
+     "IceDrillT3PodB",
+     1544
+    ],
+    [
+     "IceDrillT3PodBGlow",
+     856
+    ],
+    [
+     "IceDrillT3PodBLid",
+     584
+    ],
+    [
+     "IceDrillT3Coil",
+     2028
+    ],
+    [
+     "IceDrillT3CoilGlow",
+     80
+    ],
+    [
+     "IceDrillT3BitA",
+     674
+    ],
+    [
+     "IceDrillT3BitB",
+     674
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "IceDrillT3U1BitA",
+       674
+      ],
+      [
+       "IceDrillT3U1BitB",
+       674
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "IceDrillT3U2Lamp1",
+       300
+      ],
+      [
+       "IceDrillT3U2Lamp1Glow",
+       64
+      ],
+      [
+       "IceDrillT3U2Lamp2",
+       300
+      ],
+      [
+       "IceDrillT3U2Lamp2Glow",
+       64
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "IceDrillT3U3Gear1",
+       1064
+      ],
+      [
+       "IceDrillT3U3Gear2",
+       1064
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "IceDrillT3U5BitA",
+       78
+      ],
+      [
+       "IceDrillT3U5BitAGlow",
+       596
+      ],
+      [
+       "IceDrillT3U5BitB",
+       78
+      ],
+      [
+       "IceDrillT3U5BitBGlow",
+       596
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "IceDrillT3FxSteam1",
+     60
+    ],
+    [
+     "IceDrillT3FxHit",
+     140
+    ],
+    [
+     "IceDrillT3FxHitGlow",
+     40
+    ],
+    [
+     "IceDrillT3FxTrailGlow",
+     512
+    ]
+   ],
+   "size": [
+    9.22,
+    7.29,
+    8.24
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      2.6,
+      2.25,
+      -1.1
+     ],
+     "out": [
+      -0.0,
+      -0.482,
+      -0.876
+     ],
+     "up": [
+      -0.0,
+      0.876,
+      -0.482
+     ]
+    },
+    "Work2": {
+     "position": [
+      -2.6,
+      2.25,
+      -1.1
+     ],
+     "out": [
+      -0.0,
+      -0.482,
+      -0.876
+     ],
+     "up": [
+      -0.0,
+      0.876,
+      -0.482
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      2.6,
+      6.92,
+      -0.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      -2.6,
+      6.92,
+      -0.3
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      2.6,
+      3.5,
+      -1.0
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      -2.6,
+      3.5,
+      -1.0
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -0.0,
+      8.6,
+      0.6
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      2.6,
+      1.2,
+      -3.3
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      2.6,
+      2.25,
+      -1.1
+     ],
+     "out": [
+      -0.0,
+      -0.482,
+      -0.876
+     ],
+     "up": [
+      -0.0,
+      0.876,
+      -0.482
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.4,
+      -3.55
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      1.1,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      8.6,
+      0.6
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 4,
+   "theme": "Enchanted",
+   "form": "Floating drill inside rune rings",
+   "meshes": [
+    [
+     "IceDrillT4Dais",
+     2916
+    ],
+    [
+     "IceDrillT4DaisGlow",
+     1128
+    ],
+    [
+     "IceDrillT4DaisCrystals",
+     480
+    ],
+    [
+     "IceDrillT4DaisCrystalsGlow",
+     1152
+    ],
+    [
+     "IceDrillT4IslandA",
+     2170
+    ],
+    [
+     "IceDrillT4IslandAGlow",
+     384
+    ],
+    [
+     "IceDrillT4IslandAGlowGlow",
+     144
+    ],
+    [
+     "IceDrillT4IslandB",
+     2170
+    ],
+    [
+     "IceDrillT4IslandBGlow",
+     384
+    ],
+    [
+     "IceDrillT4IslandBGlowGlow",
+     144
+    ],
+    [
+     "IceDrillT4IslandC",
+     2170
+    ],
+    [
+     "IceDrillT4IslandCGlow",
+     384
+    ],
+    [
+     "IceDrillT4IslandCGlowGlow",
+     144
+    ],
+    [
+     "IceDrillT4Orbit",
+     1104
+    ],
+    [
+     "IceDrillT4OrbitGlow",
+     1824
+    ],
+    [
+     "IceDrillT4RuneStones",
+     768
+    ],
+    [
+     "IceDrillT4RuneStonesGlow",
+     120
+    ],
+    [
+     "IceDrillT4Crown",
+     776
+    ],
+    [
+     "IceDrillT4CrownGlow",
+     352
+    ],
+    [
+     "IceDrillT4BitRing",
+     432
+    ],
+    [
+     "IceDrillT4BitRingGlow",
+     432
+    ],
+    [
+     "IceDrillT4BitA",
+     108
+    ],
+    [
+     "IceDrillT4BitAGlow",
+     512
+    ],
+    [
+     "IceDrillT4BitACollar",
+     144
+    ],
+    [
+     "IceDrillT4BitACollarGlow",
+     384
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "IceDrillT4U1BitA",
+       620
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "IceDrillT4U2Lamp1Glow",
+       448
+      ],
+      [
+       "IceDrillT4U2Lamp2Glow",
+       448
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "IceDrillT4U3Gear1",
+       1232
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "IceDrillT4U5BitA",
+       108
+      ],
+      [
+       "IceDrillT4U5BitAGlow",
+       512
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "IceDrillT4FxSteam1Glow",
+     60
+    ],
+    [
+     "IceDrillT4FxHit",
+     140
+    ],
+    [
+     "IceDrillT4FxHitGlow",
+     40
+    ],
+    [
+     "IceDrillT4FxTrailGlow",
+     512
+    ]
+   ],
+   "size": [
+    9.1,
+    8.21,
+    14.2
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      3.4,
+      -2.3
+     ],
+     "out": [
+      -0.0,
+      -0.6,
+      -0.8
+     ],
+     "up": [
+      -0.0,
+      0.8,
+      -0.6
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -1.75,
+      5.2,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      1.3,
+      8.0,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -0.0,
+      4.85,
+      -2.05
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -0.0,
+      13.6,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      0.9,
+      -4.1
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      3.4,
+      -2.3
+     ],
+     "out": [
+      -0.0,
+      -0.6,
+      -0.8
+     ],
+     "up": [
+      -0.0,
+      0.8,
+      -0.6
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.4,
+      -3.85
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      0.8,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      13.6,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "tier": 5,
+   "theme": "Legendary",
+   "form": "Mecha Mole Titan: a giant robot mole with a drill nose and glowing eyes",
+   "meshes": [
+    [
+     "IceDrillT5Platform",
+     1464
+    ],
+    [
+     "IceDrillT5PlatformGlow",
+     128
+    ],
+    [
+     "IceDrillT5Trim",
+     140
+    ],
+    [
+     "IceDrillT5TrimGlow",
+     140
+    ],
+    [
+     "IceDrillT5Legs",
+     2944
+    ],
+    [
+     "IceDrillT5Fur",
+     880
+    ],
+    [
+     "IceDrillT5Body",
+     3004
+    ],
+    [
+     "IceDrillT5Armour",
+     896
+    ],
+    [
+     "IceDrillT5BodyTrim",
+     480
+    ],
+    [
+     "IceDrillT5BodyTrimGlow",
+     240
+    ],
+    [
+     "IceDrillT5BodyGlow",
+     192
+    ],
+    [
+     "IceDrillT5Back",
+     2432
+    ],
+    [
+     "IceDrillT5Hoses",
+     728
+    ],
+    [
+     "IceDrillT5Head",
+     4140
+    ],
+    [
+     "IceDrillT5Helmet",
+     384
+    ],
+    [
+     "IceDrillT5Eyes",
+     96
+    ],
+    [
+     "IceDrillT5EyesGlow",
+     272
+    ],
+    [
+     "IceDrillT5Snout",
+     1612
+    ],
+    [
+     "IceDrillT5ArmL",
+     2648
+    ],
+    [
+     "IceDrillT5ArmLGear",
+     492
+    ],
+    [
+     "IceDrillT5ArmR",
+     2648
+    ],
+    [
+     "IceDrillT5ArmRGear",
+     492
+    ],
+    [
+     "IceDrillT5BitA",
+     668
+    ]
+   ],
+   "upgrades": [
+    {
+     "upgrade": 1,
+     "meshes": [
+      [
+       "IceDrillT5U1BitA",
+       72
+      ],
+      [
+       "IceDrillT5U1BitAGlow",
+       596
+      ]
+     ]
+    },
+    {
+     "upgrade": 2,
+     "meshes": [
+      [
+       "IceDrillT5U2Beacon1",
+       408
+      ],
+      [
+       "IceDrillT5U2Beacon1Glow",
+       96
+      ],
+      [
+       "IceDrillT5U2Beacon2",
+       408
+      ],
+      [
+       "IceDrillT5U2Beacon2Glow",
+       96
+      ]
+     ]
+    },
+    {
+     "upgrade": 3,
+     "meshes": [
+      [
+       "IceDrillT5U3Gear1Big",
+       564
+      ],
+      [
+       "IceDrillT5U3Gear1Small",
+       420
+      ],
+      [
+       "IceDrillT5U3Gear2Big",
+       564
+      ],
+      [
+       "IceDrillT5U3Gear2Small",
+       420
+      ]
+     ]
+    },
+    {
+     "upgrade": 4,
+     "meshes": []
+    },
+    {
+     "upgrade": 5,
+     "meshes": [
+      [
+       "IceDrillT5U5Crown",
+       1636
+      ],
+      [
+       "IceDrillT5U5CrownGlow",
+       320
+      ],
+      [
+       "IceDrillT5U5NamePlate",
+       344
+      ]
+     ]
+    }
+   ],
+   "fx": [
+    [
+     "IceDrillT5FxSteam1Glow",
+     60
+    ],
+    [
+     "IceDrillT5FxSteam2Glow",
+     60
+    ],
+    [
+     "IceDrillT5FxHit",
+     140
+    ],
+    [
+     "IceDrillT5FxHitGlow",
+     40
+    ],
+    [
+     "IceDrillT5FxTrailGlow",
+     896
+    ],
+    [
+     "IceDrillT5FxSparklesGlow",
+     80
+    ],
+    [
+     "IceDrillT5FxAuraSteam",
+     120
+    ],
+    [
+     "IceDrillT5FxAuraRingsGlow",
+     576
+    ],
+    [
+     "IceDrillT5FxAuraSparksGlow",
+     64
+    ],
+    [
+     "IceDrillT5FxAuraGroundGlow",
+     256
+    ]
+   ],
+   "size": [
+    9.83,
+    9.85,
+    12.6
+   ],
+   "fitsPad": true,
+   "attachments": {
+    "Work": {
+     "position": [
+      -0.0,
+      9.407,
+      -3.053
+     ],
+     "out": [
+      -0.0,
+      -0.615,
+      -0.789
+     ],
+     "up": [
+      -0.0,
+      0.789,
+      -0.615
+     ]
+    },
+    "Lamp1": {
+     "position": [
+      -3.1,
+      7.15,
+      0.7
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Lamp2": {
+     "position": [
+      3.1,
+      7.15,
+      0.7
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Gear1": {
+     "position": [
+      -3.85,
+      6.3,
+      0.7
+     ],
+     "out": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Gear2": {
+     "position": [
+      3.85,
+      6.3,
+      0.7
+     ],
+     "out": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Steam1": {
+     "position": [
+      -1.2,
+      8.95,
+      4.35
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Steam2": {
+     "position": [
+      1.2,
+      8.95,
+      4.35
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Hit": {
+     "position": [
+      -0.0,
+      1.25,
+      -4.0
+     ],
+     "out": [
+      -0.0,
+      0.514,
+      -0.857
+     ],
+     "up": [
+      -0.0,
+      0.857,
+      0.514
+     ]
+    },
+    "Trail": {
+     "position": [
+      -0.0,
+      9.407,
+      -3.053
+     ],
+     "out": [
+      -0.0,
+      -0.615,
+      -0.789
+     ],
+     "up": [
+      -0.0,
+      0.789,
+      -0.615
+     ]
+    },
+    "Crown": {
+     "position": [
+      -0.0,
+      12.258,
+      0.1
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "NamePlate": {
+     "position": [
+      -0.0,
+      0.45,
+      -4.82
+     ],
+     "out": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "up": [
+      -0.0,
+      1.0,
+      0.0
+     ]
+    },
+    "Aura": {
+     "position": [
+      -0.0,
+      1.2,
+      0.0
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "Top": {
+     "position": [
+      -0.0,
+      12.408,
+      0.1
+     ],
+     "out": [
+      -0.0,
+      1.0,
+      0.0
+     ],
+     "up": [
+      -0.0,
+      0.0,
+      1.0
+     ]
+    }
+   }
+  }
+ ]
+}
