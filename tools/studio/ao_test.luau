@@ -1,3 +1,4 @@
+-- REJECTED (2026-11-25): baked AO is not used and ServerStorage.AOTest was deleted. Kept for reference.
 --[[
 ao_test.luau: the baked-AO TEST template (Edit mode, then save the place). Builds ServerStorage.AOTest.IceDrill.T5:
 a copy of the real Mecha Mole Titan template (its Root, attachments and upgrade sets) whose station meshes come

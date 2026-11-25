@@ -1,7 +1,7 @@
 -- The stations' name tags ("Ice Drill ×100 ★"; PlotService makes them small and hidden). Every frame:
 --  - a station's tag shows while your character is near it (BuildingConfig.NameTags.NearDistance), and your own
 --    plot's tags show while you're in your plot or the camera looks at it (LookAngle, LookDistance);
---  - any tag (the plots' owner signs too) hides while its rectangle on screen reaches into the top centre,
+--  - any tag hides while its rectangle on screen reaches into the top centre,
 --    where the HUD's crystal counter is (TopCentre, grown to cover the counter if it is bigger).
 local GuiService = game:GetService("GuiService")
 local Players = game:GetService("Players")
@@ -11,13 +11,15 @@ local Workspace = game:GetService("Workspace")
 
 local BuildingConfig = require(ReplicatedStorage.BuildingConfig)
 local MapConfig = require(ReplicatedStorage.MapConfig)
+local UIKit = require(ReplicatedStorage.UIKit)
 
 local SETTINGS = BuildingConfig.NameTags
 local player = Players.LocalPlayer
 
--- The top-centre area kept clear, in viewport pixels.
-local function clearArea(camera: Camera): (Vector2, Vector2)
-	local viewport = camera.ViewportSize
+-- The top-centre area kept clear, in viewport pixels (of the screen the HUD lays out on: UIKit.Viewport, which
+-- is the StudioScreenSize pretend screen, at the top left, in Studio phone checks).
+local function clearArea(): (Vector2, Vector2)
+	local viewport = UIKit.Viewport()
 	local half = viewport.X * SETTINGS.TopCentre.X / 2
 	local low = Vector2.new(viewport.X / 2 - half, 0)
 	local high = Vector2.new(viewport.X / 2 + half, viewport.Y * SETTINGS.TopCentre.Y)
@@ -78,15 +80,10 @@ RunService:BindToRenderStep("NameTags", Enum.RenderPriority.Camera.Value + 1, fu
 		return
 	end
 	local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-	local low, high = clearArea(camera)
+	local low, high = clearArea()
 	local watching = watchingOwnPlot(camera, root)
 	for _, plot in plots:GetChildren() do
 		local own = plot:GetAttribute("Owner") == player.UserId
-		local sign = plot:FindFirstChild("Sign")
-		local ownerLabel = sign and sign:FindFirstChild("OwnerLabel")
-		if ownerLabel then
-			ownerLabel.Enabled = not overlaps(ownerLabel, camera, low, high)
-		end
 		local buildings = plot:FindFirstChild("Buildings")
 		if not buildings then
 			continue

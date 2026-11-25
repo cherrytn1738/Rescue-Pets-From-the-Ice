@@ -1,3 +1,4 @@
+-- REJECTED (2026-11-25): baked AO is not used and ServerStorage.AOTest was deleted. Kept for reference.
 --[[
 ao_test_swap.luau: the baked-AO TEST, in a play test only (run on the Server through MCP execute_luau while
 Studio is in Play mode; everything it changes is thrown away when the play test stops).

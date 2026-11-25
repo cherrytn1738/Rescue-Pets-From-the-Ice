@@ -1,8 +1,12 @@
 --[[
 PlotService: the players' plots (docs/GAME_DESIGN.md, "Plot and map layout"). Server only.
 
- - Builds MapConfig.PlotCount greybox plots in Workspace.Plots at start: a snow square, the snow
-   mound for the ice, eight numbered building pads and a low border wall open at the front.
+ - Builds MapConfig.PlotCount plots in Workspace.Plots at start: the mound for the ice, eight numbered
+   building pads, a low border wall open at the front and the entrance arch, as plain Parts that give the
+   collision. Where the plot's own models are built (ServerStorage.PlotTemplates: the frozen ice stage, the
+   ice-block walls, the ice gate with its name boards; tools/studio/build_templates.luau, ONLY = "Plot") they
+   show instead and the Parts turn invisible; otherwise the Parts show (greybox).
+ - The owner's name is on the two name boards beside the gate (SurfaceGuis, both faces).
  - Gives each joining player the first free plot (player attribute PlotIndex; the plot's attributes
    Owner (user id) and OwnerName) and frees it when they leave.
  - Shows each owned building on its pad, facing the ice: the real station for its tier (a clone of
@@ -89,6 +93,103 @@ local function nameTag(parent: Instance): BillboardGui
 	return gui
 end
 
+-- The owner's name on one face of a name board.
+local function nameText(board: BasePart, face: Enum.NormalId)
+	local gui = Instance.new("SurfaceGui")
+	gui.Name = "Name" .. face.Name
+	gui.Face = face
+	gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
+	gui.PixelsPerStud = 40
+	gui.LightInfluence = 0.4
+	gui.MaxDistance = 300
+	gui.Parent = board
+	local text = Instance.new("TextLabel")
+	text.Name = "Text"
+	text.BackgroundTransparency = 1
+	text.Position = UDim2.fromScale(0.05, 0.1)
+	text.Size = UDim2.fromScale(0.9, 0.8)
+	text.Font = Enum.Font.FredokaOne
+	text.TextScaled = true
+	text.TextColor3 = Color3.new(1, 1, 1)
+	text.TextStrokeColor3 = Color3.fromRGB(70, 40, 20)
+	text.TextStrokeTransparency = 0
+	text.Text = "Free plot"
+	text.Parent = gui
+end
+
+local function setOwnerText(plot: Model, text: string)
+	for _, board in { plot.NameBoardLeft, plot.NameBoardRight } do
+		for _, gui in board:GetChildren() do
+			if gui:IsA("SurfaceGui") then
+				gui.Text.Text = text
+			end
+		end
+	end
+end
+
+-- The plot's own models (ServerStorage.PlotTemplates), shown over the plain Parts, which turn invisible and
+-- keep the collision. A plain Part that stays visible (no model) carries RankColour, as the models' trims do.
+local warnedLook = {}
+local function look(name: string): Model?
+	local folder = ServerStorage:FindFirstChild("PlotTemplates")
+	local model = folder and folder:FindFirstChild(name)
+	if not model and not warnedLook[name] then
+		warnedLook[name] = true
+		warn(`[Plot] no template PlotTemplates.{name}: showing the plain parts`)
+	end
+	return model
+end
+
+local function hide(p: BasePart)
+	p.Transparency = 1
+	p.CastShadow = false
+end
+
+local function dress(model: Model, cf: CFrame)
+	local border = model.Border
+	local stage = look("PlotStage")
+	if stage then
+		local copy = stage:Clone()
+		copy.Name = "Stage"
+		copy:PivotTo(cf)
+		copy.Parent = model
+		hide(model.Mound)
+		hide(model.MoundTop)
+	end
+	for _, name in { "Back", "Left", "Right", "FrontLeft", "FrontRight" } do
+		local wall = border[name]
+		local source = look(if string.sub(name, 1, 5) == "Front" then "PlotWallShort" else "PlotWallLong")
+		if source then
+			local at = cf:PointToObjectSpace(wall.Position)
+			local turn = if name == "Left" or name == "Right" then CFrame.Angles(0, math.pi / 2, 0) else CFrame.identity
+			local copy = source:Clone()
+			copy.Name = name .. "Look"
+			copy:PivotTo(cf * CFrame.new(at.X, 0, at.Z) * turn)
+			copy.Parent = border
+			hide(wall)
+		else
+			wall:SetAttribute("RankColour", true)
+		end
+	end
+	local gate = look("PlotArch")
+	if gate then
+		local copy = gate:Clone()
+		copy.Name = "ArchLook"
+		copy:PivotTo(cf * CFrame.new(0, 0, MapConfig.PlotSize / 2))
+		copy.Parent = border
+		for _, name in { "ArchLeft", "ArchRight" } do
+			hide(border[name])
+			hide(border[name].Cap)
+		end
+		hide(model.Sign)
+		hide(model.NameBoardLeft)
+		hide(model.NameBoardRight)
+	else
+		border.ArchLeft:SetAttribute("RankColour", true)
+		border.ArchRight:SetAttribute("RankColour", true)
+	end
+end
+
 local function buildPlot(index: number): Model
 	local cf = MapConfig.PlotCFrame(index)
 	local size = MapConfig.PlotSize
@@ -138,7 +239,7 @@ local function buildPlot(index: number): Model
 	stands.Name = "Buildings"
 	stands.Parent = model
 
-	-- The name sign: an arch over the open front (the beam is "Sign", carrying the owner's name).
+	-- The entrance arch over the open front (its beam is "Sign"), and the owner's name boards beside it.
 	local arch = MapConfig.Arch
 	local top = arch.ClearHeight + arch.BeamHeight
 	local postX = b.FrontGap / 2 + arch.PostSize / 2
@@ -146,8 +247,17 @@ local function buildPlot(index: number): Model
 		local post = part(border, sideX < 0 and "ArchLeft" or "ArchRight", Vector3.new(arch.PostSize, top, arch.PostSize), cf * CFrame.new(sideX * postX, top / 2, half), SIGN, Enum.Material.SmoothPlastic)
 		part(post, "Cap", Vector3.new(arch.PostSize + 1, 1, arch.PostSize + 1), cf * CFrame.new(sideX * postX, top + 0.5, half), SNOW)
 	end
-	local sign = part(model, "Sign", Vector3.new(b.FrontGap + 2 * arch.PostSize, arch.BeamHeight, arch.BeamDepth), cf * CFrame.new(0, arch.ClearHeight + arch.BeamHeight / 2, half), SIGN, Enum.Material.SmoothPlastic)
-	label(sign, "Free plot", Vector3.new(0, arch.BeamHeight / 2 + 2.5, 0), UDim2.fromScale(22, 4.5)).Name = "OwnerLabel"
+	part(model, "Sign", Vector3.new(b.FrontGap + 2 * arch.PostSize, arch.BeamHeight, arch.BeamDepth), cf * CFrame.new(0, arch.ClearHeight + arch.BeamHeight / 2, half), SIGN, Enum.Material.SmoothPlastic)
+	local board = arch.Board
+	for _, sideX in { -1, 1 } do
+		local nameBoard = part(model, if sideX < 0 then "NameBoardLeft" else "NameBoardRight", Vector3.new(board.Width, board.Height, 0.9),
+			cf * CFrame.new(sideX * board.CentreX, board.Bottom + board.Height / 2, half), SIGN, Enum.Material.Wood)
+		nameBoard.CanCollide, nameBoard.CanQuery, nameBoard.CanTouch = false, false, false
+		for _, face in { Enum.NormalId.Front, Enum.NormalId.Back } do
+			nameText(nameBoard, face)
+		end
+	end
+	dress(model, cf)
 
 	local block = Instance.new("Folder")
 	block.Name = "Block"
@@ -201,7 +311,7 @@ function PlotService.Assign(player: Player): number?
 			local plot = plots[index]
 			plot:SetAttribute("Owner", player.UserId)
 			plot:SetAttribute("OwnerName", player.DisplayName)
-			plot.Sign.OwnerLabel.Text.Text = player.DisplayName .. "'s plot"
+			setOwnerText(plot, player.DisplayName .. "'s plot")
 			player:SetAttribute("PlotIndex", index)
 			for _, callback in listeners do
 				task.spawn(callback, player, index)
@@ -225,7 +335,7 @@ function PlotService.Release(player: Player)
 			local plot = plots[index]
 			plot:SetAttribute("Owner", 0)
 			plot:SetAttribute("OwnerName", "")
-			plot.Sign.OwnerLabel.Text.Text = "Free plot"
+			setOwnerText(plot, "Free plot")
 			plot.Buildings:ClearAllChildren()
 			local block = plot.Block
 			for name in block:GetAttributes() do

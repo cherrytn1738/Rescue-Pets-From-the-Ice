@@ -447,10 +447,11 @@ Each plot is a 100 × 100 stud square of snow with the ice block in the middle, 
 | 7 | Lava Pump | (+26, −39) | 14 |
 | 8 | Sun Mirror Tower | (+40, −9) | 16 |
 
-- **Ice block:** 14 studs tall at level 1 (about 2.5 avatars), growing to 20 studs by level 50. It sits on a raised snow mound so it's visible over the fence.
+- **Ice block:** 14 studs tall at level 1 (about 2.5 avatars), growing to 20 studs by level 50. It sits on a raised frozen stage (cracked ice tiles on a snowy rim, small crystals at the corners) so it's visible over the fence.
 - **Tapping spot:** the open area in front of the ice, where the player usually stands with their pets.
-- **Border:** a low snow wall in the player's rebirth colour, open at the front.
-- **Name sign:** an arch over the open front carrying the owner's name, its beam 20 studs up so the ice stays in view beneath it from the plaza and the path.
+- **Border:** a low wall of rounded ice blocks with snow on top, open at the front; its base trim (and the gate's) shows the player's rebirth colour.
+- **Entrance gate:** a carved ice gate over the open front: chunky ice pillars with snow caps, a frosted lintel with icicles and a snowflake medallion, its beam 20 studs up so the ice stays in view beneath it from the plaza and the path.
+- **Name boards:** the owner's name, always shown, on two wooden boards standing on the front walls beside the gate (low and to the side, so from the plaza they never sit behind the HUD's crystal counter).
 - **Ground:** snow terrain with a few low drifts against the walls, flat ice patches, and a trodden footpath from the open front to the ice, all clear of the pads.
 - **Building badges:** small, and shown only near the building or while the player is in (or looking at) their own plot; never over the HUD's crystal counter at the top centre.
 

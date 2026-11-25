@@ -6,6 +6,7 @@ the templates live in the place file (ServerStorage), not in Git.
   ONLY = nil              every building and the picks
   ONLY = "IcePickPost"    one building (all five tiers and their upgrade sets)
   ONLY = "Picks"          the six ice picks
+  ONLY = "Plot"           the plot's own parts (MapConfig.PlotModels: the arch, the ice stage, the walls)
 
 Out:
   ServerStorage.BuildingTemplates.<Id>.T<tier>   a Model: "Root" (its PrimaryPart: an invisible part at
@@ -13,6 +14,9 @@ Out:
       station's MeshParts, and Upgrades.U1..U5 (the tier's upgrade part sets, in the station's space).
   ServerStorage.PickTemplates.Pick<tier>         a Tool: an invisible Handle at the pick's Grip, the pick's
       MeshParts welded to it, and Attachments Tip and Trail.
+  ServerStorage.PlotTemplates.<PlotArch|PlotStage|PlotWallLong|PlotWallShort>   a Model of MeshParts in plot
+      space, its pivot at the origin on the ground; nothing collides (the plot's own Parts do). "...Trim" meshes
+      are untextured with the attribute RankColour: RankService gives them the owner's rebirth colour.
 
 Every MeshPart (store-assets/buildings/IMPORT_NOTES.md): the palette texture, white, SmoothPlastic,
 RenderFidelity Precise (full detail at every distance); "...Glow" meshes Neon and no shadow; the base Box-collides, big body parts
@@ -29,13 +33,14 @@ local ServerStorage = game:GetService("ServerStorage")
 -- Rojo has updated since (new ids, new attachment points) would be missed. Clones are new modules.
 local fresh = Instance.new("Folder")
 fresh.Name = "BuildTemplatesConfigs"
-for _, name in { "BuildingConfig", "BuildingModels", "UpgradeConfig" } do
+for _, name in { "BuildingConfig", "BuildingModels", "UpgradeConfig", "MapConfig" } do
 	ReplicatedStorage[name]:Clone().Parent = fresh
 end
 fresh.Parent = ServerStorage
 local BuildingConfig = require(fresh.BuildingConfig)
 local BuildingModels = require(fresh.BuildingModels)
 local UpgradeConfig = require(fresh.UpgradeConfig)
+local MapConfig = require(fresh.MapConfig)
 fresh:Destroy()
 
 local PALETTE = BuildingConfig.PaletteTextureId
@@ -271,8 +276,43 @@ local function buildPick(pick)
 	say(string.format("Pick%d %s: %d meshes (import x%d)", pick.Tier, pick.Name, #parts, factor))
 end
 
+local TRIM_COLOUR = Color3.fromRGB(205, 222, 240) -- RankService's colour for a plot without a rank
+local PLOT_IMPORT = 10 -- tools/blender/plot_parts.py exports at a tenth (the 100-stud wall)
+local function buildPlotPart(name: string, assetId: number)
+	local out = folder(ServerStorage, "PlotTemplates")
+	local old = out:FindFirstChild(name)
+	if old then
+		old:Destroy()
+	end
+	local model = Instance.new("Model")
+	model.Name = name
+	local parts = load(assetId, nil, PLOT_IMPORT)
+	local trims = 0
+	for _, p in parts do
+		style(p, false, Enum.CollisionFidelity.Box)
+		if string.sub(p.Name, -4) == "Trim" then
+			p.TextureID = ""
+			p.Color = TRIM_COLOUR
+			p:SetAttribute("RankColour", true)
+			trims += 1
+		end
+		p.Parent = model
+	end
+	model.WorldPivot = CFrame.identity
+	model.Parent = out
+	local size = model:GetExtentsSize()
+	say(string.format("PlotTemplates.%s: %d meshes (%d rank trim), size %.1f x %.1f x %.1f", name, #parts, trims, size.X, size.Y, size.Z))
+end
+
 if not PALETTE then
 	return "BuildingConfig.PaletteTextureId is missing"
+end
+if ONLY == "Plot" then
+	for name, assetId in MapConfig.PlotModels do
+		buildPlotPart(name, assetId)
+		task.wait()
+	end
+	return table.concat(report, "\n")
 end
 for _, building in BuildingConfig.Buildings do
 	if ONLY == nil or ONLY == building.Id then

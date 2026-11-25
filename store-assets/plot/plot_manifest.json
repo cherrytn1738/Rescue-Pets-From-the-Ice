@@ -1,0 +1,59 @@
+{
+ "exportScale": 0.1,
+ "models": {
+  "PlotArch": {
+   "meshes": {
+    "PlotArchIce": 4676,
+    "PlotArchSnow": 3740,
+    "PlotArchTrim": 280,
+    "PlotArchWood": 1680
+   },
+   "size": [
+    85.6,
+    28.25,
+    8.64
+   ],
+   "top": 27.75
+  },
+  "PlotStage": {
+   "meshes": {
+    "PlotStageCracks": 140,
+    "PlotStageCrystals": 384,
+    "PlotStageIce": 3324,
+    "PlotStageSnow": 632
+   },
+   "size": [
+    34.43,
+    5.78,
+    34.15
+   ],
+   "top": 5.78
+  },
+  "PlotWallLong": {
+   "meshes": {
+    "PlotWallLongIce": 3220,
+    "PlotWallLongSnow": 1020,
+    "PlotWallLongTrim": 140
+   },
+   "size": [
+    100.4,
+    3.78,
+    3.52
+   ],
+   "top": 3.78
+  },
+  "PlotWallShort": {
+   "meshes": {
+    "PlotWallShortIce": 840,
+    "PlotWallShortSnow": 400,
+    "PlotWallShortTrim": 140
+   },
+   "size": [
+    28.41,
+    3.76,
+    3.52
+   ],
+   "top": 3.76
+  }
+ }
+}

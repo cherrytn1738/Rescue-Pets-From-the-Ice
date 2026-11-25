@@ -1,3 +1,4 @@
+# REJECTED (2026-11-25): baked AO is not used; ServerStorage.AOTest was deleted. Kept for reference.
 # ao_bake.py - AO TEST: bakes ambient occlusion into one building tier's own texture (headless Blender, Cycles).
 #   blender -b --factory-startup --python tools/blender/ao_bake.py -- IceDrill 5
 # Opens store-assets/buildings/<Id>/<Id>.blend (the approved build), takes the tier's station meshes,

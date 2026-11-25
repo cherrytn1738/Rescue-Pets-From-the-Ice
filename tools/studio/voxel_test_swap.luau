@@ -1,3 +1,4 @@
+-- REJECTED (2026-11-25): the voxel style test; ServerStorage.VoxelTest was deleted. Kept for reference.
 --[[
 voxel_test_swap.luau: the voxel STYLE TEST, in a play test only (run on the Server through MCP execute_luau
 while Studio is in Play mode; everything it changes is thrown away when the play test stops).

@@ -22,7 +22,24 @@ MapConfig.Border = { Height = 3, Thickness = 2, FrontGap = 44 } -- the low snow 
 -- The name sign is an arch over the open front: two posts on the wall ends and a beam high enough that the
 -- tallest ice (23 studs with its mound, 50 studs behind the arch) stays in view beneath it from the plaza
 -- and the path (tests/World.spec.luau checks the line of sight).
-MapConfig.Arch = { ClearHeight = 20, BeamHeight = 3, BeamDepth = 2, PostSize = 3 }
+MapConfig.Arch = {
+	ClearHeight = 20,
+	BeamHeight = 3,
+	BeamDepth = 2,
+	PostSize = 3,
+	-- The owner's name: two wooden boards standing on the front walls beside the gate (low and to the side, so
+	-- from the plaza they never sit behind the HUD's crystal counter at the top centre). Studs, plot space.
+	Board = { Width = 12.8, Height = 3.8, Bottom = 7.2, CentreX = 36 },
+}
+-- The plot's own parts in the buildings' style (tools/blender/plot_parts.py, store-assets/plot/; uploaded as group
+-- 921449746). tools/studio/build_templates.luau (ONLY = "Plot") builds ServerStorage.PlotTemplates from them;
+-- PlotService shows them over the plot's invisible collision Parts, or the plain Parts while one is missing.
+MapConfig.PlotModels = {
+	PlotArch = 95072979923759,
+	PlotStage = 127069362987945,
+	PlotWallLong = 84064124507568,
+	PlotWallShort = 128971708238167,
+}
 MapConfig.TapSpot = { X = 0, Z = 24 } -- where a player arrives in their plot: in front of the ice
 
 -- The ground inside every plot (plot space, as the pads). The floor is the place's snow terrain, shaped by

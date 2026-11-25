@@ -51,23 +51,29 @@ atmosphere.Decay = Color3.fromRGB(120, 146, 182)
 atmosphere.Glare = 0.15
 atmosphere.Haze = 0.8
 
+-- Post-processing, kept subtle: a soft wide bloom only on Neon and the brightest highlights, a little more
+-- contrast and saturation than the raw render, and light sun rays. (DepthOfField stays off.)
 local bloom = effect("BloomEffect", "Bloom")
 bloom.Enabled = true
-bloom.Intensity = 0.45
-bloom.Size = 22
-bloom.Threshold = 1.9
+bloom.Intensity = 0.35
+bloom.Size = 30
+bloom.Threshold = 1.7
 
 local grade = effect("ColorCorrectionEffect", "ColorCorrection")
 grade.Enabled = true
-grade.Brightness = 0
-grade.Contrast = 0.1
-grade.Saturation = 0.12
+grade.Brightness = 0.01
+grade.Contrast = 0.12
+grade.Saturation = 0.16
 grade.TintColor = Color3.fromRGB(250, 252, 255)
 
-local rays = Lighting:FindFirstChildOfClass("SunRaysEffect")
-if rays then
-	rays.Intensity = 0.03
-	rays.Spread = 0.6
+local rays = effect("SunRaysEffect", "SunRays")
+rays.Enabled = true
+rays.Intensity = 0.05
+rays.Spread = 0.5
+
+local focus = Lighting:FindFirstChildOfClass("DepthOfFieldEffect")
+if focus then
+	focus.Enabled = false
 end
 
 table.insert(report, "lighting set: save the place")

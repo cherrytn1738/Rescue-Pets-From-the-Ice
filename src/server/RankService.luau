@@ -100,7 +100,13 @@ local function border(player: Player, data)
 		return
 	end
 	local rank = RebirthConfig.RankFor(data.Rebirths)
-	local walls = plot.Border:GetChildren()
+	-- the border's rank-coloured parts: the trims of the plot's models, or the plain walls while there are none
+	local walls = {}
+	for _, d in plot.Border:GetDescendants() do
+		if d:IsA("BasePart") and d:GetAttribute("RankColour") then
+			table.insert(walls, d)
+		end
+	end
 	for index, wall in walls do
 		if not rank then
 			wall.Color = DEFAULT_BORDER

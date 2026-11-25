@@ -169,6 +169,16 @@ return function(sources)
 			check(gap > MapConfig.PlotSize * 1.05, `plots {index} and {other} don't overlap`)
 		end
 	end
+	-- The owner's name boards stand on the front walls beside the gate's pillars (the visible pillars are twice the
+	-- collision post's width), under the beam and above the wall, inside the plot.
+	local board = arch.Board
+	check(board.CentreX - board.Width / 2 > MapConfig.Border.FrontGap / 2 + 2 * arch.PostSize, "the name boards stand clear of the gate's pillars")
+	check(board.CentreX + board.Width / 2 < half, "the name boards stay on the front walls")
+	check(board.Bottom > MapConfig.Border.Height and board.Bottom + board.Height < arch.ClearHeight, "the name boards stand on the wall, low beside the gate")
+	for _, name in { "PlotArch", "PlotStage", "PlotWallLong", "PlotWallShort" } do
+		local id = MapConfig.PlotModels[name]
+		check(type(id) == "number" and id > 0 and id % 1 == 0, name .. " has an asset id")
+	end
 	-- The ground inside a plot (drifts, ice patches: build_world.luau shapes them into the terrain) stays inside the
 	-- plot and clear of every pad, the mound with the ice, and the footpath to the open front.
 	local ground = MapConfig.PlotGround
