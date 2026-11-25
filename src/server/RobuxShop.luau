@@ -5,7 +5,7 @@ Clients never open Robux prompts themselves. The shop sends an intent on the Pur
 RemoteFunction; the server checks it, prepares what the receipt will need, and opens Roblox's prompt:
   ("BuyPass", passKey)                 a game pass the player doesn't own yet
   ("Buy", productKey)                  a developer product for themselves
-  ("Gift", productKey, recipientId)    a product for another player in this server (Gifting.Prepare)
+  ("Gift", itemKey, recipientId)       a product or a pass for another player in this server (Gifting.Prepare)
 -> { ok, message } for the window's feedback line. The client never sends a price, an amount or an
 id. Nothing here grants anything: receipts do (Receipts), and pass ownership (GamePasses).
 
@@ -100,7 +100,7 @@ function actions.Buy(player: Player, productKey)
 end
 
 function actions.Gift(player: Player, productKey, recipientId)
-	local product = MonetizationConfig.GetProduct(productKey)
+	local product = MonetizationConfig.GetGiftable(productKey) -- a product, or a pass
 	if not product or type(recipientId) ~= "number" or recipientId % 1 ~= 0 then
 		return reply(false, "Pick a player to gift to.")
 	end

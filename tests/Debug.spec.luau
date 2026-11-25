@@ -215,11 +215,14 @@ return function(sources)
 			return tier >= 1 and tier <= 6
 		end },
 		GoldenGlacierService = { SpawnNow = record("SpawnNow") },
+		RobuxPerks = {},
+		Economy = {},
 	}
 	local soundEvents = {}
 	local replicated = {
 		AnalyticsConfig = { Onboarding = {} },
 		AudioConfig = { Sfx = { Tap = {}, Shatter = {} }, Ui = { Click = {} } },
+		EconomyRules = {},
 		GameEvent = { FireClient = function(_, player, kind, payload)
 			table.insert(soundEvents, { player = player, kind = kind, payload = payload })
 		end },
@@ -242,6 +245,12 @@ return function(sources)
 			end,
 			GetProduct = function()
 				return nil
+			end,
+			GetGiftable = function()
+				return nil
+			end,
+			IsGiftLive = function()
+				return false
 			end,
 		},
 	}

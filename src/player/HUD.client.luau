@@ -111,6 +111,10 @@ local rush = UIKit.Label(counter, "FrostRush", "", 28, Color3.fromRGB(140, 230, 
 rush.Position = UDim2.fromOffset(0, 124)
 rush.Size = UDim2.new(1, 0, 0, 32)
 rush.TextXAlignment = Enum.TextXAlignment.Center
+rush.TextScaled = true -- (both rushes at once fit on one line)
+local rushLimit = Instance.new("UITextSizeConstraint")
+rushLimit.MaxTextSize = 28
+rushLimit.Parent = rush
 counter.Size = UDim2.fromOffset(420, 196)
 local BlockRules = require(ReplicatedStorage.BlockRules)
 local IceLooks = require(ReplicatedStorage.IceLooks)
@@ -180,13 +184,25 @@ RunService.RenderStepped:Connect(function(dt)
 	else
 		shownHp = nil
 	end
-	local endsAt = localPlayer:GetAttribute("FrostRushEndsAt")
-	local left = if type(endsAt) == "number" then endsAt - Workspace:GetServerTimeNow() else 0
-	rush.Position = UDim2.fromOffset(0, if iceBar.Visible then 160 else 124)
-	rush.Visible = left > 0
-	if left > 0 then
-		rush.Text = `❄ FROST RUSH x{localPlayer:GetAttribute("FrostRushMultiplier") or 3}  {math.floor(left // 60)}:{string.format("%02d", math.floor(left % 60))}`
+	-- the Frost Rush timers: your own (the Golden Glacier) and the Server Frost Rush (a Robux product)
+	local now = Workspace:GetServerTimeNow()
+	local function clock(seconds: number): string
+		return `{math.floor(seconds // 60)}:{string.format("%02d", math.floor(seconds % 60))}`
 	end
+	local endsAt = localPlayer:GetAttribute("FrostRushEndsAt")
+	local left = if type(endsAt) == "number" then endsAt - now else 0
+	local serverEndsAt = Workspace:GetAttribute("ServerRushEndsAt")
+	local serverLeft = if type(serverEndsAt) == "number" then serverEndsAt - now else 0
+	local parts = {}
+	if left > 0 then
+		table.insert(parts, `❄ FROST RUSH x{localPlayer:GetAttribute("FrostRushMultiplier") or 3}  {clock(left)}`)
+	end
+	if serverLeft > 0 then
+		table.insert(parts, `❄ SERVER RUSH x{Workspace:GetAttribute("ServerRushMultiplier") or 2}  {clock(serverLeft)}`)
+	end
+	rush.Position = UDim2.fromOffset(0, if iceBar.Visible then 160 else 124)
+	rush.Visible = #parts > 0
+	rush.Text = table.concat(parts, "   ")
 end)
 
 grid:WaitForChild("HomeButton").Activated:Connect(function()

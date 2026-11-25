@@ -135,6 +135,16 @@ function RescueMoment.Start()
 		Effects.Shake(1.1, 1.2)
 		Effects.Sound("NewLayer")
 	end)
+	-- a Server Frost Rush (a Robux product): everyone sees who started it
+	ClientState.Event("ServerRush", function(payload)
+		if type(payload) ~= "table" then
+			return
+		end
+		local by = tostring(payload.By or "Someone")
+		local text = if payload.Extended then `{by} added {payload.Minutes} minutes to the Server Frost Rush!` else `{by} started it: x{payload.Multiplier} crystals for everyone for {payload.Minutes} minutes!`
+		Banners.Big("SERVER FROST RUSH!", text, Color3.fromRGB(140, 230, 255), 4)
+		Effects.Sound("GoldenSparkle")
+	end)
 	ClientState.Event("Notice", function(payload)
 		Banners.Toast(payload.Text, Color3.fromRGB(200, 240, 255))
 	end)

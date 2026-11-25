@@ -9,7 +9,8 @@ server:
    BurstSeconds' worth, so a late batch isn't punished but an autoclicker can't beat the cap. Taps
    over the cap are dropped, and a player who keeps going over is logged ([Taps]) now and then;
  - hits the block with taps x EconomyRules.TapDamage (IceBlockService pays the crystals).
-AddTaps(player, count) is the same path for taps the server makes itself (the Auto Pick pass).
+AddTaps(player, count) is the same path for taps the server makes itself; AutoTaps(player, count) lands the
+Auto Pick pass's taps through the same bucket (so with your own taps they never pass the cap), quietly.
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -58,6 +59,17 @@ function TapService.Allow(player: Player, count: number): number
 		end
 	end
 	return allowed
+end
+
+-- The Auto Pick pass's taps: taken from the same bucket as the player's own (never logged as too fast).
+function TapService.AutoTaps(player: Player, count: number): number
+	local bucket = bucketOf(player)
+	local allowed = math.min(count, math.floor(bucket.tokens))
+	if allowed <= 0 then
+		return 0
+	end
+	bucket.tokens -= allowed
+	return TapService.AddTaps(player, allowed)
 end
 
 -- Lands `count` taps on the player's block. Returns the damage dealt.

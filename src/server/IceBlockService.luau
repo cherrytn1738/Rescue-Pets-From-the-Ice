@@ -3,8 +3,10 @@ IceBlockService: each player's ice block (docs/GAME_DESIGN.md, "The ice block", 
 "Technical design"). Server only.
 
  - A block has a level (the save's BlockLevel), HP (LayerConfig.BlockHp) and a creature inside,
-   rolled when the block arrives (BlockRules, from the layer's odds) and saved as CurrentBlock, so a
-   rejoin finds the same block with the same HP left. The roll is final.
+   rolled when the block arrives (BlockRules, from the layer's odds; Lucky Ice doubles Legendary and
+   Mythic; a Mythic Block bought and waiting (data.MythicBlocks) rolls from that product's own odds
+   instead) and saved as CurrentBlock, so a rejoin finds the same block with the same HP left. The roll
+   is final.
  - Damage(player, data, amount): taps and buildings hit the block; every point of damage pays one
    crystal times the multiplier (Economy). Nothing is hit while the next block is still on its sled.
  - At 0 HP the creature is rescued (PetService.Rescue), a crystal fountain worth BurstSeconds of
@@ -24,6 +26,7 @@ local BlockRules = require(ReplicatedStorage.BlockRules)
 local CreatureConfig = require(ReplicatedStorage.CreatureConfig)
 local EconomyRules = require(ReplicatedStorage.EconomyRules)
 local LayerConfig = require(ReplicatedStorage.LayerConfig)
+local MonetizationConfig = require(ReplicatedStorage.MonetizationConfig)
 local Economy = require(script.Parent.Economy)
 local PetService = require(script.Parent.PetService)
 local PlayerData = require(script.Parent.PlayerData)
@@ -95,9 +98,16 @@ local function rollBlock(player: Player, data)
 	local layer = layerFor(data)
 	local creature
 	local forced = rollOverride[player]
+	local mythicBlock = MonetizationConfig.GetProduct("MythicBlock")
 	if forced and CreatureConfig.Get(forced) then
 		creature = CreatureConfig.Get(forced)
 		rollOverride[player] = nil
+	elseif (data.MythicBlocks or 0) > 0 and mythicBlock and mythicBlock.Odds then
+		creature = BlockRules.RollMythicBlock(mythicBlock.Odds, random:NextNumber(), random:NextNumber())
+		data.MythicBlocks -= 1
+		PlayerData.MarkImportant(player)
+		PlayerData.Publish(player)
+		gameEvent:FireClient(player, "Notice", { Text = `Your Mythic Block arrived: a {creature.Rarity} creature is inside!` })
 	else
 		creature = BlockRules.RollCreature(layer.Number, random:NextNumber(0, 100), random:NextNumber(), isLucky(player))
 	end
@@ -184,6 +194,13 @@ end
 -- Debug: the next block to roll holds this creature.
 function IceBlockService.ForceNextCreature(player: Player, creatureId: string)
 	rollOverride[player] = creatureId
+end
+
+-- Whether there is a block on the mound to shatter now (not on its sled).
+function IceBlockService.CanShatter(player: Player): boolean
+	local data = PlayerData.Get(player)
+	local state = states[player]
+	return data ~= nil and state ~= nil and data.CurrentBlock ~= nil and state.arriveAt == nil
 end
 
 -- Debug and Shatter Now: breaks the current block at once (the normal rescue).

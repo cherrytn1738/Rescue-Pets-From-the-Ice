@@ -39,18 +39,71 @@ Example (not live: copy it into a list and replace the ids):
 ]]
 local MonetizationConfig = {}
 
--- Game passes: bought once per account; Roblox's ownership record is the truth (GamePasses).
--- PetSlots: equip slots the pass adds (docs/GAME_DESIGN.md, "Pets" and "Monetization"; PetService).
--- Not created on the Creator Hub yet (Id = 0): in Studio they can be given from the debug menu.
+-- Game passes (docs/GAME_DESIGN.md, "Monetization"): bought once per account; Roblox's ownership record is
+-- the truth (GamePasses), or the save for a pass received as a gift (GiftedPasses). Every pass can be
+-- gifted: GiftId is a developer product "Gift: <name>" at the same price (0 until it exists). What each
+-- pass does (RobuxPerks):
+--  * CrystalMultiplier: all crystals times this (2x Crystals: 2, VIP: 1.2).
+--  * AutoTapsPerSecond: the server taps this often for you while you're in your own plot (Auto Pick);
+--    they share the 20-taps-a-second cap with your own taps (TapService).
+--  * GoldNameTag / Lounge (VIP): a gold name tag, and the VIP lounge in the plaza lets you in.
+--  * Lucky: doubles the chance of Legendary and Mythic blocks (BlockRules, Lucky Ice).
+--  * PetSlots: equip slots the pass adds (PetService).
+-- Not created on the Creator Hub yet (Id = 0): in Studio the shop and the debug menu give them for the
+-- session.
 MonetizationConfig.Passes = {
-	{ Key = "ExtraPetSlot", Name = "Extra Pet Slot", Id = 0, ExpectedPrice = 449, PetSlots = 1,
+	{ Key = "DoubleCrystals", Name = "2x Crystals", Id = 0, GiftId = 0, ExpectedPrice = 249, CrystalMultiplier = 2,
+		Description = "Doubles all your crystals, forever." },
+	{ Key = "AutoPick", Name = "Auto Pick", Id = 0, GiftId = 0, ExpectedPrice = 149, AutoTapsPerSecond = 5,
+		Description = "Taps the ice 5 times a second for you while you're in your plot." },
+	{ Key = "VIP", Name = "VIP", Id = 0, GiftId = 0, ExpectedPrice = 299, CrystalMultiplier = 1.2, GoldNameTag = true, Lounge = true,
+		Description = "+20% crystals, a gold name tag and the VIP lounge in the plaza." },
+	{ Key = "ExtraPetSlot", Name = "Extra Pet Slot", Id = 0, GiftId = 0, ExpectedPrice = 449, PetSlots = 1,
 		Description = "One more pet follows you." },
-	{ Key = "PetSquad", Name = "Pet Squad", Id = 0, ExpectedPrice = 899, PetSlots = 2,
+	{ Key = "PetSquad", Name = "Pet Squad", Id = 0, GiftId = 0, ExpectedPrice = 899, PetSlots = 2,
 		Description = "Two more pets follow you (with Extra Pet Slot, +3 in all)." },
+	{ Key = "LuckyIce", Name = "Lucky Ice", Id = 0, GiftId = 0, ExpectedPrice = 349, Lucky = true,
+		Description = "Doubles your chance of Legendary and Mythic blocks." },
+}
+-- A pass given as a gift: the "Pass" reward kind saves it for the recipient (RobuxPerks).
+for _, pass in MonetizationConfig.Passes do
+	pass.Reward = { Kind = "Pass", Pass = pass.Key }
+end
+
+-- Developer products: bought any number of times. Each has a gift twin (GiftId, same price).
+-- Reward kinds (RobuxPerks): CrystalBundle (Seconds of your current income: see BundleTapsPerSecond),
+-- ShatterNow (breaks the block on your mound now), ServerFrostRush (Multiplier for everyone in the server
+-- for Seconds, your name announced; another one adds Seconds), MythicBlock (your next block rolls from
+-- Odds: a paid random item).
+MonetizationConfig.Products = {
+	{ Key = "CrystalPouch", Name = "Crystal Pouch", Tab = "Products", Id = 0, GiftId = 0, ExpectedPrice = 29,
+		Description = "10 minutes of your crystal income, right now.", Reward = { Kind = "CrystalBundle", Seconds = 600 } },
+	{ Key = "CrystalSack", Name = "Crystal Sack", Tab = "Products", Id = 0, GiftId = 0, ExpectedPrice = 149,
+		Description = "1 hour of your crystal income, right now.", Reward = { Kind = "CrystalBundle", Seconds = 3600 } },
+	{ Key = "CrystalChest", Name = "Crystal Chest", Tab = "Products", Id = 0, GiftId = 0, ExpectedPrice = 499,
+		Description = "6 hours of your crystal income, right now.", Reward = { Kind = "CrystalBundle", Seconds = 21600 } },
+	{ Key = "ShatterNow", Name = "Shatter Now", Tab = "Products", Id = 0, GiftId = 0, ExpectedPrice = 25,
+		Description = "Breaks your current ice block instantly and frees the creature.", Reward = { Kind = "ShatterNow" } },
+	{ Key = "ServerFrostRush", Name = "Server Frost Rush", Tab = "Products", Id = 0, GiftId = 0, ExpectedPrice = 99,
+		Description = "x2 crystals for everyone in the server for 15 minutes, with your name announced.",
+		Reward = { Kind = "ServerFrostRush", Multiplier = 2, Seconds = 900 } },
+	{ Key = "MythicBlock", Name = "Mythic Block", Tab = "Products", Id = 0, GiftId = 0, ExpectedPrice = 199,
+		Description = "Your next ice block rolls with much better odds. Tap INFO for the odds.",
+		Reward = { Kind = "MythicBlock" }, PaidRandom = true,
+		-- Shown in the shop before purchase; the roll uses exactly these (BlockRules.RollMythicBlock). The
+		-- creature is any one of that rarity from the whole roster, so the odds hold on every layer.
+		Odds = {
+			{ Name = "Rare", Chance = 0.50 },
+			{ Name = "Epic", Chance = 0.30 },
+			{ Name = "Legendary", Chance = 0.15 },
+			{ Name = "Mythic", Chance = 0.05 },
+		} },
 }
 
--- Developer products: bought any number of times.
-MonetizationConfig.Products = {}
+-- A crystal bundle pays Seconds of "your current income": building damage per second plus your tap damage
+-- at this many taps a second, times your crystal multiplier (so a new player with no buildings gets
+-- something too).
+MonetizationConfig.BundleTapsPerSecond = 4
 
 MonetizationConfig.Shop = {
 	-- The shop's sections, in page order. Passes always go in "Passes"; a product names its Tab.
@@ -93,6 +146,11 @@ function MonetizationConfig.GetPass(key)
 	return type(key) == "string" and findByKey(MonetizationConfig.Passes, key) or nil
 end
 
+-- Anything that can be bought as a gift: a product, or a pass (keys are unique across both lists).
+function MonetizationConfig.GetGiftable(key)
+	return MonetizationConfig.GetProduct(key) or MonetizationConfig.GetPass(key)
+end
+
 function MonetizationConfig.GetPassById(gamePassId)
 	for _, pass in MonetizationConfig.Passes do
 		if MonetizationConfig.IsLive(pass) and pass.Id == gamePassId then
@@ -102,7 +160,8 @@ function MonetizationConfig.GetPassById(gamePassId)
 	return nil
 end
 
--- What a developer product id sells: "Product", product | "Gift", product (bought for someone else) | nil
+-- What a developer product id sells: "Product", product | "Gift", product or pass (bought for someone
+-- else) | nil
 function MonetizationConfig.FindByProductId(productId)
 	if type(productId) ~= "number" or productId <= 0 then
 		return nil
@@ -112,6 +171,11 @@ function MonetizationConfig.FindByProductId(productId)
 			return "Product", product
 		elseif product.GiftId == productId then
 			return "Gift", product
+		end
+	end
+	for _, pass in MonetizationConfig.Passes do
+		if pass.GiftId == productId then
+			return "Gift", pass
 		end
 	end
 	return nil
@@ -134,6 +198,7 @@ function MonetizationConfig.AllPriced()
 	end
 	for _, pass in MonetizationConfig.Passes do
 		add(pass.Name, pass.Id, "GamePass", pass.ExpectedPrice)
+		add("Gift: " .. pass.Name, pass.GiftId, "Product", pass.ExpectedPrice)
 	end
 	return entries, hidden
 end
@@ -182,6 +247,12 @@ function MonetizationConfig.Validate(config)
 		if pass.Id > 0 then
 			assert(not seenPassIds[pass.Id], "game pass id " .. pass.Id .. " is used twice")
 			seenPassIds[pass.Id] = true
+		end
+		local giftId = pass.GiftId or 0
+		assert(type(giftId) == "number" and giftId >= 0, pass.Key .. " needs a GiftId (0 until it exists)")
+		if giftId > 0 then
+			assert(not seenProductIds[giftId], "developer product id " .. giftId .. " is used twice")
+			seenProductIds[giftId] = true
 		end
 	end
 end

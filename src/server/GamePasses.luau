@@ -7,7 +7,9 @@ Roblox's ownership record is the truth:
  * a pass bought in the game counts at once: PromptGamePassPurchaseFinished fires on the server, so
    it can be trusted. Every perk reads Owns() when it applies, and OnChanged listeners refresh what
    was already shown, so nobody has to rejoin
- * never saved, and never taken from the client
+ * never saved, and never taken from the client. The one exception: a pass received as a GIFT (bought
+   as the pass's gift product by another player) has no Roblox record, so it is saved in the
+   recipient's GiftedPasses and counts as owned (Give(), from the "Pass" reward kind)
  * published as Owns_<Key> player attributes for the UI only; the server never reads them back
 
 Studio: a test purchase of a pass never becomes real ownership, and a pass without an id can't be
@@ -20,6 +22,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local MonetizationConfig = require(ReplicatedStorage.MonetizationConfig)
+local PlayerData = require(script.Parent.PlayerData)
 
 local GamePasses = {}
 
@@ -47,7 +50,17 @@ function GamePasses.Owns(player, passKey: string): boolean
 			return override
 		end
 	end
-	return owned[player] ~= nil and owned[player][passKey] == true
+	if owned[player] ~= nil and owned[player][passKey] == true then
+		return true
+	end
+	local data = PlayerData.Get(player)
+	return data ~= nil and type(data.GiftedPasses) == "table" and data.GiftedPasses[passKey] == true
+end
+
+-- A pass received as a gift: saved in the live data (the caller saves), and counts at once. Never yields.
+function GamePasses.GiveGifted(player: Player, data, passKey: string)
+	data.GiftedPasses[passKey] = true
+	task.spawn(fireChanged, player, passKey)
 end
 
 -- Whether this player's passes have been looked up since they joined (until then Owns() is false
@@ -105,6 +118,14 @@ local function onPlayerAdded(player: Player)
 end
 
 function GamePasses.Start()
+	-- passes received as gifts count once the save is loaded
+	PlayerData.OnLoaded(function(player, data)
+		for passKey in data.GiftedPasses or {} do
+			if MonetizationConfig.GetPass(passKey) then
+				fireChanged(player, passKey)
+			end
+		end
+	end)
 	Players.PlayerAdded:Connect(onPlayerAdded)
 	for _, player in Players:GetPlayers() do
 		task.spawn(onPlayerAdded, player)

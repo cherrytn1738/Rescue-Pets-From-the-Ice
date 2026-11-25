@@ -8,6 +8,9 @@ shared by the server (IceBlockService), the client's ice look and the specs.
   RollCreature(layerNumber, rarityRoll, pickRoll, lucky)  the creature: the rarity, then one of the
                                    pool's creatures of that rarity (pickRoll in [0, 1)). A rarity
                                    with nobody in the pool falls back to the next rarity down.
+  RollMythicBlock(odds, roll, pickRoll)  the Mythic Block product's creature: the rarity from its own
+                                   odds ({ { Name, Chance } }, adding up to 1; roll in [0, 1)), then one
+                                   of that rarity from the whole roster, so its odds hold on any layer.
   Height(level)                    the block's height in studs (14 at level 1, 20 by level 50).
   CrackStage(hpLeft, hpMax)        0-4: how many of the crack stages (20/40/60/80%) are reached.
   DamageShare(hpLeft, hpMax)       0-1.
@@ -64,6 +67,25 @@ function BlockRules.RollRarity(layer, roll: number, lucky: boolean?): string
 		at -= entry.Percent
 	end
 	return odds[#odds].Rarity
+end
+
+function BlockRules.RollMythicBlock(odds, roll: number, pickRoll: number)
+	local rarity = odds[#odds].Name
+	local at = roll
+	for _, entry in odds do
+		if at < entry.Chance then
+			rarity = entry.Name
+			break
+		end
+		at -= entry.Chance
+	end
+	local matching = {}
+	for _, creature in CreatureConfig.Creatures do
+		if creature.Rarity == rarity then
+			table.insert(matching, creature)
+		end
+	end
+	return matching[math.clamp(math.floor(pickRoll * #matching) + 1, 1, #matching)]
 end
 
 function BlockRules.RollCreature(layerNumber: number, rarityRoll: number, pickRoll: number, lucky: boolean?)

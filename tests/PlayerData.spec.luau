@@ -35,6 +35,9 @@ return function(sources)
 		GetPass = function()
 			return nil
 		end,
+		GetGiftable = function(key)
+			return testProducts[key]
+		end,
 		IsPaidRandom = function()
 			return false
 		end,
@@ -610,6 +613,33 @@ return function(sources)
 	check(not PlayerData.IsReady(saver), "...the session is no longer ready")
 	leave(saver)
 	check(type(record(9).Receipts) == "table", "...and leaving doesn't save it either")
+
+	-- Paid things the save holds: passes received as gifts, and Mythic Blocks not rolled yet.
+	local buyer = join(120)
+	data = PlayerData.Get(buyer)
+	check(type(data.GiftedPasses) == "table" and next(data.GiftedPasses) == nil and data.MythicBlocks == 0, "a new player has no gifted passes and no Mythic Blocks waiting")
+	PlayerData.Edit(buyer).GiftedPasses.VIP = true
+	PlayerData.Edit(buyer).MythicBlocks = 2
+	leave(buyer)
+	check(record(120).GiftedPasses.VIP == true and record(120).MythicBlocks == 2, "a gifted pass and Mythic Blocks are saved")
+	buyer = join(120)
+	check(PlayerData.Get(buyer).GiftedPasses.VIP == true and PlayerData.Get(buyer).MythicBlocks == 2, "...and load again")
+	check(PlayerData.ResetToNew(buyer) and PlayerData.Get(buyer).GiftedPasses.VIP == true and PlayerData.Get(buyer).MythicBlocks == 2,
+		"a debug reset keeps what was paid for (gifted passes, Mythic Blocks)")
+	leave(buyer)
+	for userId, broken in { [121] = { GiftedPasses = "VIP" }, [122] = { MythicBlocks = -1 }, [123] = { MythicBlocks = 1.5 }, [124] = { MythicBlocks = "two" } } do
+		broken.SchemaVersion = 1
+		put(userId, broken)
+		local player = join(userId)
+		check(not PlayerData.IsReady(player), `an unreadable paid field fails closed ({userId})`)
+		leave(player)
+	end
+	put(125, { SchemaVersion = 1, GiftedPasses = { VIP = true, AutoPick = "yes", [5] = true, ["Bad Key!"] = true, RetiredPass = true } })
+	local cleaned = join(125)
+	local gifted = PlayerData.Get(cleaned).GiftedPasses
+	check(PlayerData.IsReady(cleaned) and gifted.VIP and gifted.RetiredPass and gifted.AutoPick == nil and gifted["Bad Key!"] == nil and gifted[5] == nil,
+		"gifted passes: unreadable entries are dropped; a pass no longer sold is kept")
+	leave(cleaned)
 
 	-- Studio uses its own stores; live saves only on purpose.
 	inStudio = true

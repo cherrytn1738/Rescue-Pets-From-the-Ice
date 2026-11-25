@@ -2,8 +2,9 @@
 -- of sections (MonetizationConfig.Shop.Tabs: "~ Passes ~", then the products' tabs), each a set of
 -- colour cards: the item's picture (its config Icon, if it has one), its name and a green buy button
 -- with Roblox's live price. The buttons along the top jump to a section (and light up as the page
--- scrolls past it). The GIFT toggle picks another player in the server, and the products are then
--- bought for them (passes can't be gifted). With nothing in MonetizationConfig the page says so.
+-- scrolls past it). The GIFT toggle picks another player in the server, and every item (passes too,
+-- through each pass's gift product) is then bought for them. With nothing in MonetizationConfig the page
+-- says so.
 -- Paid random items get an "i INFO" button that shows their description and every chance (the
 -- config's Odds) before purchase, as Roblox requires. No crossed-out prices.
 --
@@ -294,12 +295,14 @@ local function card(entry, isPass: boolean, x: number, y: number, width: number,
 	button.Position, button.Size = UDim2.fromOffset(buyX, rowY), UDim2.fromOffset(width - buyX - 14, 56)
 	button.ZIndex = 6
 
-	local owned = isPass and localPlayer:GetAttribute("Owns_" .. entry.Key) == true
-	local gifting = giftMode and not isPass
+	local gifting = giftMode
+	-- a pass: owned by you, or (gifting) by the player it would go to (player attributes replicate to all)
+	local owner = if gifting then giftTarget else localPlayer
+	local owned = isPass and owner ~= nil and owner:GetAttribute("Owns_" .. entry.Key) == true
 	local id = if gifting then entry.GiftId else entry.Id
 	local live = if gifting then MonetizationConfig.IsGiftLive(entry) else MonetizationConfig.IsLive(entry)
 	if owned then
-		ShowcaseKit.Sticker(box, "OWNED", "Gold")
+		ShowcaseKit.Sticker(box, if gifting then "THEY OWN IT" else "OWNED", "Gold")
 	elseif not live then
 		ShowcaseKit.Sticker(box, "NO ID YET", "Locked") -- (Studio only: live games never show these)
 	end
@@ -311,24 +314,20 @@ local function card(entry, isPass: boolean, x: number, y: number, width: number,
 	end
 	if owned then
 		setPrice("Gold", "OWNED")
-	elseif giftMode and isPass then
-		setPrice("Done", "CAN'T GIFT")
 	elseif gifting and not live and not IS_STUDIO then
 		setPrice("Done", "NO GIFTING")
 	else
 		local fallback = entry.ExpectedPrice
-		showPrice(if live then PriceCache.Get(id, if isPass then Enum.InfoType.GamePass else Enum.InfoType.Product, fallback, showPrice) else fallback)
+		-- (a gift is always a developer product, a pass's own purchase a game pass)
+		local infoType = if isPass and not gifting then Enum.InfoType.GamePass else Enum.InfoType.Product
+		showPrice(if live then PriceCache.Get(id, infoType, fallback, showPrice) else fallback)
 	end
 
 	button.Activated:Connect(function()
 		if owned then
-			say(`You already own {entry.Name}.`)
-		elseif isPass then
-			if giftMode then
-				say("Game passes can't be gifted. Turn GIFT off to buy one.", Colors.Error)
-			else
-				send("BuyPass", entry.Key)
-			end
+			say(if gifting and owner then `{owner.DisplayName} already has {entry.Name}.` else `You already own {entry.Name}.`)
+		elseif isPass and not giftMode then
+			send("BuyPass", entry.Key)
 		elseif giftMode then
 			if not giftTarget or giftTarget.Parent ~= Players then
 				say("Pick who the gift is for first.", Colors.Error)

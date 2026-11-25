@@ -522,6 +522,15 @@ Launch with 6 passes and 4 kinds of products. Every price below is a starting po
 - **Shatter Now sells best on a glowing block:** show its button bigger when a Rare or better creature is inside.
 - **Crystal bundles scale with income,** so they stay worth buying at every stage.
 
+**Details settled when the items were built** (numbers in `MonetizationConfig`; placeholders to check before launch):
+
+- **Stacking:** every crystal bonus multiplies: pets × Creature Book × Crystal Yield × Frost Cores × 2x Crystals × VIP × group × Golden Glacier Frost Rush × Server Frost Rush.
+- **Crystal bundles** pay 10 minutes, 1 hour or 6 hours of building damage per second plus tap damage at 4 taps a second, times the current crystal multiplier.
+- **Server Frost Rush:** buying another while one runs adds 15 minutes (it doesn't stack to ×4). It isn't saved, so it ends with the server.
+- **Mythic Block** odds: 50% Rare, 30% Epic, 15% Legendary, 5% Mythic, from the whole roster (so they hold on every layer). It waits in the save until the next block arrives.
+- **Gifts** of a pass are saved in the recipient's data (Roblox only records passes bought by the player themselves); a pass the recipient already owns can't be gifted.
+- **VIP lounge:** a door between the sign posts lets VIP owners in; everyone else is told where to get VIP.
+
 **Pet slots are the priciest passes on purpose.** Every equipped pet adds its full bonus, so a second pet early on is the biggest boost in the game. Without passes, players earn slots through rebirths (3, 6 and 10); the passes let paying players skip ahead. The Pets panel shows locked slots with "Rebirth 3" or the pass price on them, and both passes can be gifted.
 
 ## UI and controls
