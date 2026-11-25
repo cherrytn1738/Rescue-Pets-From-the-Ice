@@ -19,8 +19,8 @@ local player = Players.LocalPlayer
 local state = Workspace:WaitForChild("GoldenGlacier")
 local SIZE = Vector3.new(11, 13, 11)
 
-local GOLD_ICE = Color3.fromRGB(255, 200, 90)
-local CORE = Color3.fromRGB(255, 236, 150)
+local GOLD_ICE = Color3.fromRGB(255, 176, 40)
+local CORE = Color3.fromRGB(255, 205, 90)
 local CRACK = Color3.fromRGB(255, 250, 225)
 local CRACKS_PER_STAGE = { 6, 9, 10, 12 }
 
@@ -41,20 +41,29 @@ local function piece(name: string, size: Vector3, color: Color3, material: Enum.
 end
 
 -- the golden ice: see-through, so the core shows (a near-solid gold block read as a flat yellow cube)
-local block = piece("GoldenGlacierBlock", SIZE, GOLD_ICE, Enum.Material.Ice, 0.42)
+local block = piece("GoldenGlacierBlock", SIZE, GOLD_ICE, Enum.Material.Ice, 0.5)
 block.Reflectance = 0.08
 block.CastShadow = true
 model.PrimaryPart = block
 -- a frosted cap on top, like the ice blocks' snowy tops
-local cap = piece("FrostCap", Vector3.new(SIZE.X + 0.3, 0.6, SIZE.Z + 0.3), Color3.fromRGB(255, 246, 215), Enum.Material.Snow, 0.15)
--- the crystal core: a gem (a cube on its point) with a hot centre, turning slowly
-local gem = piece("Core", Vector3.one * 4.2, CORE, Enum.Material.Glass, 0.15)
-local heart = piece("Heart", Vector3.one * 2, Color3.fromRGB(255, 220, 110), Enum.Material.Neon, 0)
+local cap = piece("FrostCap", Vector3.new(SIZE.X + 0.3, 0.6, SIZE.Z + 0.3), Color3.fromRGB(255, 240, 200), Enum.Material.Snow, 0.15)
+-- the crystal core: a cluster of glowing crystals round a hot centre, turning slowly (one neon cube on its
+-- point read as a flat yellow diamond)
+local CORE_CRYSTALS = { -- { length, tilt (degrees), turn (degrees) }
+	{ 5.2, 0, 0 }, { 4.2, 32, 20 }, { 4, 30, 140 }, { 3.6, 34, 255 }, { 3, 60, 75 }, { 3, 58, 200 },
+}
+local crystals = {}
+for index, spec in CORE_CRYSTALS do
+	local crystal = piece("Core" .. index, Vector3.new(1.1, spec[1], 1.1), CORE, Enum.Material.Neon, 0.5)
+	crystals[crystal] = CFrame.Angles(0, math.rad(spec[3]), 0) * CFrame.Angles(math.rad(spec[2]), 0, 0)
+		* CFrame.new(0, spec[1] / 2 - 0.6, 0) * CFrame.Angles(0, math.rad(45), 0)
+end
+local heart = piece("Heart", Vector3.one * 1.5, Color3.fromRGB(255, 160, 30), Enum.Material.Neon, 0)
 heart.Shape = Enum.PartType.Ball
 local light = Instance.new("PointLight")
 light.Color = Color3.fromRGB(255, 205, 100)
-light.Range = 22
-light.Brightness = 1.6
+light.Range = 16
+light.Brightness = 0.7
 light.Shadows = false
 light.Parent = heart
 local sparkles = Instance.new("ParticleEmitter")
@@ -99,9 +108,11 @@ local shownStage = 0
 local function place(cf: CFrame, now: number)
 	block.CFrame = cf
 	cap.CFrame = cf * CFrame.new(0, SIZE.Y / 2 + 0.25, 0)
-	local spin = CFrame.Angles(0, now * 0.8, 0) * CFrame.Angles(math.rad(45), 0, math.rad(35))
-	gem.CFrame = cf * CFrame.new(0, 0.4 + 0.3 * math.sin(now * 2), 0) * spin
-	heart.CFrame = gem.CFrame
+	local centre = cf * CFrame.new(0, -1 + 0.3 * math.sin(now * 2), 0) * CFrame.Angles(0, now * 0.8, 0)
+	for crystal, offset in crystals do
+		crystal.CFrame = centre * offset
+	end
+	heart.CFrame = centre * CFrame.new(0, 0.6, 0)
 	for p, offset in crackOffsets do
 		p.CFrame = cf * offset
 	end
@@ -119,15 +130,15 @@ local function setStage(stage: number, near: boolean)
 		end
 	end
 	-- the core burns brighter as the ice breaks
-	heart.Size = Vector3.one * (2 + 0.35 * stage)
-	light.Brightness = 1.6 + 0.4 * stage
+	heart.Size = Vector3.one * (1.5 + 0.3 * stage)
+	light.Brightness = 0.7 + 0.3 * stage
 	sparkles.Rate = Effects.Count(10 + 5 * stage)
 end
 local gui = Instance.new("BillboardGui")
-gui.Size = UDim2.fromScale(14, 4)
--- in front of the block's lower half (pushed toward the camera, so the block never hides it), so it stays
--- mid-screen next to the block instead of climbing into the HUD's crystal counter
-gui.StudsOffsetWorldSpace = Vector3.new(0, -2, 0)
+gui.Size = UDim2.fromScale(13, 2.2)
+-- at the foot of the block, pushed toward the camera (so the block never hides it): it never covers the block
+-- or climbs into the HUD's crystal counter
+gui.StudsOffsetWorldSpace = Vector3.new(0, -SIZE.Y / 2 + 1.4, 0)
 gui.StudsOffset = Vector3.new(0, 0, SIZE.X / 2 + 2.5)
 gui.LightInfluence = 0
 gui.MaxDistance = 400

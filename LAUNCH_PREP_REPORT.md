@@ -1,6 +1,91 @@
 # Launch prep: overnight report
 
-Branch `overnight-launch-prep` (from `main` at 348b0e5). Pushed after every phase; not merged.
+Branch `overnight-launch-prep` (from `main` at 348b0e5), merged into `main` in the launch fix pass (first section).
+
+## Launch fix pass (2026-11-25)
+
+`overnight-launch-prep` is merged into `main` (a normal merge). Everything below is on `main`. All 20 specs pass (5,006 checks).
+
+**Your answers, as built**
+- **Bundles and the daily chest** pay "your income": the HUD's crystals per second with the permanent bonuses but no rushes (`Economy.SteadyIncome`). Taps count at your recent rate, but at least 4 a second, so opening the shop (which stops your tapping) still pays something. Rushes are now flagged as temporary multipliers (`Economy.AddExtra(fn, true)`). Bought crystals count toward Frost Cores.
+- **Doc fixes:** the core loop and the rebirth text now say pets and Frost Cores multiply crystals. Kept as is: Mythic odds, stacking, rush extension, likes codes.
+- **Space** jumps again on PC everywhere. Gamepad A and R2 still tap in your plot.
+- **Rebirth goal on the HUD** from level 25: "Rebirth at level 31: N to go", then a pulsing "REBIRTH READY: +N Frost Cores" (`RebirthConfig.Goal`, spec-checked against the doc).
+- **Auto-equip:**
+  - The best pets are equipped after each rescue, with a toast when the new pet is one of them.
+  - It's on by default, with an ON/OFF in Settings (`Settings.AutoEquip`).
+  - Choice I made: it waits until the tutorial is done, so the tutorial's "Equip your new pet" step still teaches equipping.
+- **Delete all below a rarity:**
+  - With no pet picked, the Pets window's delete button opens "Delete every pet below: Uncommon / Rare / Epic / Legendary / Mythic", showing the count for each. One press asks "DELETE 25?", a second press deletes.
+  - It skips locked, equipped and Golden pets. Skipping Golden is my choice: a Golden pet costs five copies.
+  - The save had no pet lock yet, so I added one: a LOCK button and a lock mark on the tile. Saved as `Locked` on the pet (schema 1, allowed while not live). A locked pet can't be deleted or combined.
+- **Icons:**
+  - 27 UI icons rendered from the game's own models in the store-icon style: the 8 menu buttons, the 8 buildings, the 6 pick tiers, Frost Touch, Bigger Burst, Crystal Yield, Fast Sled and an up-arrow badge.
+  - They're in `store-assets/ui-icons/` (see `contact_sheet.png`), uploaded as group 921449746 (all approved) and set in `UITheme.Icons`.
+  - The Build cards show the building's icon (dark while still locked). Upgrade tiles show the pick, the building with the badge, or the ice upgrade.
+- **Legendary glow** is amber (255, 120, 20). Checked at layers 1, 3 and 5: it reads orange, no lime.
+  - At layer 6 the old near-opaque black glass hid every glow, and its own veins, so Frozen Core is now see-through dark ice (`IceLooks`). I couldn't re-shoot layer 6 after that change; check it by eye.
+- **Book tabs:** they shrink to fit the window, and on the smallest phones they show short names (COM, UNC, RARE, EPIC, LEG, MYTH, GOLD). Checked at 667x375.
+- **Phones:**
+  - **Fidelity:** every building, pick, plot and plaza template mesh is RenderFidelity Automatic (templates rebuilt: 1,256 meshes, 0 Precise).
+  - **Streaming:** `Workspace.StreamingEnabled` is on: target radius 240, minimum 96, opportunistic stream-out.
+  - **What always loads:** the plaza is a Persistent model, and your own plot's stations and looks are PersistentPerPlayer, so they stay loaded for you anywhere. Other players' stations stream in and out whole.
+  - **Tested:** from across the ring your own plot kept all 8 stations while far stations streamed out. Back home, they returned with their effects rebuilt. Name boards, block state, rare-block beams and the Golden Glacier all kept working (they're drawn from folders that always replicate, or by the client).
+
+**Your screenshot fixes**
+- **Windows over the HUD:** the crystal counter now hides while a window is open. The Build and Upgrades windows show "You have N crystals" on their bottom line instead (a purchase's answer shows there for 3 seconds first).
+- **Golden Glacier:**
+  - see-through golden ice with a frosted top;
+  - a cluster of glowing crystals turning at its core;
+  - sparkles;
+  - white-gold cracks spreading in four stages, with the core burning brighter;
+  - its TAP IT label sits at the block's foot.
+- **Leaderboards:**
+  - carved ice-and-wood boards in the plot parts' style (`tools/blender/plaza_boards.py`): log posts with snow caps, a carved ice frame with icicles, a wooden header with a crown medallion, crystals;
+  - 10.6k triangles, uploaded as the group (asset 105555700752777, approved), built into `ServerStorage.PlazaTemplates`;
+  - the SurfaceGui stays on the invisible Face part in front of the panel.
+
+**Performance** (8 maxed plots, client in front, compared with the Precise numbers in Phase 6 below)
+
+| View | Triangles before | now | Render CPU before | now |
+|---|---|---|---|---|
+| Plaza | 821k | 856k | 15.5 ms | 14.3 ms |
+| Across the ring | 1,323k | 967k (-27%) | 17.1 ms | 15.0 ms |
+| Tapping spot | 317k | 238k (-25%) | 14.5 ms | 14.2 ms |
+
+- All views ran at 60 fps (the Studio cap).
+- The plaza view doesn't drop: every plot is within 240 studs of the plaza and within Automatic's full-detail range from there.
+- The big saving is across the ring and at home, where far plots stream out and far meshes use lower detail.
+- On a phone, Roblox's level of detail is more aggressive and streaming shrinks the radius under memory pressure, so the saving there should be larger than Studio on a PC shows. Measure it on a real phone.
+
+**Thumbnails** (`store-assets/launch/`, all 1920x1080, replacing the drafts)
+- `thumb_mythic_rescue.png` (the hero), `thumb_maxed_plot_legendary.png`, `thumb_golden_glacier_rush.png` (three players), `thumb_creature_book.png`, `thumb_fresh_plot_start.png`.
+- Debug UI, tutorial hints and name tags are hidden in all of them.
+- HUD numbers come from believable saves:
+  - mid-game 4.8-6.2M crystals at +5.6K/s and level 28;
+  - the maxed plot shows 1.21B at +232M/s, because a plot that earns 232M a second can't hold "a few million" for a second. Its HP bar is out of frame, so no Tvg.
+- **Size:** Studio's side panels limit the viewport to 1565x683 even maximized and full screen (F11), so the UI was laid out in a 16:9 region (`StudioScreenSize` 1214x683), cropped and scaled 1.58x to 1920x1080. They're sharper than the drafts but not native. For native 1920x1080, close Studio's panels and use `tools/studio/thumbnail_cameras.luau`.
+- **Layout:** that pretend-screen layout puts the menu at the top left (the phone layout), not centred on the left.
+- **Staged hero:** the Mythic rescue is staged from the game's own pieces, with the block's ice and the HUD hidden, as before.
+
+**Also found and fixed**
+- The Build cards' detail, pips and income-share lines clipped on phones once the icon took room. Narrow cards now drop the flavour text and shorten "to Masterwork" and "of building income".
+- The Settings labels were shortened so both read at the same size.
+- `ShatterOffer` threw "attempt to index boolean with 'GetAttribute'" twice at join in one streaming test. The code path can't produce a boolean as written, so I added a type guard. Watch for it in Output.
+- New debug action **Set crystals** (screenshots, believable balances).
+
+**Questions**
+1. The VIP lounge now shows in the plaza, because the VIP pass exists in `MonetizationConfig` (with id 0). Hide it in a live game until the pass has a real id?
+2. Golden pets are skipped by "Delete all below". OK?
+3. Auto-equip waits for the tutorial to finish. OK?
+
+**Check by eye**
+- **Icons:** the 27 icons in the menu, Build and Upgrades (`store-assets/ui-icons/contact_sheet.png`). The agent flagged that Pick 1-3 look alike at 48 px, and the tier-1 buildings are thin wooden machines.
+- **Golden Glacier:** its new look in a real rush: the crystal core and the label at the foot.
+- **Leaderboards:** the new boards from the plaza.
+- **Frozen Core (layer 6):** the new see-through dark ice with any rarity inside (not seen after the change).
+- **Streaming pop-in:** walking across the ring, stations should stream in and out whole and not look broken. Also check the far ring from the plaza with Automatic detail. Earlier passes chose Precise because Automatic looked blocky far away.
+- **Pets window:** auto-equip after a rescue (toast), LOCK, and "Delete below" on a real phone.
 
 ## Summary
 

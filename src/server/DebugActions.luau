@@ -196,6 +196,18 @@ local ACTIONS = {
 		end,
 	},
 	{
+		-- (screenshots: a believable balance on a built-up plot; the run and all-time totals stay)
+		Id = "SetCrystals", Group = "Save", Label = "Set crystals to an amount (spendable only)",
+		Params = { amountParam("Amount", "Crystals", 0, 1e15, 5_000_000) },
+		Run = function(target, args)
+			local data = dataOf(target)
+			data.Crystals = args.Amount
+			PlayerData.Publish(target)
+			PlayerData.MarkImportant(target)
+			return `{target.Name} now has {data.Crystals} crystals`
+		end,
+	},
+	{
 		Id = "SetBlockLevel", Group = "Save", Label = "Set block level (the next block rolls again)",
 		Params = { amountParam("Level", "Block level", 1, 1000, 21) },
 		Run = function(target, args)

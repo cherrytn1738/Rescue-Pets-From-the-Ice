@@ -21,7 +21,8 @@ IceLooks.Layers = {
 	{ Color = Color3.fromRGB(55, 105, 205), Material = Enum.Material.Ice, Transparency = 0.38, Clear = 0.55, Extra = "Bubbles" }, -- Ancient Ice
 	{ Color = Color3.fromRGB(160, 238, 255), Material = Enum.Material.Glass, Transparency = 0.45, Clear = 0.62, Extra = "Sparkles" }, -- Crystal Ice
 	{ Color = Color3.fromRGB(22, 98, 108), Material = Enum.Material.Ice, Transparency = 0.36, Clear = 0.52, Extra = "Veins", VeinColor = Color3.fromRGB(80, 255, 220) }, -- Primordial Ice
-	{ Color = Color3.fromRGB(16, 18, 30), Material = Enum.Material.Glass, Transparency = 0.3, Clear = 0.48, Extra = "InnerLight", VeinColor = Color3.fromRGB(255, 120, 60) }, -- Frozen Core
+	-- (see-through dark ice: near-opaque black glass hid the silhouette, the veins and any rarity glow)
+	{ Color = Color3.fromRGB(30, 34, 60), Material = Enum.Material.Ice, Transparency = 0.45, Clear = 0.6, Extra = "InnerLight", VeinColor = Color3.fromRGB(255, 120, 60) }, -- Frozen Core
 }
 
 IceLooks.Glow = {

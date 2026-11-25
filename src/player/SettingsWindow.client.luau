@@ -55,7 +55,7 @@ end, function(value)
 	current.Sounds = value
 	save()
 end)
-effectsLabel = UIKit.Label(content, "EffectsLabel", "Reduced effects (low-end phones)", 24, Colors.Muted)
+effectsLabel = UIKit.Label(content, "EffectsLabel", "Reduced effects", 24, Colors.Muted)
 effectsLabel.TextXAlignment = Enum.TextXAlignment.Center
 effectsLabel.TextScaled = true
 autoLabel = UIKit.Label(content, "AutoEquipLabel", "Auto-equip best pets", 24, Colors.Muted)

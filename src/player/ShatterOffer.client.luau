@@ -88,7 +88,8 @@ RunService.RenderStepped:Connect(function()
 	local plots = Workspace:FindFirstChild("Plots")
 	local plot = if type(index) == "number" and plots then plots:FindFirstChild("Plot" .. index) else nil
 	local block = if plot then plot:FindFirstChild("Block") else nil
-	local present = block ~= nil and block:GetAttribute("Present") == true
+	-- (typeof: an error "index boolean" was seen twice at join in a streaming test; never index a non-Instance)
+	local present = typeof(block) == "Instance" and block:GetAttribute("Present") == true
 	holder.Visible = present and inOwnPlot(index) and not UIKit.AnyWindowOpen()
 	if not holder.Visible then
 		return

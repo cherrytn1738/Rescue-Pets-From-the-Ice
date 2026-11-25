@@ -94,9 +94,11 @@ for order, building in BuildingConfig.Buildings do
 	end
 
 	local row = {}
+	local compact = false -- a narrow card (phones): the detail line leaves out how the building breaks the ice
 	function row.layout(width: number)
 		local right = 210
 		local left = if icon then ICON + 22 else 18
+		compact = width - right - left - 22 < 520
 		if icon then
 			icon.Position, icon.Size = UDim2.fromOffset(12, (ROW_HEIGHT - ICON) / 2), UDim2.fromOffset(ICON, ICON)
 		end
@@ -120,16 +122,16 @@ for order, building in BuildingConfig.Buildings do
 			icon.ImageTransparency = if show then 0 else 0.35
 		end
 		detail.Text = if show
-			then `Owned {owned} · {NumberFormat.Rate(each)} dmg/s each · {building.Breaks}`
+			then `Owned {owned} · {NumberFormat.Rate(each)} dmg/s each` .. (if compact then "" else ` · {building.Breaks}`)
 			else "Keep earning crystals to find out..."
 		local toGo = BuildingConfig.MaxDetailLevel - level
 		pipLabel.Text = if not show then ""
 			elseif toGo <= 0 then pips(level) .. "  MASTERWORK"
-			elseif level > 0 then pips(level) .. `  {toGo} more to Masterwork`
+			elseif level > 0 then pips(level) .. (if compact then `  {toGo} more` else `  {toGo} more to Masterwork`)
 			else pips(level)
 		bar.Visible = show and owned > 0
 		local share = if totalDps and totalDps > 0 then dps / totalDps else 0
-		setBar(share, `{math.floor(share * 100 + 0.5)}% of building income`)
+		setBar(share, `{math.floor(share * 100 + 0.5)}%` .. (if compact then " of income" else " of building income"))
 		local affordable = data.Crystals >= cost
 		UIKit.SetButton(buy, (if count > 1 then `x{count}\n` else "") .. "💎 " .. NumberFormat.Short(cost),
 			if affordable and show then "Buy" else "Done", affordable and show)

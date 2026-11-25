@@ -4,8 +4,8 @@ Every step you do by hand to launch Rescue Pets From the Ice, in order. Tick eac
 
 ## 1. Before you start
 
-- [ ] Merge the `overnight-launch-prep` branch into `main` (after reviewing it), pull, and make sure `rojo serve` is running and the Studio plugin is connected.
-- [ ] Save the place in Studio and keep a backup copy of the `.rbxl` (File > Save to File As...). The building, pick and plot templates and the world live only in the place file.
+- [x] Merge the `overnight-launch-prep` branch into `main` (done in the launch fix pass). Pull, and make sure `rojo serve` is running and the Studio plugin is connected.
+- [ ] Save the place in Studio and keep a backup copy of the `.rbxl` (File > Save to File As...). The building, pick, plot and plaza templates, the world and the streaming settings live only in the place file.
 - [ ] Run every spec: `python tools/run_specs.py` (Studio open in Edit mode). All must pass.
 - [ ] Workspace attributes: none of the Studio test switches may be set (`StudioFreshSave`, `StudioUseLiveSaves`, `StudioTimeAway`, `StudioPaidRandomRestricted`); on the client switches `StudioScreenSize`, `StudioGamepad` are never saved. Check Workspace > Attributes is empty of them.
 - [ ] `ProximityPromptService.Enabled` is ticked (it is saved with the place; the UI kit turns it off while a window is open in Edit mode).
@@ -33,11 +33,14 @@ Then:
 ## 4. The place
 
 - [ ] Lighting > Technology is **Future** (Properties; the tools can't read it).
+- [ ] Workspace > StreamingEnabled is ticked, StreamingTargetRadius 240, StreamingMinRadius 96, StreamOutBehavior Opportunistic (set in the launch fix pass; saved with the place).
+- [ ] Every template MeshPart is RenderFidelity Automatic: if you rebuild templates, `tools/studio/build_templates.luau` already sets it.
 - [ ] Music: in the Toolbox (Creator Store > Audio, licensed tracks from Roblox, APM or ProSoundEffects), pick two loops and paste their ids into `AudioConfig.Music` with the source and licence beside each:
   - Plaza: a light, playful winter tune, about 100-120 BPM (bells, pizzicato, glockenspiel).
   - Plot: a calm, cosy loop, about 80-95 BPM (soft piano, music box or mallets, no vocals).
   Play once and walk in and out of your plot: the music crossfades. An empty id simply plays nothing.
 - [ ] Every audio file is approved: `python tools/upload_models.py --check --manifest store-assets/audio/upload_manifest.json`.
+- [ ] Every UI icon is approved: `python tools/upload_models.py --check --manifest store-assets/ui-icons/upload_manifest.json` (27 images, all approved on 2026-11-25), and the leaderboard model: `--manifest store-assets/plaza/upload_manifest.json` (approved at upload).
 
 ## 5. Codes
 
