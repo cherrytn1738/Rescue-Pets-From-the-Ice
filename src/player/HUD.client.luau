@@ -115,7 +115,18 @@ rush.TextScaled = true -- (both rushes at once fit on one line)
 local rushLimit = Instance.new("UITextSizeConstraint")
 rushLimit.MaxTextSize = 28
 rushLimit.Parent = rush
-counter.Size = UDim2.fromOffset(420, 196)
+-- The rebirth goal (from RebirthConfig.GoalFromLevel): how many levels to go, then "REBIRTH READY".
+local goal = UIKit.Label(counter, "RebirthGoal", "", 26, Color3.fromRGB(205, 160, 255))
+goal.Size = UDim2.new(1, 0, 0, 30)
+goal.TextXAlignment = Enum.TextXAlignment.Center
+goal.TextScaled = true
+local goalLimit = Instance.new("UITextSizeConstraint")
+goalLimit.MaxTextSize = 26
+goalLimit.Parent = goal
+goal.Visible = false
+counter.Size = UDim2.fromOffset(420, 230)
+local RebirthConfig = require(ReplicatedStorage.RebirthConfig)
+local ClientState = require(script.Parent.ClientState)
 local BlockRules = require(ReplicatedStorage.BlockRules)
 local IceLooks = require(ReplicatedStorage.IceLooks)
 local LayerConfig = require(ReplicatedStorage.LayerConfig)
@@ -147,6 +158,8 @@ local goHome = ReplicatedStorage:WaitForChild("GoHome") :: RemoteEvent
 local shown = nil
 local shownHp = nil
 RunService.RenderStepped:Connect(function(dt)
+	-- (hidden while a window is open: it sat in the gap behind the window's title)
+	counter.Visible = not UIKit.AnyWindowOpen()
 	local target = localPlayer:GetAttribute("Crystals")
 	if type(target) ~= "number" then
 		return
@@ -203,6 +216,21 @@ RunService.RenderStepped:Connect(function(dt)
 	rush.Position = UDim2.fromOffset(0, if iceBar.Visible then 160 else 124)
 	rush.Visible = #parts > 0
 	rush.Text = table.concat(parts, "   ")
+	-- the rebirth goal, under whatever else shows
+	local data = ClientState.Data()
+	local aim = data and RebirthConfig.Goal(level, data.CrystalsThisRun)
+	goal.Visible = aim ~= nil
+	if aim then
+		local below = if rush.Visible then rush.Position.Y.Offset + 34 elseif iceBar.Visible then 160 else 124
+		goal.Position = UDim2.fromOffset(0, below)
+		if aim.Ready then
+			goal.Text = `⭐ REBIRTH READY: +{aim.Cores} Frost Core{if aim.Cores == 1 then "" else "s"}`
+			goal.TextColor3 = Color3.fromRGB(255, 215, 90):Lerp(Color3.fromRGB(215, 165, 255), 0.5 + 0.5 * math.sin(os.clock() * 4))
+		else
+			goal.Text = `🎯 Rebirth at level {RebirthConfig.RequiredLevel}: {aim.LevelsLeft} to go`
+			goal.TextColor3 = Color3.fromRGB(205, 160, 255)
+		end
+	end
 end)
 
 grid:WaitForChild("HomeButton").Activated:Connect(function()

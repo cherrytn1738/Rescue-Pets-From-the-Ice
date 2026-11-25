@@ -5,8 +5,12 @@ Server only.
  - Rescue(player, data, creatureId): the Creature Book counts it (BookSeen; a first rescue gets a
    "New!" badge in BookNew), CreaturesRescued goes up, and a pet joins the inventory (at most
    CreatureConfig.Pets.InventorySize; a full inventory still fills the book). Returns the pet or nil.
+ - Auto-equip (Settings.AutoEquip, on by default; off in Settings): after a rescue, the best pets are
+   equipped (PetRules.Best), once the tutorial is done (its "Equip your new pet" step still teaches it).
  - PetRequest (RemoteFunction): the client asks, the server checks ownership, slots and counts:
      ("Equip", uid) ("Unequip", uid) ("EquipBest") ("Delete", { uids }) ("CombineGolden", uid)
+     ("Lock", uid) (locks or unlocks it: a locked pet can't be deleted or combined away)
+     ("DeleteBelow", rarity id) (every pet of a lower rarity that isn't locked, equipped or Golden)
      ("MarkSeen", { creature ids })   -> { ok, message }
  - Slots: PetRules.Slots(rebirths, slots from passes with PetSlots that the player owns).
  - Every client draws every player's equipped pets from the player attribute EquippedPets (JSON
@@ -25,6 +29,8 @@ local PlayerData = require(script.Parent.PlayerData)
 local PetService = {}
 
 local MAX_LIST = 60 -- uids or ids in one request
+local TUTORIAL_DONE = 5 -- TutorialService's last step
+local AUTO_EQUIP_NOTICE_DELAY = 2.5
 local lastRequest = {} -- [player] = os.clock()
 local REQUEST_GAP = 0.15
 local equipListeners = {}
@@ -96,8 +102,35 @@ function PetService.Rescue(player: Player, data, creatureId: string)
 	end
 	local pet = { Uid = HttpService:GenerateGUID(false), CreatureId = creatureId, Golden = false }
 	table.insert(data.Pets, pet)
-	PetService.Publish(player, data)
+	if PetService.AutoEquip(player, data) then
+		local creature = CreatureConfig.Get(creatureId)
+		if table.find(data.Equipped, pet.Uid) and creature then
+			-- (after the rescue banner)
+			task.delay(AUTO_EQUIP_NOTICE_DELAY, function()
+				if player.Parent then
+					ReplicatedStorage.GameEvent:FireClient(player, "Notice", { Text = `Auto-equipped your new {creature.Name}!` })
+				end
+			end)
+		end
+	else
+		PetService.Publish(player, data)
+	end
 	return pet
+end
+
+-- Equips the best pets if the player has auto-equip on (and the tutorial is done). Returns whether the
+-- equipped set changed.
+function PetService.AutoEquip(player: Player, data): boolean
+	if data.Settings.AutoEquip == false or data.TutorialStep < TUTORIAL_DONE then
+		return false
+	end
+	local best = PetRules.Best(data.Pets, PetService.Slots(player, data))
+	if PetRules.SameSet(best, data.Equipped) then
+		return false
+	end
+	data.Equipped = best
+	changed(player, data)
+	return true
 end
 
 -- Gives a pet directly (debug).
@@ -189,8 +222,11 @@ function actions.Delete(player, data, uids)
 		return false, "Pick the pets to delete."
 	end
 	for _, uid in uids do
-		if not findPet(data, uid) then
+		local pet = findPet(data, uid)
+		if not pet then
 			return false, "You don't have that pet."
+		elseif pet.Locked then
+			return false, "That pet is locked. Unlock it first."
 		end
 	end
 	for _, uid in uids do
@@ -207,13 +243,33 @@ function actions.Delete(player, data, uids)
 	return true, if #uids == 1 then "Pet deleted." else `{#uids} pets deleted.`
 end
 
+function actions.DeleteBelow(player, data, rarityId)
+	if type(rarityId) ~= "string" or PetRules.RarityRank(rarityId) < 2 then
+		return false, "Pick a rarity."
+	end
+	local uids = PetRules.BelowRarity(data.Pets, rarityId, data.Equipped)
+	if #uids == 0 then
+		return false, `No pets below {rarityId} to delete (locked, equipped and Golden pets are kept).`
+	end
+	return actions.Delete(player, data, uids)
+end
+
+function actions.Lock(player, data, uid)
+	local pet = type(uid) == "string" and findPet(data, uid)
+	if not pet then
+		return false, "You don't have that pet."
+	end
+	pet.Locked = if pet.Locked then nil else true
+	return true, if pet.Locked then "Locked: it can't be deleted." else "Unlocked."
+end
+
 function actions.CombineGolden(player, data, uid)
 	if type(uid) ~= "string" then
 		return false, "Pick a pet."
 	end
 	local group = PetRules.CombineGroup(data.Pets, uid, data.Equipped)
 	if not group then
-		return false, `You need {CreatureConfig.Pets.GoldenCombineCount} of the same pet (not Golden).`
+		return false, `You need {CreatureConfig.Pets.GoldenCombineCount} of the same pet (not Golden, not locked).`
 	end
 	local target = findPet(data, uid)
 	-- if any of the five was equipped, the Golden one takes that slot

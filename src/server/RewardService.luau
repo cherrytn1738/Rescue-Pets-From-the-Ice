@@ -2,7 +2,8 @@
 RewardService: the free rewards (docs/GAME_DESIGN.md, "Social and events"; GameConfig.Daily, .Group).
 Server only.
  - The daily crystal chest (the plaza's DailyPrompt): once a UTC day (DailyClaimDay in the save),
-   Daily.IncomeSeconds of the player's crystals per second, at least Daily.Minimum.
+   Daily.IncomeSeconds of the player's steady income (Economy.SteadyIncome, as a crystal bundle: no rushes),
+   at least Daily.Minimum.
  - The group reward: members of the game's group earn +10% crystals (checked on join; the plaza's
    GroupPrompt says whether it's on). Player attribute InGroup.
  - The "Crystals" reward kind (PurchaseRewards), so codes (and later products) can give crystals.
@@ -45,7 +46,7 @@ function RewardService.ClaimDaily(player: Player): (boolean, string)
 		local left = 86400 - os.time() % 86400
 		return false, `Already opened today. Come back in {left // 3600}h {(left % 3600) // 60}m.`
 	end
-	local amount = RewardService.DailyAmount(Economy.CrystalsPerSecond(player, data))
+	local amount = RewardService.DailyAmount(Economy.SteadyIncome(player, data))
 	data.DailyClaimDay = today
 	Economy.Grant(player, data, amount)
 	PlayerData.MarkImportant(player)

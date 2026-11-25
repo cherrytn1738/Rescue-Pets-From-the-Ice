@@ -18,7 +18,7 @@ CreatureConfig.Rarities = {
 	{ Id = "Uncommon", Bonus = 0.25, Glow = "None", Announce = false },
 	{ Id = "Rare", Bonus = 0.50, Glow = "SoftBlue", Announce = false },
 	{ Id = "Epic", Bonus = 1.00, Glow = "Purple", Announce = false },
-	{ Id = "Legendary", Bonus = 2.00, Glow = "PulsingGold", Announce = true },
+	{ Id = "Legendary", Bonus = 2.00, Glow = "PulsingAmber", Announce = true },
 	{ Id = "Mythic", Bonus = 4.00, Glow = "ShiftingRainbow", Announce = true },
 }
 

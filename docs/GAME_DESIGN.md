@@ -26,18 +26,18 @@ Three pillars decide every feature:
 
 The concept renders in this doc show the intended look: chunky voxel shapes, bright snow, see-through ice with a creature silhouette and a rarity glow, and a bold cartoon UI. They're built from simple 3D blocks to show layout, scale and mood, not final art.
 
-**Gameplay view.** A player at level 24 in Ancient Ice taps a block with a Legendary creature inside (gold glow, 68% cracked). Buildings ring the ice, three pets follow the player (a player with rebirths and a slot pass), and the HUD shows crystals per second, the layer, a Frost Rush timer and the Shatter Now offer.
+**Gameplay view.** A player at level 24 in Ancient Ice taps a block with a Legendary creature inside (amber glow, 68% cracked). Buildings ring the ice, three pets follow the player (a player with rebirths and a slot pass), and the HUD shows crystals per second, the layer, a Frost Rush timer and the Shatter Now offer.
 
 [Concept image in the Claude doc: Gameplay view: a player taps a glowing block of Ancient Ice with a Legendary creature inside, surrounded by buildings, pets and the HUD\]
 
 ## Core loop
 
-Tapping the ice earns crystals, crystals build machines that crack it faster, and every block ends in a rescue whose pet makes the next block go faster still.
+Tapping the ice earns crystals, crystals build machines that crack it faster, and every block ends in a rescue whose pet multiplies every crystal after it, so the next machines come sooner.
 
 ```
 Core loop (diagram in the Claude doc):
 Tap the ice -> Crystals fly off (1 per damage) -> Build machines (and upgrades) -> Cracks faster (damage grows)
-Cracks faster -> HP reaches zero -> Creature freed (a pet + a new block) -> pet bonus speeds up every hit -> Tap the ice
+Cracks faster -> HP reaches zero -> Creature freed (a pet + a new block) -> pet bonus multiplies every crystal -> Tap the ice
 Crystals -> at the rebirth cost -> Rebirth (+5% per Frost Core) -> restart stronger -> Tap the ice
 ```
 
@@ -84,7 +84,7 @@ This is a starting value. The economy simulation tunes it so a rescue comes ever
 | Common, Uncommon | None, just a dark silhouette |
 | Rare | Soft blue |
 | Epic | Purple |
-| Legendary | Pulsing gold, and the server is told |
+| Legendary | Pulsing amber, and the server is told |
 | Mythic | Shifting rainbow, and the server is told |
 
 **Crack stages.** The ice shows its damage in five steps, and the creature gets clearer at each one:
@@ -325,14 +325,15 @@ Every rescued creature becomes a pet. Equipped pets follow the player and add to
 | Uncommon | +25% | None |
 | Rare | +50% | Soft blue |
 | Epic | +100% | Purple |
-| Legendary | +200% | Pulsing gold |
+| Legendary | +200% | Pulsing amber |
 | Mythic | +400% | Shifting rainbow |
 
 The chance of each rarity depends on the layer (see Glacier depth).
 
 - **Pool:** 18 creatures at launch in one pool (4 Common, 4 Uncommon, 3 Rare, 3 Epic, 2 Legendary, 2 Mythic). New creatures arrive in updates.
 - **Equip slots:** 1 at the start, so only one pet follows the player and picking it is a real choice. Rebirth ranks add more (a 2nd slot at rebirth 3, a 3rd at rebirth 6, a 4th at rebirth 10), and two Robux passes add up to 3 more, for a maximum of 7. Equipped bonuses add together.
-- **Inventory:** 50 pets, with an Equip Best button and a delete button.
+- **Inventory:** 50 pets, with an Equip Best button, a lock (a locked pet can't be deleted or combined away) and a delete button. With no pet picked, the delete button offers "Delete all below <rarity>": every pet of a lower rarity that isn't locked, equipped or Golden, after a confirmation.
+- **Auto-equip:** after a rescue the best pets are equipped automatically (on by default, off in Settings), once the tutorial is done (its "Equip your new pet" step still teaches equipping by hand). A toast says when the new pet is the one equipped.
 - **Golden pets:** combine 5 of the same pet into a Golden version with double the bonus.
 - **Kept forever:** pets stay through rebirths.
 - **Announcements:** a server-wide message when a Legendary or Mythic block arrives, so other players can come and watch the rescue.
@@ -474,7 +475,9 @@ A rebirth resets the run in exchange for Frost Cores, which add 5% crystals each
 | --- | --- |
 | Crystals, buildings, upgrades, block level | Pets, Frost Cores, rebirth rank, Robux items |
 
-**When:** the Rebirth button lights up once the player reaches Layer 4 (Crystal Ice, level 31). Rebirthing sends them back to level 1, but Frost Cores make every block go faster, so they pass their old depth quickly.
+**Goal on the HUD:** from level 25 the HUD shows the rebirth goal under the crystal counter: "Rebirth at level 31: N to go", then a pulsing "REBIRTH READY: +N Frost Cores" with the cores a rebirth would give now.
+
+**When:** the Rebirth button lights up once the player reaches Layer 4 (Crystal Ice, level 31). Rebirthing sends them back to level 1, but Frost Cores multiply every crystal, so buildings come sooner and they pass their old depth quickly. (Pets and Frost Cores multiply crystals, not damage: see the formula in Economy.)
 
 **Rebirth ranks open deeper layers:**
 
@@ -494,9 +497,9 @@ Players share one world. Everyone can see each other's ice and what's glowing in
 
 - **Plots:** 8 plots per server around a central plaza. Your ice block, your buildings breaking it and the pets following you are visible to everyone who walks by.
 - **Rare rescues are events:** when a Legendary or Mythic block arrives, the whole server is told, and other players can come and watch it break: a tall beam in the rarity's colour stands over that plot until the creature is freed, and the server is told again when it is.
-- **Golden Glacier rush:** every 5–8 minutes a golden ice block crashes into the plaza with a countdown and a sound. Everyone who taps it before it breaks gets a Frost Rush (×3 crystals for 60 seconds). The player who dealt the most damage gets ×5.
-- **Leaderboards:** boards in the plaza for all-time crystals, rebirths and creatures rescued.
-- **Daily reward and group reward:** a daily crystal chest, and +10% crystals for members of the group.
+- **Golden Glacier rush:** every 5–8 minutes a golden ice block crashes into the plaza with a countdown and a sound. Everyone who taps it before it breaks gets a Frost Rush (×3 crystals for 60 seconds). The player who dealt the most damage gets ×5. It looks like an ice block in gold: see-through golden ice with a frosted top, a glowing crystal core turning inside, sparkles, and cracks that spread in four stages (20, 40, 60 and 80% of its HP gone) while the core burns brighter.
+- **Leaderboards:** carved ice-and-wood boards in the plaza (log posts with snow caps, an ice frame with icicles, a wooden header with a crown medallion; the plot parts' toy style) for all-time crystals, rebirths and creatures rescued.
+- **Daily reward and group reward:** a daily crystal chest (5 minutes of your income, without rushes, like the crystal bundles), and +10% crystals for members of the group.
 - **Codes:** a launch code, a tutorial-completion code, and milestone codes for likes (1K, 5K, 10K, 25K, 50K and 100K likes, each paying 5 to 60 minutes of the player's own income; switched on when the game reaches the milestone).
 - **Later update:** tapping a friend's ice gives them crystals and you a small share.
 
@@ -512,7 +515,7 @@ Launch with 6 passes and 4 kinds of products. Every price below is a starting po
 | Extra Pet Slot | Pass | 449 | One more pet follows you |
 | Pet Squad | Pass | 899 | Two more pets follow you (with Extra Pet Slot, +3 in all) |
 | Lucky Ice | Pass | 349 | Doubles the chance of Legendary and Mythic blocks |
-| Crystal bundles | Product | 29 / 149 / 499 | 10 minutes, 1 hour or 6 hours of your current income |
+| Crystal bundles | Product | 29 / 149 / 499 | 10 minutes, 1 hour or 6 hours of your income |
 | Shatter Now | Product | 25 | Breaks the current block instantly |
 | Server Frost Rush | Product | 99 | ×2 crystals for everyone in the server for 15 minutes, with your name announced |
 | Mythic Block | Product | 199 | Your next block rolls from a pool with better odds |
@@ -525,7 +528,8 @@ Launch with 6 passes and 4 kinds of products. Every price below is a starting po
 **Details settled when the items were built** (numbers in `MonetizationConfig`; placeholders to check before launch):
 
 - **Stacking:** every crystal bonus multiplies: pets × Creature Book × Crystal Yield × Frost Cores × 2x Crystals × VIP × group × Golden Glacier Frost Rush × Server Frost Rush.
-- **Crystal bundles** pay 10 minutes, 1 hour or 6 hours of building damage per second plus tap damage at 4 taps a second, times the current crystal multiplier.
+- **Crystal bundles** pay 10 minutes, 1 hour or 6 hours of "your income": the crystals per second the HUD shows, with the permanent bonuses (pets, Creature Book, Crystal Yield, Frost Cores, passes, group) but without rushes (Golden Glacier Frost Rush, Server Frost Rush). Taps count at your recent rate, but at least 4 a second, so opening the shop (which stops your tapping) or having no buildings still pays something. Bought crystals count toward the next rebirth's Frost Cores like any others.
+- **Daily chest:** 5 minutes of the same income (at least 100 crystals), so claiming it during a rush pays no more.
 - **Server Frost Rush:** buying another while one runs adds 15 minutes (it doesn't stack to ×4). It isn't saved, so it ends with the server.
 - **Mythic Block** odds: 50% Rare, 30% Epic, 15% Legendary, 5% Mythic, from the whole roster (so they hold on every layer). It waits in the save until the next block arrives.
 - **Gifts** of a pass are saved in the recipient's data (Roblox only records passes bought by the player themselves); a pass the recipient already owns can't be gifted.
@@ -540,14 +544,14 @@ Inside your plot, a tap anywhere on the screen swings your ice pick at the block
 | Device | Hit the ice |
 | --- | --- |
 | Phone and tablet | Tap anywhere that isn't a button |
-| PC | Click anywhere, or press Space |
+| PC | Click anywhere (Space jumps) |
 | Gamepad | R2 or A |
 
-Where you can tap (your plot, or next to a standing Golden Glacier), Space and A tap instead of jumping; anywhere else they jump as usual.
+Where you can tap (your plot, or next to a standing Golden Glacier), gamepad A taps instead of jumping; anywhere else it jumps as usual. On PC a click taps, so Space always jumps.
 
 **HUD.**
 
-- **Top:** crystals and crystals per second, counting up smoothly.
+- **Top:** crystals and crystals per second, counting up smoothly. It hides while a window is open (the Build and Upgrades windows show your crystals on their bottom line instead).
 - **Your ice block** (while you're in your own plot): under the crystal counter, the level and layer line (with the rarity once the ice is 40% cracked) and an HP bar, "HP left / HP · crack %", in the same short numbers as the crystals. Nothing floats above the block, so the ice stays in clear view.
 - **Left side:** Build, Upgrades, Pets, Rebirth and Shop buttons.
 - **Build panel:** buy ×1, ×10, ×100 or Max. The next affordable building glows.
@@ -571,9 +575,9 @@ Every screen at launch, so the UI can be built from one list. All use the showca
 | --- | --- | --- |
 | HUD | Always | Crystals and crystals/s (top), layer and level badge, side buttons (Build, Upgrades, Pets, Book, Rebirth, Shop), Home button, Frost Rush timer when active |
 | Ice block bar | In the HUD while in your own plot | HP bar (HP left / HP), crack %, block level and layer, the rarity once 40% cracked |
-| Build panel | Build button | Eight building cards (3D preview, owned, price, damage/s, income share bar), buy ×1/×10/×100/Max, locked buildings as "???" |
+| Build panel | Build button | Eight building cards (the building's icon, owned, price, damage/s, income share bar), buy ×1/×10/×100/Max, locked buildings as "???" with a dark icon |
 | Upgrades panel | Upgrades button | Grid of upgrade icons sorted by price, dimmed until affordable; Owned tab |
-| Pets panel | Pets button | Inventory grid, equipped slots on top, Equip Best, delete, combine 5 into Golden |
+| Pets panel | Pets button | Inventory grid, equipped slots on top, Equip Best, lock, delete, Delete all below <rarity>, combine 5 into Golden |
 | Creature Book | Book button | Pages by rarity, silhouettes, rescue counts, page rewards, completion % |
 | Rescue reveal | Block shatters | Creature, name, rarity banner, "New!" badge, crystal burst total |
 | New layer banner | Every 10th level | Layer name and number, new ice preview, "Rarer creatures ahead" |
@@ -581,7 +585,7 @@ Every screen at launch, so the UI can be built from one list. All use the showca
 | Robux shop | Shop button | Passes, crystal bundles, Shatter Now, Frost Rush, Mythic Block with an odds info button, gifting |
 | Welcome back | Joining after time away | Offline crystals earned, a Collect button |
 | Codes | Codes board in the plaza | Code entry and result |
-| Settings | Gear button | Music, sound effects, reduced effects for low-end phones |
+| Settings | Gear button | Music, sound effects, reduced effects for low-end phones, auto-equip best pets |
 
 [Concept image in the Claude doc: Build panel: eight building cards with owned counts, damage per second, income bars and prices, the next building highlighted and two locked\]
 
@@ -627,7 +631,8 @@ The server owns every number. The client sends tap counts and requests, and only
 - **Big numbers:** Luau numbers reach about 1e308, which is enough. Display uses suffixes (K, M, B, T, Qa, Qi, Sx, Sp, Oc, No, Dc, then Ud, Dd, Td, Qad, Qid, Sxd, Spd, Ocd, Nod, Vg, Uvg, Dvg, Tvg, Qavg, Qivg, Sxvg, Spvg, Ocvg, Novg, Tg); past Tg (1e93) a short exponent such as "1.82e96". Ice block HP passes Dc around level 200. Leaderboards store `math.floor(math.log10(total) * 1000)`, because OrderedDataStore only holds whole numbers up to about 9e18.
 - **Offline earnings:** building income only, at 50%, capped at 2 hours, shown in a welcome-back popup.
 - **Anti-cheat:** every RemoteEvent is rate-limited. The server computes all prices and checks every buy and equip. Auto Pick runs on the server, so autoclickers can never beat the 20-taps-a-second cap.
-- **Phones:** building animations, ice chips and crystal particles run on the client only. Each plot shows one model per building type with a count badge.
+- **Phones:** building animations, ice chips and crystal particles run on the client only. Each plot shows one model per building type with a count badge. Every building, pick and plot mesh uses RenderFidelity Automatic (Roblox's level of detail), not Precise.
+- **Streaming:** Workspace.StreamingEnabled is on, so distant plots stream out (target radius 240 studs, minimum 96, opportunistic stream-out). The plaza is a Persistent model (always loaded with its boards and chests); each station and the plot's own models are PersistentPerPlayer, always loaded for the plot's owner and streamed whole for everyone else. Plot models and their Block folders (the block's state) always reach every client, so ice blocks, beams, name tags and the Golden Glacier (drawn by the client) work at any distance.
 - **Analytics funnels:** Joined, First tap, First building, First rescue, First pet equipped, Tutorial done, First rebirth, plus a shop funnel.
 
 ## Data and code structure

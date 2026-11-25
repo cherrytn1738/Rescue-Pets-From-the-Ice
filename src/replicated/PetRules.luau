@@ -6,9 +6,12 @@ PetRules: the pet rules as pure functions (docs/GAME_DESIGN.md, "Pets"), shared 
                                  plus the slot passes, at most CreatureConfig.Pets.MaxEquipSlots.
   Best(pets, slots)              the uids Equip Best would equip: the highest bonuses.
   CombineGroup(pets, uid, equipped)  the five uids a Golden combine would use for that pet (the pet
-                                 itself plus four more non-Golden copies of the same creature,
-                                 unequipped ones first), or nil when there aren't five.
+                                 itself plus four more non-Golden, unlocked copies of the same creature,
+                                 unequipped ones first), or nil when there aren't five (or it's locked).
   Sorted(pets)                   the inventory in display order: best bonus first.
+  BelowRarity(pets, rarityId, equipped)  the uids "Delete all below <rarity>" deletes: every pet of a
+                                 lower rarity that isn't locked, equipped or Golden.
+  SameSet(a, b)                  whether two uid lists hold the same uids (auto-equip's "nothing new").
 ]]
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -63,7 +66,7 @@ function PetRules.CombineGroup(pets, uid: string, equipped)
 			target = pet
 		end
 	end
-	if not target or target.Golden then
+	if not target or target.Golden or target.Locked then
 		return nil
 	end
 	local group = { target.Uid }
@@ -74,7 +77,7 @@ function PetRules.CombineGroup(pets, uid: string, equipped)
 				break
 			end
 			local isEquipped = table.find(equipped, pet.Uid) ~= nil
-			if pet.Uid ~= uid and not pet.Golden and pet.CreatureId == target.CreatureId and isEquipped == wantEquipped then
+			if pet.Uid ~= uid and not pet.Golden and not pet.Locked and pet.CreatureId == target.CreatureId and isEquipped == wantEquipped then
 				table.insert(group, pet.Uid)
 			end
 		end
@@ -87,6 +90,34 @@ end
 
 function PetRules.RarityRank(rarityId: string): number
 	return RARITY_RANK[rarityId] or 0
+end
+
+function PetRules.BelowRarity(pets, rarityId: string, equipped)
+	local limit = RARITY_RANK[rarityId]
+	local uids = {}
+	if not limit then
+		return uids
+	end
+	for _, pet in pets do
+		local creature = CreatureConfig.Get(pet.CreatureId)
+		if creature and RARITY_RANK[creature.Rarity] < limit and not pet.Locked and not pet.Golden
+			and not table.find(equipped, pet.Uid) then
+			table.insert(uids, pet.Uid)
+		end
+	end
+	return uids
+end
+
+function PetRules.SameSet(a, b): boolean
+	if #a ~= #b then
+		return false
+	end
+	for _, uid in a do
+		if not table.find(b, uid) then
+			return false
+		end
+	end
+	return true
 end
 
 return PetRules

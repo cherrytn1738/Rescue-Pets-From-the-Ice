@@ -366,6 +366,12 @@ function UIKit.TextBox(parent: Instance, name: string, placeholder: string): Tex
 	return box
 end
 
+-- The image id of an icon from the game's set (UITheme.Icons), or nil while it has no picture.
+function UIKit.IconImage(key: string): string?
+	local image = UITheme.Icons[key]
+	return if type(image) == "string" and image ~= "" then image else nil
+end
+
 -- An icon from the game's set (UITheme.Icons: "Shop", "Codes"...), as an image fitted into the
 -- label's box. A key with no image is shown as text (an emoji or a short word), sized `size`; the set
 -- is empty until the game's icons are uploaded. The caller sets the size.

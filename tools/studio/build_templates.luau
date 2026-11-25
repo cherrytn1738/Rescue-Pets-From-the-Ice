@@ -7,6 +7,7 @@ the templates live in the place file (ServerStorage), not in Git.
   ONLY = "IcePickPost"    one building (all five tiers and their upgrade sets)
   ONLY = "Picks"          the six ice picks
   ONLY = "Plot"           the plot's own parts (MapConfig.PlotModels: the arch, the ice stage, the walls)
+  ONLY = "Plaza"          the plaza's parts (MapConfig.PlazaModels: the leaderboard board)
 
 Out:
   ServerStorage.BuildingTemplates.<Id>.T<tier>   a Model: "Root" (its PrimaryPart: an invisible part at
@@ -17,9 +18,11 @@ Out:
   ServerStorage.PlotTemplates.<PlotArch|PlotStage|PlotWallLong|PlotWallShort>   a Model of MeshParts in plot
       space, its pivot at the origin on the ground; nothing collides (the plot's own Parts do). "...Trim" meshes
       are untextured with the attribute RankColour: RankService gives them the owner's rebirth colour.
+  ServerStorage.PlazaTemplates.<LeaderboardBoard>   the same, in plaza-spot space (PlazaService places it).
 
 Every MeshPart (store-assets/buildings/IMPORT_NOTES.md): the palette texture, white, SmoothPlastic,
-RenderFidelity Precise (full detail at every distance); "...Glow" meshes Neon and no shadow; the base Box-collides, big body parts
+RenderFidelity Automatic (Roblox's level of detail: a full server of maxed plots was 1.3M triangles at
+Precise, too much for phones); "...Glow" meshes Neon and no shadow; the base Box-collides, big body parts
 Hull-collide, everything else Box and no collision. The import arrives 100x too big round the Blender
 origin (the pad centre), so every part is scaled back about the origin.
 ]]
@@ -44,7 +47,7 @@ local MapConfig = require(fresh.MapConfig)
 fresh:Destroy()
 
 local PALETTE = BuildingConfig.PaletteTextureId
-local PRECISE = true -- every station MeshPart at full detail (store-assets/buildings/IMPORT_NOTES.md)
+local PRECISE = false -- Automatic level of detail for every MeshPart (store-assets/buildings/IMPORT_NOTES.md)
 local report = {}
 
 local function say(line)
@@ -278,8 +281,8 @@ end
 
 local TRIM_COLOUR = Color3.fromRGB(205, 222, 240) -- RankService's colour for a plot without a rank
 local PLOT_IMPORT = 10 -- tools/blender/plot_parts.py exports at a tenth (the 100-stud wall)
-local function buildPlotPart(name: string, assetId: number)
-	local out = folder(ServerStorage, "PlotTemplates")
+local function buildPlotPart(name: string, assetId: number, folderName: string?)
+	local out = folder(ServerStorage, folderName or "PlotTemplates")
 	local old = out:FindFirstChild(name)
 	if old then
 		old:Destroy()
@@ -301,7 +304,7 @@ local function buildPlotPart(name: string, assetId: number)
 	model.WorldPivot = CFrame.identity
 	model.Parent = out
 	local size = model:GetExtentsSize()
-	say(string.format("PlotTemplates.%s: %d meshes (%d rank trim), size %.1f x %.1f x %.1f", name, #parts, trims, size.X, size.Y, size.Z))
+	say(string.format("%s.%s: %d meshes (%d rank trim), size %.1f x %.1f x %.1f", out.Name, name, #parts, trims, size.X, size.Y, size.Z))
 end
 
 if not PALETTE then
@@ -310,6 +313,13 @@ end
 if ONLY == "Plot" then
 	for name, assetId in MapConfig.PlotModels do
 		buildPlotPart(name, assetId)
+		task.wait()
+	end
+	return table.concat(report, "\n")
+end
+if ONLY == "Plaza" then
+	for name, assetId in MapConfig.PlazaModels do
+		buildPlotPart(name, assetId, "PlazaTemplates") -- (tools/blender/plaza_boards.py: the same tenth scale)
 		task.wait()
 	end
 	return table.concat(report, "\n")

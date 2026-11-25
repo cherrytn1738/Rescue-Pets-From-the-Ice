@@ -16,6 +16,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local EconomyRules = require(ReplicatedStorage.EconomyRules)
 local GameConfig = require(ReplicatedStorage.GameConfig)
+local MonetizationConfig = require(ReplicatedStorage.MonetizationConfig)
 local OfflineEarningsRules = require(ReplicatedStorage.OfflineEarningsRules)
 local OfflineEarnings = require(script.Parent.OfflineEarnings)
 local PlayerData = require(script.Parent.PlayerData)
@@ -23,19 +24,23 @@ local PlayerData = require(script.Parent.PlayerData)
 local Economy = {}
 
 local MAX_CRYSTALS = 1e300 -- PlayerData's MAX_AMOUNT
-local extras = {} -- { function(player) -> multiplier }
+local extras = {} -- { { callback = function(player) -> multiplier, temporary = boolean } }
 local tapLog = {} -- [player] = { { time, taps } }
 local tickListeners = {}
 
--- A server-only crystal multiplier source: callback(player) -> number (1 = none).
-function Economy.AddExtra(callback)
-	table.insert(extras, callback)
+-- A server-only crystal multiplier source: callback(player) -> number (1 = none). temporary: a rush
+-- (the Golden Glacier's Frost Rush, the Server Frost Rush), left out of SteadyIncome.
+function Economy.AddExtra(callback, temporary: boolean?)
+	table.insert(extras, { callback = callback, temporary = temporary == true })
 end
 
-function Economy.ExtraMultiplier(player: Player): number
+function Economy.ExtraMultiplier(player: Player, permanentOnly: boolean?): number
 	local total = 1
-	for _, callback in extras do
-		local ok, value = pcall(callback, player)
+	for _, extra in extras do
+		if permanentOnly and extra.temporary then
+			continue
+		end
+		local ok, value = pcall(extra.callback, player)
 		if ok and type(value) == "number" and value == value and value > 0 and value < math.huge then
 			total *= value
 		end
@@ -45,6 +50,11 @@ end
 
 function Economy.Multiplier(player: Player, data): number
 	return EconomyRules.Multiplier(data, Economy.ExtraMultiplier(player))
+end
+
+-- The multiplier without any rush running: pets, book, Crystal Yield, Frost Cores, passes, group.
+function Economy.PermanentMultiplier(player: Player, data): number
+	return EconomyRules.Multiplier(data, Economy.ExtraMultiplier(player, true))
 end
 
 -- Adds crystals to the live save. amount must be a real, non-negative number.
@@ -98,6 +108,16 @@ end
 function Economy.CrystalsPerSecond(player: Player, data): number
 	local damage = EconomyRules.TotalBuildingDps(data) + Economy.TapRate(player) * EconomyRules.TapDamage(data)
 	return damage * Economy.Multiplier(player, data)
+end
+
+-- "Your income" for crystal bundles and the daily chest: the HUD's crystals per second without rushes
+-- (permanent bonuses only). Taps count at the player's recent rate, but at least
+-- MonetizationConfig.BundleTapsPerSecond, so opening the shop (and so stopping tapping) or being new
+-- with no buildings doesn't pay nothing.
+function Economy.SteadyIncome(player: Player, data): number
+	local taps = math.max(Economy.TapRate(player), MonetizationConfig.BundleTapsPerSecond)
+	local damage = EconomyRules.TotalBuildingDps(data) + taps * EconomyRules.TapDamage(data)
+	return damage * Economy.PermanentMultiplier(player, data)
 end
 
 -- callback(player, data, dt) runs every tick for every ready player (IceBlockService applies the

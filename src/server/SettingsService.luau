@@ -1,12 +1,14 @@
 --[[
 SettingsService: the Settings screen (docs/GAME_DESIGN.md, "Screens": music, sound effects, reduced
-effects for low-end phones). Server only. SaveSettings (RemoteEvent) sends { Music, Sounds,
-ReducedEffects }; the server checks them, saves them (Settings) and sets the player attributes Audio
-reads (MusicVolume, SfxVolume) and ReducedEffects.
+effects for low-end phones, auto-equip best pets). Server only. SaveSettings (RemoteEvent) sends { Music,
+Sounds, ReducedEffects, AutoEquip (optional: unchanged when left out) }; the server checks them, saves
+them (Settings) and sets the player attributes Audio reads (MusicVolume, SfxVolume) and ReducedEffects.
+Turning auto-equip on equips the best pets at once.
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local PetService = require(script.Parent.PetService)
 local PlayerData = require(script.Parent.PlayerData)
 
 local SettingsService = {}
@@ -37,11 +39,17 @@ function SettingsService.Save(player: Player, settings): boolean
 	lastSave[player] = now
 	local data = PlayerData.Edit(player)
 	local music, sounds = volume(settings.Music), volume(settings.Sounds)
-	if not data or not music or not sounds or type(settings.ReducedEffects) ~= "boolean" then
+	if not data or not music or not sounds or type(settings.ReducedEffects) ~= "boolean"
+		or (settings.AutoEquip ~= nil and type(settings.AutoEquip) ~= "boolean") then
 		return false
 	end
-	data.Settings = { Music = music, Sounds = sounds, ReducedEffects = settings.ReducedEffects }
+	local autoEquip = if settings.AutoEquip == nil then data.Settings.AutoEquip ~= false else settings.AutoEquip
+	local turnedOn = autoEquip and data.Settings.AutoEquip == false
+	data.Settings = { Music = music, Sounds = sounds, ReducedEffects = settings.ReducedEffects, AutoEquip = autoEquip }
 	apply(player, data.Settings)
+	if turnedOn then
+		PetService.AutoEquip(player, data)
+	end
 	PlayerData.Publish(player)
 	return true
 end

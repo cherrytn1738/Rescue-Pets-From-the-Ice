@@ -86,9 +86,41 @@ UITheme.Assets = {
 	Robux = "rbxassetid://11560341132", -- white Robux icon (Creator Store)
 }
 
--- The icon set (UIKit.Icon, keyed by name: "Shop", "Codes"...). Empty until this game's icons are
--- made and uploaded; a missing key shows as text instead.
-UITheme.Icons = {}
+-- The icon set (UIKit.Icon / UIKit.IconImage, keyed by name). Rendered from the game's own models by
+-- tools/icons/compose_icons.py --ui (store-assets/ui-icons/, original, made for this game), uploaded as
+-- group 921449746 (store-assets/ui-icons/upload_manifest.json). A missing key shows as text instead.
+UITheme.Icons = {
+	-- the HUD menu
+	Build = "rbxassetid://85794462682522",
+	Upgrades = "rbxassetid://98369261128948",
+	Pets = "rbxassetid://119156189567977",
+	Book = "rbxassetid://130307156552089",
+	Rebirth = "rbxassetid://119002750297089",
+	Home = "rbxassetid://77155447367974",
+	Shop = "rbxassetid://120557887995853",
+	Codes = "rbxassetid://131827593577086",
+	-- the Build window (each building's tier-1 station)
+	Building_ChiselMill = "rbxassetid://99961407371116",
+	Building_FlamethrowerTurret = "rbxassetid://97345125768912",
+	Building_HeatLamp = "rbxassetid://118767728936322",
+	Building_IceDrill = "rbxassetid://78775902196885",
+	Building_IcePickPost = "rbxassetid://116570461396234",
+	Building_LavaPump = "rbxassetid://100257002467306",
+	Building_SunMirrorTower = "rbxassetid://132354686137893",
+	Building_WreckingCrane = "rbxassetid://110047670337897",
+	-- the Upgrades window (a building upgrade is its building's icon with UpgradeBadge on it)
+	Pick1 = "rbxassetid://136428678785240",
+	Pick2 = "rbxassetid://92777533398232",
+	Pick3 = "rbxassetid://80619630715191",
+	Pick4 = "rbxassetid://74673990084200",
+	Pick5 = "rbxassetid://74268222142817",
+	Pick6 = "rbxassetid://135680749240773",
+	FrostTouch = "rbxassetid://83885185754286",
+	BiggerBurst = "rbxassetid://101644423518291",
+	CrystalYield = "rbxassetid://87468174560263",
+	FastSled = "rbxassetid://76695650631595",
+	UpgradeBadge = "rbxassetid://99395304409533",
+}
 
 -- Picture sheets (ShowcaseKit.SheetPicture): images of Cell x Cell cells, PerRow to a row, in the
 -- order listed. Groups = { [group] = { { Image = id, Cells = { item ids } }, ... } }. Empty for now.

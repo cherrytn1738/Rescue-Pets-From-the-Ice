@@ -10,11 +10,13 @@ Usually run through compose_icons.py (--render), which calls Blender for you:
 By hand (Blender 5.x; the newest under C:\\Program Files\\Blender Foundation\\):
     blender -b --factory-startup --python tools/icons/render_icons.py -- picks  <work dir>
     blender -b --factory-startup --python tools/icons/render_icons.py -- render <work dir> <IconName>
+    blender -b --factory-startup --python tools/icons/render_icons.py -- ui     <work dir> <Key>
 
   picks   builds the six ice pick tiers from tools/blender/tools_ice_picks.py (its geometry, nothing is
           written to store-assets/tools/) into <work>/picks.blend, which the icon scenes append from.
   render  renders one icon into <work>/<IconName>/: <layer>.png per layer and meta.json (the layer order
           plus a few projected 2D points, e.g. the pick's pivot for the motion arcs).
+  ui      the same for one in-game UI icon (compose_icons.py --ui) into <work>/ui/<Key>/.
 
 What it uses: the game's own creature models (store-assets/creatures/<Id>/<Id>.blend, posed with their
 own Idle/Cheer clips), the pick tiers, and two simple props made here: the ice block (a bevelled
@@ -883,16 +885,517 @@ def icon_concept_3():
 
 ICONS = {k if k.startswith('icon_concept') else k[5:]: v for k, v in globals().items() if k.startswith('icon_') and callable(v)}
 
+
+# ================================================================ UI icons (mode "ui")
+# The in-game button and window icons: one subject each, no background or text (compose_icons.py --ui adds the
+# outline, glow and sparkles). Layers go to <work>/ui/<Key>/. The buildings come from their own .blend files
+# (store-assets/buildings/<Id>/<Id>.blend, the tier-1 "Scrappy" station); the other props are simple shapes made here.
+
+BUILDINGS = os.path.join(REPO, 'store-assets', 'buildings')
+BUILDING_IDS = ['IcePickPost', 'ChiselMill', 'IceDrill', 'HeatLamp', 'WreckingCrane', 'FlamethrowerTurret', 'LavaPump', 'SunMirrorTower']
+BUILDING_VIEW = dict(yaw=-34, pitch=24, lens=50, fill=0.9)      # one camera for every building icon
+PICK_ROT = (0, 38, -12)                                          # the picks lean right, head at the top
+GREEN = (70, 215, 90)
+
+
+def ui_out(key):
+    return 'ui/' + key
+
+
+def plastic(name, colour, rough=0.35, metal=0.0, emit=0.0, emit_colour=None, coat=0.3):
+    """a plain toy-like material (sRGB 0-255 colour); emit adds a little self-light so it stays saturated"""
+    m = bpy.data.materials.new(name)
+    m.use_nodes = True
+    P = next(n for n in m.node_tree.nodes if n.type == 'BSDF_PRINCIPLED')
+    P.inputs['Base Color'].default_value = lin(colour)
+    P.inputs['Roughness'].default_value = rough
+    P.inputs['Metallic'].default_value = metal
+    P.inputs['Emission Color'].default_value = lin(emit_colour or colour)
+    P.inputs['Emission Strength'].default_value = emit
+    if 'Coat Weight' in P.inputs:
+        P.inputs['Coat Weight'].default_value = coat
+    return m
+
+
+def finish_mesh(name, bm, mats, bevel=0.0, smooth=True, segments=3):
+    me = bpy.data.meshes.new(name)
+    bm.to_mesh(me)
+    bm.free()
+    for m in mats:
+        me.materials.append(m)
+    for p in me.polygons:
+        p.use_smooth = smooth
+    ob = link(bpy.data.objects.new(name, me))
+    if bevel:
+        bev = ob.modifiers.new('Bevel', 'BEVEL')
+        bev.width = bevel
+        bev.segments = segments
+        bev.limit_method = 'ANGLE'
+        try:
+            bev.harden_normals = True
+        except AttributeError:
+            pass
+    return ob
+
+
+def box_into(bm, size, loc=(0, 0, 0), rot=(0, 0, 0), mat_index=0):
+    """add a box (size, centre loc, rot in degrees XYZ) to a bmesh"""
+    M = Matrix.Translation(Vector(loc)) @ Euler([math.radians(a) for a in rot]).to_matrix().to_4x4() @ Matrix.Diagonal(tuple(size) + (1,))
+    ret = bmesh.ops.create_cube(bm, size=1.0, matrix=M)
+    for f in {f for v in ret['verts'] for f in v.link_faces}:
+        f.material_index = mat_index
+
+
+def cyl_into(bm, radius, depth, loc=(0, 0, 0), rot=(0, 0, 0), mat_index=0, segments=20, radius2=None):
+    """a cylinder (or a cone with radius2) along its local Z"""
+    M = Matrix.Translation(Vector(loc)) @ Euler([math.radians(a) for a in rot]).to_matrix().to_4x4()
+    ret = bmesh.ops.create_cone(bm, cap_ends=True, segments=segments, radius1=radius,
+                                radius2=radius if radius2 is None else radius2, depth=depth, matrix=M)
+    for f in {f for v in ret['verts'] for f in v.link_faces}:
+        f.material_index = mat_index
+
+
+def boxes(name, parts, mats, bevel=0.05):
+    """one object from [(size, loc, rot, material index)] boxes, bevelled"""
+    bm = bmesh.new()
+    for size, loc, rot, mi in parts:
+        box_into(bm, size, loc, rot, mi)
+    return finish_mesh(name, bm, mats, bevel)
+
+
+def slab(name, outline, depth, mat, round_edge=0.06, loc=(0, 0, 0), rot=(90, 0, 0), scale=1.0, tube=False, radii=None):
+    """a chunky flat shape: the 2D outline (x, y points, counter-clockwise) filled and made `depth` thick with
+    rounded edges (a filled curve, turned into a mesh). rot (degrees) stands it up: the default faces -Y.
+    tube=True instead runs a round tube of radius round_edge along the (open) outline."""
+    cu = bpy.data.curves.new(name, 'CURVE')
+    cu.dimensions = '3D' if tube else '2D'
+    sp = cu.splines.new('POLY')
+    pts = [tuple(p) + ((0.0,) if len(p) == 2 else ()) for p in outline]
+    sp.points.add(len(pts) - 1)
+    for i, (p, xyz) in enumerate(zip(sp.points, pts)):
+        p.co = (xyz[0], xyz[1], xyz[2], 1.0)
+        if radii:
+            p.radius = radii[i]
+    if tube:
+        cu.bevel_depth = round_edge
+        cu.bevel_resolution = 4
+        cu.use_fill_caps = True
+    else:
+        sp.use_cyclic_u = True
+        cu.fill_mode = 'BOTH'
+        cu.extrude = max(depth / 2 - round_edge, 0.001)
+        cu.bevel_depth = round_edge
+        cu.bevel_resolution = 3
+    tmp = link(bpy.data.objects.new(name + 'Curve', cu))
+    bpy.context.view_layer.update()
+    me = bpy.data.meshes.new_from_object(tmp.evaluated_get(bpy.context.evaluated_depsgraph_get()))
+    bpy.data.objects.remove(tmp)
+    me.materials.clear()
+    me.materials.append(mat)
+    for p in me.polygons:
+        p.use_smooth = True
+    ob = link(bpy.data.objects.new(name, me))
+    ob.location = loc
+    ob.rotation_euler = [math.radians(a) for a in rot]
+    ob.scale = (scale, scale, scale)
+    bpy.context.view_layer.update()
+    return ob
+
+
+def arrow_outline(w=0.5, head=1.25, h=1.7, head_h=0.75):
+    """an up-arrow, its base at y = 0"""
+    return [(-w / 2, 0), (w / 2, 0), (w / 2, h - head_h), (head / 2, h - head_h), (0, h), (-head / 2, h - head_h), (-w / 2, h - head_h)]
+
+
+def plus_outline(arm=0.42, span=1.4):
+    a, s = arm / 2, span / 2
+    return [(-a, -s), (a, -s), (a, -a), (s, -a), (s, a), (a, a), (a, s), (-a, s), (-a, a), (-s, a), (-s, -a), (-a, -a)]
+
+
+def ring_arrow_outline(r=1.0, band=0.26, a0=20, a1=160, head=0.62, head_len=34):
+    """a curved arrow: a band round the circle from angle a0 to a1 (degrees, counter-clockwise), with a head at a1"""
+    out, inn = r + band / 2, r - band / 2
+    steps = 24
+    end = a1 - head_len
+    pts = []
+    for i in range(steps + 1):          # outer edge, a0 -> end
+        a = math.radians(a0 + (end - a0) * i / steps)
+        pts.append((math.cos(a) * out, math.sin(a) * out))
+    e = math.radians(end)
+    pts.append((math.cos(e) * (r + head / 2), math.sin(e) * (r + head / 2)))
+    t = math.radians(a1)
+    pts.append((math.cos(t) * r, math.sin(t) * r))
+    pts.append((math.cos(e) * (r - head / 2), math.sin(e) * (r - head / 2)))
+    for i in range(steps + 1):          # inner edge, end -> a0
+        a = math.radians(end + (a0 - end) * i / steps)
+        pts.append((math.cos(a) * inn, math.sin(a) * inn))
+    return pts
+
+
+def snowflake(name, radius, loc, mat, thick=0.08, rot=(90, 0, 0)):
+    """a chunky six-armed snowflake (bars and chevrons), in the XY plane before rot (default: faces -Y)"""
+    bm = bmesh.new()
+    w = radius * 0.2
+    for k in range(3):
+        box_into(bm, (radius * 2, w, thick), (0, 0, 0), (0, 0, k * 60))
+    for k in range(6):
+        a = math.radians(k * 60)
+        tip = Vector((math.cos(a), math.sin(a), 0)) * radius * 0.6
+        for turn in (-50, 50):
+            b = math.radians(k * 60 + turn)
+            c = tip + Vector((math.cos(b), math.sin(b), 0)) * radius * 0.18
+            box_into(bm, (radius * 0.38, w * 0.85, thick), c, (0, 0, k * 60 + turn))
+    cyl_into(bm, radius * 0.22, thick * 1.1, segments=6)
+    ob = finish_mesh(name, bm, [mat], bevel=min(thick, w) * 0.3)
+    ob.location = loc
+    ob.rotation_euler = [math.radians(a) for a in rot]
+    bpy.context.view_layer.update()
+    return ob
+
+
+def turn(objs, yaw, tilt=0.0):
+    """turn a group of objects together round the origin: yaw about Z, then tilt (roll) about Y, in degrees"""
+    bpy.context.view_layer.update()
+    M = Matrix.Rotation(math.radians(tilt), 4, 'Y') @ Matrix.Rotation(math.radians(yaw), 4, 'Z')
+    for o in objs:
+        if o.parent is None:
+            o.matrix_world = M @ o.matrix_world
+    bpy.context.view_layer.update()
+
+
+def add_building(bid, tier=1, loc=(0, 0, 0), yaw=0.0):
+    """the tier's station from the building's own .blend: its meshes (not the upgrade parts, effects or attachments)"""
+    path = os.path.join(BUILDINGS, bid, bid + '.blend')
+    prefix = '%sT%d' % (bid, tier)
+
+    def wanted(n):
+        if not n.startswith(prefix):
+            return False
+        rest = n[len(prefix):]
+        if rest == '':
+            return True
+        return not (rest[0].isdigit() or rest[0] == '_' or rest.startswith('Fx') or (rest[0] == 'U' and rest[1:2].isdigit()))
+
+    with bpy.data.libraries.load(path, link=False) as (src, dst):
+        dst.objects = [n for n in src.objects if wanted(n)]
+    root = None
+    for o in dst.objects:
+        link(o)
+        if o.name == prefix:
+            root = o
+    palette = os.path.join(REPO, 'assets', 'textures', 'BuildingPalette.png')
+    for img in bpy.data.images:
+        if img.name.startswith('BuildingPalette') and os.path.exists(palette):
+            img.filepath = palette
+            img.reload()
+    meshes = [o for o in dst.objects if o.type == 'MESH']
+    if root is None:
+        root = next(o for o in dst.objects if o.parent is None)
+    root.location = loc
+    root.rotation_euler = (0, 0, math.radians(yaw))
+    bpy.context.view_layer.update()
+    return meshes
+
+
+def ui_building(bid):
+    objs = add_building(bid)
+    camera(objs, **BUILDING_VIEW)
+    render_layers(ui_out('Building_' + bid), [('main', objs)])
+
+
+for _bid in BUILDING_IDS:
+    globals()['ui_Building_' + _bid] = (lambda b: (lambda: ui_building(b)))(_bid)
+
+
+def _pick_icon(tier):
+    picks, root = add_pick(tier, (0, 0, 0), PICK_ROT)
+    camera(picks, yaw=0, pitch=8, lens=60, fill=0.9)
+    render_layers(ui_out('Pick%d' % tier), [('main', picks)])
+
+
+for _t in range(1, 7):
+    globals()['ui_Pick%d' % _t] = (lambda t: (lambda: _pick_icon(t)))(_t)
+
+
+def ui_Build():
+    objs = add_building('IcePickPost')
+    wood, steel = plastic('HammerWood', (165, 100, 50), 0.5), plastic('HammerSteel', (175, 185, 200), 0.3, metal=0.5)
+    bm = bmesh.new()
+    cyl_into(bm, 0.16, 2.6, (0, 0, 1.3), mat_index=0, segments=12)
+    box_into(bm, (1.25, 0.55, 0.6), (0.15, 0, 2.75), mat_index=1)
+    box_into(bm, (0.2, 0.62, 0.68), (-0.5, 0, 2.75), mat_index=1)
+    hammer = finish_mesh('Hammer', bm, [wood, steel], bevel=0.08)
+    hammer.location = (1.9, -2.2, 0.4)
+    hammer.rotation_euler = (math.radians(8), math.radians(-28), math.radians(-30))
+    bpy.context.view_layer.update()
+    camera(objs + [hammer], **BUILDING_VIEW)
+    render_layers(ui_out('Build'), [('station', objs), ('hammer', [hammer])])
+
+
+def ui_Upgrades():
+    arrow = slab('Arrow', arrow_outline(0.62, 1.5, 2.1, 0.9), 0.45, plastic('ArrowGreen', GREEN, 0.3, emit=0.12),
+                 round_edge=0.12, loc=(0.75, 0.6, 0.7), rot=(90, 0, 0), scale=1.35)
+    picks, root = add_pick(4, (-0.5, -0.4, 0.0), (0, 38, -12), 1.0)
+    camera(picks + [arrow], yaw=0, pitch=8, lens=60, fill=0.92)
+    render_layers(ui_out('Upgrades'), [('arrow', [arrow]), ('pick', picks)])
+
+
+def ui_Pets():
+    pet = add_pet('SnowBunny', (0, 0, 0), yaw=-22, size=1.0, clip='Cheer', frame=CHEER['SnowBunny'])
+    camera([pet], yaw=-10, pitch=12, lens=60, fill=0.92)
+    render_layers(ui_out('Pets'), [('main', [pet])])
+
+
+def ui_Book():
+    cover, pages, gold = plastic('Cover', (60, 150, 235), 0.4, emit=0.08), plastic('Pages', (250, 244, 225), 0.6), \
+        plastic('Gold', GOLD, 0.3, metal=0.4, emit=0.1)
+    W, D, H = 1.5, 0.62, 1.85
+    parts = [((W, 0.12, H), (0.04, -D / 2 + 0.06, H / 2), (0, 0, 0), 0),         # front cover
+             ((W, 0.12, H), (0.04, D / 2 - 0.06, H / 2), (0, 0, 0), 0),          # back cover
+             ((0.18, D, H), (-W / 2 + 0.07, 0, H / 2), (0, 0, 0), 0),            # spine
+             ((W - 0.2, D - 0.2, H - 0.14), (0.06, 0, H / 2), (0, 0, 0), 1)]     # pages
+    for z in (0.28, H - 0.28):                                                   # gold bands on the spine
+        parts.append(((0.24, D + 0.04, 0.14), (-W / 2 + 0.07, 0, z), (0, 0, 0), 2))
+    book = boxes('Book', parts, [cover, pages, gold], bevel=0.05)
+    bm = bmesh.new()                                                              # a gold paw on the front cover
+    y = -D / 2 - 0.02
+    cyl_into(bm, 0.3, 0.08, (0.08, y, 0.78), (90, 0, 0), segments=24)
+    for dx, dz in ((-0.3, 1.1), (-0.11, 1.24), (0.11, 1.24), (0.3, 1.1)):
+        cyl_into(bm, 0.12, 0.08, (0.08 + dx * 1.05, y, dz), (90, 0, 0), segments=16)
+    paw = finish_mesh('Paw', bm, [gold], bevel=0.025)
+    paw.scale = (1, 1, 1)
+    pet = add_pet('PenguinChick', (0.1, 0.45, 0.95), yaw=20, size=1.9, clip='Cheer', frame=CHEER['PenguinChick'])
+    turn([book, paw, pet.parent], -30)
+    camera([book, paw, pet], yaw=5, pitch=14, lens=60, fill=0.92)
+    render_layers(ui_out('Book'), [('pet', [pet]), ('book', [book, paw])])
+
+
+def ui_Rebirth():
+    bm = bmesh.new()
+    bmesh.ops.create_icosphere(bm, subdivisions=1, radius=0.78)
+    core = finish_mesh('FrostCore', bm, [plastic('Core', (120, 205, 255), 0.08, emit=0.55, emit_colour=(150, 230, 255), coat=0.8)], smooth=False)
+    core.rotation_euler = (0.3, 0.2, 0.4)
+    ring_mat = plastic('RingArrow', (255, 205, 70), 0.3, metal=0.3, emit=0.12)
+    arrows = [slab('RingA', ring_arrow_outline(1.32, 0.32, 15, 165, 0.75, 36), 0.36, ring_mat, 0.1, loc=(0, 0.15, 0), rot=(90, 0, 0)),
+              slab('RingB', ring_arrow_outline(1.32, 0.32, 195, 345, 0.75, 36), 0.36, ring_mat, 0.1, loc=(0, 0.15, 0), rot=(90, 0, 0))]
+    camera([core] + arrows, yaw=0, pitch=6, lens=60, fill=0.92)
+    render_layers(ui_out('Rebirth'), [('arrows', arrows), ('core', [core])])
+
+
+def ui_Home():
+    """a cosy igloo: ice bricks round a dome, a snow cap, a tunnel with a warm glowing doorway"""
+    ice_a, ice_b = plastic('IceA', (150, 215, 255), 0.25, emit=0.1), plastic('IceB', (205, 238, 255), 0.25, emit=0.1)
+    inner = plastic('IceInner', (110, 180, 235), 0.4)
+    snow = plastic('Snow', (250, 252, 255), 0.6, emit=0.05)
+    door = plastic('Door', (255, 175, 70), 0.5, emit=2.2, emit_colour=(255, 170, 70))
+    R = 1.3
+    bm = bmesh.new()
+    rows = 5
+    for row in range(rows):
+        phi0, phi1 = row / rows * 78, (row + 1) / rows * 78
+        phi = math.radians((phi0 + phi1) / 2)
+        r = R * math.cos(phi)
+        count = max(5, int(round(2 * math.pi * r / 0.62)))
+        h = R * math.radians(phi1 - phi0) * 0.92
+        for k in range(count):
+            a = (k + 0.5 * (row % 2)) / count * 360
+            ar = math.radians(a)
+            loc = (math.cos(ar) * r, math.sin(ar) * r, R * math.sin(phi))
+            box_into(bm, (0.24, 2 * math.pi * r / count * 0.93, h), loc, (0, -math.degrees(phi), a), (row + k) % 2)
+    dome = finish_mesh('Dome', bm, [ice_a, ice_b], bevel=0.045)
+    bm = bmesh.new()                                                     # the solid dome behind the bricks
+    bmesh.ops.create_uvsphere(bm, u_segments=32, v_segments=16, radius=R - 0.1)
+    bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(0, 0, 0), plane_no=(0, 0, -1), clear_outer=True)
+    shell = finish_mesh('Shell', bm, [inner])
+    bm = bmesh.new()                                                     # the snow cap
+    bmesh.ops.create_uvsphere(bm, u_segments=24, v_segments=12, radius=0.62)
+    cap = finish_mesh('Cap', bm, [snow])
+    cap.location, cap.scale = (0.05, 0.0, R - 0.02), (1.0, 1.0, 0.55)
+    bm = bmesh.new()                                                     # the tunnel: a half cylinder of bricks
+    tr, tl = 0.62, 0.8
+    for k in range(7):
+        a = k / 6 * 180
+        ar = math.radians(a)
+        box_into(bm, (0.26, tl, 0.3), (math.cos(ar) * tr, 0, math.sin(ar) * tr), (0, -a, 0), k % 2)
+    tunnel_bricks = finish_mesh('Tunnel', bm, [ice_a, ice_b], bevel=0.045)
+    tunnel_bricks.location = (0, -R + 0.05, 0)
+    bm = bmesh.new()
+    cyl_into(bm, tr - 0.04, tl * 0.98, (0, 0, 0), (90, 0, 0), segments=24)
+    bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(0, 0, 0), plane_no=(0, 0, -1), clear_outer=True)
+    tunnel_core = finish_mesh('TunnelCore', bm, [inner])
+    tunnel_core.location = (0, -R + 0.05, 0)
+    bm = bmesh.new()                                                     # the warm doorway
+    cyl_into(bm, tr - 0.2, 0.06, (0, 0, 0), (90, 0, 0), segments=24)
+    bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(0, 0, 0), plane_no=(0, 0, -1), clear_outer=True)
+    doorway = finish_mesh('Doorway', bm, [door])
+    doorway.location = (0, -R + 0.05 - tl / 2 - 0.03, 0)
+    bm = bmesh.new()                                                     # snow drifts round the foot
+    for k, (x, y, s) in enumerate(((-1.25, -0.35, 0.42), (1.2, -0.5, 0.38), (0.75, -1.25, 0.3), (-0.8, -1.2, 0.28), (1.35, 0.5, 0.36))):
+        ret = bmesh.ops.create_uvsphere(bm, u_segments=16, v_segments=8, radius=s)
+        bmesh.ops.scale(bm, vec=(1.4, 1.1, 0.55), verts=ret['verts'])
+        bmesh.ops.translate(bm, vec=(x, y, 0.02), verts=ret['verts'])
+    drifts = finish_mesh('Drifts', bm, [snow])
+    objs = [dome, shell, cap, tunnel_bricks, tunnel_core, doorway, drifts]
+    turn(objs, -20)
+    camera(objs, yaw=-14, pitch=20, lens=55, fill=0.92)
+    render_layers(ui_out('Home'), [('main', objs)])
+
+
+def ui_Shop():
+    """an open treasure chest heaped with crystals"""
+    wood, wood_dark, gold = plastic('ChestWood', (185, 105, 50), 0.55), plastic('ChestWoodDark', (130, 70, 35), 0.6), \
+        plastic('ChestGold', GOLD, 0.3, metal=0.45, emit=0.1)
+    W, D, H = 1.9, 1.2, 0.95
+    parts = [((W, D, H), (0, 0, H / 2), (0, 0, 0), 0)]
+    for x in (-W / 2 + 0.28, W / 2 - 0.28):                                     # gold straps
+        parts.append(((0.2, D + 0.06, H + 0.04), (x, 0, H / 2), (0, 0, 0), 2))
+    parts.append(((W + 0.06, D + 0.06, 0.14), (0, 0, H - 0.07), (0, 0, 0), 2))   # gold rim
+    parts.append(((W + 0.04, D + 0.04, 0.1), (0, 0, 0.05), (0, 0, 0), 1))        # dark foot
+    parts.append(((0.34, 0.14, 0.4), (0, -D / 2 - 0.05, H - 0.3), (0, 0, 0), 2))  # the lock
+    body = boxes('ChestBody', parts, [wood, wood_dark, gold], bevel=0.04)
+    lid_parts = [((W, D, 0.34), (0, -D / 2, 0.17), (0, 0, 0), 0),
+                 ((W + 0.06, D + 0.06, 0.12), (0, -D / 2, 0.06), (0, 0, 0), 2)]
+    for x in (-W / 2 + 0.28, W / 2 - 0.28):
+        lid_parts.append(((0.2, D + 0.06, 0.38), (x, -D / 2, 0.17), (0, 0, 0), 2))
+    lid = boxes('ChestLid', lid_parts, [wood, wood_dark, gold], bevel=0.04)
+    lid.location = (0, D / 2, H)
+    lid.rotation_euler = (math.radians(-105), 0, 0)
+    bpy.context.view_layer.update()
+    gems = gem_pile((0, -0.05, H - 0.25), 0.82, 0.5, 0.3, seed=31, density=1.3)
+    gems += [gem((0.05, -0.15, H + 0.55), 0.62, (math.radians(10), math.radians(-14), 0.3))]
+    gems += [gem((-1.05, -0.75, 0.12), 0.3, (0.3, 1.3, 0.2)), gem((1.1, -0.7, 0.1), 0.26, (1.2, 0.4, 0.8))]
+    objs = [body, lid]
+    turn(objs + gems, -22)
+    camera(objs + gems, yaw=-6, pitch=24, lens=55, fill=0.92)
+    render_layers(ui_out('Shop'), [('main', objs + gems)])
+
+
+def ui_Codes():
+    """a gold ticket with a snowflake on it"""
+    W, H, notch = 2.4, 1.3, 0.24
+    corner = 0.16
+    pts = [(-W / 2 + corner, -H / 2), (W / 2 - corner, -H / 2), (W / 2, -H / 2 + corner)]
+    for i in range(13):                                       # the right notch
+        a = math.radians(-90 + 180 * i / 12)
+        pts.append((W / 2 - math.cos(a) * notch, math.sin(a) * notch))
+    pts += [(W / 2, H / 2 - corner), (W / 2 - corner, H / 2), (-W / 2 + corner, H / 2), (-W / 2, H / 2 - corner)]
+    for i in range(13):                                       # the left notch
+        a = math.radians(90 - 180 * i / 12)
+        pts.append((-W / 2 + math.cos(a) * notch, math.sin(a) * notch))
+    pts.append((-W / 2, -H / 2 + corner))
+    ticket = slab('Ticket', pts, 0.22, plastic('Ticket', (255, 200, 60), 0.35, emit=0.12), round_edge=0.07, rot=(90, 0, 0))
+    bm = bmesh.new()                                           # the tear line: a row of dashes
+    for i in range(5):
+        box_into(bm, (0.07, 0.06, 0.16), (-0.42, -0.13, -0.48 + i * 0.24))
+    dashes = finish_mesh('Dashes', bm, [plastic('TicketDark', (215, 130, 30), 0.5)], bevel=0.02)
+    flake = snowflake('Flake', 0.42, (0.4, -0.14, 0.0), plastic('Flake', (90, 185, 255), 0.3, emit=0.15), thick=0.08)
+    star = snowflake('FlakeSmall', 0.2, (-0.82, -0.14, 0.0), plastic('Flake2', (255, 255, 255), 0.3, emit=0.1), thick=0.06)
+    objs = [ticket, dashes, flake, star]
+    turn(objs, -14, tilt=-16)
+    camera(objs, yaw=-6, pitch=14, lens=60, fill=0.92)
+    render_layers(ui_out('Codes'), [('main', objs)])
+
+
+def ui_FrostTouch():
+    """the pick wrapped in a frost swirl"""
+    picks, root = add_pick(3, (0, 0, 0), PICK_ROT)
+    pts, radii = [], []
+    turns, z0, z1 = 1.6, 0.5, 3.6
+    for i in range(80):
+        t = i / 79
+        a = t * turns * math.tau + 0.6
+        r = 0.55 + 0.35 * math.sin(t * math.pi)
+        pts.append((math.cos(a) * r, math.sin(a) * r, z0 + (z1 - z0) * t))
+        radii.append(0.25 + 0.75 * math.sin(t * math.pi) ** 0.7)
+    swirl = slab('Swirl', pts, 0, plastic('Frost', (120, 215, 255), 0.2, emit=0.9, emit_colour=(130, 215, 255)), round_edge=0.11,
+                 rot=(0, 0, 0), tube=True, radii=radii)
+    swirl.parent = root
+    frost = ice_material('FrostChip', cracks=0, alpha=0.7, tint=(120, 200, 245))
+    chips = []
+    rng = random.Random(4)
+    for i in range(7):                                       # ice crusted on the head
+        x = rng.uniform(-1.0, 1.0)
+        s = shard((x, rng.uniform(-0.2, 0.2), 3.05 + rng.uniform(-0.15, 0.2)), rng.uniform(0.25, 0.4), 70 + i, frost, stretch=1.3)
+        s.parent = root
+        chips.append(s)
+    bpy.context.view_layer.update()
+    camera(picks + [swirl] + chips, yaw=0, pitch=8, lens=60, fill=0.9)
+    render_layers(ui_out('FrostTouch'), [('main', picks + chips + [swirl])])
+
+
+def ui_BiggerBurst():
+    block = ice_block((0, 0, 0), (1.5, 1.5, 0.55), cracks=1.0, seed=41)
+    mat = ice_material('ShardIce', cracks=0, alpha=0.5, tint=(120, 200, 245))
+    rim = broken_rim(1.5, 1.5, 0.55, mat, seed=7, count=13, height=0.5)
+    gems = [gem((0.0, -0.1, 1.45), 0.7, (math.radians(8), math.radians(-10), 0.3))]
+    for i, (deg, r, size) in enumerate(((20, 1.35, 0.42), (48, 1.5, 0.48), (78, 1.75, 0.4), (104, 1.65, 0.46), (133, 1.5, 0.48),
+                                        (160, 1.3, 0.42), (64, 0.95, 0.32), (118, 1.0, 0.34))):
+        a = math.radians(deg)
+        gems.append(gem((math.cos(a) * r * 1.05, -0.15, 0.55 + math.sin(a) * r * 0.95), size,
+                        (math.radians(10), -(a - math.pi / 2) * 0.8, 0.4 * i)))
+    objs = block + rim + gems
+    camera(objs, yaw=-14, pitch=18, lens=50, fill=0.92)
+    render_layers(ui_out('BiggerBurst'), [('main', objs)])
+
+
+def ui_CrystalYield():
+    pile = gem_pile((0, 0, 0), 0.95, 0.6, 0.36, seed=51)
+    pile += [gem((-0.1, -0.15, 0.95), 0.72, (math.radians(10), math.radians(-14), 0.3))]
+    plus = slab('Plus', plus_outline(0.55, 1.5), 0.4, plastic('PlusGreen', GREEN, 0.3, emit=0.12), round_edge=0.12,
+                loc=(1.05, -0.9, 1.35), rot=(90, 0, -18), scale=0.8)
+    camera(pile + [plus], yaw=-16, pitch=24, lens=55, fill=0.92)
+    render_layers(ui_out('CrystalYield'), [('pile', pile), ('plus', [plus])])
+
+
+def ui_FastSled():
+    """a wooden sled on two metal runners, carrying an ice block (the speed streaks are 2D, in compose)"""
+    wood, wood_dark = plastic('SledWood', (200, 120, 55), 0.5), plastic('SledWoodDark', (150, 80, 35), 0.55)
+    steel = plastic('Runner', (190, 200, 215), 0.25, metal=0.6)
+    L, Wd = 2.5, 1.3
+    parts = []
+    for i, y in enumerate((-0.42, 0.0, 0.42)):
+        parts.append(((L, 0.38, 0.12), (0, y, 0.55), (0, 0, 0), i % 2))
+    for x in (-0.85, 0.0, 0.85):
+        parts.append(((0.2, Wd + 0.1, 0.12), (x, 0, 0.44), (0, 0, 0), 1))
+        for y in (-0.55, 0.55):
+            parts.append(((0.14, 0.12, 0.38), (x, y, 0.25), (0, 0, 0), 1))
+    deck = boxes('SledDeck', parts, [wood, wood_dark], bevel=0.035)
+    runner_pts = []
+    for i in range(9):
+        runner_pts.append((-1.3 + i * 0.28, 0.06))
+    for i in range(1, 15):                                  # the curl at the front
+        a = math.radians(-90 + i * 18)
+        runner_pts.append((1.0 + math.cos(a) * 0.42, 0.48 + math.sin(a) * 0.42))
+    runners = []
+    for y in (-0.55, 0.55):
+        runners.append(slab('Runner', [(x, y, z) for x, z in runner_pts], 0, steel, round_edge=0.075, rot=(0, 0, 0), tube=True))
+    block = ice_block((-0.1, 0, 0.61), (1.05, 1.0, 1.0), cracks=0.5, seed=61, pet='SealPup', pet_size=0.75, pet_yaw=-60,
+                      orb=(140, 220, 255), orb_strength=5.0, view=(-22, 16))
+    objs = [deck] + runners + block
+    camera(objs, yaw=-22, pitch=16, lens=55, fill=0.92)
+    render_layers(ui_out('FastSled'), [('main', objs)])
+
+
+def ui_UpgradeBadge():
+    arrow = slab('Arrow', arrow_outline(0.62, 1.5, 2.0, 0.9), 0.5, plastic('ArrowGreen', GREEN, 0.3, emit=0.12),
+                 round_edge=0.13, rot=(90, 0, -14))
+    camera([arrow], yaw=0, pitch=8, lens=60, fill=0.9)
+    render_layers(ui_out('UpgradeBadge'), [('main', [arrow])])
+
+
+UI_ICONS = {k[3:]: v for k, v in globals().items() if k.startswith('ui_') and k != 'ui_out' and k != 'ui_building' and callable(v)}
+
 if __name__ == '__main__':
     if MODE == 'picks':
         build_picks()
-    elif MODE == 'render':
-        for icon in NAMES or sorted(ICONS):
+    elif MODE in ('render', 'ui'):
+        table = ICONS if MODE == 'render' else UI_ICONS
+        for icon in NAMES or sorted(table):
             reset()
             _templates.clear()
             _gem.clear()
             _silhouette = None
-            ICONS[icon]()
+            table[icon]()
             print('ICON_DONE', icon)
     else:
-        raise SystemExit('mode must be picks or render')
+        raise SystemExit('mode must be picks, render or ui')

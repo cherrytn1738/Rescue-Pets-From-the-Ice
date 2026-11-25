@@ -27,7 +27,8 @@ IceLooks.Layers = {
 IceLooks.Glow = {
 	Rare = { Color = Color3.fromRGB(110, 180, 255), Brightness = 2.5, Range = 18 },
 	Epic = { Color = Color3.fromRGB(185, 95, 255), Brightness = 3, Range = 20 },
-	Legendary = { Color = Color3.fromRGB(255, 200, 50), Brightness = 4, Range = 24, Mode = "Pulse" },
+	-- (amber, not gold: gold light through the blue ice read lime green)
+	Legendary = { Color = Color3.fromRGB(255, 120, 20), Brightness = 4, Range = 24, Mode = "Pulse" },
 	Mythic = { Color = Color3.fromRGB(255, 255, 255), Brightness = 4.5, Range = 26, Mode = "Rainbow" },
 }
 

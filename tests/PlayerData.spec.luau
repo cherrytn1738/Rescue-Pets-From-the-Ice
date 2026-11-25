@@ -338,6 +338,7 @@ return function(sources)
 	check(data.BookGolden.SealPup == true and data.BookGolden.Dinosaur == nil and data.BookGolden.MiniYeti == nil, "the Golden page keeps known creatures marked true")
 	check(#data.BookNew == 1 and data.BookNew[1] == "SealPup", "New! badges: only seen, known creatures, each once")
 	check(data.DailyClaimDay == 0 and data.Settings.Music == 1 and data.Settings.Sounds == 1, "an unreadable daily day and settings fall back to defaults")
+	check(data.Settings.AutoEquip == true, "auto-equip is on unless turned off")
 	leave(messyGame)
 	local tooMany = {}
 	for index = 1, CreatureConfig.Pets.InventorySize + 5 do
@@ -690,7 +691,7 @@ return function(sources)
 	full.BlockLevel, full.CurrentBlock = 12, { CreatureId = "SealPup", HpLeft = 77 }
 	full.Buildings.IcePickPost, full.Buildings.HeatLamp = 4, 2
 	table.insert(full.Upgrades, "IcePickPostUpgrade1")
-	table.insert(full.Pets, { Uid = "rt-1", CreatureId = "SnowBunny", Golden = false })
+	table.insert(full.Pets, { Uid = "rt-1", CreatureId = "SnowBunny", Golden = false, Locked = true })
 	table.insert(full.Pets, { Uid = "rt-2", CreatureId = "SealPup", Golden = true })
 	table.insert(full.Equipped, "rt-2")
 	full.BookSeen.SnowBunny, full.BookSeen.SealPup = 3, 1
@@ -698,7 +699,7 @@ return function(sources)
 	table.insert(full.BookNew, "SealPup")
 	full.FrostCores, full.Rebirths, full.MaxLayerOpened, full.CreaturesRescued = 4, 2, 5, 11
 	full.TutorialStep = 3 -- (not 5: an unreadable step loads as 5)
-	full.Settings = { Music = 0.3, Sounds = 0.6, ReducedEffects = true }
+	full.Settings = { Music = 0.3, Sounds = 0.6, ReducedEffects = true, AutoEquip = false }
 	full.DailyClaimDay = 20400
 	table.insert(full.Codes, "ROUNDTRIP")
 	full.GiftedPasses.AutoPick = true

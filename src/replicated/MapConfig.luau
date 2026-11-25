@@ -40,6 +40,11 @@ MapConfig.PlotModels = {
 	PlotWallLong = 84064124507568,
 	PlotWallShort = 128971708238167,
 }
+-- The plaza's own models (tools/blender/plaza_boards.py, uploaded as the group; built into
+-- ServerStorage.PlazaTemplates by tools/studio/build_templates.luau with ONLY = "Plaza").
+MapConfig.PlazaModels = {
+	LeaderboardBoard = 105555700752777,
+}
 MapConfig.TapSpot = { X = 0, Z = 24 } -- where a player arrives in their plot: in front of the ice
 -- The light column over your own plot's entrance while you're outside it (PlotGuide.client): it starts above the
 -- gate's snow (the gate's top is about 26 studs up) and fades out as it rises.

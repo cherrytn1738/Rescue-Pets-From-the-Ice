@@ -1,6 +1,6 @@
 -- Tapping the ice (docs/GAME_DESIGN.md, "UI and controls"): inside your plot, a tap anywhere that
--- isn't a button swings your ice pick at the block. Phone: tap; PC: click or Space; gamepad: R2 or A
--- (where you can tap, Space and A tap instead of jumping).
+-- isn't a button swings your ice pick at the block. Phone: tap; PC: click (Space jumps, as everywhere);
+-- gamepad: R2 or A (where you can tap, A taps instead of jumping).
 -- The client only counts taps and sends the total every GameConfig.Taps.BatchSeconds (TapBatch);
 -- the server caps the rate, decides the damage and pays the crystals. TapFeedback shows the hit at once,
 -- and the ice pick in the player's hand (PickService) swings: Roblox's default Animate script plays its
@@ -67,10 +67,10 @@ local TAP_INPUTS = {
 local TAP_KEYS = {
 	[Enum.KeyCode.ButtonR2] = true,
 }
--- Space and gamepad A are also the jump keys: where you can tap (your plot, or near a standing Golden
--- Glacier) they tap INSTEAD of jumping (a high-priority action that sinks them); anywhere else they jump as
--- usual. (Phones keep their jump button.)
-local SINK_KEYS = { Enum.KeyCode.Space, Enum.KeyCode.ButtonA }
+-- Gamepad A is also the jump button: where you can tap (your plot, or near a standing Golden Glacier) it
+-- taps INSTEAD of jumping (a high-priority action that sinks it); anywhere else it jumps as usual. On PC
+-- a click taps, so Space always jumps. (Phones keep their jump button.)
+local SINK_KEYS = { Enum.KeyCode.ButtonA }
 
 local function tap(screenPosition: Vector2?)
 	if UIKit.AnyWindowOpen() then

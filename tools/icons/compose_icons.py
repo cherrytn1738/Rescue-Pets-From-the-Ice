@@ -11,8 +11,13 @@ snowflakes) and a chunky outlined text badge. Composited at 1024 and downscaled 
     options: --work <dir> (render layers; default: <system temp>/rpfi_icons_work), --jobs N (Blender
              processes at once, default 3), --sheet-only (just rebuild the contact sheet)
 
+    python tools/icons/compose_icons.py --ui --render         # the UI icons instead (store-assets/ui-icons/)
+    python tools/icons/compose_icons.py --ui --render Pets Home
+
 Writes store-assets/icons/<Name>.png (the 12 Robux items), store-assets/launch/icon_concept_<n>.png (the
-three game icon concepts, no text) and store-assets/icons/contact_sheet.png. Nothing is uploaded.
+three game icon concepts, no text) and store-assets/icons/contact_sheet.png; with --ui, the in-game button and
+window icons (256x256, transparent, no text) to store-assets/ui-icons/<Key>.png and their contact_sheet.png
+(each icon on its card colour at 96 and 48 px). Nothing is uploaded.
 Blender: the newest C:\\Program Files\\Blender Foundation\\*\\blender.exe, or set BLENDER_EXE.
 Fonts: Arial Black (C:\\Windows\\Fonts\\ariblk.ttf) for badges, Segoe UI Bold for the sheet labels.
 Game pass icons show as circles on the Roblox site: keep badges inside the circle (they are).
@@ -497,6 +502,170 @@ def contact_sheet():
     return path
 
 
+# ------------------------------------------------------------------ UI icons (--ui)
+# The in-game button and window icons: 256x256, transparent, no text. Composed at 1024 like the store icons,
+# with a much thicker outline (UI_RING px at 1024 = about 7 px at 256) so they read at 48 px on a coloured button.
+OUT_UI = os.path.join(REPO, 'store-assets', 'ui-icons')
+UI_SIZE = 256
+UI_RING = 28
+UI_BOX = (80, 80, 944, 944)         # the subject fills about 85% of the frame
+CARDS = {'Build': (255, 150, 50), 'Upgrades': (80, 200, 100), 'Pets': (255, 120, 180), 'Book': (40, 190, 190),
+         'Rebirth': (150, 90, 230), 'Home': (120, 200, 255), 'Shop': (120, 200, 255), 'Codes': (90, 110, 140),
+         'Window': (40, 70, 130)}
+UI_BUILDINGS = ['IcePickPost', 'ChiselMill', 'IceDrill', 'HeatLamp', 'WreckingCrane', 'FlamethrowerTurret', 'LavaPump', 'SunMirrorTower']
+FROST = (215, 245, 255)
+# card: the colour it sits on (CARDS); glow: soft halo colour (or None); sparkles / glints: as for the store icons;
+# extras: 2D extras (snowflakes, streaks); box: where the subject goes, if not UI_BOX
+UI_SPECS = {
+    'Build': dict(card='Build', what='The tier-1 Ice Pick Post station with a chunky hammer', glow=(255, 240, 210), sparkles=2),
+    'Upgrades': dict(card='Upgrades', what='The gold ice pick in front of a big green up-arrow', glow=(220, 255, 220), sparkles=2),
+    'Pets': dict(card='Pets', what='Snow Bunny, cheering', glow=(255, 240, 250), sparkles=2),
+    'Book': dict(card='Book', what='A chunky icy-blue book with a gold paw on the cover, Penguin Chick peeking over the top',
+                 glow=(220, 255, 255), sparkles=2),
+    'Rebirth': dict(card='Rebirth', what='A glowing faceted Frost Core inside two gold circular arrows', glow=(170, 230, 255),
+                    glow_layer='core', glow_radius=60, sparkles=2, glints=1),
+    'Home': dict(card='Home', what='A cosy ice-brick igloo with a snow cap and a warm glowing doorway', glow=(255, 250, 235), sparkles=2),
+    'Shop': dict(card='Shop', what='An open wooden treasure chest heaped with cyan crystals', glow=(200, 250, 255), sparkles=2, glints=2),
+    'Codes': dict(card='Codes', what='A gold ticket with a blue snowflake and a tear line', glow=(255, 245, 200), sparkles=2),
+}
+for _b in UI_BUILDINGS:
+    UI_SPECS['Building_' + _b] = dict(card='Window', what='The tier-1 %s station, three-quarter view' % _b, glow=(220, 240, 255), sparkles=0)
+_PICK_NAMES = ['Wooden', 'Stone', 'Iron', 'Gold', 'Diamond', 'Cosmic']
+for _t in range(1, 7):
+    UI_SPECS['Pick%d' % _t] = dict(card='Window', what='Ice pick tier %d (%s)' % (_t, _PICK_NAMES[_t - 1]), glow=(220, 240, 255), sparkles=1)
+UI_SPECS.update({
+    'FrostTouch': dict(card='Window', what='The iron pick crusted with ice inside a glowing frost swirl, snowflakes',
+                       glow=(170, 230, 255), extras=['snowflakes'], sparkles=0),
+    'BiggerBurst': dict(card='Window', what='Cyan crystals bursting up out of a shattered ice block', glow=(170, 240, 255), sparkles=1, glints=2),
+    'CrystalYield': dict(card='Window', what='A crystal pile with a green 3D plus', glow=(170, 240, 255), sparkles=1, glints=1),
+    'FastSled': dict(card='Window', what='A wooden sled on metal runners carrying an ice block (a pet silhouette inside), speed streaks',
+                     glow=(220, 240, 255), extras=['streaks'], box=(190, 110, 950, 914), sparkles=0),
+    'UpgradeBadge': dict(card='Window', what='A green up-arrow, to overlay on a building icon for building upgrades', glow=None, sparkles=0),
+})
+UI_ORDER = list(UI_SPECS)
+
+
+def ui_sparkle(canvas, cx, cy, r, colour=(255, 255, 255)):
+    """a four-point sparkle with a dark outline (so it shows on pale cards too)"""
+    m = Image.new('L', canvas.size, 0)
+    ImageDraw.Draw(m).polygon(star_points(cx, cy, r, 0.22), fill=255)
+    canvas.alpha_composite(colour_layer(dilate(m, max(6, r * 0.16)), INK))
+    canvas.alpha_composite(colour_layer(m, colour))
+
+
+def draw_streaks(canvas, union):
+    """speed lines trailing off the subject's left side"""
+    l, t, r, b = solid(union).getbbox()
+    rows = [0.3, 0.52, 0.74]
+    lens = [0.8, 1.0, 0.7]
+    m = Image.new('L', canvas.size, 0)
+    d = ImageDraw.Draw(m)
+    w = 34
+    for f, k in zip(rows, lens):
+        y = t + (b - t) * f
+        x1 = l + 40
+        x0 = max(40, l - 180 * k)
+        d.rounded_rectangle((x0, y - w / 2, x1, y + w / 2), radius=w / 2, fill=255)
+    m = ImageChops.subtract(m, dilate(solid(union), UI_RING - 4))
+    canvas.alpha_composite(colour_layer(dilate(m, UI_RING * 0.6), INK))
+    canvas.alpha_composite(colour_layer(m, (255, 255, 255)))
+
+
+def edge_fade(margin=70):
+    """1 inside, fading to 0 at the frame's edge: the soft glow never ends in a hard line at the border"""
+    ramp = np.clip(np.minimum(np.arange(S), S - 1 - np.arange(S)) / margin, 0, 1).astype(np.float32)
+    return Image.fromarray((np.minimum(ramp[:, None], ramp[None, :]) * 255).astype(np.uint8), 'L')
+
+
+def compose_ui(work, key):
+    spec = UI_SPECS[key]
+    meta, layers = load(os.path.join(work, 'ui'), key)
+    layers, xf, k = place(layers, spec.get('box', UI_BOX))
+    canvas = Image.new('RGBA', (S, S), (0, 0, 0, 0))
+    union = Image.new('L', (S, S), 0)
+    for _, im in layers:
+        union = ImageChops.lighter(union, alpha_of(im))
+    gmask = alpha_of(dict(layers)[spec['glow_layer']]) if spec.get('glow_layer') else union
+    if 'streaks' in spec.get('extras', ()):
+        draw_streaks(canvas, union)
+    if spec.get('glow'):
+        gr = spec.get('glow_radius', 40)
+        halo = dilate(solid(gmask), UI_RING + gr * 0.5).filter(ImageFilter.GaussianBlur(gr * 0.6))
+        canvas.alpha_composite(colour_layer(ImageChops.multiply(halo, edge_fade()), spec['glow'], 0.45))
+    shadow = dilate(solid(union), UI_RING).filter(ImageFilter.GaussianBlur(10))
+    moved = Image.new('L', (S, S), 0)
+    moved.paste(shadow, (0, 14))
+    canvas.alpha_composite(colour_layer(moved, (10, 10, 40), 0.35))
+    for i, (n, im) in enumerate(layers):
+        if n not in spec.get('no_outline', ()):
+            canvas.alpha_composite(colour_layer(outline_ring(alpha_of(im), UI_RING if i == 0 else UI_RING - 10), INK))
+        canvas.alpha_composite(im)
+    for x, y, rr in glint_spots(union, spec.get('glints', 0), sum(map(ord, key)) + 7):
+        sparkle(canvas, x, y, rr * 1.3)
+    if 'snowflakes' in spec.get('extras', ()):
+        l, t, r, b = solid(union).getbbox()
+        for (fx, fy, rr, rot) in ((0.12, 0.2, 70, 0.2), (0.88, 0.62, 58, 0.5), (0.2, 0.85, 46, 0.1)):
+            draw_snowflake(canvas, l + (r - l) * fx, t + (b - t) * fy, rr, rot, FROST)
+    for x, y, rr in free_spots(union, spec.get('sparkles', 0), sum(map(ord, key)), radius=0.44):
+        ui_sparkle(canvas, x, y, rr * 1.3)
+    os.makedirs(OUT_UI, exist_ok=True)
+    path = os.path.join(OUT_UI, key + '.png')
+    canvas.resize((UI_SIZE, UI_SIZE), Image.LANCZOS).save(path, optimize=True)
+    return path
+
+
+def card_tile(colour, size):
+    """a rounded colour card like the game's menu buttons: lighter top, darker bottom, a dark rim"""
+    big = size * 4
+    m = Image.new('L', (big, big), 0)
+    ImageDraw.Draw(m).rounded_rectangle((0, 0, big - 1, big - 1), radius=big * 0.22, fill=255)
+    top = tuple(min(255, int(c * 1.15 + 20)) for c in colour)
+    bottom = tuple(int(c * 0.78) for c in colour)
+    tile = Image.new('RGBA', (big, big), INK + (255,))
+    inner = Image.new('L', (big, big), 0)
+    pad = max(6, big // 26)
+    ImageDraw.Draw(inner).rounded_rectangle((pad, pad, big - 1 - pad, big - 1 - pad), radius=big * 0.2, fill=255)
+    tile.paste(gradient((big, big), top, bottom), (0, 0), inner)
+    tile.putalpha(m)
+    return tile.resize((size, size), Image.LANCZOS)
+
+
+def ui_contact_sheet():
+    cols, cell, row = 6, 300, 166
+    rows = math.ceil(len(UI_ORDER) / cols)
+    W = cols * cell + 30
+    H = 80 + rows * row + 10
+    sheet = Image.new('RGB', (W, H), (26, 30, 48))
+    d = ImageDraw.Draw(sheet)
+    f_title = ImageFont.truetype(LABEL_FONT, 30)
+    f_lab = ImageFont.truetype(LABEL_FONT, 18)
+    d.text((18, 22), 'Rescue Pets From the Ice - UI icons (each at 96 px and 48 px on its card)', font=f_title, fill=(235, 242, 255))
+    for i, key in enumerate(UI_ORDER):
+        path = os.path.join(OUT_UI, key + '.png')
+        if not os.path.exists(path):
+            continue
+        icon = Image.open(path).convert('RGBA')
+        colour = CARDS[UI_SPECS[key]['card']]
+        x = 18 + (i % cols) * cell
+        y = 80 + (i // cols) * row
+        for size, ox, oy in ((96, 0, 0), (48, 116, 48)):
+            card = card_tile(colour, int(size * 1.2))
+            card.alpha_composite(icon.resize((size, size), Image.LANCZOS), (int(size * 0.1), int(size * 0.1)))
+            sheet.paste(card, (x + ox, y + oy), card)
+        checker = Image.new('RGBA', (100, 100), (200, 200, 200, 255))
+        cd = ImageDraw.Draw(checker)
+        for cy in range(0, 100, 10):
+            for cx in range(0, 100, 10):
+                if (cx + cy) // 10 % 2:
+                    cd.rectangle((cx, cy, cx + 9, cy + 9), fill=(160, 160, 160, 255))
+        checker.alpha_composite(icon.resize((100, 100), Image.LANCZOS))
+        sheet.paste(checker.convert('RGB'), (x + 178, y + 16))
+        d.text((x, y + 124 + 8), key, font=f_lab, fill=(235, 242, 255))
+    path = os.path.join(OUT_UI, 'contact_sheet.png')
+    sheet.save(path, optimize=True)
+    return path
+
+
 # ------------------------------------------------------------------ Blender
 
 def blender_exe():
@@ -519,12 +688,12 @@ def run_blender(args):
     return text
 
 
-def render(work, names, jobs):
+def render(work, names, jobs, mode='render'):
     if not os.path.exists(os.path.join(work, 'picks.blend')):
         print('building the ice picks ...')
         run_blender(['picks', work])
     def one(n):
-        run_blender(['render', work, n])
+        run_blender([mode, work, n])
         print('rendered', n)
     with ThreadPoolExecutor(jobs) as pool:
         list(pool.map(one, names))
@@ -543,6 +712,18 @@ if __name__ == '__main__':
         jobs = int(args[i + 1])
         del args[i:i + 2]
     flags = {a for a in args if a.startswith('--')}
+    if '--ui' in flags:          # the UI icons: store-assets/ui-icons/
+        names = [a for a in args if not a.startswith('--')] or UI_ORDER
+        for n in names:
+            if n not in UI_SPECS:
+                raise SystemExit('unknown UI icon: %s (known: %s)' % (n, ', '.join(UI_ORDER)))
+        if '--sheet-only' not in flags:
+            if '--render' in flags:
+                render(work, names, jobs, 'ui')
+            for n in names:
+                print('composed', compose_ui(work, n))
+        print('sheet', ui_contact_sheet())
+        raise SystemExit(0)
     names = [a for a in args if not a.startswith('--')] or ORDER
     for n in names:
         if n not in SPECS:

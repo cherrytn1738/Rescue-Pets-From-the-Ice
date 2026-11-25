@@ -84,13 +84,21 @@ return function(sources)
 
 	-- No old asset ids --------------------------------------------------------------------------------
 	-- The only images allowed in the UI files are the public library ones in UITheme.Assets; the
-	-- game's own pictures (Icons, Sheets, ShopIcons) start empty. The sounds are the game's own (SoundRules spec).
+	-- game's own pictures: Icons (uploaded), Sheets and ShopIcons (still empty). The sounds are the game's own (SoundRules spec).
 	local allowed = {}
 	for _, id in UITheme.Assets do
 		allowed[id] = true
 	end
 	check(allowed["rbxassetid://385956923"] and allowed["rbxassetid://11560341132"], "the checker and the Robux icon")
-	check(next(UITheme.Icons) == nil, "no icons yet")
+	-- the game's own icons (rendered from its models, uploaded as the group: store-assets/ui-icons/)
+	for key, id in UITheme.Icons do
+		check(type(id) == "string" and string.match(id, "^rbxassetid://%d+$") ~= nil, "icon " .. key .. " is an asset id")
+		allowed[id] = true
+	end
+	for _, key in { "Build", "Upgrades", "Pets", "Book", "Rebirth", "Home", "Shop", "Codes", "UpgradeBadge", "FrostTouch",
+		"BiggerBurst", "CrystalYield", "FastSled", "Pick1", "Pick6", "Building_IcePickPost", "Building_SunMirrorTower" } do
+		check(UITheme.Icons[key] ~= nil, "an icon for " .. key)
+	end
 	check(next(UITheme.ShopIcons) == nil, "no shop pictures yet")
 	check(next(UITheme.Sheets.Groups) == nil, "no picture sheets yet")
 	check(AudioConfig.Ui.Click ~= nil and AudioConfig.Sfx.Tap ~= nil, "the game's own sounds")

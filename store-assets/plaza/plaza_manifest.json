@@ -1,0 +1,43 @@
+{
+ "exportScale": 0.1,
+ "models": {
+  "LeaderboardBoard": {
+   "bounds": {
+    "x": [
+     -12.31,
+     12.3
+    ],
+    "y": [
+     -2.29,
+     2.67
+    ],
+    "z": [
+     -0.1,
+     28.5
+    ]
+   },
+   "meshes": {
+    "LeaderboardBoardCrystals": 400,
+    "LeaderboardBoardGold": 320,
+    "LeaderboardBoardIce": 5184,
+    "LeaderboardBoardPanel": 60,
+    "LeaderboardBoardSnow": 1380,
+    "LeaderboardBoardStone": 240,
+    "LeaderboardBoardWood": 3004
+   },
+   "panel": {
+    "bottom": 1.0,
+    "front": -0.45,
+    "top": 21.0,
+    "width": 16.0
+   },
+   "size": [
+    24.61,
+    28.6,
+    4.96
+   ],
+   "top": 28.5,
+   "triangles": 10588
+  }
+ }
+}

@@ -145,6 +145,28 @@ local function hide(p: BasePart)
 	p.CastShadow = false
 end
 
+-- Streaming (Workspace.StreamingEnabled): the plot Models and their folders (Block's attributes) always
+-- reach every client; their parts stream by distance. The heavy looks (the plot's own models and every
+-- station) are PersistentPerPlayer: always loaded for the plot's owner, and atomic for everyone else, so a
+-- station streams in or out whole (its effects rebuild when it comes back: BuildingEffects.client).
+local function streamLook(model: Model)
+	model.ModelStreamingMode = Enum.ModelStreamingMode.PersistentPerPlayer
+	model:SetAttribute("PlotLook", true)
+end
+
+local function setLookOwner(plot: Model, player: any, add: boolean)
+	if not (typeof(player) == "Instance" and player:IsA("Player")) then
+		return -- (a debug dummy plot: nobody to keep it loaded for)
+	end
+	local list = plot:GetDescendants()
+	table.insert(list, plot) -- (a station itself is one)
+	for _, d in list do
+		if d:IsA("Model") and d:GetAttribute("PlotLook") then
+			pcall(if add then d.AddPersistentPlayer else d.RemovePersistentPlayer, d, player)
+		end
+	end
+end
+
 local function dress(model: Model, cf: CFrame)
 	local border = model.Border
 	local stage = look("PlotStage")
@@ -152,6 +174,7 @@ local function dress(model: Model, cf: CFrame)
 		local copy = stage:Clone()
 		copy.Name = "Stage"
 		copy:PivotTo(cf)
+		streamLook(copy)
 		copy.Parent = model
 		hide(model.Mound)
 		hide(model.MoundTop)
@@ -165,6 +188,7 @@ local function dress(model: Model, cf: CFrame)
 			local copy = source:Clone()
 			copy.Name = name .. "Look"
 			copy:PivotTo(cf * CFrame.new(at.X, 0, at.Z) * turn)
+			streamLook(copy)
 			copy.Parent = border
 			hide(wall)
 		else
@@ -176,6 +200,7 @@ local function dress(model: Model, cf: CFrame)
 		local copy = gate:Clone()
 		copy.Name = "ArchLook"
 		copy:PivotTo(cf * CFrame.new(0, 0, MapConfig.PlotSize / 2))
+		streamLook(copy)
 		copy.Parent = border
 		for _, name in { "ArchLeft", "ArchRight" } do
 			hide(border[name])
@@ -312,6 +337,7 @@ function PlotService.Assign(player: Player): number?
 			plot:SetAttribute("Owner", player.UserId)
 			plot:SetAttribute("OwnerName", player.DisplayName)
 			setOwnerText(plot, player.DisplayName .. "'s plot")
+			setLookOwner(plot, player, true)
 			player:SetAttribute("PlotIndex", index)
 			for _, callback in listeners do
 				task.spawn(callback, player, index)
@@ -337,6 +363,7 @@ function PlotService.Release(player: Player)
 			plot:SetAttribute("OwnerName", "")
 			setOwnerText(plot, "Free plot")
 			plot.Buildings:ClearAllChildren()
+			setLookOwner(plot, player, false)
 			local block = plot.Block
 			for name in block:GetAttributes() do
 				block:SetAttribute(name, nil)
@@ -587,7 +614,9 @@ function PlotService.RefreshBuildings(player: Player, data)
 				station.Name = building.Id
 				station:SetAttribute("Look", look)
 				nameTag(station.PrimaryPart)
+				streamLook(station)
 				station.Parent = folder
+				setLookOwner(station, player, true)
 			end
 			height = 2
 		elseif source then
@@ -597,7 +626,9 @@ function PlotService.RefreshBuildings(player: Player, data)
 				station:SetAttribute("Look", look)
 				nameTag(station.PrimaryPart)
 				station:PivotTo(padCFrame(cf, building.Pad))
+				streamLook(station)
 				station.Parent = folder
+				setLookOwner(station, player, true)
 			end
 			height = source:GetExtentsSize().Y * (if faded then BuildingConfig.FadedScale else 1)
 		else

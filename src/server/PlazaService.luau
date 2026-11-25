@@ -11,6 +11,7 @@ Players spawn in the plaza (the place's SpawnLocation); a glowing guide line lea
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
 
 local MapConfig = require(ReplicatedStorage.MapConfig)
@@ -71,11 +72,25 @@ local function spot(radius: number, degrees: number, height: number): CFrame
 	return CFrame.lookAt(position, Vector3.new(0, position.Y, 0))
 end
 
+-- A leaderboard: the carved ice-and-wood board (ServerStorage.PlazaTemplates.LeaderboardBoard, built by
+-- tools/studio/build_templates.luau) with the invisible Face part carrying the SurfaceGui just in front of
+-- its panel (and giving it collision). Without the template, the old navy slab and post stand in.
 local function board(name: string, title: string, degrees: number)
 	local model = Instance.new("Model")
 	model.Name = name
 	local face = part(model, "Face", Vector3.new(16, 20, 1), spot(58, degrees, 11), Color3.fromRGB(30, 60, 100), Enum.Material.SmoothPlastic)
-	part(model, "Post", Vector3.new(2, 2, 2), spot(58, degrees, 1), Color3.fromRGB(90, 110, 140), Enum.Material.Slate)
+	local templates = ServerStorage:FindFirstChild("PlazaTemplates")
+	local template = templates and templates:FindFirstChild("LeaderboardBoard")
+	if template then
+		local look = template:Clone()
+		look.Name = "Look"
+		look:PivotTo(spot(58, degrees, 0))
+		look.Parent = model
+		face.Transparency = 1
+	else
+		warn("[Plaza] ServerStorage.PlazaTemplates.LeaderboardBoard is missing: a plain board stands in")
+		part(model, "Post", Vector3.new(2, 2, 2), spot(58, degrees, 1), Color3.fromRGB(90, 110, 140), Enum.Material.Slate)
+	end
 	local gui = Instance.new("SurfaceGui")
 	gui.Name = "Board"
 	gui.CanvasSize = Vector2.new(480, 600)
@@ -122,8 +137,10 @@ end
 PlazaService.Boards = {} -- [board id] = the TextLabel its rows go in
 
 function PlazaService.Start(boards)
-	folder = Instance.new("Folder")
+	-- (a Persistent model: with streaming on, the plaza, its boards and chests stay loaded everywhere)
+	folder = Instance.new("Model")
 	folder.Name = "Plaza"
+	folder.ModelStreamingMode = Enum.ModelStreamingMode.Persistent
 	folder.Parent = Workspace
 	part(folder, "Ground", Vector3.new(1, MapConfig.PlazaRadius * 2, MapConfig.PlazaRadius * 2),
 		CFrame.new(0, MapConfig.Ground + 0.1, 0) * CFrame.Angles(0, 0, math.rad(90)), SNOW, Enum.Material.Snow, Enum.PartType.Cylinder)

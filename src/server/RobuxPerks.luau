@@ -5,7 +5,7 @@ in MonetizationConfig). Server only.
 Reward kinds (PurchaseRewards.Kinds: bought, gifted, simulated and code rewards all come through these; Give
 never yields and never saves, the caller records the receipt and saves):
  * Pass: a pass received as a gift: saved in the recipient's GiftedPasses (GamePasses.GiveGifted).
- * CrystalBundle: Seconds of the player's current income (MonetizationRules.BundleCrystals).
+ * CrystalBundle: Seconds of the player's steady income (Economy.SteadyIncome: no rushes).
  * ShatterNow: breaks the block on their mound now (refused while the next block is still on its sled).
  * ServerFrostRush: x Multiplier crystals for everyone in this server for Seconds, the buyer's name announced;
    another one while it runs adds Seconds (MonetizationRules.RushEndsAt). Not saved: it ends with the server.
@@ -23,7 +23,6 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
-local EconomyRules = require(ReplicatedStorage.EconomyRules)
 local MonetizationConfig = require(ReplicatedStorage.MonetizationConfig)
 local MonetizationRules = require(ReplicatedStorage.MonetizationRules)
 local NumberFormat = require(ReplicatedStorage.NumberFormat)
@@ -75,10 +74,9 @@ function RobuxPerks.ServerRushMultiplier(): number
 	return if os.clock() < serverRush.endsAt then serverRush.multiplier else 1
 end
 
--- What a crystal bundle of `seconds` pays this player now.
+-- What a crystal bundle of `seconds` pays this player now: their steady income (no rushes).
 function RobuxPerks.BundleAmount(player: Player, data, seconds: number): number
-	local income = EconomyRules.TotalBuildingDps(data) + EconomyRules.TapDamage(data) * MonetizationConfig.BundleTapsPerSecond
-	return MonetizationRules.BundleCrystals(income * Economy.Multiplier(player, data), seconds)
+	return MonetizationRules.BundleCrystals(Economy.SteadyIncome(player, data), seconds)
 end
 
 -- Starts (or lengthens) the Server Frost Rush. byName: who is announced.
@@ -176,7 +174,7 @@ Kinds.MythicBlock = {
 
 function RobuxPerks.Start()
 	Economy.AddExtra(RobuxPerks.PassMultiplier)
-	Economy.AddExtra(RobuxPerks.ServerRushMultiplier)
+	Economy.AddExtra(RobuxPerks.ServerRushMultiplier, true)
 	IceBlockService.AddLuck(RobuxPerks.IsLucky)
 	-- Auto Pick: the server taps for you while you're in your own plot, inside the 20-a-second cap.
 	Economy.OnTick(function(player, _, dt)

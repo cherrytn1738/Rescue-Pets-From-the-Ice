@@ -19,9 +19,27 @@ local remote = ReplicatedStorage:WaitForChild("PetRequest") :: RemoteFunction
 local Colors = UIKit.Colors
 
 local TILE = 200
+local TAB_WIDTH, TAB_GAP = 150, 8
+-- On the smallest phones the full names don't fit: the tabs shrink and take these short names (the
+-- header line under them still names the page in full).
+local SHORT_NAMES = { Common = "COM", Uncommon = "UNC", Rare = "RARE", Epic = "EPIC", Legendary = "LEG", Mythic = "MYTH", Golden = "GOLD" }
 local PAGES = {}
 for _, page in CreatureConfig.Book do
-	table.insert(PAGES, { Id = page.Page, Name = string.upper(page.Page), Width = 150 })
+	table.insert(PAGES, { Id = page.Page, Name = string.upper(page.Page), Width = TAB_WIDTH })
+end
+local SHORT_BELOW = 120 -- tabs narrower than this take the short names (full ones would shrink too small)
+
+-- Every tab fits on the row: as wide as TAB_WIDTH, narrower when the window is (then short names).
+local function fitTabs(tabsController, width: number)
+	local each = math.clamp(math.floor((width - 8) / #PAGES) - TAB_GAP, 64, TAB_WIDTH)
+	local short = each < SHORT_BELOW
+	for _, tab in PAGES do
+		local button = tabsController.buttons[tab.Id]
+		if button then
+			button.Size = UDim2.new(0, each, 1, -8)
+			UIKit.SetButton(button, if short then SHORT_NAMES[tab.Id] or string.sub(tab.Name, 1, 4) else tab.Name)
+		end
+	end
 end
 
 local page = "Common"
@@ -34,6 +52,7 @@ local window = ShowcaseKit.Window("BookWindow", "Creature Book", {
 	height = 660,
 	onLayout = function(width, height)
 		tabs.frame.Position, tabs.frame.Size = UDim2.fromOffset(0, 0), UDim2.fromOffset(width, 56)
+		fitTabs(tabs, width)
 		header.Position, header.Size = UDim2.fromOffset(0, 62), UDim2.fromOffset(width, 30)
 		rewardLine.Position, rewardLine.Size = UDim2.fromOffset(0, 94), UDim2.fromOffset(width, 28)
 		grid.Position, grid.Size = UDim2.fromOffset(0, 128), UDim2.fromOffset(width, height - 128)

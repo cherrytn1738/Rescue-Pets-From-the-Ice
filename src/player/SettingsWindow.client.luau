@@ -1,6 +1,6 @@
--- The Settings screen (docs/GAME_DESIGN.md, "Screens"): music and sound volume, and reduced effects for
--- low-end phones (half the particles, no camera shake). Opened from the gear button; saved on the
--- server (SaveSettings), which sets the volume attributes Audio reads.
+-- The Settings screen (docs/GAME_DESIGN.md, "Screens"): music and sound volume, reduced effects for
+-- low-end phones (half the particles, no camera shake) and auto-equip best pets (on by default). Opened
+-- from the gear button; saved on the server (SaveSettings), which sets the volume attributes Audio reads.
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -13,8 +13,9 @@ local remote = ReplicatedStorage:WaitForChild("SaveSettings") :: RemoteEvent
 local Colors = UIKit.Colors
 local player = Players.LocalPlayer
 
-local current = { Music = 1, Sounds = 1, ReducedEffects = false }
+local current = { Music = 1, Sounds = 1, ReducedEffects = false, AutoEquip = true }
 local musicLabel, musicSlider, setMusic, soundLabel, soundSlider, setSound, effectsLabel, effectsButton
+local autoLabel, autoButton
 
 local function save()
 	remote:FireServer(table.clone(current))
@@ -28,8 +29,11 @@ local window = ShowcaseKit.Window("SettingsWindow", "Settings", {
 		musicSlider.Position, musicSlider.Size = UDim2.fromOffset(20, 40), UDim2.fromOffset(width - 40, 34)
 		soundLabel.Position, soundLabel.Size = UDim2.fromOffset(0, 96), UDim2.fromOffset(width, 32)
 		soundSlider.Position, soundSlider.Size = UDim2.fromOffset(20, 136), UDim2.fromOffset(width - 40, 34)
-		effectsLabel.Position, effectsLabel.Size = UDim2.fromOffset(0, 196), UDim2.fromOffset(width, 32)
-		effectsButton.Position, effectsButton.Size = UDim2.fromOffset(width / 2 - 150, 236), UDim2.fromOffset(300, 64)
+		local half = width / 2
+		effectsLabel.Position, effectsLabel.Size = UDim2.fromOffset(0, 196), UDim2.fromOffset(half - 8, 32)
+		effectsButton.Position, effectsButton.Size = UDim2.fromOffset(half / 2 - 110, 236), UDim2.fromOffset(220, 64)
+		autoLabel.Position, autoLabel.Size = UDim2.fromOffset(half + 8, 196), UDim2.fromOffset(half - 8, 32)
+		autoButton.Position, autoButton.Size = UDim2.fromOffset(half + half / 2 - 110, 236), UDim2.fromOffset(220, 64)
 	end,
 })
 local content = window.content
@@ -51,8 +55,23 @@ end, function(value)
 	current.Sounds = value
 	save()
 end)
-effectsLabel = UIKit.Label(content, "EffectsLabel", "Reduced effects (for low-end phones)", 24, Colors.Muted)
+effectsLabel = UIKit.Label(content, "EffectsLabel", "Reduced effects (low-end phones)", 24, Colors.Muted)
 effectsLabel.TextXAlignment = Enum.TextXAlignment.Center
+effectsLabel.TextScaled = true
+autoLabel = UIKit.Label(content, "AutoEquipLabel", "Auto-equip best pets", 24, Colors.Muted)
+autoLabel.TextXAlignment = Enum.TextXAlignment.Center
+autoLabel.TextScaled = true
+for _, label in { effectsLabel, autoLabel } do
+	local limit = Instance.new("UITextSizeConstraint")
+	limit.MaxTextSize = 24
+	limit.Parent = label
+end
+autoButton = UIKit.Button(content, "AutoEquip", "ON", "Go", 30)
+autoButton.Activated:Connect(function()
+	current.AutoEquip = not current.AutoEquip
+	UIKit.SetButton(autoButton, if current.AutoEquip then "ON" else "OFF", if current.AutoEquip then "Go" else "Done")
+	save()
+end)
 effectsButton = UIKit.Button(content, "ReducedEffects", "OFF", "Done", 30)
 effectsButton.Activated:Connect(function()
 	current.ReducedEffects = not current.ReducedEffects
@@ -66,10 +85,12 @@ local function load()
 		current.Music = data.Settings.Music or 1
 		current.Sounds = data.Settings.Sounds or 1
 		current.ReducedEffects = data.Settings.ReducedEffects == true
+		current.AutoEquip = data.Settings.AutoEquip ~= false
 	end
 	setMusic(current.Music)
 	setSound(current.Sounds)
 	UIKit.SetButton(effectsButton, if current.ReducedEffects then "ON" else "OFF", if current.ReducedEffects then "Go" else "Done")
+	UIKit.SetButton(autoButton, if current.AutoEquip then "ON" else "OFF", if current.AutoEquip then "Go" else "Done")
 end
 
 local gear = player:WaitForChild("PlayerGui"):WaitForChild("HUD"):WaitForChild("Root"):WaitForChild("SettingsButton")

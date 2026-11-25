@@ -132,7 +132,7 @@ function GoldenGlacierService.Start()
 	state:SetAttribute("Spot", PlazaService.GoldenSpot)
 	state.Parent = Workspace
 	ReplicatedStorage:WaitForChild("GoldenTap").OnServerEvent:Connect(onTap)
-	Economy.AddExtra(GoldenGlacierService.RushMultiplier)
+	Economy.AddExtra(GoldenGlacierService.RushMultiplier, true)
 	Players.PlayerRemoving:Connect(function(player)
 		contributions[player] = nil
 		rushes[player] = nil

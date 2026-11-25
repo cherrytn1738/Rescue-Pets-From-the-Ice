@@ -110,14 +110,14 @@ local function cleanBlock(block)
 	return { CreatureId = block.CreatureId, HpLeft = block.HpLeft }
 end
 
--- One pet: { Uid, CreatureId, Golden }. A pet whose creature this game doesn't know, or with an
--- unreadable uid, is dropped.
+-- One pet: { Uid, CreatureId, Golden, Locked (true, or absent) }. A pet whose creature this game doesn't
+-- know, or with an unreadable uid, is dropped.
 local function cleanPet(pet)
 	if type(pet) ~= "table" or type(pet.Uid) ~= "string" or #pet.Uid == 0 or #pet.Uid > MAX_UID_TEXT
 		or not CreatureConfig.Get(pet.CreatureId) then
 		return nil
 	end
-	return { Uid = pet.Uid, CreatureId = pet.CreatureId, Golden = pet.Golden == true }
+	return { Uid = pet.Uid, CreatureId = pet.CreatureId, Golden = pet.Golden == true, Locked = if pet.Locked == true then true else nil }
 end
 
 -- Purchase bookkeeping --------------------------------------------------------------------------
@@ -334,7 +334,9 @@ local function validate(record)
 	local function volume(value)
 		return if type(value) == "number" and value == value then math.clamp(value, 0, 1) else 1
 	end
-	data.Settings = { Music = volume(settings.Music), Sounds = volume(settings.Sounds), ReducedEffects = settings.ReducedEffects == true }
+	-- (AutoEquip: on unless turned off)
+	data.Settings = { Music = volume(settings.Music), Sounds = volume(settings.Sounds), ReducedEffects = settings.ReducedEffects == true,
+		AutoEquip = settings.AutoEquip ~= false }
 
 	-- Tutorial: a new player starts it; a step that can't be read counts as done.
 	if isNew then
@@ -577,7 +579,8 @@ local function gameFieldsValid(data): boolean
 	end
 	local uids = {}
 	for _, pet in data.Pets do
-		if cleanPet(pet) == nil or uids[pet.Uid] or (pet.Golden ~= true and pet.Golden ~= false) then
+		if cleanPet(pet) == nil or uids[pet.Uid] or (pet.Golden ~= true and pet.Golden ~= false)
+			or (pet.Locked ~= nil and pet.Locked ~= true) then
 			return false
 		end
 		uids[pet.Uid] = true

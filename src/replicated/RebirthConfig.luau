@@ -14,6 +14,7 @@ Starting values for the economy simulation.
 local RebirthConfig = {}
 
 RebirthConfig.RequiredLevel = 31
+RebirthConfig.GoalFromLevel = 25 -- the HUD shows the rebirth goal from this block level
 RebirthConfig.FrostCoreBonus = 0.05
 RebirthConfig.CrystalsPerCoreUnit = 1_000_000
 
@@ -49,6 +50,19 @@ function RebirthConfig.FrostCoresFor(crystalsThisRun: number): number
 		cores -= 1
 	end
 	return cores
+end
+
+-- The HUD's rebirth goal (docs/GAME_DESIGN.md, "Rebirth"): nil below GoalFromLevel; otherwise
+-- { Ready, LevelsLeft, Cores } (the Frost Cores a rebirth would give now).
+function RebirthConfig.Goal(level: number, crystalsThisRun: number)
+	if type(level) ~= "number" or level < RebirthConfig.GoalFromLevel then
+		return nil
+	end
+	return {
+		Ready = level >= RebirthConfig.RequiredLevel,
+		LevelsLeft = math.max(0, RebirthConfig.RequiredLevel - level),
+		Cores = RebirthConfig.FrostCoresFor(crystalsThisRun or 0),
+	}
 end
 
 -- The highest rank reached with this many rebirths, or nil before the first.

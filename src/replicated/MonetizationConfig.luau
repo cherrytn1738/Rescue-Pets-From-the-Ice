@@ -100,9 +100,10 @@ MonetizationConfig.Products = {
 		} },
 }
 
--- A crystal bundle pays Seconds of "your current income": building damage per second plus your tap damage
--- at this many taps a second, times your crystal multiplier (so a new player with no buildings gets
--- something too).
+-- A crystal bundle (and the daily chest) pays Seconds of "your income": the HUD's crystals per second with
+-- the permanent bonuses (pets, book, Frost Cores, passes, group) but without rushes (Economy.SteadyIncome).
+-- Your taps count at your recent rate, but at least this many a second (so opening the shop, which stops
+-- you tapping, or having no buildings yet still pays something).
 MonetizationConfig.BundleTapsPerSecond = 4
 
 MonetizationConfig.Shop = {

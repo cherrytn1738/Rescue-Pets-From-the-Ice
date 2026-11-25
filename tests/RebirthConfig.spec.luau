@@ -26,6 +26,16 @@ return function(sources)
 	check(tonumber(level) == RebirthConfig.RequiredLevel, "rebirth needs level 31")
 	check(LayerConfig.Layers[tonumber(layer)].MinLevel == RebirthConfig.RequiredLevel, "...the first level of Layer 4")
 
+	-- The rebirth goal on the HUD.
+	local goalFrom = string.match(text, "from level (%d+) the HUD shows the rebirth goal")
+	check(tonumber(goalFrom) == RebirthConfig.GoalFromLevel, "the HUD shows the rebirth goal from level 25")
+	check(RebirthConfig.Goal(RebirthConfig.GoalFromLevel - 1, 1e9) == nil, "...not before")
+	local goal = RebirthConfig.Goal(RebirthConfig.GoalFromLevel, 8_000_000)
+	check(goal and not goal.Ready and goal.LevelsLeft == RebirthConfig.RequiredLevel - RebirthConfig.GoalFromLevel and goal.Cores == 2,
+		"at level 25: 6 levels to go, and the Frost Cores a rebirth would give now")
+	local ready = RebirthConfig.Goal(RebirthConfig.RequiredLevel + 4, 27_000_000)
+	check(ready and ready.Ready and ready.LevelsLeft == 0 and ready.Cores == 3, "from level 31: ready")
+
 	-- Ranks.
 	local ranks = doc:Table({ "Rank", "Title", "Name-tag and border colour", "Opens" })
 	check(#ranks == #RebirthConfig.Ranks, "five ranks")
