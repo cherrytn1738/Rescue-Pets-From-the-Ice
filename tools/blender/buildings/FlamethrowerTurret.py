@@ -703,6 +703,43 @@ def tier_dragon(b):
 TIER_FNS = [tier_scrappy, tier_workshop, tier_frosttech, tier_enchanted, tier_dragon]
 
 
+def PEDESTAL(t, b, info):
+    """Dragon Turret (Legendary): no room to grow to its full height, so the turret (drum, fuel tanks and
+    dragon, unchanged) stands on a tower of three stacked gunmetal drums: gold-trimmed joints, a crest, a
+    glowing strip, and a flared collar under a deck that carries the drum and the tanks
+    (framework.raise_on_pedestal)."""
+    if t != 5:
+        return
+    m, z0 = info["matrix"], info["bottom"]
+    s = m.to_scale().x
+    foot = m @ V(0.0, 0.6, 1.2)  # the turret drum's foot, now
+    deck_top = foot.z + 0.12
+    deck_bottom = deck_top - 1.1
+    outline = floor_outline(info["grown"], foot.z - 0.3, foot.z + 1.2)
+    b.add("Deck", [(prism(outline, deck_bottom, deck_top, inset=0.15), "Gunmetal", 0.12, False)])
+    b.add("DeckTrim", [(prism(outline, deck_bottom + 0.35, deck_bottom + 0.6, inset=0.05), "Gold", 0.0, False)])
+    cx, cy = foot.x, min(foot.y, 5.7 - 3.9)
+    R = 3.2  # the tower's drums: narrow next to the 15-stud turret
+    collar_h = 2.2
+    collar = bmesh.new()
+    lathe(collar, [(0, deck_bottom - collar_h), (R + 0.1, deck_bottom - collar_h), (R + 0.6, deck_bottom - collar_h + 0.5),
+                   (R + 2.2, deck_bottom - 0.25), (R + 2.4, deck_bottom + 0.05), (0, deck_bottom + 0.05)], 16, M((cx, cy, 0)))
+    b.add("Tower", [(collar, "Gunmetal", 0.0, False)])
+    b.add("TowerTrim", place(trim_ring(R + 0.55, 0, "Gold", minor=0.1, segments=16), M((cx, cy, deck_bottom - collar_h + 0.45))))
+    zs = [z0 - 0.05 + (deck_bottom - collar_h - z0) * k / 3 for k in range(4)]
+    for k in range(3):
+        za, zb = zs[k], zs[k + 1]
+        r = R * (1.12 - 0.05 * k)
+        drum = bmesh.new()
+        lathe(drum, [(0, za), (r, za), (r + 0.15, za + 0.3), (r + 0.15, zb - 0.3), (r, zb), (0, zb)], 16, M((cx, cy, 0)))
+        b.add("Tower", [(drum, "Gunmetal" if k != 1 else "SteelDark", 0.0, False)])
+        if k < 2:  # gold trim where the drums meet (the collar covers the top one)
+            b.add("TowerTrim", place(trim_ring(r + 0.17, 0, "Gold", minor=0.1, segments=16), M((cx, cy, zb - 0.12))))
+    b.add("Tower", place(crest(1.5, 1.8, 0.2, "Gold", "NavyIce", "FlameYellow", "FlameOrange"), front((cx, cy - R * 1.02 - 0.17, (zs[2] + zs[3]) / 2 + 0.2), 0.0)))
+    b.add("TowerLights", trim_strip((cx - 1.2, cy - R * 1.12 - 0.17, zs[0] + 0.7), (cx + 1.2, cy - R * 1.12 - 0.17, zs[0] + 0.7), 0.16, "FlameOrange", True))
+
+
+
 # ---------- the upgrade sets ----------
 
 NOZZLE_LOOK = {  # metal, ring, ring glows

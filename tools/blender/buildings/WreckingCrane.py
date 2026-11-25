@@ -791,6 +791,57 @@ def tier_titan(b):
 TIER_FNS = [tier_scrappy, tier_workshop, tier_frosttech, tier_enchanted, tier_titan]
 
 
+def PEDESTAL(t, b, info):
+    """Titan Arm (Legendary): no room to grow to its full height, so its boulder head stands on a rock pillar:
+    two hewn stones with a gold band between, glowing cracks and runes down the front and rubble round the
+    foot. The head sinks into the pillar's top as if it broke out of it; the arm and the meteor keep their
+    approved shape (framework.raise_on_pedestal)."""
+    if t != 5:
+        return
+    z0 = info["bottom"]
+    head = points_of(grown_part(info, "Head"))
+    hz = min(p.z for p in head)
+    low = [p for p in head if p.z < hz + 2.0]
+    hx0, hx1 = min(p.x for p in low), max(p.x for p in low)
+    hy0, hy1 = min(p.y for p in low), max(p.y for p in low)
+    w, d = (hx1 - hx0) * 0.62, (hy1 - hy0) * 0.66
+    edge = 5.3  # stays on the plinth (10.8 square)
+    cx = max(-edge + w * 0.55, min(edge - w * 0.55, (hx0 + hx1) / 2))
+    cy = max(-edge + d * 0.55, min(edge - d * 0.55, (hy0 + hy1) / 2))
+    top = hz + 1.7  # (the head sits 1.7 studs down into it)
+    zm = z0 + (top - z0) * 0.5
+    stones = []
+    for k, (za, zb, grow, swatch, seed) in enumerate(((z0 - 0.1, zm + 0.2, 1.1, "StoneDark", 131), (zm - 0.2, top, 1.0, "Stone", 137))):
+        size = (w * grow, d * grow, zb - za)
+        centre = V(cx, cy, (za + zb) / 2)
+        pieces, local = hewn(size, Matrix(), swatch, seed, cuts=1, levels=2, rough=0.05)
+        b.add("Pillar", place(pieces, M(centre)), organic=True)
+        h = zb - za
+        # a glowing crack down the front, zig-zagging, and a rune
+        path = [((0.22 if i % 2 else -0.18) * size[0] * (1 - 0.1 * i) + 0.15 * _hash(seed, i), -h * 0.38 + i * h * 0.19) for i in range(5)]
+        b.add("Pillar", place(glow_crack(local, path, radius=0.11), M(centre)))
+        rz = h * (0.12 if k else -0.05)
+        rx = -size[0] * 0.27 if k else size[0] * 0.25
+        ry = front_y(local, rx, rz, 0.6)
+        if ry is not None:
+            b.add("PillarTrim", place(rune_glyph(1.1, 3 + k, RUNE_GLOW, 0.06), M(centre) @ frame((rx, ry - 0.03, rz), out=(0, -1, 0), up=(0, 0, 1))))
+        stones.append((centre, local, h))
+    # the gold band where the stones meet, gold gems at its front corners
+    centre, local, h = stones[1]
+    b.add("PillarTrim", place(band(local, -h / 2 + 0.35, 0.45, "Gold", 0.12), M(centre)))
+    hx, hy = half_extent(local, -h / 2 + 0.35)
+    for sx in (-1, 1):
+        b.add("PillarTrim", place(gem_setting(0.24, "AuroraCyan", "Gold", 4), M(centre) @ frame((sx * hx * 0.7, -hy - 0.1, -h / 2 + 0.35), out=(0, -1, 0))))
+    # rubble round the pillar's foot and round the head's broken-out top
+    for k in range(7):
+        a = k * 2 * math.pi / 7 + 0.5
+        b.add("PillarRubble", rock((0.6, 0.5, 0.42), (cx + (w * 0.62) * math.cos(a), cy + (d * 0.64) * math.sin(a), z0 + 0.25), k + 140, "Stone" if k % 2 else "StoneDark", (0, 0, a)))
+    for k in range(5):
+        a = k * 2 * math.pi / 5 + 0.2
+        b.add("PillarRubble", rock((0.5, 0.42, 0.35), (cx + (w * 0.5) * math.cos(a), cy + (d * 0.52) * math.sin(a), top - 0.05), k + 160, "StoneDark", (0, 0, a)))
+
+
+
 # ---------- upgrade sets ----------
 
 def spiked_ball(t, c, r):

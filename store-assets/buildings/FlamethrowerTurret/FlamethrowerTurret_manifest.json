@@ -153,6 +153,7 @@
     "top": 7.0,
     "target": 7.0,
     "short": false,
+    "lift": 0.0,
     "base": [
      "Planks"
     ]
@@ -522,6 +523,7 @@
     "top": 11.0,
     "target": 11.0,
     "short": false,
+    "lift": 0.0,
     "base": [
      "Frame",
      "WheelL",
@@ -958,6 +960,7 @@
     "top": 17.0,
     "target": 17.0,
     "short": false,
+    "lift": 0.0,
     "base": [
      "Deck",
      "DeckCrystals",
@@ -1422,6 +1425,7 @@
     "top": 25.0,
     "target": 25.0,
     "short": false,
+    "lift": 0.0,
     "base": [
      "Dais",
      "DaisCrystals",
@@ -1774,6 +1778,26 @@
     [
      "FlamethrowerTurretT5Hoses",
      984
+    ],
+    [
+     "FlamethrowerTurretT5Deck",
+     72
+    ],
+    [
+     "FlamethrowerTurretT5DeckTrim",
+     72
+    ],
+    [
+     "FlamethrowerTurretT5Tower",
+     1124
+    ],
+    [
+     "FlamethrowerTurretT5TowerTrim",
+     576
+    ],
+    [
+     "FlamethrowerTurretT5TowerLightsGlow",
+     140
     ]
    ],
    "upgrades": [
@@ -1907,7 +1931,7 @@
    "size": [
     20.27,
     19.24,
-    22.29
+    34.0
    ],
    "fitsPad": true,
    "growth": {
@@ -1917,9 +1941,10 @@
      0.0,
      -0.058
     ],
-    "top": 22.29,
+    "top": 34.0,
     "target": 34.0,
-    "short": true,
+    "short": false,
+    "lift": 11.713,
     "base": [
      "Platform",
      "PlatformGlow",
@@ -1931,7 +1956,7 @@
     "Work": {
      "position": [
       -0.0,
-      10.933,
+      22.646,
       -5.383
      ],
      "out": [
@@ -1948,7 +1973,7 @@
     "Lamp1": {
      "position": [
       -7.897,
-      8.82,
+      20.533,
       7.572
      ],
      "out": [
@@ -1965,7 +1990,7 @@
     "Lamp2": {
      "position": [
       7.897,
-      8.82,
+      20.533,
       7.572
      ],
      "out": [
@@ -1982,7 +2007,7 @@
     "Gear1": {
      "position": [
       -7.201,
-      3.649,
+      15.363,
       1.179
      ],
      "out": [
@@ -1999,7 +2024,7 @@
     "Gear2": {
      "position": [
       7.201,
-      3.649,
+      15.363,
       1.179
      ],
      "out": [
@@ -2016,7 +2041,7 @@
     "Gauge1": {
      "position": [
       7.897,
-      4.966,
+      16.679,
       5.842
      ],
      "out": [
@@ -2033,7 +2058,7 @@
     "Gauge2": {
      "position": [
       -7.897,
-      4.966,
+      16.679,
       5.842
      ],
      "out": [
@@ -2050,7 +2075,7 @@
     "Steam1": {
      "position": [
       -0.605,
-      15.276,
+      26.989,
       -7.328
      ],
      "out": [
@@ -2067,7 +2092,7 @@
     "Steam2": {
      "position": [
       0.605,
-      15.276,
+      26.989,
       -7.328
      ],
      "out": [
@@ -2101,7 +2126,7 @@
     "Trail": {
      "position": [
       -0.0,
-      10.933,
+      22.646,
       -5.383
      ],
      "out": [
@@ -2118,7 +2143,7 @@
     "Crown": {
      "position": [
       -0.0,
-      18.613,
+      30.326,
       -3.238
      ],
      "out": [
@@ -2135,7 +2160,7 @@
     "Eyes": {
      "position": [
       1.557,
-      16.035,
+      27.749,
       -6.502
      ],
      "out": [
@@ -2152,7 +2177,7 @@
     "Eyes2": {
      "position": [
       -1.557,
-      16.035,
+      27.749,
       -6.502
      ],
      "out": [
@@ -2203,7 +2228,7 @@
     "Top": {
      "position": [
       -0.0,
-      19.846,
+      31.559,
       -3.911
      ],
      "out": [

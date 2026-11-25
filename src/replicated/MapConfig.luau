@@ -19,6 +19,10 @@ MapConfig.TapMargin = 6 -- studs outside the plot square that still count as "in
 
 MapConfig.Mound = { Size = 30, Height = 3 } -- the snow mound under the ice (square, rounded later)
 MapConfig.Border = { Height = 3, Thickness = 2, FrontGap = 44 } -- the low snow wall, open at the front
+-- The name sign is an arch over the open front: two posts on the wall ends and a beam high enough that the
+-- tallest ice (23 studs with its mound, 50 studs behind the arch) stays in view beneath it from the plaza
+-- and the path (tests/World.spec.luau checks the line of sight).
+MapConfig.Arch = { ClearHeight = 20, BeamHeight = 3, BeamDepth = 2, PostSize = 3 }
 MapConfig.TapSpot = { X = 0, Z = 24 } -- where a player arrives in their plot: in front of the ice
 
 -- The plot ring: plot i's centre and facing. Returns a CFrame whose LookVector points AWAY from the

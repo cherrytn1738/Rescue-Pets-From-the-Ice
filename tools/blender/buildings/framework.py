@@ -86,7 +86,7 @@ def mesh_points(objs):
     return {o.name: [tuple(o.matrix_world @ v.co) for v in o.data.vertices] for o in objs if o.type == "MESH"}
 
 
-def grow_tier(bid, t, station, others, atts, standins=()):
+def grow_tier(bid, t, station, others, atts, standins=(), module=None, b=None):
     """Grows tier t of a building to its height: everything above its base scales uniformly about the base's
     top centre (the base keeps its pad size), capped by the room on the plot (heights.py). station: the
     station's mesh objects; others: its upgrade sets' mesh objects; standins: the render-only FX and aura
@@ -109,20 +109,99 @@ def grow_tier(bid, t, station, others, atts, standins=()):
     index = PAD_OF[bid]
     target = TIER_HEIGHTS[index][t - 1]
     scale, reached = HEIGHTS.best_scale(PADS[index], HEIGHTS.neighbours(PADS, index), base_top, top, target, outline, (cx, cy))
-    centre = Vector((cx, cy, base_top))
-    m = Matrix.Translation(centre) @ Matrix.Diagonal((scale, scale, scale, 1.0)) @ Matrix.Translation(-centre)
+    # no room to grow all the way: a building with a PEDESTAL stands its grown character on a tall, narrow
+    # pedestal instead (the character keeps its approved shape; the pedestal makes up the height)
+    lift = target - reached if module and "PEDESTAL" in module and b is not None and reached < target - 0.3 else 0.0
+    m = growth_matrix(scale, (cx, cy), base_top, lift)
+    # upgrade pieces standing on the floor (lamps, glowing rocks; a glow mesh goes with its solid one) aren't lifted;
+    # on a pedestal building they grow where they stand, so they stay on the plinth at their attachment points
+    def family(o):
+        return o.name[:-4] if o.name.endswith("Glow") else o.name
+
+    family_points = {}
+    for o in others:
+        family_points.setdefault(family(o), []).extend(o.matrix_world @ v.co for v in o.data.vertices)
+    feet = {}
+    for key, vs in family_points.items():
+        feet[key] = Vector(((min(v.x for v in vs) + max(v.x for v in vs)) / 2, (min(v.y for v in vs) + max(v.y for v in vs)) / 2, min(v.z for v in vs)))
+    on_floor = {o for o in others if o in grows and feet[family(o)].z < base_top + 0.15}
+    m_floor = growth_matrix(scale, (cx, cy), base_top)
     for o in grows:
-        local = o.matrix_world.inverted() @ m @ o.matrix_world
-        o.data.transform(local)
+        mo = m
+        if o in on_floor:
+            mo = m_floor
+            if lift:
+                foot = feet[family(o)]
+                mo = Matrix.Translation(foot) @ Matrix.Diagonal((scale, scale, scale, 1.0)) @ Matrix.Translation(-foot)
+        o.data.transform(o.matrix_world.inverted() @ mo @ o.matrix_world)
         o.data.update()
     for name, frame_ in list(atts.items()):
         if frame_.to_translation().z > slack:
             moved = frame_.copy()
             moved.translation = m @ frame_.to_translation()
             atts[name] = moved
-    print("%s T%d grows x%.2f: top %.1f -> %.1f (target %d)%s" % (bid, t, scale, top, reached, target, "  SHORT: no room" if reached < target - 0.3 else ""))
+    if lift:
+        raise_on_pedestal(module, t, b, [o for o in grows if o not in standins and o not in on_floor], base_top, lift, m)
+        reached += lift
+    print("%s T%d grows x%.2f: top %.1f -> %.1f (target %d)%s%s" % (bid, t, scale, top, reached, target,
+          "  on a %.1f-stud pedestal" % lift if lift else "", "  SHORT: no room" if reached < target - 0.3 else ""))
     return {"scale": round(scale, 4), "baseTop": round(base_top, 3), "centre": [round(cx, 3), round(cy, 3)], "top": round(reached, 2),
-            "target": target, "short": reached < target - 0.3, "base": sorted(n.replace("%sT%d" % (bid, t), "") for n in base)}
+            "target": target, "short": reached < target - 0.3, "lift": round(lift, 3),
+            "base": sorted(n.replace("%sT%d" % (bid, t), "") for n in base)}
+
+
+def growth_matrix(scale, centre, base_top, lift=0.0):
+    """Scales about the base's top centre, then lifts by `lift` (the pedestal's height)."""
+    c = Vector((centre[0], centre[1], base_top))
+    return Matrix.Translation((0, 0, lift)) @ Matrix.Translation(c) @ Matrix.Diagonal((scale, scale, scale, 1.0)) @ Matrix.Translation(-c)
+
+
+def floor_outline(objs, z0, z1):
+    """The convex outline (x, y) of every vertex of objs between heights z0 and z1: what stands on a deck at z0."""
+    pts = [(p.x, p.y) for o in objs for p in (o.matrix_world @ v.co for v in o.data.vertices) if z0 <= p.z <= z1]
+    return HEIGHTS.hull(pts)
+
+
+def prism(outline, z0, z1, inset=0.0, min_edge=0.9):
+    """A bmesh: a convex outline (x, y) extruded from z0 to z1, pulled in toward its middle by inset (a deck)."""
+    kept = [outline[0]]
+    for p in outline[1:]:  # (a coarser outline: fewer triangles)
+        if math.hypot(p[0] - kept[-1][0], p[1] - kept[-1][1]) >= min_edge:
+            kept.append(p)
+    outline = kept
+    cx = sum(p[0] for p in outline) / len(outline)
+    cy = sum(p[1] for p in outline) / len(outline)
+    pts = []
+    for x, y in outline:
+        d = Vector((x - cx, y - cy))
+        k = max(0.0, d.length - inset) / d.length if d.length > 1e-6 else 0.0
+        pts.append((cx + d.x * k, cy + d.y * k))
+    bm = bmesh.new()
+    bottom = [bm.verts.new((x, y, z0)) for x, y in pts]
+    top = [bm.verts.new((x, y, z1)) for x, y in pts]
+    bm.faces.new(top)
+    bm.faces.new(list(reversed(bottom)))
+    for i in range(len(pts)):
+        j = (i + 1) % len(pts)
+        bm.faces.new((bottom[i], bottom[j], top[j], top[i]))
+    return bm
+
+
+def grown_part(info, role):
+    """The lifted mesh of one role (e.g. "Head") in a pedestal's info."""
+    return next(o for o in info["grown"] if o.name.endswith(role) and not o.name.endswith("Glow"))
+
+
+def points_of(obj):
+    return [obj.matrix_world @ v.co for v in obj.data.vertices]
+
+
+def raise_on_pedestal(module, t, b, grown, base_top, lift, m):
+    """Adds the building's pedestal (module PEDESTAL(t, b, info)) to Builder b and finishes it into b.made.
+    info: bottom (the base top), top (where the lifted character's floor now is), matrix (the growth: a point
+    of the tier as modelled -> where it stands now) and grown (the lifted meshes, station and upgrades)."""
+    module["PEDESTAL"](t, b, {"bottom": base_top, "top": base_top + lift, "lift": lift, "matrix": m, "grown": grown})
+    b.finish()
 
 
 # ---------- organic vs hard surfaces ----------
@@ -304,7 +383,7 @@ def build_building(module, bid):
                 obj["aura"] = True
         others = [o for u in range(1, 6) for ur in [bpy.data.objects.get("%sT%dU%d" % (bid, t, u))] if ur for o in ur.children if o.type == "MESH"]
         standins = list(fx.made) + (list(aura.made) if t == 5 else [])
-        growth = grow_tier(bid, t, list(b.made), others, atts, standins)
+        growth = grow_tier(bid, t, list(b.made), others, atts, standins, module, b)
         attach(b, atts)
         bpy.context.view_layer.update()
         lo, hi = bounds_of(b.made)

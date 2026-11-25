@@ -56,6 +56,10 @@ normals on import.
   room: short of the half-way line to every other pad, off the fence ring round the ice and inside the plot.
   The manifest's `growth` records the scale, the height reached and whether it fell short. `fitsPad` means
   the base is on its pad and the rest is in its room.
+- **Pedestals:** a building module with a `PEDESTAL(t, b, info)` function (Wrecking Crane, Flamethrower
+  Turret, Lava Pump) doesn't fall short: its capped character is lifted by the missing height (`growth.lift`)
+  and stands on the pedestal that function builds (rock pillar, drum tower, lava-rock column). Upgrade pieces
+  standing on the floor (lamps, glowing rocks) stay on the plinth and grow where they stand.
 - **Import scale:** building FBX files are exported at a quarter scale, so Studio's import arrives at 25x
   (not 100x). A grown tier has meshes over 20 studs, and Roblox caps a part at 2048 studs on each axis.
   `tools/studio/build_templates.luau` detects the factor. The ice picks still arrive at 100x.

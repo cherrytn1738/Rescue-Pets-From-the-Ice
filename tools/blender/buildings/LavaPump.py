@@ -631,25 +631,43 @@ def lp_enchanted(b):
 # ---------- tier 5: Legendary - the Volcano Forge ----------
 
 VC = V(0, 0.9, 0)  # the volcano's axis
-VOLCANO_PROFILE = [(0, 1.15), (4.75, 1.15), (4.65, 1.5), (4.15, 2.4), (3.55, 3.6), (3.1, 5.0), (2.75, 6.6), (2.45, 8.2),
-                   (2.2, 9.5), (2.05, 10.25), (1.8, 10.55), (1.5, 10.45), (1.28, 9.95), (0.0, 9.8)]
+# The cone as first approved, in "design heights" z: everything on the volcano is placed by design height.
+# It stands on a lava-rock column now (PEDESTAL), so it is built slimmer and taller: vz() stretches the heights
+# by TALL and slim() pulls the lower slopes in (the face, crown and crater keep their approved sizes).
+DESIGN_PROFILE = [(0, 1.15), (4.75, 1.15), (4.65, 1.5), (4.15, 2.4), (3.55, 3.6), (3.1, 5.0), (2.75, 6.6), (2.45, 8.2),
+                  (2.2, 9.5), (2.05, 10.25), (1.8, 10.55), (1.5, 10.45), (1.28, 9.95), (0.0, 9.8)]
+FLOOR_Z, TALL, SLIM_FOOT, SLIM_TOP_Z = 1.15, 1.22, 0.78, 9.5
+PROP_IN = 0.84  # the forge's props move in with the slimmer foot
+
+
+def vz(z):
+    """A design height -> the real height on the taller cone."""
+    return FLOOR_Z + (z - FLOOR_Z) * TALL if z > FLOOR_Z else z
+
+
+def slim(z):
+    """How much the cone's radius is pulled in at design height z (most at the foot, none from the face up)."""
+    return SLIM_FOOT + (1 - SLIM_FOOT) * max(0.0, min(1.0, (z - FLOOR_Z) / (SLIM_TOP_Z - FLOOR_Z)))
+
+
+VOLCANO_PROFILE = [(r * slim(z), vz(z)) for r, z in DESIGN_PROFILE]
 
 
 def vol_r(z):
-    """The volcano's outside radius at height z (the profile, before the noise)."""
-    outer = VOLCANO_PROFILE[1:-3]
+    """The volcano's outside radius at design height z (the profile, before the noise)."""
+    outer = DESIGN_PROFILE[1:-3]
     for (r0, z0), (r1, z1) in zip(outer, outer[1:]):
         if z0 <= z <= z1:
-            return r0 + (r1 - r0) * (z - z0) / (z1 - z0)
-    return outer[-1][0]
+            return (r0 + (r1 - r0) * (z - z0) / (z1 - z0)) * slim(z)
+    return outer[-1][0] * slim(z)
 
 
 def vol_point(a, z, lift=0.0):
-    """A point on the volcano's skin at angle a (0 = +X, -90 deg = the face) and height z, and its normal."""
+    """A point on the volcano's skin at angle a (0 = +X, -90 deg = the face) and design height z, and its normal."""
     r = vol_r(z) - 0.06 + lift
-    slope = (vol_r(z + 0.1) - vol_r(z - 0.1)) / 0.2
+    slope = (vol_r(z + 0.1) - vol_r(z - 0.1)) / (vz(z + 0.1) - vz(z - 0.1))
     n = V(math.cos(a), math.sin(a), -slope).normalized()
-    return VC + V(r * math.cos(a), r * math.sin(a), z), n
+    return VC + V(r * math.cos(a), r * math.sin(a), vz(z)), n
 
 
 def vol_face(x, z, lift=0.0):
@@ -686,19 +704,19 @@ def lp_legendary(b):
     b.add("TrimLights", trim_strip((-2.0, -5.83, 0.4), (2.0, -5.83, 0.4), 0.14, "AuroraGreen", True))
     for k, (p0, p1, p2) in enumerate((((-1.2, -4.0), (-2.2, -4.8), (-2.6, -5.3)), ((1.3, -3.7), (2.0, -4.3), (1.8, -5.1)),
                                        ((-4.0, -2.0), (-4.7, -2.9), (-5.2, -3.1)), ((4.3, 3.4), (4.9, 4.2), (5.2, 4.3)))):
-        b.add("LavaCracks", lp_stream([(p0[0], p0[1], 1.2), (p1[0], p1[1], 1.21), (p2[0], p2[1], 1.2)], 0.07, 0.03, segments=6))
+        b.add("FloorCracks", lp_stream([(p0[0], p0[1], 1.2), (p1[0], p1[1], 1.21), (p2[0], p2[1], 1.2)], 0.07, 0.03, segments=6))
     # the volcano: a rocky cone (organic), a crater of lava, lava running down its sides, rock ledges
     cone = bmesh.new()
     lathe(cone, VOLCANO_PROFILE, 32, M(VC))
     for v in cone.verts:
         d = V(v.co.x - VC.x, v.co.y - VC.y, 0)
-        if d.length > 0.5 and 1.6 < v.co.z < 10.3:
+        if d.length > 0.5 and 1.6 < v.co.z < vz(10.3):
             front_face = max(0.0, -d.normalized().y - 0.55) * 2.2  # keep the face smooth
             a = math.atan2(d.y, d.x)
             bump = 0.3 * lp_noise(v.co.x * 0.6, v.co.y * 0.6, v.co.z * 0.55, 4) + 0.22 * math.sin(7 * a + 0.8 * v.co.z) * min(1.0, (v.co.z - 1.6) / 2.0)
             v.co += d.normalized() * bump * (1 - min(1.0, front_face))
     b.add("Volcano", [(subsurf(cone, 1), "StoneDark", 0.0, False)], organic=True)
-    b.add("CraterLava", place(lp_pool(1.4, 18, 4, 0.2), M(VC + V(0, 0, 9.85))))
+    b.add("CraterLava", place(lp_pool(1.4, 18, 4, 0.2), M(VC + V(0, 0, vz(9.85)))))
     for k, a in enumerate((0.35, 1.25, 2.2, 2.9, 3.7, 5.55)):
         pts = []
         for z in (10.35, 9.4, 8.3, 7.0, 5.8, 4.6 - 0.5 * (k % 2)):
@@ -719,7 +737,7 @@ def lp_legendary(b):
     for k in range(16):  # basalt columns round the foot, leaving the face and the hose clear
         a = math.pi / 2 + (k - 7.5) * 0.3
         h = 0.8 + 0.55 * ((k * 7) % 4)
-        p = VC + V(4.5 * math.cos(a), 4.5 * math.sin(a), 1.1)
+        p = VC + V(4.5 * SLIM_FOOT * math.cos(a), 4.5 * SLIM_FOOT * math.sin(a), 1.1)
         if p.y > 5.6:
             p.y = 5.6
         col = bmesh.new()
@@ -732,7 +750,7 @@ def lp_legendary(b):
             pts.append(q)
         b.add("LavaCracks", lp_stream(pts, 0.08, 0.03, LAVA, per=2, segments=6))
     # the crown on the crater rim: a gold band, obsidian and gold spikes, lava gems
-    rim_z = 10.3
+    rim_z = vz(10.3)
     b.add("Crown", lp_ring(M(VC + V(0, 0, rim_z - 0.15)), 2.02, 0.17, "Gold", segments=26, minor_segments=6))
     b.add("Crown", lp_ring(M(VC + V(0, 0, rim_z + 0.2)), 1.92, 0.08, "Gold", segments=26))
     for k in range(10):
@@ -801,7 +819,7 @@ def lp_legendary(b):
     for sx in (-1, 1):
         a = math.pi / 2 - sx * 1.05
         top, n = vol_point(a, 6.0, 0.15)
-        foot = VC + V(sx * 4.8, 1.8, 1.2)
+        foot = VC + V(sx * 4.8 * PROP_IN, 1.8 * PROP_IN, 1.2)
         b.add("Pistons", piston(foot, top, 0.3, "Gunmetal", "SteelLight"))
         b.add("Pistons", place(block((0.9, 0.9, 0.3), "Gold", corner=0.15, edge=0.06), M(foot + V(0, 0, -0.05))))
         b.add("Pistons", place(cyl(0.45, 0.25, "Gold", 14), frame(top, out=n)))
@@ -818,7 +836,7 @@ def lp_legendary(b):
         lathe(flare, [(0.25, -0.1), (0.36, 0.0), (0.5, 0.4), (0.42, 0.45), (0.26, 0.1)], 14, Matrix.Translation(hi) @ align_z(hi - lo))
         b.add("Stacks", [(flare, "Iron", 0.0, False)])
     # the bellows at the back left, puffing air into the forge through a copper pipe
-    Bw = V(-4.3, 3.5, 1.2)
+    Bw = V(-4.3 * PROP_IN, 3.5 * PROP_IN, 1.2)
     for s in (-1, 1):
         board = bmesh.new()
         rounded_block(board, (1.5, 2.0, 0.12), M(Bw + V(0, 0, 0.75 + s * 0.42), (s * 0.22, 0, 0)), corner=0.45, edge=0.05, corner_seg=2, edge_seg=1, taper=1.0)
@@ -834,7 +852,7 @@ def lp_legendary(b):
     bel, _ = lp_hose([nozzle_from, nozzle_from + V(0.3, -0.5, 0.5), pipe_to], 0.16, "Copper", "Gold", "Gold", 1)
     b.add("Bellows", bel)
     # the anvil on a stump at the front left, a glowing ingot on it, a hammer leaning on the stump
-    Av = V(-3.9, -4.2, 1.2)
+    Av = V(-3.9 * PROP_IN, -4.2 * PROP_IN, 1.2)
     b.add("Anvil", place(cyl(0.7, 0.75, "PineDark", 14), M(Av)))
     b.add("Anvil", lp_ring(M(Av + V(0, 0, 0.6)), 0.71, 0.05, "Iron", segments=14))
     b.add("Anvil", place(block((0.7, 0.55, 0.25), "Iron", corner=0.06, edge=0.04), M(Av + V(0, 0, 0.75))))
@@ -849,7 +867,7 @@ def lp_legendary(b):
     b.add("Anvil", beam_between(Av + V(-0.6, -0.55, 0.0), Av + V(-0.68, -0.05, 1.05), 0.1, swatch="PineLight"))
     b.add("Anvil", place(block((0.45, 0.25, 0.25), "Iron", corner=0.05, edge=0.03), Matrix.Translation(Av + V(-0.68, -0.05, 1.05)) @ align_z(V(-0.08, 0.5, 1.05))))
     # the gauge manifold at the right: a gold-trimmed box, two dials, pipes into the volcano
-    Mf = V(5.0, -0.6, 1.2)
+    Mf = V(5.0 * PROP_IN, -0.6 * PROP_IN, 1.2)
     b.add("Manifold", place(block((0.9, 1.6, 1.3), "Gunmetal", corner=0.15, edge=0.08), M(Mf)))
     b.add("Manifold", place(block((0.98, 1.68, 0.1), "Gold", corner=0.17, edge=0.03), M(Mf + V(0, 0, 1.25))))
     for k, y in enumerate((-0.4, 0.4)):
@@ -861,9 +879,9 @@ def lp_legendary(b):
     port, pn = vol_point(-0.62, 3.4, 0.0)
     b.add("Port", place(cyl(0.5, 0.35, "Gold", 16), frame(port, out=pn)))
     b.add("Port", place(bolt_ring(0.42, 6, 0.06, "Iron"), frame(port + pn * 0.35, out=pn)))
-    Ar = V(3.7, -4.0, 1.2)
+    Ar = V(3.7 * PROP_IN, -4.0 * PROP_IN, 1.2)
     D = V(0, -1, -0.5).normalized()
-    N = V(3.5, -4.5, 3.5)
+    N = V(3.5 * PROP_IN, -4.5 * PROP_IN, 3.5)
     b.add("Arm", place(cyl(0.6, 0.3, "Gold", 16), M(Ar)))
     b.add("Arm", place(cyl(0.35, 1.6, "Gunmetal", 14), M(Ar + V(0, 0, 0.3))))
     b.add("Arm", piston(Ar + V(0, 0, 1.6), N + V(0, 0.35, -0.55), 0.22, "Gunmetal", "SteelLight"))
@@ -872,14 +890,14 @@ def lp_legendary(b):
     b.add("Arm", [(joint, "Gold", 0.0, False)])
     work = frame(N, out=D)
     b.add("Nozzle", place(nozzle(5), work))
-    hose, pts = lp_hose([port + pn * 0.3, port + pn * 1.0 + V(0, 0, -0.4), V(4.6, -3.0, 3.4), N - D * 0.9 + V(0, 0, 0.25), N - D * 0.12],
+    hose, pts = lp_hose([port + pn * 0.3, port + pn * 1.0 + V(0, 0, -0.4), V(4.6 * PROP_IN, -3.0 * PROP_IN, 3.4), N - D * 0.9 + V(0, 0, 0.25), N - D * 0.12],
                         HOSE_R[5], "Rubber", "Gold", "Gold", 6)
     b.add("Hose", hose)
     atts = {"Work": work, "Lamp1": up_((-5.0, -5.0, 1.2)), "Lamp2": up_((5.0, -5.0, 1.2)),
             "Gear1": frame(vol_face(-3.1, 5.4, 0.0)[0], out=(-1, -0.4, 0.2)),
             "Gear2": frame(vol_face(3.1, 5.4, 0.0)[0], out=(1, -0.4, 0.2)),
             "Steam1": None, "Steam2": None,
-            "Hit": frame((N.x, -6.5, 0.3), out=(0, -1, 0.6)), "Trail": work, "Fountain": up_(VC + V(0, 0, 9.95)),
+            "Hit": frame((N.x, -6.5, 0.3), out=(0, -1, 0.6)), "Trail": work, "Fountain": up_(VC + V(0, 0, vz(9.95))),
             "Crown": up_(VC + V(0, 0, rim_z + 0.2)), "Eyes": frame(vol_face(0, 7.25)[0], out=vol_face(0, 7.25)[1]),
             "NamePlate": frame((0, -5.85, 0.45), out=(0, -1, 0)), "Aura": up_((0, 0, 1.2)), "Top": up_(VC + V(0, 0, rim_z + 1.75))}
     for sx, key in ((-1, "Steam1"), (1, "Steam2")):
@@ -892,6 +910,60 @@ def lp_legendary(b):
 
 
 TIER_FNS = [lp_scrappy, lp_workshop, lp_frosttech, lp_enchanted, lp_legendary]
+
+
+def PEDESTAL(t, b, info):
+    """Volcano Forge (Legendary): no room to grow to its full height, so the slimmer, taller cone and its forge
+    (anvil, bellows, gauges, nozzle arm) stand on a column of lava rock: faceted basalt with glowing lava veins,
+    flaring out under a rock shelf with a gold edge, a lava drip off the shelf and rocks round the foot
+    (framework.raise_on_pedestal)."""
+    if t != 5:
+        return
+    m, z0 = info["matrix"], info["bottom"]
+    foot = m @ V(VC.x, VC.y, FLOOR_Z)  # the cone's foot, now
+    deck_top = foot.z + 0.12
+    deck_bottom = deck_top - 1.3
+    outline = floor_outline(info["grown"], foot.z - 0.3, foot.z + 1.0)
+    b.add("Shelf", [(prism(outline, deck_bottom, deck_top, inset=0.15), "StoneDark", 0.15, False)])
+    b.add("ShelfTrim", [(prism(outline, deck_bottom + 0.45, deck_bottom + 0.7, inset=0.02), "Gold", 0.0, False)])
+    R = 3.6
+    cx, cy = foot.x, min(foot.y, 5.8 - R * 1.25 - 0.2)  # the column's foot stays on the plinth
+    H = deck_bottom - z0
+    profile = [(R * 1.25, z0 - 0.05), (R * 1.12, z0 + 1.2), (R * 1.0, z0 + H * 0.35), (R * 0.94, z0 + H * 0.62),
+               (R * 1.05, deck_bottom - 2.4), (R * 1.45, deck_bottom - 0.9), (R * 1.7, deck_bottom + 0.05)]
+
+    def radius_at(z):
+        for (r0, a), (r1, c) in zip(profile, profile[1:]):
+            if a <= z <= c:
+                return r0 + (r1 - r0) * (z - a) / (c - a)
+        return profile[-1][0]
+
+    column = bmesh.new()
+    lathe(column, [(0, profile[0][1])] + profile + [(0, profile[-1][1])], 14, M((cx, cy, 0)))
+    for v in column.verts:  # craggy: pushed in and out, the top and foot rings kept
+        d = V(v.co.x - cx, v.co.y - cy, 0)
+        if d.length > 0.5 and z0 + 0.3 < v.co.z < deck_bottom - 0.3:
+            v.co += d.normalized() * 0.35 * lp_noise(v.co.x * 0.5, v.co.y * 0.5, v.co.z * 0.45, 7)
+    b.add("Column", [(faceted(column), "StoneDark", 0.0, False)])
+    # glowing lava veins running down the column, brightest near the shelf
+    for k, a in enumerate((-1.25, -2.05, -0.5, 2.3)):
+        pts = []
+        for i in range(6):
+            z = deck_bottom - 0.6 - i * (H - 1.4) / 5
+            aa = a + 0.18 * math.sin(i * 1.9 + k)
+            r = radius_at(z) + 0.05
+            pts.append(V(cx + r * math.cos(aa), cy + r * math.sin(aa), z))
+        b.add("ColumnLava", lp_stream(pts, 0.2, 0.07, LAVA, per=2, segments=6))
+    # a lava drip falling from the shelf's front edge
+    fx, fy = outline[min(range(len(outline)), key=lambda i: outline[i][1] + 0.4 * abs(outline[i][0] + 2.0))]
+    b.add("ColumnLava", lp_stream([V(fx * 0.97, fy * 0.97 + 0.1, deck_top - 0.1), V(fx * 0.97, fy * 0.97 - 0.05, deck_bottom - 0.3),
+                                   V(fx * 0.97, fy * 0.97 - 0.05, deck_bottom - 1.6)], 0.2, 0.08, LAVA_HOT, per=3, segments=6))
+    # rocks round the column's foot
+    for k in range(6):
+        a = k * 2 * math.pi / 6 + 0.4
+        p = V(cx + R * 1.3 * math.cos(a), cy + R * 1.3 * math.sin(a), z0 + 0.2)
+        b.add("ColumnRocks", lp_rock(p, (0.75, 0.6, 0.5), "Gunmetal" if k % 2 else "StoneDark", k + 70, floor=z0 - 0.05))
+
 
 
 # ---------- the upgrade sets ----------

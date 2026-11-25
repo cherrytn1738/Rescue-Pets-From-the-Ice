@@ -39,13 +39,18 @@ def legendary_sheet():
         # grow it as the pipeline did (the building's manifest records its Legendary's growth)
         manifest = json.load(open(os.path.join(REPO, "store-assets", "buildings", bid, bid + "_manifest.json"), encoding="utf-8"))
         g = manifest["tiers"][4]["growth"]
-        centre = Vector((g["centre"][0], g["centre"][1], g["baseTop"]))
-        m = Matrix.Translation(centre) @ Matrix.Diagonal((g["scale"], g["scale"], g["scale"], 1.0)) @ Matrix.Translation(-centre)
+        lift = g.get("lift", 0.0)
+        m = growth_matrix(g["scale"], g["centre"], g["baseTop"], lift)
+        grown = []
         for o in b.made + fx.made:
             role = o.name.replace(bid + "Legend", "")
             high = max((o.matrix_world @ v.co).z for v in o.data.vertices) > g["baseTop"] + HEIGHTS.BASE_SLACK
             if (o in b.made and role not in g["base"]) or (o in fx.made and high):
                 o.data.transform(o.matrix_world.inverted() @ m @ o.matrix_world)
+                if o in b.made:
+                    grown.append(o)
+        if lift:  # stands on its pedestal, as in the pipeline
+            raise_on_pedestal(module, 5, b, grown, g["baseTop"], lift, m)
         roots.append((bid, b.root))
     rig, avatar, _ = reference(coll_in(scene, "Reference"))
     cam = stage(scene)

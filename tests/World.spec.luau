@@ -151,6 +151,15 @@ return function(sources)
 
 	-- Map and rush settings ---------------------------------------------------------------------------
 	check(MapConfig.PlotCount == 8, "eight plots per server")
+	-- The name sign arches over the open front: a viewer's line of sight (eye 6 studs up) to the top of the
+	-- tallest ice passes under its beam from anywhere on the path, highest at the arch for the farthest viewer
+	-- (the plaza's centre). Its posts stand outside the opening.
+	local arch = MapConfig.Arch
+	local half = MapConfig.PlotSize / 2
+	local iceTop = MapConfig.Mound.Height + LayerConfig.Block.HeightAtLevel50
+	local far = MapConfig.RingRadius - half
+	check(6 + (iceTop - 6) * far / (far + half) < arch.ClearHeight, "the tallest ice is in full view under the arch from the plaza and the path")
+	check(arch.PostSize > 0 and arch.BeamHeight > 0 and MapConfig.Border.FrontGap / 2 + arch.PostSize <= MapConfig.PlotSize / 2, "the arch's posts stand on the front wall, outside the opening")
 	for index = 1, MapConfig.PlotCount do
 		local cf = MapConfig.PlotCFrame(index)
 		local front = (cf * CFrame.new(0, 0, 1)).Position - cf.Position

@@ -27,6 +27,7 @@ local PlotService = {}
 local SNOW = Color3.fromRGB(236, 244, 252)
 local SNOW_SHADE = Color3.fromRGB(205, 222, 240)
 local PAD = Color3.fromRGB(150, 170, 195)
+local SIGN = Color3.fromRGB(60, 110, 170)
 -- Greybox colours, one per building (stand-ins until the art is approved).
 local STAND_IN_COLOURS = {
 	IcePickPost = Color3.fromRGB(160, 120, 80),
@@ -121,8 +122,16 @@ local function buildPlot(index: number): Model
 	stands.Name = "Buildings"
 	stands.Parent = model
 
-	local sign = part(model, "Sign", Vector3.new(16, 4, 1), cf * CFrame.new(0, 6, half + 2), Color3.fromRGB(60, 110, 170), Enum.Material.SmoothPlastic)
-	label(sign, "Free plot", Vector3.new(0, 3.5, 0), UDim2.fromScale(18, 3.5)).Name = "OwnerLabel"
+	-- The name sign: an arch over the open front (the beam is "Sign", carrying the owner's name).
+	local arch = MapConfig.Arch
+	local top = arch.ClearHeight + arch.BeamHeight
+	local postX = b.FrontGap / 2 + arch.PostSize / 2
+	for _, sideX in { -1, 1 } do
+		local post = part(border, sideX < 0 and "ArchLeft" or "ArchRight", Vector3.new(arch.PostSize, top, arch.PostSize), cf * CFrame.new(sideX * postX, top / 2, half), SIGN, Enum.Material.SmoothPlastic)
+		part(post, "Cap", Vector3.new(arch.PostSize + 1, 1, arch.PostSize + 1), cf * CFrame.new(sideX * postX, top + 0.5, half), SNOW)
+	end
+	local sign = part(model, "Sign", Vector3.new(b.FrontGap + 2 * arch.PostSize, arch.BeamHeight, arch.BeamDepth), cf * CFrame.new(0, arch.ClearHeight + arch.BeamHeight / 2, half), SIGN, Enum.Material.SmoothPlastic)
+	label(sign, "Free plot", Vector3.new(0, arch.BeamHeight / 2 + 2.5, 0), UDim2.fromScale(22, 4.5)).Name = "OwnerLabel"
 
 	local block = Instance.new("Folder")
 	block.Name = "Block"

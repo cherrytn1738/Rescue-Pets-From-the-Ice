@@ -167,6 +167,7 @@ Each tier changes the silhouette, the materials and the glow, so players can tel
 - **Taller, not wider:** the base stays the pad's size; only the structure above it grows. Characters may overhang their base a little, but never onto a neighbouring pad or the fence ring.
 - **The ice stays the centrepiece:** front pads stay lower than the ice block, so the open front never hides it from the plaza.
 - **Masterwork** keeps the Legendary height; its crown and extras may add a little on top.
+- **Pedestals:** a back-row Legendary too wide to grow to its height in its room (the Titan Arm, Dragon Turret and Volcano Forge) keeps its shape and stands on a tall, narrow themed pedestal instead: a rock pillar, a stacked drum tower, a lava-rock column.
 
 | Building | 1: Scrappy | 10: Workshop | 25: Frost-tech | 50: Enchanted | 100: Legendary |
 | --- | --- | --- | --- | --- | --- |
@@ -449,6 +450,7 @@ Each plot is a 100 × 100 stud square of snow with the ice block in the middle, 
 - **Ice block:** 14 studs tall at level 1 (about 2.5 avatars), growing to 20 studs by level 50. It sits on a raised snow mound so it's visible over the fence.
 - **Tapping spot:** the open area in front of the ice, where the player usually stands with their pets.
 - **Border:** a low snow wall in the player's rebirth colour, open at the front.
+- **Name sign:** an arch over the open front carrying the owner's name, its beam 20 studs up so the ice stays in view beneath it from the plaza and the path.
 
 **The map.**
 

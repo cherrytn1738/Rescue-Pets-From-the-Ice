@@ -168,8 +168,8 @@
     "groupId": "921449746"
    },
    "moderationState": "Approved",
-   "sha256": "35d15f42a828316b097eda5bc78a55ea9d823aeb57e8d7dd1b0323ab53353aec",
-   "updated": "2026-11-25T00:23:28+00:00"
+   "sha256": "d14938499e6052044587c77f20e39920e7bb55ed1fab3ebdb12ab278fc3f77e8",
+   "updated": "2026-11-25T02:21:05+00:00"
   },
   "FlamethrowerTurret/fbx/FlamethrowerTurret_T5_Upgrades.fbx": {
    "assetId": "91566409512525",
@@ -177,8 +177,8 @@
     "groupId": "921449746"
    },
    "moderationState": "Approved",
-   "sha256": "68f8425e47c3a9daabc67eb0f59fb470683653a4130664bcb6aad696e63c4703",
-   "updated": "2026-11-25T00:23:41+00:00"
+   "sha256": "21a691d039dceee9dbc886920e64aadb3c9dbb26875e256a669e04e7b453753d",
+   "updated": "2026-11-25T02:21:18+00:00"
   },
   "HeatLamp/fbx/HeatLamp_T1.fbx": {
    "assetId": "86787464860708",
@@ -528,8 +528,8 @@
     "groupId": "921449746"
    },
    "moderationState": "Approved",
-   "sha256": "9aaddd798c9c0be530f117a0f722727292fb3f7e31ca790cca016dd940fc6f65",
-   "updated": "2026-11-25T00:31:36+00:00"
+   "sha256": "dab37b9158dde14731addb2af38163afd00174170699f5967c80cb7ba7a2bee0",
+   "updated": "2026-11-25T02:21:27+00:00"
   },
   "LavaPump/fbx/LavaPump_T5_Upgrades.fbx": {
    "assetId": "135670105298451",
@@ -537,8 +537,8 @@
     "groupId": "921449746"
    },
    "moderationState": "Approved",
-   "sha256": "2d2b0e2b48d5bbd13ea16d368e35d4f768154e80dc7d7d0d2a477cb65f2c3738",
-   "updated": "2026-11-25T00:31:57+00:00"
+   "sha256": "c8d331a05024d55479d94b38efc9bfec6084847582a85117b9a2b19ab20accc4",
+   "updated": "2026-11-25T02:21:40+00:00"
   },
   "SunMirrorTower/fbx/SunMirrorTower_T1.fbx": {
    "assetId": "96910763552517",
@@ -708,8 +708,8 @@
     "groupId": "921449746"
    },
    "moderationState": "Approved",
-   "sha256": "845b945dc45f6449b05c6276473227db1a184f7f80e04f985e6438b4462ca23e",
-   "updated": "2026-11-25T00:35:39+00:00"
+   "sha256": "1a17746178f9eef2f773670e753aa932cec2a30ea850b9608c5f81d7d6e24cff",
+   "updated": "2026-11-25T02:21:48+00:00"
   },
   "WreckingCrane/fbx/WreckingCrane_T5_Upgrades.fbx": {
    "assetId": "82504420504935",
@@ -717,8 +717,8 @@
     "groupId": "921449746"
    },
    "moderationState": "Approved",
-   "sha256": "850cf70489999ab002bc6a91c682bc3e3379ecf031ad5107116d367e8b24f6f9",
-   "updated": "2026-11-25T00:35:52+00:00"
+   "sha256": "28f651e44fbaaafddd6477214770f456ab26b902419e35615910b0176de992cd",
+   "updated": "2026-11-25T02:22:01+00:00"
   }
  },
  "creator": {
