@@ -115,16 +115,42 @@ function PetService.Give(player: Player, creatureId: string, golden: boolean): b
 	return true
 end
 
+-- A list of pet uids from a client: 1 to MAX_LIST short strings, no repeats (a repeated uid would make Delete
+-- remove a second, unpicked pet), nothing but the list's own entries.
 local function uidList(value)
 	if type(value) ~= "table" or #value == 0 or #value > MAX_LIST then
 		return nil
 	end
-	for _, uid in value do
-		if type(uid) ~= "string" or #uid > 64 then
+	local seen, count = {}, 0
+	for key, uid in value do
+		count += 1
+		if type(key) ~= "number" or type(uid) ~= "string" or #uid > 64 or seen[uid] then
 			return nil
 		end
+		seen[uid] = true
 	end
-	return value
+	return if count == #value then value else nil
+end
+
+-- Equipped must only hold owned, distinct uids (the save refuses anything else): a last guard after
+-- every request.
+local function cleanEquipped(data)
+	local owned, seen, kept = {}, {}, {}
+	for _, pet in data.Pets do
+		owned[pet.Uid] = true
+	end
+	for _, uid in data.Equipped do
+		if owned[uid] and not seen[uid] then
+			seen[uid] = true
+			table.insert(kept, uid)
+		end
+	end
+	if #kept ~= #data.Equipped then
+		table.clear(data.Equipped)
+		for _, uid in kept do
+			table.insert(data.Equipped, uid)
+		end
+	end
 end
 
 local actions = {}
@@ -134,7 +160,7 @@ function actions.Equip(player, data, uid)
 		return false, "You don't have that pet."
 	end
 	if table.find(data.Equipped, uid) then
-		return true, "Already equipped."
+		return true, "Already equipped.", nil, true -- (nothing changed: no save)
 	end
 	if #data.Equipped >= PetService.Slots(player, data) then
 		return false, "Your pet slots are full. Unequip one first."
@@ -169,6 +195,9 @@ function actions.Delete(player, data, uids)
 	end
 	for _, uid in uids do
 		local _, index = findPet(data, uid)
+		if not index then
+			continue -- (can't happen with a checked list: never table.remove(list, nil), which removes the last one)
+		end
 		table.remove(data.Pets, index)
 		local at = table.find(data.Equipped, uid)
 		if at then
@@ -214,16 +243,19 @@ function actions.CombineGolden(player, data, uid)
 end
 
 function actions.MarkSeen(player, data, ids)
-	if type(ids) ~= "table" or #ids > MAX_LIST then
+	if type(ids) ~= "table" or #ids > MAX_LIST or (#ids == 0 and next(ids) ~= nil) then
 		return false, "Nothing to mark."
 	end
-	for _, id in ids do
+	local removed = 0
+	for index = 1, #ids do
+		local id = ids[index]
 		local at = type(id) == "string" and table.find(data.BookNew, id)
 		if at then
 			table.remove(data.BookNew, at)
+			removed += 1
 		end
 	end
-	return true, ""
+	return true, "", nil, removed == 0 -- (nothing removed: no save)
 end
 
 function PetService.Handle(player: Player, action, argument)
@@ -239,8 +271,9 @@ function PetService.Handle(player: Player, action, argument)
 	if not data then
 		return { ok = false, message = "Your data isn't ready yet." }
 	end
-	local ok, message, extra = actions[action](player, data, argument)
-	if ok then
+	local ok, message, extra, unchanged = actions[action](player, data, argument)
+	cleanEquipped(data)
+	if ok and not unchanged then
 		changed(player, data)
 	end
 	return { ok = ok, message = message, uid = extra }

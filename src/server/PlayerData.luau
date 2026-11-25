@@ -40,6 +40,10 @@ local STUDIO_FRESH_STORE = "IcePets_PlayerData_StudioFresh" -- a brand-new throw
 
 local SCHEMA_VERSION = 1
 local AUTOSAVE_SECONDS = 60
+-- MarkImportant saves on the next tick, but at most once every IMPORTANT_GAP_SECONDS per player: gameplay
+-- marks many things important (a rescue, a build, a pet), and one DataStore key shouldn't be written more
+-- often than every ~6 s. Robux grants don't wait: they use SaveNow.
+local IMPORTANT_GAP_SECONDS = 15
 local LEASE_SECONDS = 180 -- how long a claim lasts without being renewed
 local LEASE_SAFETY_SECONDS = 15 -- stop gameplay this long before the lease could run out
 local LEASE_HELD = "data is still in use by another server"
@@ -142,7 +146,7 @@ end
 -- A queued gift in the recipient's inbox: { Id = the buyer's PurchaseId, Product, From, FromName }.
 -- A product this game doesn't sell (any more) can't be given, so it drops.
 local function cleanGift(entry)
-	if type(entry) ~= "table" or not isIdText(entry.Id) or not MonetizationConfig.GetProduct(entry.Product) or not isUserId(entry.From) then
+	if type(entry) ~= "table" or not isIdText(entry.Id) or not MonetizationConfig.GetGiftable(entry.Product) or not isUserId(entry.From) then
 		return nil
 	end
 	return {
@@ -175,9 +179,12 @@ end
 --        ({ [building id] = count }), Upgrades (upgrade ids), Pets ({ Uid, CreatureId, Golden }),
 --        Equipped (pet uids), BookSeen ({ [creature id] = rescue count }), FrostCores, Rebirths,
 --        MaxLayerOpened, CreaturesRescued, TutorialStep. The doc's codesRedeemed is Codes, lastOnline is
---        LeftAt and purchaseIds is Receipts (below). Pass ownership is never saved (GamePasses).
+--        LeftAt and purchaseIds is Receipts (below). Bought pass ownership is never saved (GamePasses);
+--        a pass received as a gift is (GiftedPasses).
 --      Robux bookkeeping: Receipts ({ Id, Product, At, For }), PendingGifts ({ [product key] = intent }),
---        GiftInbox (store only: gifts other players sent, not given yet), ReceivedGifts (gift ids given);
+--        GiftInbox (store only: gifts other players sent, not given yet), ReceivedGifts (gift ids given),
+--        GiftedPasses ({ [pass key] = true }: passes received as gifts; Roblox has no record of those, so
+--        they are saved), MythicBlocks (Mythic Block products bought and not rolled yet);
 --        Codes (redeemed promo codes, CodeRules.Normalize's form); Funnels (how far the one-time
 --        analytics funnels are logged, AnalyticsRules); LeftAt (store only: the server's os.time() at
 --        the last save, for offline earnings). Plus Session and LastWriteId (lease bookkeeping).
@@ -356,7 +363,7 @@ local function validate(record)
 	data.Receipts = receipts
 	local pendingGifts = {}
 	for key, intent in data.PendingGifts or {} do
-		if MonetizationConfig.GetProduct(key) then
+		if MonetizationConfig.GetGiftable(key) then
 			pendingGifts[key] = cleanIntent(intent)
 		end
 	end
@@ -379,6 +386,24 @@ local function validate(record)
 		end
 	end
 	data.GiftInbox = inbox
+
+	-- Paid things the save holds: GiftedPasses ({ [pass key] = true }; a key not in the config any more is
+	-- kept, in case it comes back) and MythicBlocks (bought, not rolled yet). A field that can't be read
+	-- fails closed; unreadable entries are dropped.
+	if data.GiftedPasses ~= nil and type(data.GiftedPasses) ~= "table" then
+		return nil, "invalid GiftedPasses"
+	end
+	local gifted = {}
+	for key, value in data.GiftedPasses or {} do
+		if type(key) == "string" and #key <= 32 and string.match(key, "^%w+$") and value == true then
+			gifted[key] = true
+		end
+	end
+	data.GiftedPasses = gifted
+	if data.MythicBlocks ~= nil and not isInteger(data.MythicBlocks, 0, MAX_AMOUNT) then
+		return nil, "invalid MythicBlocks"
+	end
+	data.MythicBlocks = data.MythicBlocks or 0
 
 	-- Codes: missing starts with none. It stops a code paying twice, so a field that isn't a list fails
 	-- closed; entries that aren't a code's saved form and repeats are dropped (a code taken out of
@@ -503,6 +528,7 @@ local function publish(player, session)
 		TutorialStep = data.TutorialStep,
 		Settings = data.Settings,
 		DailyClaimDay = data.DailyClaimDay,
+		MythicBlocks = data.MythicBlocks,
 	}))
 end
 
@@ -591,7 +617,8 @@ local function snapshot(session)
 		return nil
 	end
 	if type(data.Receipts) ~= "table" or #data.Receipts > MonetizationRules.MaxReceipts
-		or type(data.PendingGifts) ~= "table" or type(data.ReceivedGifts) ~= "table" then
+		or type(data.PendingGifts) ~= "table" or type(data.ReceivedGifts) ~= "table"
+		or type(data.GiftedPasses) ~= "table" or not isInteger(data.MythicBlocks, 0, MAX_AMOUNT) then
 		return nil
 	end
 	for _, receipt in data.Receipts do
@@ -832,8 +859,9 @@ function PlayerData.ResetToNew(player): boolean
 	end
 	local fresh = validate(nil)
 	fresh.GiftInbox = nil
-	-- Purchase bookkeeping survives a reset: it is what stops a receipt or a gift paying twice.
-	for _, field in { "Receipts", "PendingGifts", "ReceivedGifts" } do
+	-- Purchase bookkeeping survives a reset: it is what stops a receipt or a gift paying twice; and what
+	-- was paid for and not used up stays too (gifted passes, Mythic Blocks not rolled yet).
+	for _, field in { "Receipts", "PendingGifts", "ReceivedGifts", "GiftedPasses", "MythicBlocks" } do
 		fresh[field] = session.data[field]
 	end
 	session.leftAt = nil -- a fresh save has never been away
@@ -947,9 +975,16 @@ function PlayerData.AutosaveTick()
 		if session.loaded and not session.closing and not session.failed then
 			if os.time() >= session.expiresAt - LEASE_SAFETY_SECONDS then
 				fail(player, session, "autosave could not renew the lease in time")
-			elseif not session.saving and (session.importantSavePending or os.clock() >= session.nextSave) then
-				session.nextSave = os.clock() + AUTOSAVE_SECONDS
-				task.spawn(save, player, session, false)
+			elseif not session.saving then
+				local now = os.clock()
+				local important = session.importantSavePending and now - (session.lastImportantSave or -math.huge) >= IMPORTANT_GAP_SECONDS
+				if important or now >= session.nextSave then
+					if important then
+						session.lastImportantSave = now
+					end
+					session.nextSave = now + AUTOSAVE_SECONDS
+					task.spawn(save, player, session, false)
+				end
 			end
 		end
 	end

@@ -85,11 +85,54 @@ return function(sources)
 	data = save({ Rebirths = 9, MaxLayerOpened = 6 })
 	Rebirth.Apply(data)
 	check(data.MaxLayerOpened == 6, "rebirth 10's Layer 7 isn't in the game yet, so 6 stays the deepest")
+	-- Exactly ResetOnRebirth is reset, to a new player's values; everything else is kept as it was (only
+	-- FrostCores, Rebirths and MaxLayerOpened may grow).
+	local NEW_PLAYER = { Crystals = 0, CrystalsThisRun = 0, BlockLevel = 1, CurrentBlock = "none", Buildings = "empty", Upgrades = "empty" }
+	local full = save({
+		BookNew = { "SnowBunny" }, Settings = { Music = 0.2, Sounds = 0.4, ReducedEffects = true }, Codes = { "THAWED" },
+		Receipts = { { Id = "r1", Product = "ShatterNow", At = 5 } }, GiftedPasses = { VIP = true }, MythicBlocks = 2,
+		DailyClaimDay = 20400, TutorialStep = 5, Funnels = { Onboarding = 3, Waiting = {} }, BookGolden = { SnowBunny = true },
+	})
+	local before = game:GetService("HttpService"):JSONEncode(full)
+	Rebirth.Apply(full)
+	local reset = {}
 	for _, field in RebirthConfig.ResetOnRebirth do
-		local fresh = save()
-		Rebirth.Apply(fresh)
-		local value = fresh[field]
-		check(value == nil or value == 0 or value == 1 or (type(value) == "table" and next(value) == nil), `{field} is reset`)
+		reset[field] = true
+		local value, expected = full[field], NEW_PLAYER[field]
+		check(expected ~= nil, `{field} has a known new-player value`)
+		if expected == "none" then
+			check(value == nil, `{field} is reset to none`)
+		elseif expected == "empty" then
+			check(type(value) == "table" and next(value) == nil, `{field} is reset to empty`)
+		else
+			check(value == expected, `{field} is reset to {expected}`)
+		end
+	end
+	local GROWS = { FrostCores = true, Rebirths = true, MaxLayerOpened = true }
+	local function same(a, b)
+		if type(a) ~= "table" or type(b) ~= "table" then
+			return a == b
+		end
+		for key, value in a do
+			if not same(value, b[key]) then
+				return false
+			end
+		end
+		for key in b do
+			if a[key] == nil then
+				return false
+			end
+		end
+		return true
+	end
+	for field, value in game:GetService("HttpService"):JSONDecode(before) do
+		if not reset[field] then
+			if GROWS[field] then
+				check(full[field] >= value, `{field} is kept (it may grow)`)
+			else
+				check(same(full[field], value), `{field} is kept unchanged by a rebirth`)
+			end
+		end
 	end
 
 	-- The tutorial ------------------------------------------------------------------------------------

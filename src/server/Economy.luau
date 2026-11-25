@@ -22,6 +22,7 @@ local PlayerData = require(script.Parent.PlayerData)
 
 local Economy = {}
 
+local MAX_CRYSTALS = 1e300 -- PlayerData's MAX_AMOUNT
 local extras = {} -- { function(player) -> multiplier }
 local tapLog = {} -- [player] = { { time, taps } }
 local tickListeners = {}
@@ -51,9 +52,10 @@ function Economy.Grant(player: Player, data, amount: number)
 	if type(amount) ~= "number" or amount ~= amount or amount <= 0 or amount == math.huge then
 		return
 	end
-	data.Crystals += amount
-	data.CrystalsThisRun += amount
-	data.CrystalsAllTime += amount
+	-- (capped at MAX_CRYSTALS: the save refuses amounts above it, which would stop the player's session)
+	data.Crystals = math.min(MAX_CRYSTALS, data.Crystals + amount)
+	data.CrystalsThisRun = math.min(MAX_CRYSTALS, data.CrystalsThisRun + amount)
+	data.CrystalsAllTime = math.min(MAX_CRYSTALS, data.CrystalsAllTime + amount)
 end
 
 -- Spends crystals. Returns false (and spends nothing) if the player can't afford it.

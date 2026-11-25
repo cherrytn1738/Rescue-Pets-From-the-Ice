@@ -111,10 +111,18 @@ return function(sources)
 	end
 	load("CodeRules")
 	local CodesConfig = load("CodesConfig")
-	check(type(CodesConfig.Codes) == "table" and #CodesConfig.Codes == 2, "CodesConfig ships with the tutorial and launch codes")
+	check(type(CodesConfig.Codes) == "table" and #CodesConfig.Codes == 8, "CodesConfig ships with the tutorial and launch codes and six likes milestone codes")
+	local milestones = 0
 	for _, entry in CodesConfig.Codes do
-		check(entry.Reward.Kind == "Crystals" and entry.Reward.Amount > 0 and entry.Active, `{entry.Code} gives crystals`)
+		if string.sub(entry.Code, 1, 5) == "LIKES" then
+			milestones += 1
+			check(entry.Reward.Kind == "CrystalBundle" and entry.Reward.Seconds > 0 and entry.Active == false,
+				`{entry.Code} pays minutes of income and stays off until its milestone`)
+		else
+			check(entry.Reward.Kind == "Crystals" and entry.Reward.Amount > 0 and entry.Active, `{entry.Code} gives crystals`)
+		end
 	end
+	check(milestones == 6, "six likes milestone codes")
 	check(CodesConfig.RateLimit.MinSeconds == 1 and CodesConfig.RateLimit.PerMinute == 6, "the rate limit: 1 s apart, 6 a minute")
 	check(pcall(modules.CodeRules.Validate, CodesConfig), "the shipped list is valid")
 	-- Test-only codes, added before CodeService checks the list.

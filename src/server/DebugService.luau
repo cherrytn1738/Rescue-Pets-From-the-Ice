@@ -23,8 +23,20 @@ local function hasAccess(player: Player): boolean
 	return DebugRules.HasAccess(player.UserId, RunService:IsStudio(), DebugConfig.AllowedUserIds)
 end
 
+-- A refused request is logged at most once a minute per user id, so someone spamming the remote can't flood
+-- the server's log (they are refused every time all the same).
+local REJECT_LOG_SECONDS = 60
+local rejectLoggedAt = {} -- [user id text] = os.clock()
 local function log(text: string)
-	if string.find(text, "REJECTED", 1, true) or string.find(text, "failed", 1, true) then
+	if string.find(text, "REJECTED", 1, true) then
+		local userId = string.match(text, "%((%-?%d+)%)") or "?"
+		local now = os.clock()
+		if rejectLoggedAt[userId] and now - rejectLoggedAt[userId] < REJECT_LOG_SECONDS then
+			return
+		end
+		rejectLoggedAt[userId] = now
+		warn(text)
+	elseif string.find(text, "failed", 1, true) then
 		warn(text)
 	else
 		print(text)

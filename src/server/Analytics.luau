@@ -131,6 +131,9 @@ function Analytics.RobuxPurchased(player: Player, key: string)
 	end
 end
 
+local NEW_VISIT_SECONDS = 15
+local lastOpenAt = {} -- [player] = os.clock() of their last counted shop visit
+
 -- The ShopVisit RemoteEvent: (action "Open" | "Close" | "Info", shop "Robux", key for Info).
 local function rateOk(player: Player): boolean
 	local now = os.clock()
@@ -155,6 +158,13 @@ local function onVisit(player: Player, action, shop, key)
 		return
 	end
 	if action == "Open" then
+		-- one visit at a time, and a new one at most every NEW_VISIT_SECONDS (a spammed "Open" can't inflate
+		-- the funnel or spend the analytics budget)
+		local now = os.clock()
+		if currentVisit(player, "Robux", true) or now - (lastOpenAt[player] or -math.huge) < NEW_VISIT_SECONDS then
+			return
+		end
+		lastOpenAt[player] = now
 		Analytics.ShopOpened(player, "Robux")
 	elseif action == "Close" then
 		local visit = currentVisit(player, "Robux", true)
@@ -180,7 +190,7 @@ function Analytics.Start()
 	local remote = ReplicatedStorage:WaitForChild("ShopVisit") :: RemoteEvent
 	remote.OnServerEvent:Connect(onVisit)
 	Players.PlayerRemoving:Connect(function(player)
-		visits[player], visitRequests[player] = nil, nil
+		visits[player], visitRequests[player], lastOpenAt[player] = nil, nil, nil
 	end)
 end
 

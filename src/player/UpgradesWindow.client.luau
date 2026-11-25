@@ -62,6 +62,16 @@ local function buy(upgradeId: string)
 		feedback.Text = tostring(reply.message or "")
 		feedback.TextColor3 = if reply.ok then Colors.Good else Colors.Error
 		UIKit.PlaySound(if reply.ok then "BuyUpgrade" else "Invalid")
+		-- the tile flashes (docs/GAME_DESIGN.md: "Buying flashes the card"; the station puffs: BuildMoments)
+		local tile = reply.ok and tiles[upgradeId]
+		if tile and tile.card.Parent then
+			ShowcaseKit.SetCardPalette(tile.card, "Ice")
+			task.delay(0.25, function()
+				if tile.card.Parent then
+					ShowcaseKit.SetCardPalette(tile.card, tile.palette)
+				end
+			end)
+		end
 	else
 		feedback.Text = "The server didn't answer. Try again."
 		feedback.TextColor3 = Colors.Error

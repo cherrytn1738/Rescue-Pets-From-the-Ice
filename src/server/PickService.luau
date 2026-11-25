@@ -9,6 +9,8 @@ simply holds nothing (the game still plays: taps don't need the tool).
 
 The tool is only a look: tapping stays in TapInput.client (TapBatch), which also plays the swing on each
 tap. The Tool's attribute Tier says which pick it is. SetTier is the debug menu's "Set ice pick tier".
+The Creature Book's Golden page (all 18 Golden) gives the golden ice pick skin: the same pick in gold
+(attribute Skin "Golden").
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -43,7 +45,37 @@ local function held(player: Player): Tool?
 	return backpack and backpack:FindFirstChild("IcePick")
 end
 
--- Makes sure the player holds the pick for their tier.
+-- The pick skin the Creature Book gives (the Golden page's PickSkin), or "".
+local function skinFor(data): string
+	if type(data.BookSeen) ~= "table" then
+		return ""
+	end
+	for _, page in EconomyRules.BookPages(data) do
+		if page.Complete and page.Reward.PickSkin then
+			return page.Reward.PickSkin
+		end
+	end
+	return ""
+end
+
+local GOLD = Color3.fromRGB(255, 200, 60)
+local function applySkin(tool: Tool, skin: string)
+	if skin ~= "Golden" then
+		return
+	end
+	for _, part in tool:GetDescendants() do
+		if part:IsA("MeshPart") then
+			part.TextureID = ""
+			part.Color = GOLD
+			part.Material = Enum.Material.Foil
+		elseif part:IsA("BasePart") then
+			part.Color = GOLD
+			part.Material = Enum.Material.Foil
+		end
+	end
+end
+
+-- Makes sure the player holds the pick for their tier (and their book's skin).
 function PickService.Refresh(player: Player)
 	local character = player.Character
 	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
@@ -52,8 +84,9 @@ function PickService.Refresh(player: Player)
 		return
 	end
 	local tier = EconomyRules.PickTier(data)
+	local skin = skinFor(data)
 	local current = held(player)
-	if current and current:GetAttribute("Tier") == tier then
+	if current and current:GetAttribute("Tier") == tier and (current:GetAttribute("Skin") or "") == skin then
 		if current.Parent ~= character then
 			humanoid:EquipTool(current) -- always in hand
 		end
@@ -69,6 +102,8 @@ function PickService.Refresh(player: Player)
 	local tool = source:Clone()
 	tool.Name = "IcePick"
 	tool:SetAttribute("Tier", tier)
+	tool:SetAttribute("Skin", skin)
+	applySkin(tool, skin)
 	tool.Parent = player:FindFirstChildOfClass("Backpack") or character
 	humanoid:EquipTool(tool)
 end

@@ -33,6 +33,9 @@ local Gifting = require(script.Parent.Gifting)
 local OfflineEarnings = require(script.Parent.OfflineEarnings)
 local PlayerData = require(script.Parent.PlayerData)
 local Receipts = require(script.Parent.Receipts)
+local RobuxPerks = require(script.Parent.RobuxPerks)
+local Economy = require(script.Parent.Economy)
+local EconomyRules = require(ReplicatedStorage.EconomyRules)
 local AnalyticsConfig = require(ReplicatedStorage.AnalyticsConfig)
 local AnalyticsRules = require(ReplicatedStorage.AnalyticsRules)
 local AudioConfig = require(ReplicatedStorage.AudioConfig)
@@ -66,6 +69,10 @@ for _, pass in MonetizationConfig.Passes do
 end
 for _, product in MonetizationConfig.Products do
 	table.insert(productChoices, { Value = product.Key, Label = product.Name .. (if MonetizationConfig.IsLive(product) then "" else " (no id yet)") })
+end
+-- A pass in a receipt is its gift product: for themselves it arrives as a pass received as a gift (saved).
+for _, pass in MonetizationConfig.Passes do
+	table.insert(productChoices, { Value = pass.Key, Label = `{pass.Name} pass, as a gift` .. (if MonetizationConfig.IsGiftLive(pass) then "" else " (no gift id yet)") })
 end
 passChoices = choicesOr(passChoices, "(no game passes in MonetizationConfig yet)")
 productChoices = choicesOr(productChoices, "(no products in MonetizationConfig yet)")
@@ -146,7 +153,7 @@ local function productOf(key: string)
 	if key == NONE then
 		fail("There are no products yet: add them to MonetizationConfig.Products")
 	end
-	return MonetizationConfig.GetProduct(key)
+	return MonetizationConfig.GetGiftable(key)
 end
 
 -- "PurchaseGranted: gave ... (PurchaseId Studio-1A2B...)" from a simulated receipt.
@@ -290,6 +297,27 @@ local ACTIONS = {
 		end,
 	},
 	{
+		Id = "FillDummyPlots", Group = "Testing switches", Label = "Fill every empty plot with a maxed dummy plot (performance tests)",
+		NoTarget = true,
+		Params = { { Name = "Creature", Label = "Creature in the dummies' blocks", Kind = "choice", Choices = creatureChoices, Default = creatureChoices[1].Value } },
+		Run = function(_, args)
+			studioOnly()
+			local creature = CreatureConfig.Get(args.Creature)
+			if not creature then
+				fail("Pick a creature")
+			end
+			return `Filled {PlotService.FillDummies(creature.Rarity, creature.Id)} empty plots with maxed dummies`
+		end,
+	},
+	{
+		Id = "ClearDummyPlots", Group = "Testing switches", Label = "Free the dummy plots again",
+		NoTarget = true,
+		Run = function()
+			studioOnly()
+			return `Freed {PlotService.ClearDummies()} dummy plots`
+		end,
+	},
+	{
 		Id = "SendHome", Group = "Player", Label = "Send to their plot",
 		Run = function(target)
 			if not PlotService.SendHome(target) then
@@ -319,6 +347,11 @@ local ACTIONS = {
 			if not PlayerData.ResetToNew(target) then
 				fail(`Couldn't reset {target.Name}`)
 			end
+			-- what the world shows follows the fresh save at once: the stations, a new block, the pets
+			local data = PlayerData.Edit(target)
+			PlotService.RefreshBuildings(target, data)
+			IceBlockService.Reroll(target)
+			PetService.Publish(target, data)
 			return `Reset {target.Name} to a fresh save`
 		end,
 	},
@@ -403,6 +436,24 @@ local ACTIONS = {
 			local decision, note, purchaseId = Receipts.Simulate(target, product, { gift = gift })
 			lastSimulated[target] = { product = product, gift = gift, purchaseId = purchaseId }
 			return receiptResult(decision, note, purchaseId)
+		end,
+	},
+	{
+		Id = "RobuxPerks", Group = "Robux", Label = "Show the target's Robux perks and every crystal multiplier",
+		Run = function(target)
+			local data = dataOf(target)
+			local owned = {}
+			for _, pass in MonetizationConfig.Passes do
+				if GamePasses.Owns(target, pass.Key) then
+					table.insert(owned, pass.Key .. (if data.GiftedPasses[pass.Key] then " (gift)" else ""))
+				end
+			end
+			return string.format(
+				"%s: passes [%s]; Mythic Blocks waiting %d; Auto Pick %d taps/s; Lucky %s | multipliers: save %.3f x passes %.2f x server rush %.2f x other extras (group, Frost Rush) %.3f = %.3f",
+				target.Name, table.concat(owned, ", "), data.MythicBlocks, RobuxPerks.AutoTapsPerSecond(target), tostring(RobuxPerks.IsLucky(target)),
+				EconomyRules.Multiplier(data, 1), RobuxPerks.PassMultiplier(target), RobuxPerks.ServerRushMultiplier(),
+				Economy.ExtraMultiplier(target) / (RobuxPerks.PassMultiplier(target) * RobuxPerks.ServerRushMultiplier()),
+				Economy.Multiplier(target, data))
 		end,
 	},
 	{

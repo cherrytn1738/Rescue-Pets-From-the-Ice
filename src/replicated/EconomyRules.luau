@@ -59,6 +59,15 @@ function EconomyRules.IceTier(data, iceId: string): number
 	return tiers
 end
 
+-- How many ice upgrade tiers the player owns in all (the crystals' colour: IceLooks.CrystalColour).
+function EconomyRules.IceTiersTotal(data): number
+	local total = 0
+	for _, ice in UpgradeConfig.IceUpgrades do
+		total += EconomyRules.IceTier(data, ice.Id)
+	end
+	return total
+end
+
 local function iceUpgrade(iceId: string)
 	for _, ice in UpgradeConfig.IceUpgrades do
 		if ice.Id == iceId then

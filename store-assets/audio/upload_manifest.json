@@ -90,6 +90,15 @@
    "sha256": "a1464908ec3298946616c25ac7fd4ad25ca317c3204dc604e462c9c87561870d",
    "updated": "2026-11-25T11:47:16+00:00"
   },
+  "GoldenAlarm.ogg": {
+   "assetId": "78520467096529",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "ee064e21102ece75e0daac7774cbeff79cc622c6313fcd26d79063bd9fa42042",
+   "updated": "2026-11-25T12:29:18+00:00"
+  },
   "GoldenSparkle.ogg": {
    "assetId": "83955552934976",
    "creator": {
@@ -98,6 +107,15 @@
    "moderationState": "Approved",
    "sha256": "56e46d304f90b48cf0b42097070254ca3b21c91a2d3f1cae0b132a245ce31739",
    "updated": "2026-11-25T11:47:18+00:00"
+  },
+  "Heartbeat.ogg": {
+   "assetId": "85965699278351",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "73ac50d7f9589e1cc6a697cd8c58b677e644069e7170f88e04a2889a79dd50ef",
+   "updated": "2026-11-25T12:29:20+00:00"
   },
   "Nope.ogg": {
    "assetId": "84881498913979",

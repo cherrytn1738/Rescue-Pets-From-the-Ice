@@ -191,7 +191,7 @@ function Gifting.Apply(player: Player, entries)
 	end
 	local hasPaidRandom = false
 	for _, entry in entries do
-		local product = type(entry) == "table" and MonetizationConfig.GetProduct(entry.Product)
+		local product = type(entry) == "table" and MonetizationConfig.GetGiftable(entry.Product)
 		hasPaidRandom = hasPaidRandom or MonetizationConfig.IsPaidRandom(product)
 	end
 	if hasPaidRandom then
@@ -206,7 +206,7 @@ function Gifting.Apply(player: Player, entries)
 	end
 	local applied = {}
 	for _, entry in entries do
-		local product = type(entry) == "table" and type(entry.Id) == "string" and MonetizationConfig.GetProduct(entry.Product)
+		local product = type(entry) == "table" and type(entry.Id) == "string" and MonetizationConfig.GetGiftable(entry.Product)
 		if product and not table.find(data.ReceivedGifts, entry.Id) then
 			local given, problem = PurchaseRewards.Give(player, product, { giftFrom = entry.FromName })
 			if given then

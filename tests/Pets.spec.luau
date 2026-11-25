@@ -142,7 +142,13 @@ return function(sources)
 	local goldenUid = reply.uid
 	check(table.find(save.Equipped, goldenUid) ~= nil, "the Golden one takes the equipped bunny's slot")
 	check(ask("EquipBest").ok and save.Equipped[1] == goldenUid or save.Equipped[1] == "p6", "Equip Best")
-	check(ask("Delete", { "p6" }).ok and #save.Pets == 1 and not table.find(save.Equipped, "p6"), "deleting an equipped pet unequips it")
+	-- abusive lists (a repeated uid used to delete an unpicked pet and leave a broken save)
+	local petsBefore, equippedBefore = #save.Pets, #save.Equipped
+	check(not ask("Delete", { "p6", "p6" }).ok and #save.Pets == petsBefore and #save.Equipped == equippedBefore, "a repeated uid in Delete is refused, nothing deleted")
+	check(not ask("Delete", { "p6", extra = "p6" }).ok and #save.Pets == petsBefore, "a list with extra keys is refused")
+	check(not ask("Delete", "p6").ok and not ask("Delete", {}).ok and not ask("Delete", { 5 }).ok, "Delete needs a list of uid strings")
+	check(not ask("MarkSeen", { a = "MiniYeti" }).ok, "MarkSeen needs a plain list")
+		check(ask("Delete", { "p6" }).ok and #save.Pets == 1 and not table.find(save.Equipped, "p6"), "deleting an equipped pet unequips it")
 	check(not ask("Delete", { "p6" }).ok, "a deleted pet can't be deleted again")
 	check(ask("MarkSeen", { "MiniYeti" }).ok and #save.BookNew == 0, "viewing the book clears the New! badge")
 	owned.PetSquad = false

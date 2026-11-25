@@ -56,6 +56,22 @@ local function play(creatureId: string, view)
 		animator:Play("Cheer", true, 0.1)
 	end
 	frostPuff(start.Position + Vector3.new(0, 2, 0)) -- (the jingle plays with the shatter: IceBlocks)
+	-- confetti in the rarity colour (and white), falling over the mound
+	local creature = CreatureConfig.Get(creatureId)
+	local colour = creature and IceLooks.RarityColors[creature.Rarity] or Color3.new(1, 1, 1)
+	for i = 1, Effects.Count(IceLooks.Confetti) do
+		task.delay(i * 0.01, function()
+			Effects.Debris({
+				Size = Vector3.new(0.5, 0.06, 0.3),
+				CFrame = CFrame.new(start.Position + Vector3.new((math.random() - 0.5) * 6, 6 + math.random() * 4, (math.random() - 0.5) * 6))
+					* CFrame.Angles(math.random() * 6, math.random() * 6, math.random() * 6),
+				Color = if i % 3 == 0 then Color3.new(1, 1, 1) else colour,
+				Material = Enum.Material.SmoothPlastic,
+				Velocity = Vector3.new((math.random() - 0.5) * 30, 20 + math.random() * 18, (math.random() - 0.5) * 30),
+				Life = 2.4,
+			})
+		end)
+	end
 
 	local t0 = os.clock()
 	local connection
@@ -133,7 +149,18 @@ function RescueMoment.Start()
 	ClientState.Event("NewLayer", function(payload)
 		Banners.Big(`Layer {payload.Layer}: {payload.Name}`, "Rarer creatures ahead", Color3.fromRGB(150, 225, 255), 3)
 		Effects.Shake(1.1, 1.2)
+		Effects.Dip(1.6, 1.4) -- the camera dips as the ground shakes
 		Effects.Sound("NewLayer")
+	end)
+	-- a Server Frost Rush (a Robux product): everyone sees who started it
+	ClientState.Event("ServerRush", function(payload)
+		if type(payload) ~= "table" then
+			return
+		end
+		local by = tostring(payload.By or "Someone")
+		local text = if payload.Extended then `{by} added {payload.Minutes} minutes to the Server Frost Rush!` else `{by} started it: x{payload.Multiplier} crystals for everyone for {payload.Minutes} minutes!`
+		Banners.Big("SERVER FROST RUSH!", text, Color3.fromRGB(140, 230, 255), 4)
+		Effects.Sound("GoldenSparkle")
 	end)
 	ClientState.Event("Notice", function(payload)
 		Banners.Toast(payload.Text, Color3.fromRGB(200, 240, 255))

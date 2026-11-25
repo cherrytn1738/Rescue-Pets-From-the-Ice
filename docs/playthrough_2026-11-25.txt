@@ -1,0 +1,96 @@
+   0.0 min  start (fresh save), tapping 4/s
+   0.0 min  tutorial step 1
+   0.0 min  snapshot: level 1, crystals 2.2, income 4/s (at 4 taps/s), 0 buildings, 0 pets
+   0.1 min  tutorial step 2
+   0.4 min  upgrade Stone pick
+   0.4 min  rescue 1: FrostMouse (Common) at level 1, 0.4 min since the last, NEW
+   0.4 min  MILESTONE first building: Heat Lamp
+   0.4 min  redeem ICELAUNCH: Code redeemed: 500 crystals!
+   0.4 min  first Heat Lamp
+   0.4 min  tutorial step 4
+   0.4 min  equip best: Equipped your best pets!
+   0.4 min  tutorial step 5
+   0.4 min  redeem THAWED: Code redeemed: 250 crystals!
+   0.7 min  upgrade Iron pick
+   0.7 min  rescue 2: PuffinPal (Common) at level 2, 0.3 min since the last, NEW
+   0.7 min  first Ice Pick Post
+   0.7 min  equip best: Equipped your best pets!
+   1.0 min  rescue 3: PuffinPal (Common) at level 3, 0.3 min since the last
+   1.1 min  first Chisel Mill
+   1.3 min  rescue 4: SealPup (Uncommon) at level 4, 0.3 min since the last, NEW
+   1.7 min  rescue 5: PuffinPal (Common) at level 5, 0.4 min since the last
+   1.7 min  upgrade Fast Sled 1
+   2.0 min  snapshot: level 6, crystals 229, income 45.4/s (at 4 taps/s), 9 buildings, 5 pets
+   2.1 min  rescue 6: FrostMouse (Common) at level 6, 0.5 min since the last
+   2.5 min  upgrade Heat Lamp upgrade 1
+   2.6 min  rescue 7: SnowBunny (Common) at level 7, 0.5 min since the last, NEW
+   3.1 min  rescue 8: FrostMouse (Common) at level 8, 0.5 min since the last
+   3.3 min  upgrade Bigger Burst 1
+   3.7 min  rescue 9: PenguinChick (Common) at level 9, 0.7 min since the last, NEW
+   3.7 min  upgrade Heat Lamp upgrade 2
+   4.0 min  snapshot: level 10, crystals 592, income 137/s (at 4 taps/s), 23 buildings, 9 pets
+   4.4 min  rescue 10: ArcticFoxKit (Uncommon) at level 10, 0.7 min since the last, NEW
+   4.4 min  MILESTONE layer 2: Blue Ice
+   4.9 min  first Ice Drill
+   5.1 min  upgrade Ice Pick Post upgrade 1
+   5.2 min  rescue 11: PuffinPal (Common) at level 11, 0.8 min since the last
+   5.9 min  rescue 12: GlacierOtter (Rare) at level 12, 0.7 min since the last, NEW
+   5.9 min  MILESTONE first Rare or better: Rare
+   5.9 min  upgrade Chisel Mill upgrade 1
+   6.0 min  snapshot: level 13, crystals 1.15e+03, income 501/s (at 4 taps/s), 39 buildings, 12 pets
+   6.4 min  upgrade Ice Pick Post upgrade 2
+   6.6 min  rescue 13: PuffinPal (Common) at level 13, 0.7 min since the last
+   7.4 min  upgrade Chisel Mill upgrade 2
+   7.5 min  rescue 14: SnowBunny (Common) at level 14, 0.9 min since the last
+   7.6 min  upgrade Crystal Yield 1
+   8.0 min  snapshot: level 15, crystals 5.35e+03, income 1.32e+03/s (at 4 taps/s), 55 buildings, 14 pets
+   8.2 min  rescue 15: PuffinPal (Common) at level 15, 0.7 min since the last
+   9.0 min  rescue 16: PenguinChick (Common) at level 16, 0.8 min since the last
+   9.0 min  upgrade Fast Sled 2
+   9.8 min  first Wrecking Crane
+  10.0 min  snapshot: level 17, crystals 2.59e+04, income 2.16e+03/s (at 4 taps/s), 66 buildings, 16 pets
+  10.1 min  rescue 17: SnowBunny (Common) at level 17, 1.1 min since the last
+  10.1 min  upgrade Ice Drill upgrade 1
+  11.1 min  rescue 18: SnowBunny (Common) at level 18, 1.0 min since the last
+  11.1 min  upgrade Frost Touch I
+  12.0 min  snapshot: level 19, crystals 1.17e+05, income 4.35e+03/s (at 4 taps/s), 76 buildings, 18 pets
+  12.2 min  rescue 19: SealPup (Uncommon) at level 19, 1.1 min since the last
+  12.2 min  upgrade Bigger Burst 2
+  13.7 min  rescue 20: PolarBearCub (Rare) at level 20, 1.5 min since the last, NEW
+  13.7 min  upgrade Ice Drill upgrade 2
+  13.7 min  MILESTONE layer 3: Ancient Ice
+  14.0 min  snapshot: level 21, crystals 5.9e+04, income 7.41e+03/s (at 4 taps/s), 79 buildings, 20 pets
+  14.4 min  upgrade Gold pick
+  14.9 min  rescue 21: IceHedgehog (Uncommon) at level 21, 1.3 min since the last, NEW
+  15.0 min  upgrade Heat Lamp upgrade 3
+  16.0 min  snapshot: level 22, crystals 9.63e+04, income 1.16e+04/s (at 4 taps/s), 104 buildings, 21 pets
+  16.3 min  rescue 22: GlacierOtter (Rare) at level 22, 1.3 min since the last
+  17.0 min  first Flamethrower Turret
+  18.0 min  rescue 23: SealPup (Uncommon) at level 23, 1.7 min since the last
+  18.0 min  upgrade Wrecking Crane upgrade 1
+  18.1 min  snapshot: level 24, crystals 8.65e+04, income 1.79e+04/s (at 4 taps/s), 106 buildings, 23 pets
+  19.6 min  rescue 24: SnowyOwlet (Uncommon) at level 24, 1.7 min since the last, NEW
+  19.6 min  upgrade Crystal Yield 2
+  19.6 min  upgrade Ice Pick Post upgrade 3
+  20.0 min  upgrade Chisel Mill upgrade 3
+  20.1 min  snapshot: level 25, crystals 2.8e+04, income 2.84e+04/s (at 4 taps/s), 120 buildings, 24 pets
+  21.6 min  rescue 25: SnowyOwlet (Uncommon) at level 25, 2.0 min since the last
+  22.1 min  snapshot: level 26, crystals 5.41e+06, income 2.9e+04/s (at 4 taps/s), 125 buildings, 25 pets
+  23.2 min  upgrade Wrecking Crane upgrade 2
+  24.0 min  rescue 26: SnowBunny (Common) at level 26, 2.4 min since the last
+  24.1 min  snapshot: level 27, crystals 2.35e+06, income 5.09e+04/s (at 4 taps/s), 129 buildings, 26 pets
+  26.1 min  snapshot: level 27, crystals 1.19e+06, income 6.51e+04/s (at 4 taps/s), 142 buildings, 26 pets
+  26.2 min  rescue 27: PenguinChick (Common) at level 27, 2.1 min since the last
+  28.1 min  snapshot: level 28, crystals 5.08e+06, income 7.69e+04/s (at 4 taps/s), 153 buildings, 27 pets
+  28.4 min  upgrade Ice Drill upgrade 3
+  28.7 min  rescue 28: FrostTurtle (Rare) at level 28, 2.5 min since the last, NEW
+  30.1 min  snapshot: level 29, crystals 1.29e+07, income 9.98e+04/s (at 4 taps/s), 159 buildings, 28 pets
+  30.5 min  upgrade Flamethrower Turret upgrade 1
+  31.5 min  rescue 29: PuffinPal (Common) at level 29, 2.9 min since the last
+  32.1 min  snapshot: level 30, crystals 5.34e+06, income 1.44e+05/s (at 4 taps/s), 163 buildings, 29 pets
+  32.6 min  upgrade Frost Touch II
+  34.1 min  snapshot: level 30, crystals 5.56e+06, income 1.67e+05/s (at 4 taps/s), 170 buildings, 29 pets
+  34.5 min  rescue 30: SnowBunny (Common) at level 30, 3.0 min since the last
+  34.5 min  MILESTONE layer 1: Fresh Snow
+  34.5 min  MILESTONE first rebirth: Reborn! +5 Frost Cores (5 Frost Cores)
+  34.5 min  finished

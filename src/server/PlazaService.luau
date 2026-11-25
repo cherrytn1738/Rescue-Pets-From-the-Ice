@@ -15,6 +15,7 @@ local Workspace = game:GetService("Workspace")
 
 local MapConfig = require(ReplicatedStorage.MapConfig)
 local MonetizationConfig = require(ReplicatedStorage.MonetizationConfig)
+local PlayerEffects = require(script.Parent.PlayerEffects)
 local PlotService = require(script.Parent.PlotService)
 
 local PlazaService = {}
@@ -176,12 +177,33 @@ function PlazaService.Start(boards)
 				part(gate, name .. "Post", Vector3.new(0.8, 4.2, 0.8), lounge * CFrame.new(at + Vector3.new(0, 2.1, 0)), gold, Enum.Material.SmoothPlastic)
 			end
 		end
-		rails("Front", Vector3.new(-9, 0, -3), Vector3.new(9, 0, -3))
+		rails("FrontLeft", Vector3.new(-9, 0, -3), Vector3.new(-3, 0, -3))
+		rails("FrontRight", Vector3.new(3, 0, -3), Vector3.new(9, 0, -3))
 		rails("Left", Vector3.new(-9, 0, -3), Vector3.new(-9, 0, 11))
 		rails("Right", Vector3.new(9, 0, -3), Vector3.new(9, 0, 11))
+		rails("Back", Vector3.new(-9, 0, 11), Vector3.new(9, 0, 11))
 		for _, x in { -3, 3 } do
 			part(gate, "SignPost", Vector3.new(0.5, 6.5, 0.5), lounge * CFrame.new(x, 3.25, -3), gold, Enum.Material.SmoothPlastic)
 		end
+		-- Invisible walls, too high to jump, all round; the door between the sign posts lets VIP owners
+		-- through (VipLounge.client turns its collision off for them: your own character's physics is your
+		-- client's, and the lounge gives no gameplay advantage, so a client-side door is enough).
+		for _, wall in {
+			{ "WallFront", Vector3.new(6, 12, 1), Vector3.new(-6, 6, -3) },
+			{ "WallFront", Vector3.new(6, 12, 1), Vector3.new(6, 6, -3) },
+			{ "WallLeft", Vector3.new(1, 12, 14), Vector3.new(-9, 6, 4) },
+			{ "WallRight", Vector3.new(1, 12, 14), Vector3.new(9, 6, 4) },
+			{ "WallBack", Vector3.new(18, 12, 1), Vector3.new(0, 6, 11) },
+		} do
+			local blocker = part(gate, wall[1], wall[2], lounge * CFrame.new(wall[3]), gold, Enum.Material.SmoothPlastic)
+			blocker.Transparency = 1
+		end
+		local door = part(gate, "VipDoor", Vector3.new(6, 12, 0.6), lounge * CFrame.new(0, 6, -3), gold, Enum.Material.SmoothPlastic)
+		door.Transparency = 1
+		local glow = part(gate, "VipDoorGlow", Vector3.new(5.6, 5, 0.2), lounge * CFrame.new(0, 2.5, -3), gold, Enum.Material.Neon)
+		glow.Transparency = 0.75
+		glow.CanCollide = false
+		door:SetAttribute("Pass", VIP_PASS)
 		local board = part(gate, "Sign", Vector3.new(9, 2, 0.4), lounge * CFrame.new(0, 6.2, -3), Color3.fromRGB(80, 50, 120), Enum.Material.SmoothPlastic)
 		sign(board, "VIP LOUNGE")
 	end
@@ -195,6 +217,9 @@ function PlazaService.Start(boards)
 			return
 		end
 		lastHome[player] = now
+		if PlayerEffects.Busy(player) == "jailed" then
+			return -- (HOME doesn't let a player out of the admin's jail early)
+		end
 		PlotService.SendHome(player)
 	end)
 	Players.PlayerRemoving:Connect(function(player)

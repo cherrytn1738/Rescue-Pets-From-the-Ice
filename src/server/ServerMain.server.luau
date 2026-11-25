@@ -23,6 +23,7 @@ local RankService = require(script.Parent.RankService)
 local RebirthService = require(script.Parent.RebirthService)
 local Receipts = require(script.Parent.Receipts)
 local RewardService = require(script.Parent.RewardService)
+local RobuxPerks = require(script.Parent.RobuxPerks)
 local RobuxShop = require(script.Parent.RobuxShop)
 local SettingsService = require(script.Parent.SettingsService)
 local ShopService = require(script.Parent.ShopService)
@@ -58,11 +59,18 @@ PlazaService.Start(GameConfig.Leaderboards.Boards)
 LeaderboardService.Start()
 GoldenGlacierService.Start()
 RewardService.Start()
+RobuxPerks.Start() -- what each pass and product does (reward kinds, pass perks, Auto Pick, Server Frost Rush)
 
 -- Developer tools: the F2 debug menu (everyone in Studio, allowlist live) and the F3 admin window.
 PlayerEffects.Start()
 DebugService.Start()
 AdminService.Start()
+
+-- Server-to-client remotes: a client firing them at the server is ignored (a handler, so Roblox doesn't
+-- queue the calls and warn about it).
+for _, name in { "GameEvent", "PurchaseNotice" } do
+	game:GetService("ReplicatedStorage"):WaitForChild(name).OnServerEvent:Connect(function() end)
+end
 
 PlayerData.Start()
 print("[Server] started")

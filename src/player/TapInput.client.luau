@@ -1,5 +1,6 @@
 -- Tapping the ice (docs/GAME_DESIGN.md, "UI and controls"): inside your plot, a tap anywhere that
--- isn't a button swings your ice pick at the block. Phone: tap; PC: click or Space; gamepad: R2 or A.
+-- isn't a button swings your ice pick at the block. Phone: tap; PC: click or Space; gamepad: R2 or A
+-- (where you can tap, Space and A tap instead of jumping).
 -- The client only counts taps and sends the total every GameConfig.Taps.BatchSeconds (TapBatch);
 -- the server caps the rate, decides the damage and pays the crystals. TapFeedback shows the hit at once,
 -- and the ice pick in the player's hand (PickService) swings: Roblox's default Animate script plays its
@@ -7,6 +8,8 @@
 -- can't be put away.
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ContextActionService = game:GetService("ContextActionService")
+local GuiService = game:GetService("GuiService")
 local StarterGui = game:GetService("StarterGui")
 local UserInputService = game:GetService("UserInputService")
 
@@ -62,10 +65,12 @@ local TAP_INPUTS = {
 	[Enum.UserInputType.Touch] = true,
 }
 local TAP_KEYS = {
-	[Enum.KeyCode.Space] = true,
 	[Enum.KeyCode.ButtonR2] = true,
-	[Enum.KeyCode.ButtonA] = true,
 }
+-- Space and gamepad A are also the jump keys: where you can tap (your plot, or near a standing Golden
+-- Glacier) they tap INSTEAD of jumping (a high-priority action that sinks them); anywhere else they jump as
+-- usual. (Phones keep their jump button.)
+local SINK_KEYS = { Enum.KeyCode.Space, Enum.KeyCode.ButtonA }
 
 local function tap(screenPosition: Vector2?)
 	if UIKit.AnyWindowOpen() then
@@ -105,6 +110,19 @@ UserInputService.InputBegan:Connect(function(input, processed)
 		end
 	end
 end)
+
+local function tapsHere(): boolean
+	return not UIKit.AnyWindowOpen() and GuiService.SelectedObject == nil and (inOwnPlot() or nearGolden())
+end
+ContextActionService:BindActionAtPriority("IceTapKeys", function(_, inputState)
+	if not tapsHere() then
+		return Enum.ContextActionResult.Pass -- jump (or press the selected button) as usual
+	end
+	if inputState == Enum.UserInputState.Begin then
+		tap(nil)
+	end
+	return Enum.ContextActionResult.Sink
+end, false, Enum.ContextActionPriority.High.Value, table.unpack(SINK_KEYS))
 
 task.spawn(function()
 	while true do

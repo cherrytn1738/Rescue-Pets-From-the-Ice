@@ -64,4 +64,18 @@ function MonetizationRules.IsValidReceipt(receipt, userId: number): boolean
 		and #receipt.PurchaseId <= 64
 end
 
+-- A crystal bundle: `seconds` of an income of `perSecond` crystals a second (0 for anything unreadable).
+function MonetizationRules.BundleCrystals(perSecond: number, seconds: number): number
+	if type(perSecond) ~= "number" or type(seconds) ~= "number" or perSecond ~= perSecond or seconds ~= seconds then
+		return 0
+	end
+	local amount = math.max(0, perSecond) * math.max(0, seconds)
+	return if amount < math.huge then amount else 0
+end
+
+-- When a Server Frost Rush bought at `now` ends: `seconds` from now, or added to one still running.
+function MonetizationRules.RushEndsAt(now: number, endsAt: number, seconds: number): number
+	return math.max(now, endsAt) + seconds
+end
+
 return MonetizationRules

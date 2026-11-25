@@ -54,14 +54,100 @@ return function(sources)
 	end
 	local Config, Rules = modules.MonetizationConfig, modules.MonetizationRules
 
-	-- The real config: only the two pet-slot passes, both without ids yet (none of the old game's items).
-	check(#Config.Passes == 2 and #Config.Products == 0, "the game's MonetizationConfig has only the pet-slot passes")
-	check(Config.GetPass("ExtraPetSlot").PetSlots == 1 and Config.GetPass("PetSquad").PetSlots == 2, "...Extra Pet Slot adds 1 slot and Pet Squad 2")
-	check(Config.GetPass("ExtraPetSlot").ExpectedPrice == 449 and Config.GetPass("PetSquad").ExpectedPrice == 899, "...at the doc's prices")
-	check(not Config.IsLive(Config.GetPass("ExtraPetSlot")) and not Config.IsLive(Config.GetPass("PetSquad")), "...and neither has a real id yet")
-	check(Config.GetProduct("Anything") == nil and Config.GetPass("Anything") == nil and Config.FindByProductId(1) == nil, "...so nothing else is found")
+	-- The real config: every item of the design doc's Monetization table, at the doc's price, none with an
+	-- id yet (none of the old game's items).
+	local DesignDoc = assert(loadstring(sources.DesignDoc))()
+	local doc = DesignDoc.new(sources["GAME_DESIGN.md"])
+	local docRows = doc:Table({ "Item", "Type" })
+	check(#docRows == 10, "the doc's Monetization table has its 10 rows")
+	local BUNDLES = { { "CrystalPouch", 600 }, { "CrystalSack", 3600 }, { "CrystalChest", 21600 } }
+	for _, row in docRows do
+		if row.Item == "Crystal bundles" then
+			local index = 0
+			for price in string.gmatch(row["Price (Robux)"], "%d+") do
+				index += 1
+				local bundle = Config.GetProduct(BUNDLES[index][1])
+				check(bundle and bundle.ExpectedPrice == tonumber(price) and bundle.Reward.Kind == "CrystalBundle"
+					and bundle.Reward.Seconds == BUNDLES[index][2], `crystal bundle {index} costs {price} and pays {BUNDLES[index][2]} s of income`)
+			end
+			check(index == 3, "three crystal bundles")
+		else
+			local list = if row.Type == "Pass" then Config.Passes else Config.Products
+			local item
+			for _, entry in list do
+				if entry.Name == row.Item then
+					item = entry
+				end
+			end
+			check(item ~= nil, `the doc's {row.Type} "{row.Item}" is in MonetizationConfig`)
+			check(item.ExpectedPrice == DesignDoc.Number(row["Price (Robux)"]), `{row.Item} costs the doc's {row["Price (Robux)"]} Robux`)
+		end
+	end
+	check(#Config.Passes == 6 and #Config.Products == 6, "6 passes and 6 products, nothing else")
+	for _, list in { Config.Passes, Config.Products } do
+		for _, entry in list do
+			check(entry.Id == 0 and entry.GiftId == 0, `{entry.Key} has no id yet (and a gift id slot)`)
+			check(type(entry.Reward) == "table" and type(entry.Reward.Kind) == "string", `{entry.Key} has a reward kind (gifts use it for passes)`)
+			check(type(entry.Description) == "string" and #entry.Description <= 120, `{entry.Key} has a short description`)
+		end
+	end
+	check(Config.GetPass("ExtraPetSlot").PetSlots == 1 and Config.GetPass("PetSquad").PetSlots == 2, "Extra Pet Slot adds 1 slot and Pet Squad 2")
+	check(Config.GetPass("DoubleCrystals").CrystalMultiplier == 2 and Config.GetPass("VIP").CrystalMultiplier == 1.2, "2x Crystals doubles, VIP adds 20%")
+	check(Config.GetPass("VIP").GoldNameTag and Config.GetPass("VIP").Lounge, "VIP has the gold name tag and the lounge")
+	check(Config.GetPass("AutoPick").AutoTapsPerSecond == 5 and Config.GetPass("LuckyIce").Lucky, "Auto Pick taps 5 a second; Lucky Ice is lucky")
+	local rush = Config.GetProduct("ServerFrostRush").Reward
+	check(rush.Kind == "ServerFrostRush" and rush.Multiplier == 2 and rush.Seconds == 900, "Server Frost Rush: x2 for 15 minutes")
+	local mythic = Config.GetProduct("MythicBlock")
+	check(Config.IsPaidRandom(mythic) and mythic.Reward.Kind == "MythicBlock", "the Mythic Block is a paid random item")
+	for _, odd in mythic.Odds do
+		check(odd.Name == "Rare" or odd.Name == "Epic" or odd.Name == "Legendary" or odd.Name == "Mythic", `Mythic Block odds name a rarity ({odd.Name})`)
+	end
+	check(Config.GetGiftable("VIP") == Config.GetPass("VIP") and Config.GetGiftable("ShatterNow") == Config.GetProduct("ShatterNow"), "passes and products can both be gifted")
+	check(Config.GetProduct("Anything") == nil and Config.GetPass("Anything") == nil and Config.FindByProductId(1) == nil, "an unknown key or id finds nothing")
 	local priced, hidden = Config.AllPriced()
-	check(#priced == 0 and hidden == 2, "...and PriceCheck has nothing to check (2 hidden)")
+	check(#priced == 0 and hidden == 24, "PriceCheck has nothing to check yet (12 items and their 12 gift products hidden)")
+	-- every reward kind the config names is registered by the game (RobuxPerks, or RewardService's Crystals)
+	local registered = {}
+	for _, source in { sources.RobuxPerks, sources.RewardService } do
+		for kindName in string.gmatch(source, "Kinds%.(%w+) = {") do
+			registered[kindName] = true
+		end
+	end
+	for _, list in { Config.Passes, Config.Products } do
+		for _, entry in list do
+			check(registered[entry.Reward.Kind], `{entry.Key}'s reward kind {entry.Reward.Kind} is registered`)
+		end
+	end
+	-- the rules the perks use
+	check(Rules.BundleCrystals(10, 600) == 6000 and Rules.BundleCrystals(0, 600) == 0, "a bundle pays income x seconds")
+	check(Rules.BundleCrystals(0 / 0, 600) == 0 and Rules.BundleCrystals(math.huge, 600) == 0 and Rules.BundleCrystals(-5, 600) == 0, "...and nothing for an unreadable income")
+	check(Rules.RushEndsAt(100, 0, 900) == 1000 and Rules.RushEndsAt(100, 500, 900) == 1400, "a Server Frost Rush adds its time to one still running")
+	-- The Mythic Block rolls exactly its shown odds, on any layer, and only creatures of the rolled rarity
+	local BlockRules = loadPure("BlockRules")
+	local counts, seenCreatures = {}, {}
+	for i = 0, 999 do
+		local creature = BlockRules.RollMythicBlock(mythic.Odds, (i + 0.5) / 1000, ((i * 7) % 1000 + 0.5) / 1000)
+		counts[creature.Rarity] = (counts[creature.Rarity] or 0) + 1
+		seenCreatures[creature.Id] = true
+	end
+	for _, odd in mythic.Odds do
+		check(counts[odd.Name] == math.floor(odd.Chance * 1000 + 0.5), `Mythic Block: {odd.Name} comes up {odd.Chance * 100}% of the time`)
+	end
+	check(counts.Common == nil and counts.Uncommon == nil, "...never a Common or Uncommon")
+	local CreatureConfig = modules.CreatureConfig
+	for _, rarityRoll in { 0.9, 0.999 } do -- (0.9 is in Legendary's share, 0.999 in Mythic's)
+		for k = 0, 99 do
+			seenCreatures[BlockRules.RollMythicBlock(mythic.Odds, rarityRoll, (k + 0.5) / 100).Id] = true
+		end
+	end
+	for _, creature in CreatureConfig.Creatures do
+		if creature.Rarity == "Mythic" or creature.Rarity == "Legendary" then
+			check(seenCreatures[creature.Id], `...and every {creature.Rarity} creature can come up ({creature.Id})`)
+		end
+	end
+	-- (the rest of this spec uses test-only items)
+	table.clear(Config.Passes)
+	table.clear(Config.Products)
 
 	-- Config checks catch mistakes at load.
 	local function invalid(config)

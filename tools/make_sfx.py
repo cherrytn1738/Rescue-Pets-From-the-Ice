@@ -5,15 +5,17 @@
   python tools/make_sfx.py TapIce1    # only these sounds
 
 Needs numpy, scipy and soundfile (pip install numpy scipy soundfile; soundfile's wheel brings libsndfile with
-Vorbis). Every sound is synthesised here, with fixed random seeds, so a re-run makes the same files and
-the uploader (tools/upload_models.py) skips the unchanged ones. The look of the sound: bright, cartoony and
+Vorbis). Every sound is synthesised here, with fixed random seeds. An Ogg file gets a random stream serial
+number each time it is written, so a sound whose samples haven't changed is NOT written again
+(store-assets/audio/sources.json keeps a hash of each sound's samples), and the uploader
+(tools/upload_models.py) then skips it. The look of the sound: bright, cartoony and
 icy: glassy bell partials, crisp crunches, celesta-like FM bells in a major key, a touch of reverb.
 
 The names are the cue names in src/replicated/AudioConfig.luau (which gives each its volume). Loudness:
 each file is normalised to the same short-term loudness (the loudest 100 ms at LOUDNESS_DB), then kept
 under PEAK, so AudioConfig's volumes alone set the mix.
 """
-import os, sys
+import hashlib, json, os, sys
 import numpy as np
 from scipy import signal
 import soundfile
@@ -430,6 +432,27 @@ def book_new():
     return trim(reverb(out, 0.2, 0.8, 0.6))
 
 
+def heartbeat():
+    """A soft, slow 'lub-dub' (the creature about to break free, at 80%): two low thumps."""
+    def beat(freq, seconds, level):
+        t = t_axis(seconds)
+        glide = freq * (1 + 0.6 * decay(t, 0.03))
+        body = np.sin(TAU * np.cumsum(glide) / RATE) * decay(t, seconds) * attack(t, 0.004)
+        return lowpass(body, 300) * level
+    out = mix((beat(62, 0.22, 1.0), 0), (beat(54, 0.26, 0.75), 0.16))
+    return trim(reverb(out, 0.08, 0.7, 0.3))
+
+
+def golden_alarm():
+    """The Golden Glacier is coming: a bright three-note chime, twice, with a gold shimmer."""
+    rng = np.random.default_rng(1300)
+    notes = ["G5", "B5", "D6"]
+    once = arpeggio(notes, 0.09, bell, seconds=0.5, index=2.8)
+    out = mix((once, 0), (once * 0.85, 0.42), (bell(note("G6"), 0.9, index=2.0) * 0.5, 0.84),
+              (sparkle(rng, 0.9, 18, 3200, 8000, level=0.25), 0.8))
+    return trim(reverb(out, 0.25, 1.0, 0.9))
+
+
 SOUNDS = {
     **{f"TapIce{v}": (lambda v=v: tap_ice(v)) for v in (1, 2, 3, 4)},
     **{f"Crack{s}": (lambda s=s: crack(s)) for s in (1, 2, 3, 4)},
@@ -446,6 +469,8 @@ SOUNDS = {
     "Rebirth": rebirth,
     "BookPage": book_page,
     "BookNew": book_new,
+    "Heartbeat": heartbeat,
+    "GoldenAlarm": golden_alarm,
 }
 
 
@@ -468,11 +493,20 @@ def main():
     if unknown:
         sys.exit("Unknown sound(s): %s. Known: %s" % (", ".join(unknown), ", ".join(SOUNDS)))
     os.makedirs(OUT, exist_ok=True)
+    hashes_path = os.path.join(OUT, "sources.json")
+    hashes = json.load(open(hashes_path, encoding="utf-8")) if os.path.exists(hashes_path) else {}
     for name in names:
-        sound = master(SOUNDS[name]())
+        sound = master(SOUNDS[name]()).astype(np.float32)
         path = os.path.join(OUT, name + ".ogg")
-        soundfile.write(path, sound.astype(np.float32), RATE, format="OGG", subtype="VORBIS")
+        digest = hashlib.sha256(sound.tobytes()).hexdigest()
+        if hashes.get(name) == digest and os.path.exists(path):
+            print("%-18s unchanged" % name)
+            continue
+        soundfile.write(path, sound, RATE, format="OGG", subtype="VORBIS")
+        hashes[name] = digest
         print("%-18s %5.2f s  peak %.2f  %s" % (name, len(sound) / RATE, np.max(np.abs(sound)), os.path.relpath(path)))
+    with open(hashes_path, "w", encoding="utf-8") as handle:
+        json.dump(hashes, handle, indent=1, sort_keys=True)
 
 
 if __name__ == "__main__":
