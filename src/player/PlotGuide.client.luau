@@ -31,7 +31,8 @@ beam.Transparency = NumberSequence.new(0.15)
 beam.Attachment1 = targetAttachment
 beam.Parent = anchor
 
-local marker -- a tall light column over your plot's entrance
+local marker -- a light column over your plot's entrance, above the gate, fading as it rises
+local markerBeam
 local function ensureMarker(index: number)
 	if marker and marker:GetAttribute("Index") == index then
 		return
@@ -39,15 +40,31 @@ local function ensureMarker(index: number)
 	if marker then
 		marker:Destroy()
 	end
+	local spec = MapConfig.HomeMarker
 	marker = Instance.new("Part")
 	marker.Name = "HomeMarker"
 	marker.Anchored, marker.CanCollide, marker.CanQuery, marker.CanTouch = true, false, false, false
-	marker.Material = Enum.Material.Neon
-	marker.Color = Color3.fromRGB(255, 235, 120)
-	marker.Transparency = 0.55
-	marker.Shape = Enum.PartType.Cylinder
-	marker.Size = Vector3.new(60, 2.5, 2.5)
-	marker.CFrame = CFrame.new(MapConfig.PlotPoint(index, MapConfig.TapSpot.X, MapConfig.PlotSize / 2, 30)) * CFrame.Angles(0, 0, math.rad(90))
+	marker.Transparency = 1
+	marker.Size = Vector3.one
+	marker.CFrame = CFrame.new(MapConfig.PlotPoint(index, MapConfig.TapSpot.X, MapConfig.PlotSize / 2, spec.Bottom))
+	local bottom = Instance.new("Attachment")
+	bottom.Parent = marker
+	local top = Instance.new("Attachment")
+	top.Position = Vector3.new(0, spec.Height, 0)
+	top.Parent = marker
+	markerBeam = Instance.new("Beam")
+	markerBeam.Name = "Column"
+	markerBeam.Attachment0, markerBeam.Attachment1 = bottom, top
+	markerBeam.Color = ColorSequence.new(Color3.fromRGB(255, 235, 120))
+	markerBeam.LightEmission = 1
+	markerBeam.FaceCamera = true
+	markerBeam.Width0, markerBeam.Width1 = spec.Width, spec.Width * 0.5
+	markerBeam.Transparency = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 1),
+		NumberSequenceKeypoint.new(0.08, 0.35),
+		NumberSequenceKeypoint.new(1, 1),
+	})
+	markerBeam.Parent = marker
 	marker:SetAttribute("Index", index)
 	marker.Parent = Workspace
 end
@@ -63,7 +80,7 @@ RunService.Heartbeat:Connect(function()
 	local localPos = MapConfig.PlotCFrame(index):PointToObjectSpace(root.Position)
 	local half = MapConfig.PlotSize / 2
 	local inside = math.abs(localPos.X) <= half and math.abs(localPos.Z) <= half
-	marker.Transparency = if inside then 1 else 0.55
+	markerBeam.Enabled = not inside
 	if inside then
 		anchor.Parent = nil
 		return

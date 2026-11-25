@@ -10,7 +10,8 @@ block"; the look is in IceLooks):
    Mythic cycles through the rainbow);
  - the crack stages: 20% hairline cracks, 40% chunks fall off (the shape is clear), 60% the eyes show and
    blink, 80% it wiggles, the glow brightens and a heartbeat plays;
- - the overhead HP bar with the crack %, the level and layer, and the rarity once 40% cracked;
+ - (the HP bar, the crack %, the level and layer and the rarity are on your HUD while you're in your plot:
+   HUD.client; nothing floats above the block, where it covered the ice);
  - the next block sliding in on its sled; the shatter (shards and a crystal fountain) for everyone, and
    for the owner the rescue moment (RescueMoment).
 IceBlocks.Hit(plotIndex, strength) makes a block shudder (taps, buildings).
@@ -25,8 +26,6 @@ local CreatureConfig = require(ReplicatedStorage.CreatureConfig)
 local IceLooks = require(ReplicatedStorage.IceLooks)
 local LayerConfig = require(ReplicatedStorage.LayerConfig)
 local MapConfig = require(ReplicatedStorage.MapConfig)
-local NumberFormat = require(ReplicatedStorage.NumberFormat)
-local UITheme = require(ReplicatedStorage.UITheme)
 local PetLooks = require(ReplicatedStorage.Pets.PetLooks)
 local Effects = require(script.Parent.Effects)
 
@@ -49,65 +48,6 @@ end
 -- callback(plotIndex, creatureId, view) when a block shatters (RescueMoment listens for the owner's).
 function IceBlocks.OnShatter(callback)
 	table.insert(rescueListeners, callback)
-end
-
-local function overhead(parent: BasePart)
-	local gui = Instance.new("BillboardGui")
-	gui.Name = "Overhead"
-	gui.Size = UDim2.fromScale(13, 4.2) -- studs: shrinks with distance like the world
-	gui.MaxDistance = 170
-	gui.LightInfluence = 0
-	gui.Parent = parent
-
-	local function text(name, y, h)
-		local label = Instance.new("TextLabel")
-		label.Name = name
-		label.BackgroundTransparency = 1
-		label.Position = UDim2.fromScale(0, y)
-		label.Size = UDim2.fromScale(1, h)
-		label.Font = UITheme.Font
-		label.TextScaled = true
-		label.TextColor3 = Color3.new(1, 1, 1)
-		label.TextStrokeTransparency = 0
-		label.Parent = gui
-		return label
-	end
-	text("Rarity", 0, 0.26)
-	text("Title", 0.26, 0.26)
-
-	local trough = Instance.new("Frame")
-	trough.Name = "Bar"
-	trough.Position = UDim2.fromScale(0, 0.56)
-	trough.Size = UDim2.fromScale(1, 0.4)
-	trough.BackgroundColor3 = UITheme.Progress.trough
-	trough.Parent = gui
-	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0.3, 0)
-	corner.Parent = trough
-	local stroke = Instance.new("UIStroke")
-	stroke.Thickness = 3
-	stroke.Parent = trough
-	local fill = Instance.new("Frame")
-	fill.Name = "Fill"
-	fill.BackgroundColor3 = Color3.new(1, 1, 1)
-	fill.Size = UDim2.fromScale(1, 1)
-	fill.Parent = trough
-	corner:Clone().Parent = fill
-	local gradient = Instance.new("UIGradient")
-	gradient.Rotation = 90
-	gradient.Color = ColorSequence.new(UITheme.Progress.top, UITheme.Progress.bottom)
-	gradient.Parent = fill
-	local barText = Instance.new("TextLabel")
-	barText.Name = "Text"
-	barText.BackgroundTransparency = 1
-	barText.Size = UDim2.fromScale(1, 1)
-	barText.Font = UITheme.Font
-	barText.TextScaled = true
-	barText.TextColor3 = Color3.new(1, 1, 1)
-	barText.TextStrokeTransparency = 0
-	barText.ZIndex = 3
-	barText.Parent = trough
-	return gui
 end
 
 -- Pieces welded to the block move with it (the shudder, the sled).
@@ -303,9 +243,7 @@ local function makeView(plot: Model)
 		core = core,
 		glow = glow,
 		aura = aura,
-		gui = overhead(block),
 		shake = 0,
-		shownHp = nil,
 		key = nil, -- level..creature: rebuild cracks and silhouette when it changes
 		stage = 0,
 		present = false,
@@ -366,7 +304,6 @@ local function update(view, dt: number)
 	local level = attrs:GetAttribute("Level") or 1
 	local layer = attrs:GetAttribute("Layer") or 1
 	local hp = attrs:GetAttribute("Hp") or 0
-	local hpMax = attrs:GetAttribute("HpMax") or 1
 	local creatureId = attrs:GetAttribute("CreatureId")
 	local rarity = attrs:GetAttribute("Rarity") or "Common"
 	local stage = attrs:GetAttribute("Stage") or 0
@@ -393,7 +330,6 @@ local function update(view, dt: number)
 		makeExtras(view, size, layer, level)
 		buildSilhouette(view, creatureId, height)
 		view.stage = 0
-		view.shownHp = hp
 	end
 	if present and not view.present then
 		view.slideStart = os.clock() -- the sled brings it in
@@ -492,19 +428,6 @@ local function update(view, dt: number)
 		view.heartbeatAt = now + 1.1
 		Effects.Sound("Heartbeat")
 	end
-
-	-- the overhead: HP counting smoothly, the crack %, level and layer; the rarity once 40% cracked
-	view.shownHp = if view.shownHp then view.shownHp + (hp - view.shownHp) * math.min(1, dt * 10) else hp
-	local share = BlockRules.DamageShare(view.shownHp, hpMax)
-	local gui = view.gui
-	gui.Enabled = present
-	gui.StudsOffsetWorldSpace = Vector3.new(0, height / 2 + 3.2, 0)
-	local layerInfo = LayerConfig.Get(layer)
-	gui.Title.Text = `Level {level} · {layerInfo and layerInfo.Name or ""}`
-	gui.Rarity.Text = if stage >= 2 and rarity then string.upper(rarity) else ""
-	gui.Rarity.TextColor3 = IceLooks.RarityColors[rarity] or Color3.new(1, 1, 1)
-	gui.Bar.Fill.Size = UDim2.fromScale(math.clamp(1 - share, 0, 1), 1)
-	gui.Bar.Text.Text = `{NumberFormat.Short(math.max(0, view.shownHp))} HP · {math.floor(share * 100)}% cracked`
 end
 
 -- A tap or a building hit: the block shudders.

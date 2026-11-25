@@ -41,6 +41,9 @@ MapConfig.PlotModels = {
 	PlotWallShort = 128971708238167,
 }
 MapConfig.TapSpot = { X = 0, Z = 24 } -- where a player arrives in their plot: in front of the ice
+-- The light column over your own plot's entrance while you're outside it (PlotGuide.client): it starts above the
+-- gate's snow (the gate's top is about 26 studs up) and fades out as it rises.
+MapConfig.HomeMarker = { Bottom = 28, Height = 55, Width = 3.5 }
 
 -- The ground inside every plot (plot space, as the pads). The floor is the place's snow terrain, shaped by
 -- tools/studio/build_world.luau from this table (re-run it after changing it, then save the place); the plot's

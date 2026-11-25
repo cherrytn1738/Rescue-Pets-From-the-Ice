@@ -95,13 +95,39 @@ local badge = UIKit.Label(counter, "Badge", "", 24, UIKit.Colors.Muted)
 badge.Position = UDim2.fromOffset(0, 96)
 badge.Size = UDim2.new(1, 0, 0, 28)
 badge.TextXAlignment = Enum.TextXAlignment.Center
+badge.RichText = true -- (the rarity, once revealed, in its own colour)
+badge.TextScaled = true -- (one line: a long layer name and a rarity shrink to fit)
+local badgeLimit = Instance.new("UITextSizeConstraint")
+badgeLimit.MaxTextSize = 24
+badgeLimit.Parent = badge
+-- Your ice block's HP while you're in your own plot: HP left / HP, and the crack %. (It used to float above
+-- the block, where it covered the ice and this counter.)
+local iceBar, setIceBar = UIKit.ProgressBar(counter, "IceBar")
+iceBar.AnchorPoint = Vector2.new(0.5, 0)
+iceBar.Position = UDim2.new(0.5, 0, 0, 128)
+iceBar.Size = UDim2.fromOffset(340, 28)
+iceBar.Visible = false
 local rush = UIKit.Label(counter, "FrostRush", "", 28, Color3.fromRGB(140, 230, 255))
 rush.Position = UDim2.fromOffset(0, 124)
 rush.Size = UDim2.new(1, 0, 0, 32)
 rush.TextXAlignment = Enum.TextXAlignment.Center
-counter.Size = UDim2.fromOffset(420, 160)
+counter.Size = UDim2.fromOffset(420, 196)
+local BlockRules = require(ReplicatedStorage.BlockRules)
+local IceLooks = require(ReplicatedStorage.IceLooks)
 local LayerConfig = require(ReplicatedStorage.LayerConfig)
+local MapConfig = require(ReplicatedStorage.MapConfig)
 local Workspace = game:GetService("Workspace")
+
+-- Is your character in your own plot (as the server counts it: PlotService.InOwnPlot)?
+local function inOwnPlot(index: number?): boolean
+	local root = localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
+	if type(index) ~= "number" or not root then
+		return false
+	end
+	local at = MapConfig.PlotCFrame(index):PointToObjectSpace(root.Position)
+	local half = MapConfig.PlotSize / 2 + MapConfig.TapMargin
+	return math.abs(at.X) <= half and math.abs(at.Z) <= half and at.Y > -10 and at.Y < 60
+end
 
 -- The settings gear, top right of the counter.
 local gear = UIKit.Button(root, "SettingsButton", "⚙", "Frost", 34)
@@ -115,6 +141,7 @@ gearScale.Parent = gear
 local goHome = ReplicatedStorage:WaitForChild("GoHome") :: RemoteEvent
 
 local shown = nil
+local shownHp = nil
 RunService.RenderStepped:Connect(function(dt)
 	local target = localPlayer:GetAttribute("Crystals")
 	if type(target) ~= "number" then
@@ -132,10 +159,30 @@ RunService.RenderStepped:Connect(function(dt)
 	local level = localPlayer:GetAttribute("BlockLevel") or 1
 	local index = localPlayer:GetAttribute("PlotIndex")
 	local plot = index and Workspace:FindFirstChild("Plots") and Workspace.Plots:FindFirstChild("Plot" .. index)
-	local layer = LayerConfig.Get(plot and plot.Block:GetAttribute("Layer") or 1)
-	badge.Text = `Level {level} · {layer and layer.Name or ""}`
+	local block = plot and plot:FindFirstChild("Block")
+	local layer = LayerConfig.Get(block and block:GetAttribute("Layer") or 1)
+	local hp, hpMax = block and block:GetAttribute("Hp"), block and block:GetAttribute("HpMax")
+	local present = block ~= nil and block:GetAttribute("Present") == true and type(hp) == "number" and type(hpMax) == "number" and hpMax > 0
+	-- the rarity once the ice is 40% cracked (crack stage 2), as the block's overhead showed it
+	local rarity = block and block:GetAttribute("Rarity")
+	local stage = block and block:GetAttribute("Stage") or 0
+	local rarityText = ""
+	if present and stage >= 2 and type(rarity) == "string" then
+		local colour = IceLooks.RarityColors[rarity] or Color3.new(1, 1, 1)
+		rarityText = ` · <font color="#{colour:ToHex()}">{string.upper(rarity)}</font>`
+	end
+	badge.Text = `Level {level} · {layer and layer.Name or ""}{rarityText}`
+	iceBar.Visible = present and inOwnPlot(index)
+	if present then
+		shownHp = if shownHp and shownHp <= hpMax then shownHp + (hp - shownHp) * math.min(1, dt * 10) else hp
+		local share = BlockRules.DamageShare(shownHp, hpMax)
+		setIceBar(1 - share, `{NumberFormat.Short(math.max(0, shownHp))} / {NumberFormat.Short(hpMax)} · {math.floor(share * 100)}% cracked`)
+	else
+		shownHp = nil
+	end
 	local endsAt = localPlayer:GetAttribute("FrostRushEndsAt")
 	local left = if type(endsAt) == "number" then endsAt - Workspace:GetServerTimeNow() else 0
+	rush.Position = UDim2.fromOffset(0, if iceBar.Visible then 160 else 124)
 	rush.Visible = left > 0
 	if left > 0 then
 		rush.Text = `❄ FROST RUSH x{localPlayer:GetAttribute("FrostRushMultiplier") or 3}  {math.floor(left // 60)}:{string.format("%02d", math.floor(left % 60))}`

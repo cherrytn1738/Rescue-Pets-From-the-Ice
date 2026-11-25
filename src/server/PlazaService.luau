@@ -156,8 +156,30 @@ function PlazaService.Start(boards)
 	-- the VIP lounge behind its gate (closed until a VIP pass exists)
 	local lounge = spot(62, 22.5 + 45 * 7, 0)
 	part(folder, "VipFloor", Vector3.new(18, 0.6, 14), lounge * CFrame.new(0, 0.3, 4), Color3.fromRGB(80, 50, 120), Enum.Material.Fabric)
-	local gate = part(folder, "VipGate", Vector3.new(18, 8, 1), lounge * CFrame.new(0, 4, -3), Color3.fromRGB(255, 205, 80), Enum.Material.ForceField)
-	sign(gate, "VIP LOUNGE")
+	-- a gold rail fence round the floor, closed at the front, with the sign over the gate (a ForceField wall
+	-- here only shimmered and read as something broken; a solid one was a big flat slab beside a plot's path)
+	local gold = Color3.fromRGB(255, 205, 80)
+	local gate = Instance.new("Model")
+	gate.Name = "VipGate"
+	gate.Parent = folder
+	local function rails(name: string, from: Vector3, to: Vector3)
+		local length = (to - from).Magnitude
+		local along = CFrame.lookAt((from + to) / 2, to)
+		for _, y in { 1.6, 3.2 } do
+			part(gate, name .. "Rail", Vector3.new(0.4, 0.4, length), lounge * along * CFrame.new(0, y, 0), gold, Enum.Material.SmoothPlastic)
+		end
+		for _, at in { from, to } do
+			part(gate, name .. "Post", Vector3.new(0.8, 4.2, 0.8), lounge * CFrame.new(at + Vector3.new(0, 2.1, 0)), gold, Enum.Material.SmoothPlastic)
+		end
+	end
+	rails("Front", Vector3.new(-9, 0, -3), Vector3.new(9, 0, -3))
+	rails("Left", Vector3.new(-9, 0, -3), Vector3.new(-9, 0, 11))
+	rails("Right", Vector3.new(9, 0, -3), Vector3.new(9, 0, 11))
+	for _, x in { -3, 3 } do
+		part(gate, "SignPost", Vector3.new(0.5, 6.5, 0.5), lounge * CFrame.new(x, 3.25, -3), gold, Enum.Material.SmoothPlastic)
+	end
+	local board = part(gate, "Sign", Vector3.new(9, 2, 0.4), lounge * CFrame.new(0, 6.2, -3), Color3.fromRGB(80, 50, 120), Enum.Material.SmoothPlastic)
+	sign(board, "VIP LOUNGE")
 	-- a welcome sign over the spawn
 	local welcome = part(folder, "Welcome", Vector3.new(20, 6, 1), spot(24, 0, 10), Color3.fromRGB(40, 90, 150), Enum.Material.SmoothPlastic)
 	sign(welcome, "Rescue Pets From the Ice")

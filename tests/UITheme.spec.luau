@@ -120,6 +120,13 @@ return function(sources)
 	-- NumberFormat ------------------------------------------------------------------------------------
 	check(NumberFormat.Short(950) == "950", "small numbers stay whole")
 	check(NumberFormat.Short(1200) == "1.2K", "thousands")
+	check(NumberFormat.Short(1.5e33) == "1.5Dc", "decillions")
+	check(NumberFormat.Short(1.8214294876533983e72) == "1.82Tvg", "past Dc the suffixes go on (level 400 ice HP)")
+	check(NumberFormat.Short(18.2e93) == "18.2Tg", "the last suffix")
+	check(NumberFormat.Short(1.82e96) == "1.82e96", "past the last suffix: a short exponent")
+	check(NumberFormat.Short(3e100) == "3e100", "an exponent without trailing zeros")
+	check(#NumberFormat.Short(1e300) <= 8, "the largest numbers stay short")
+	check(NumberFormat.Short(0 / 0) == "0", "not a number shows 0")
 	check(NumberFormat.Money(2500000) == "$2.5M", "money")
 	check(NumberFormat.MoneyPrecise(186910) == "$186.91K", "precise money never rounds up")
 

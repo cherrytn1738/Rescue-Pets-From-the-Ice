@@ -411,7 +411,7 @@ Once a player owns the next building up, the older station shrinks and blends in
 - **Tap power** upgrades the ice pick the player swings on every tap: wood, stone, iron, gold, diamond, then cosmic, each with its own spark colour.
 - **Building upgrades** give the building better parts (a stone pick head, then iron, then gold; a hotter flame), change its hit sparks, and add a star to its badge.
 - **Ice upgrades** make the rescue burst bigger and turn the crystals from white to blue to gold.
-- **Rebirths** give a rank title and colour on the player's name tag ("Rebirth 7") and change the colour of the plot's border.
+- **Rebirths** give a rank title and colour on the player's name tag ("Rebirth 7"; other players see it, your own is hidden for you so it never covers your ice) and change the colour of the plot's border.
 
 **Pets.** Pets are the only animals in the game, and they follow the player everywhere. They hop when the player taps, cheer when a creature is freed, and each has its own idle animation. They are the random, fun part of the game: you never quite know what the next block holds.
 
@@ -537,7 +537,7 @@ Inside your plot, a tap anywhere on the screen swings your ice pick at the block
 **HUD.**
 
 - **Top:** crystals and crystals per second, counting up smoothly.
-- **Above the ice:** an HP bar with the crack percentage and the block level.
+- **Your ice block** (while you're in your own plot): under the crystal counter, the level and layer line (with the rarity once the ice is 40% cracked) and an HP bar, "HP left / HP · crack %", in the same short numbers as the crystals. Nothing floats above the block, so the ice stays in clear view.
 - **Left side:** Build, Upgrades, Pets, Rebirth and Shop buttons.
 - **Build panel:** buy ×1, ×10, ×100 or Max. The next affordable building glows.
 - **Phones:** nothing near the jump button or the bottom edge.
@@ -559,7 +559,7 @@ Every screen at launch, so the UI can be built from one list. All use the showca
 | Screen | Opens from | What's on it |
 | --- | --- | --- |
 | HUD | Always | Crystals and crystals/s (top), layer and level badge, side buttons (Build, Upgrades, Pets, Book, Rebirth, Shop), Home button, Frost Rush timer when active |
-| Ice block overhead | Always, above the ice | HP bar, crack %, block level, rarity glow label once 40% cracked |
+| Ice block bar | In the HUD while in your own plot | HP bar (HP left / HP), crack %, block level and layer, the rarity once 40% cracked |
 | Build panel | Build button | Eight building cards (3D preview, owned, price, damage/s, income share bar), buy ×1/×10/×100/Max, locked buildings as "???" |
 | Upgrades panel | Upgrades button | Grid of upgrade icons sorted by price, dimmed until affordable; Owned tab |
 | Pets panel | Pets button | Inventory grid, equipped slots on top, Equip Best, delete, combine 5 into Golden |
@@ -606,7 +606,7 @@ The server owns every number. The client sends tap counts and requests, and only
 - **The ice look:** a see-through ice shell around a copy of the pet model coloured one dark shade, as the silhouette. Each crack stage lowers the frost on the ice and swaps in a crack layer. The glow is a light inside the block in the rarity colour. Test glass and lights on a low-end phone early.
 - **Replication:** crystals, crystals per second, block HP and the block's rarity are attributes updated about 4 times a second. The client counts smoothly between updates.
 - **Saving:** PlayerData from Steal Safari Pets (session lock, schema version, separate Studio stores). It saves crystals, crystals earned this run and all time, buildings owned, upgrades, block level, the current block's creature, pets and equipped slots, Frost Cores, rebirths, creatures rescued and passes.
-- **Big numbers:** Luau numbers reach about 1e308, which is enough. Display uses suffixes (K, M, B, T, Qa, Qi, Sx, Sp, Oc, No, Dc). Leaderboards store `math.floor(math.log10(total) * 1000)`, because OrderedDataStore only holds whole numbers up to about 9e18.
+- **Big numbers:** Luau numbers reach about 1e308, which is enough. Display uses suffixes (K, M, B, T, Qa, Qi, Sx, Sp, Oc, No, Dc, then Ud, Dd, Td, Qad, Qid, Sxd, Spd, Ocd, Nod, Vg, Uvg, Dvg, Tvg, Qavg, Qivg, Sxvg, Spvg, Ocvg, Novg, Tg); past Tg (1e93) a short exponent such as "1.82e96". Ice block HP passes Dc around level 200. Leaderboards store `math.floor(math.log10(total) * 1000)`, because OrderedDataStore only holds whole numbers up to about 9e18.
 - **Offline earnings:** building income only, at 50%, capped at 2 hours, shown in a welcome-back popup.
 - **Anti-cheat:** every RemoteEvent is rate-limited. The server computes all prices and checks every buy and equip. Auto Pick runs on the server, so autoclickers can never beat the 20-taps-a-second cap.
 - **Phones:** building animations, ice chips and crystal particles run on the client only. Each plot shows one model per building type with a count badge.

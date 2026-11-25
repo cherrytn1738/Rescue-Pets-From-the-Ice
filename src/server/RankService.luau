@@ -1,7 +1,7 @@
 --[[
 RankService: what shows a player's standing in the world (docs/GAME_DESIGN.md, "Rebirth" and "The
 Creature Book"). Server only.
- - A name tag over every character: the display name, the rebirth rank ("Rebirth 7 · Frost Finder") in
+ - A name tag over every character (hidden from its own player): the display name, the rebirth rank ("Rebirth 7 · Frost Finder") in
    the rank's colour, the Creature Book's "Ice Keeper" title, and the book's frosty or golden border.
  - The plot's border wall in the rank's colour (Rainbow: a hue per wall).
 Refreshed on spawn, on load, after a rebirth and after any book change.
@@ -46,6 +46,7 @@ local function tag(player: Player, data)
 		gui.Size = UDim2.fromScale(7, 1.9)
 		gui.StudsOffset = Vector3.new(0, 2.6, 0)
 		gui.MaxDistance = 120
+		gui.PlayerToHideFrom = player -- your own tag would cover the ice from the tapping spot; others still see it
 		gui.Parent = head
 		local frame = Instance.new("Frame")
 		frame.Name = "Tag"

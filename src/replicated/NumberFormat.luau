@@ -2,13 +2,25 @@
 -- symbol, or add a function for the game's own currency, once the design names it.)
 local NumberFormat = {}
 
--- The design's suffixes ("Technical design": K, M, B, T, Qa, Qi, Sx, Sp, Oc, No, Dc).
-local SUFFIXES = { "", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc" }
+-- The design's suffixes ("Technical design": K, M, B, T, Qa, Qi, Sx, Sp, Oc, No, Dc, then Ud ... Tg, 1e93).
+-- Ice block HP outgrows Dc (1e33) around level 200, so the list goes on; past Tg a number shows as "1.82e96".
+local SUFFIXES = {
+	"", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc",
+	"Ud", "Dd", "Td", "Qad", "Qid", "Sxd", "Spd", "Ocd", "Nod", "Vg",
+	"Uvg", "Dvg", "Tvg", "Qavg", "Qivg", "Sxvg", "Spvg", "Ocvg", "Novg", "Tg",
+}
 
 function NumberFormat.Short(value: number): string
+	if value ~= value or math.abs(value) == math.huge then
+		return "0"
+	end
 	value = math.floor(value)
 	if math.abs(value) < 1000 then
 		return tostring(value)
+	end
+	if math.abs(value) >= 1000 ^ #SUFFIXES then
+		local text = string.format("%.2e", value) -- 1.82e+96
+		return (string.gsub(string.gsub(text, "e%+?0*", "e"), "%.?0+e", "e"))
 	end
 
 	local index = 1
