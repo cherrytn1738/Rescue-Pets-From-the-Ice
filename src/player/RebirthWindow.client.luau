@@ -18,9 +18,14 @@ local Colors = UIKit.Colors
 local coresLine, bonusLine, resetLine, keptLine, rankLine, confirm, feedback
 local sure = false
 
-local window = ShowcaseKit.Window("RebirthWindow", "Rebirth", {
+local window
+window = ShowcaseKit.Window("RebirthWindow", "Rebirth", {
 	width = 760,
 	height = 560,
+	-- gamepad: start on the close button, so mashing A can't rebirth by accident (REBIRTH needs two presses)
+	firstSelection = function()
+		return window and window.panel:FindFirstChild("Close")
+	end,
 	onLayout = function(width, height)
 		local y = 0
 		for _, item in { coresLine, bonusLine, resetLine, keptLine, rankLine } do

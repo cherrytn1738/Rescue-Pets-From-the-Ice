@@ -208,8 +208,8 @@ return function(sources)
 		OfflineEarnings = { Pay = record("Pay") },
 		Receipts = { Simulate = record("Simulate") },
 		IceBlockService = { Shatter = record("Shatter"), ForceNextCreature = record("ForceNextCreature"), Reroll = record("Reroll") },
-		PetService = { Give = record("Give") },
-		PlotService = { SendHome = record("SendHome"), FillDummies = function()
+		PetService = { Give = record("Give"), Publish = record("Publish") },
+		PlotService = { SendHome = record("SendHome"), RefreshBuildings = record("RefreshBuildings"), FillDummies = function()
 			return 6
 		end, ClearDummies = function()
 			return 6
@@ -312,7 +312,12 @@ return function(sources)
 	check(ids.SetPickTier.Params[1].Min == 1 and ids.SetPickTier.Params[1].Max == 6, "pick tiers 1 to 6")
 
 	ok = run("ResetSave")
-	check(ok and calls[#calls].name == "ResetToNew" and calls[#calls].args[1] == me, "resetting a save goes through PlayerData.ResetToNew")
+	local resetCalls = {}
+	for _, call in calls do
+		resetCalls[call.name] = true
+	end
+	check(ok and resetCalls.ResetToNew and resetCalls.RefreshBuildings and resetCalls.Reroll and resetCalls.Publish,
+		"resetting a save goes through PlayerData.ResetToNew, then the plot, the block and the pets follow it")
 	ok, message = run("PlaySound", { Sound = "Shatter" })
 	check(ok and #soundEvents == 1 and soundEvents[1].player == me and soundEvents[1].kind == "DebugSound"
 		and soundEvents[1].payload.Name == "Shatter", "the sound test plays the chosen sound on the target's client")

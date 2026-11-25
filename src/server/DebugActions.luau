@@ -347,6 +347,11 @@ local ACTIONS = {
 			if not PlayerData.ResetToNew(target) then
 				fail(`Couldn't reset {target.Name}`)
 			end
+			-- what the world shows follows the fresh save at once: the stations, a new block, the pets
+			local data = PlayerData.Edit(target)
+			PlotService.RefreshBuildings(target, data)
+			IceBlockService.Reroll(target)
+			PetService.Publish(target, data)
 			return `Reset {target.Name} to a fresh save`
 		end,
 	},

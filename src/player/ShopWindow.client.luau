@@ -459,9 +459,18 @@ end)
 
 local _, noticeRoot = UIKit.Screen("PurchaseNotices", 40)
 local banner = UIKit.Label(noticeRoot, "Notice", "", 30, Colors.Good)
-banner.AnchorPoint = Vector2.new(0.5, 0)
-banner.Position, banner.Size = UDim2.new(0.5, 0, 0, 90), UDim2.fromOffset(700, 44)
+-- the lower middle: clear of the HUD's counter, any window's title and tabs, and a phone's thumbstick and
+-- jump button; a long line shrinks to fit a small screen
+banner.AnchorPoint = Vector2.new(0.5, 1)
+banner.Position, banner.Size = UDim2.new(0.5, 0, 0.8, 0), UDim2.new(0.9, 0, 0, 44)
 banner.TextXAlignment = Enum.TextXAlignment.Center
+banner.TextScaled = true
+local bannerLimit = Instance.new("UITextSizeConstraint")
+bannerLimit.MaxTextSize = 30
+bannerLimit.Parent = banner
+local bannerWidth = Instance.new("UISizeConstraint")
+bannerWidth.MaxSize = Vector2.new(700, 44)
+bannerWidth.Parent = banner
 banner.Visible = false
 local noticeCount = 0
 

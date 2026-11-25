@@ -4,15 +4,77 @@ Branch `overnight-launch-prep` (from `main` at 348b0e5). Pushed after every phas
 
 ## Summary
 
-_(Written at the end of the run.)_
+All nine phases are done on `overnight-launch-prep`. It is pushed after every phase and not merged. All 20 specs pass (4,900 checks, up from 4,639).
+
+- **Robux:** every pass and product in the design doc is built and tested with simulated purchases, including gifts for all of them (passes too), duplicate receipts and the restricted-region refusal. Only the Creator Hub ids are missing; `docs/ROBUX_PRODUCTS.md` has every name, description and price, ready to copy. Icon drafts for all 12 items are in `store-assets/icons/` (not uploaded).
+- **Gaps:** most of the audit's gaps are filled. Among them:
+  - the heartbeat and Golden Glacier alarm sounds (uploaded as the group);
+  - the likes milestone codes;
+  - the come-and-watch beams for rare blocks;
+  - the building rise, evolution and upgrade moments;
+  - confetti, the crystal and spark colours, the sled and the camera dip;
+  - badge stars, the Masterwork plate, the aurora trail and the golden pick;
+  - Space and A tap instead of jumping in your plot.
+
+  The deferred gaps (3D build previews, model animation, the book's fly-in animation, menu icon art) are listed with reasons in the gap table below.
+- **Playthrough:** a scripted new player, tapping 4/s and buying sensibly, reached the **first rebirth at 34.5 minutes** (target 30-40):
+  - first rescue and first building at 24 s;
+  - layer 2 at 4.4 min, first Rare at 5.9 min, layer 3 at 13.7 min;
+  - all 7 onboarding funnel steps logged.
+
+  It played near-perfectly, so real players will be slower; the proposals are in Phase 4.
+- **Multiplayer (3 players):** all pass: the Glacier race (x5 for the top tapper, x3 for the rest), other plots' sounds, the rare beams and announcement, the leaderboards, a pass gift, Server Frost Rush, and a player leaving cleanly.
+- **Security:** one high-severity exploit fixed: a repeated pet id in Delete could force a save rollback, for example a free re-roll of a paid Mythic Block. Seven smaller issues were fixed too. Abusive input on every remote from a client gained nothing and caused no server errors.
+- **Saves:** specs now cover an every-field round trip, two live servers fighting over one save, and a rebirth keeping everything it should.
+- **Performance:** about 51-58 fps and 15-17 ms render in Studio with all 8 plots maxed. Phones will struggle with the 1.3M triangles across the ring; reduced effects doesn't help, because the cost is the Precise meshes. Proposals are in Phase 6.
+- **Phone and gamepad:**
+  - Phone layouts are clean at 844x390. At 667x375 the banners, toasts and notice were fixed.
+  - The gamepad works for tapping, B to close, and the first selection in every window. D-pad moves between buttons couldn't be tested from Studio.
+- **Launch material:** 5 thumbnail drafts and 3 game icon concepts are in `store-assets/launch/`, plus a camera-preset script for full-size retakes. `docs/LAUNCH_CHECKLIST.md` lists every manual step, in order.
+
+**Please save the place in Studio and keep a backup copy** (File > Save to File As). Nothing this run needs to be in the place file: everything is scripts, built at runtime. But the place holds the templates and the world from earlier passes, and Lighting Technology = Future.
 
 ## Questions for you
 
-_(Collected as the run goes.)_
+1. **Mythic Block odds:** 50% Rare / 30% Epic / 15% Legendary / 5% Mythic, rolled from the whole roster, so a level-1 player can pull a layer-5 creature. OK, or should it be limited to the player's own layer?
+2. **Stacking:** every bonus multiplies: pets x book x Crystal Yield x Frost Cores x 2x Crystals x VIP x group x Frost Rush x Server Rush. At the top that's 2 x 1.2 x 1.1 x 5 x 2 = 26x on top of the save's own multipliers. Keep it, or make the passes and rushes add up instead?
+3. **Crystal bundles:** "current income" = building damage/s + tap damage at 4 taps/s, x the multiplier at that moment (a rush included). Bought crystals also count toward the next rebirth's Frost Cores. OK?
+4. **Server Frost Rush:** a second purchase adds 15 minutes rather than stacking to x4, and a rush ends if its server closes. OK?
+5. **Doc vs code:** the doc's loop says pets and Frost Cores make every hit faster, but the formula (and the code) multiply crystals, not damage. Which is right?
+6. **Phones:** do you want Automatic (level-of-detail) copies of the station templates for faded and other players' stations, or StreamingEnabled? (Phase 6.) This needs your go-ahead, because it changes the model setup.
+7. **Daily chest:** it pays 300 s of crystals/s including any rush running, so claiming during a rush pays 2-10x. Leave it, or use the bundle-style income without rushes?
+8. **Likes codes:** LIKES1K ... LIKES100K pay 5, 10, 15, 20, 30 and 60 minutes of income. OK?
+9. **Space and A:** inside your plot (and next to a standing Golden Glacier) they now tap instead of jumping; outside they jump. OK?
+10. **Pace proposals** (Phase 4): a "rebirth at level 31" goal on the HUD from level 25? An auto-equip-best option or a "new best pet" toast? A "delete all Commons" button before the pet inventory (50) fills during the second run?
+11. **Menu and upgrade icons** are still words and emoji. Should they be made like the Robux icon drafts?
+12. **Legendary glow:** gold light through the blue ice reads lime green (visible in `thumb_maxed_plot_legendary.png`). Retint it?
+13. **Book tabs** on the smallest phones: the tab row scrolls, and MYTHIC sits half off the edge. Shorter tab names there?
 
 ## Check by eye or ear
 
-_(Collected as the run goes.)_
+- **Icon drafts:** `store-assets/icons/contact_sheet.png` (all 12 items) and `store-assets/launch/icon_concept_1-3.png`. Thumbnail drafts: `store-assets/launch/thumb_*.png`.
+- **New sounds:** the 80% heartbeat and the Golden Glacier alarm chime (F2 debug menu > Sound > Play a sound > Heartbeat / GoldenAlarm). In game: your block at 80% cracked, and a Golden Glacier countdown.
+- **Golden Glacier:** the new golden-ice look, and its TAP IT! label on a dark plate in front of the block. The label's final style wasn't seen live.
+- **Shop:** both tabs, every card, and the Mythic Block INFO odds. Gift mode for a pass ("THEY OWN IT" when the other player has it).
+- **Shatter Now** button on the right edge of your plot: plain blue normally; gold, bigger and pulsing with a Rare or better inside.
+- **VIP:** the plaza lounge and its gold door (VIP owners walk through; others get a toast), and the gold "VIP · Name" tag seen by others.
+- **Building moments:**
+  - your first building rising out of the snow;
+  - "Your X evolved!" with a white flash at 10, 25, 50 and 100 owned;
+  - the flash and puff on a building upgrade;
+  - stars on the station badge, and the "<name>'s Masterwork" plate.
+- **Rescue and block:**
+  - confetti in the rarity colour;
+  - the sled under an arriving block;
+  - the camera dip on a new layer;
+  - crystals turning white, then blue, then gold with ice upgrades;
+  - tap sparks in your pick's colour.
+- **Creature Book rewards:** the aurora trail (Mythic page) and the golden pick (Golden page).
+- **Rare blocks:** the beam over another player's Legendary or Mythic plot.
+- **Purchase notice:** "Thanks! You got ..." now shows in the lower middle of the screen.
+- **A real controller:** D-pad between buttons and A on a selected button (the input tool can't send real gamepad input).
+- **A real phone:** frame rate looking across a full server, and the HUD bar and Book tabs at small sizes.
+- **Lighting:** Technology is Future in Properties.
 
 ## Phase status
 
@@ -22,11 +84,11 @@ _(Collected as the run goes.)_
 | 2. Robux items | Done (icons: agent still rendering, committed separately) | see git log |
 | 3. Gaps | Done | see git log |
 | 4. New-player playthrough | Done: first rebirth at 34.5 min (target 30-40) | see git log |
-| 5. Multiplayer | Not started | |
-| 6. Performance, phone, gamepad | Not started | |
-| 7. Saves and security | Done (code and specs); abuse test from a client in Phase 5's session | see git log |
-| 8. Launch material | Not started | |
-| 9. Launch checklist | Not started | |
+| 5. Multiplayer | Done (3 players) | see git log |
+| 6. Performance, phone, gamepad | Done (proposals for phone geometry) | see git log |
+| 7. Saves and security | Done | see git log |
+| 8. Launch material | Done (drafts) | see git log |
+| 9. Launch checklist | Done | see git log |
 
 ## Phase 1: gap list (docs/GAME_DESIGN.md against the code)
 
@@ -225,3 +287,134 @@ No remote is created in code; every one is declared in `default.project.json`. A
 | (Crystals) | - | Low: crystals past 1e300 would make the save refuse the player every session | Yes: Grant caps at 1e300 |
 
 Not changed (a proposal): the daily chest pays 300 s x your current crystals/s, which includes a running Frost Rush or Server Frost Rush (claiming during a rush pays 2-10x). Once a day, so small; the fix would be to use the bundle-style income without rushes.
+
+### Abuse test from a client (Studio, 3-player session)
+
+A client script sent abusive input on every remote, in every argument slot (1,288 calls):
+- NaN, ±inf, -1, 0, 0.5, ±1e308 and 2^53;
+- strings: empty, "1" and 100,000 characters;
+- empty, list and deeply nested tables, booleans, Instances and a Vector3;
+- other players' ids (-2, 1, 99999999).
+
+On top of that:
+- every pet action and every purchase action with junk;
+- gifts to 1e300, -1e300, NaN, 2^60, yourself and a missing player;
+- 200 tap batches of 1,000 taps at once;
+- junk settings;
+- 60 shop "Open" spams.
+
+Results:
+- **Nothing was gained:** pets, buildings, upgrades, rebirths and level were unchanged. The 200,000-tap spam earned 42 crystals (the 1-second burst), and "[Taps] ... 980 taps dropped" was logged once.
+- **Settings:** NaN was refused; -5 and 50 were clamped to 0 and 1.
+- **Accepted calls:** only two MarkSeen no-ops, which don't save.
+- **Server log:** no errors. The shop-visit funnel counted one visit for 60 opens.
+
+### Saves: what the specs now cover
+
+| Case | Covered by |
+|---|---|
+| Rejoin keeps everything | PlayerData spec: a save with every field set away from its default round-trips field by field after leaving and rejoining. The spec fails if a field is added that the round trip doesn't cover. |
+| A rebirth resets exactly ResetOnRebirth | World spec: each reset field goes to a new player's value. Every other field (book, settings, codes, receipts, gifted passes, Mythic Blocks, daily chest, tutorial, funnels...) stays unchanged; Frost Cores, Rebirths and MaxLayerOpened may only grow. |
+| Two servers fight over one save | PlayerData spec, two live PlayerData servers on one store: (1) B can't load while A holds the lease (the player is kicked there, the record untouched). (2) A keeps saving. (3) Once A stalls past its lease, B takes over and saves. (4) A has already stopped gameplay before its lease ran out, can't save, and its next autosave tick stops the session. (5) The record stays B's. |
+| BindToClose saves | Already covered: shutdown saves and releases every session; a receipt during shutdown gives nothing. |
+| Bad or corrupt fields | Already covered for dozens of cases. Added: crystals past 1e300 fail closed and are left untouched; a block whose HP can't be read is rolled again; settings that aren't a table go back to the defaults; gifted passes and Mythic Blocks. |
+| Saving rate | An important change saves on the next tick; a second one within 15 s waits. |
+
+## Phase 5: multiplayer (3 players, then 2)
+
+Studio coped with 3 players (a server and 3 clients).
+
+| Test | Result |
+|---|---|
+| Golden Glacier race (Player1 20 taps/s, Player2 8/s, Player3 4/s) | Pass: 190 / 76 / 38 taps. Player1 (most damage) got **x5** and the others **x3**, each with 58 s left on the rush. |
+| Other plots' sounds | Pass. Player1, 30 studs from Player2's block, heard Player2's **Legendary** jingle at 0.27 (= 0.6 x 0.45, quieter). Player2's **Common** next to Player1 was silent. Player2's **Mythic**, with Player1 75 studs away, was silent. Player3, at home and far away, heard nothing. |
+| Rare-rescue announcement | Pass: everyone got the "Announce" toast. A beam stood over Player2's plot on Player1's and Player3's screens (not on Player2's own). It went out the moment the block broke, with "Player2 freed a Legendary ...". |
+| Leaderboards | Pass: after the 120 s refresh, all-time crystals, rebirths and creatures rescued listed the test players (from Studio's own leaderboard stores). |
+| Pass gift Player1 -> Player2 (Auto Pick, simulated) | Pass: it arrived, marked "(gift)", and Auto Pick tapped 5/s for Player2. |
+| Server Frost Rush (bought by Player3) | Pass: x2 for all three players (perks readout), with the banner and the HUD timer. |
+| A player leaving (Player3 kicked with 3 stations and pets) | Pass: plot owner 0, name board cleared, 0 stations, block reset. Nothing named Player3 was left on the server or on the other clients (pets gone). |
+
+Found and fixed in these sessions:
+- **The debug "Reset to a fresh save" left the old stations on the plot**; the plot only refreshed on the next purchase. It now refreshes the stations, rolls a new block and publishes the pets. Spec-checked, and verified live (stations 1 -> 0).
+- **The Golden Glacier** was a flat, Neon-bright yellow square under Future lighting; it's now golden Ice with a softer light. Its "TAP IT!" label sat on top of the HUD's crystal counter; it now stands in front of the block's lower half, in white text on a dark plate. The new block look was seen live; the label's final style wasn't (the glacier melted first), so check it by eye.
+- **The purchase notice** ("Thanks! You got ...") sat at the top, over the HUD and any window's tabs. It now shows in the lower middle and shrinks to fit a small phone.
+
+## Phase 6: performance, phone, gamepad
+
+### Performance
+
+Measured on a client with all 8 plots full: 2 real players and 6 debug dummy plots, each with 100 of every building and every upgrade, every block at level 400, and Legendary blocks glowing.
+
+| View | Reduced effects | fps | Render CPU | Triangles | Draw calls |
+|---|---|---|---|---|---|
+| Plaza | off | 56 | 15.5 ms | 821k | 667 |
+| Across the ring | off | 51 | 17.1 ms | 1,323k | 690 |
+| Tapping spot | off | 58 | 14.5 ms | 317k | 442 |
+| Plaza | on | 56 | 15.4 ms | 814k | 630 |
+| Across the ring | on | 51 | 17.2 ms | 1,322k | 652 |
+| Tapping spot | on | 57 | 14.5 ms | 317k | 418 |
+
+- **Scene size:** 3,016 MeshParts in the plots, all RenderFidelity Precise; 6,400 BaseParts and 23,700 instances on the client; 10,850 instances on the server.
+- **Memory:** Studio reports 2.2 GB for the client and 2.0 GB for the server. In Studio that includes Studio itself and its plugins (Lua heap 559 MB), so it says little about a phone. Of the game's own share: textures 65 MB, particles 29 MB, sounds 11 MB.
+- **Network receive** reads 0 KB/s in a local Studio test (there is no real network). Measure it live (F9 > Stats).
+
+**What would struggle on a phone:** geometry, not effects. Reduced effects barely changes the numbers (draw calls -5%). The 1.3 million triangles and ~700 draw calls come from 8 plots of Precise station meshes, so a low-end phone will drop frames looking across the ring. Suggested fixes (not done, because they change how the models are set up; a question below):
+1. **Precise only where you look closely.** Use a second "Automatic" (level-of-detail) copy of each tier template for faded stations and for other players' plots. RenderFidelity can't be changed by scripts in a live game, so this needs separate templates.
+2. **Streaming.** Turn on Workspace StreamingEnabled and stream each plot by distance, so far plots aren't in a phone's memory at all.
+3. **Reduced effects.** With it on, hide other plots' faded stations (already shrunk to 60%) or their decorative upgrade parts.
+
+### Phone layouts
+
+Checked at StudioScreenSize 844x390 and 667x375. Every window was opened from the HUD and audited for text that doesn't fit, text too small to read, buttons under 36 px, anything off screen and overlapping buttons; screenshots too.
+- **844x390:** the HUD and all 8 windows are clean.
+- **667x375:**
+  - The big banners and the toasts ran off the screen. Fixed: they shrink to fit.
+  - The purchase notice could overlap a window's tabs. Fixed (above).
+  - The Creature Book's tab row is wider than the window, so MYTHIC is cut off at the edge. The row scrolls sideways, so it's reachable (a question below).
+- **Build cards** on a phone show 1.5 cards at a time (the list scrolls). The detail pips line ("★★★☆☆☆☆☆☆☆ 7 more to Masterwork") is small but readable.
+
+### Gamepad
+
+Tested with the StudioGamepad switch and gamepad buttons sent through Studio's input tool.
+- **Tapping:** R2 and A tap the ice in your plot with 0 jumps, and so does Space. In the plaza, Space jumps and doesn't tap.
+- **Menu:** D-pad left selects the first menu button (BUILD), and B closes a window.
+- **Windows:** every window (Build, Upgrades, Pets, Book, Rebirth, Shop, Codes, Settings) opened in gamepad mode selects a button inside itself, and every button in it is selectable.
+- **Not testable here:** Studio's input tool sends gamepad buttons as keyboard input, which Roblox's built-in gamepad UI navigation ignores. So moving between buttons with the D-pad and pressing A on a selected button couldn't be tested; check with a real controller.
+- **Fixed:** the Rebirth window selected REBIRTH first, so mashing A could rebirth by accident (it takes two presses). It now starts on the close button.
+
+## Phase 8: launch material (for your review; nothing uploaded)
+
+### Thumbnails
+
+In `store-assets/launch/`, at 1920x1080:
+- `thumb_maxed_plot_legendary.png`: a maxed plot with its Masterworks, the Legendary block glowing, and the HUD.
+- `thumb_mythic_rescue.png`: the Spirit Whale bursting out with "Spirit Whale rescued! NEW! MYTHIC", and the HUD.
+- `thumb_golden_glacier_rush.png`: two players at the golden glacier in the plaza.
+- `thumb_creature_book.png`: the Mythic page complete, with "Reward earned: an aurora trail".
+- `thumb_fresh_plot_start.png`: a level-1 plot with the first block, and the HUD.
+
+Notes on them:
+- They are drafts for composition. The Studio test window's view is only 1565x620, so each is a 16:9 crop scaled up 1.74x, and a bit soft. Retake the ones you like at full size: `tools/studio/thumbnail_cameras.luau` has camera presets for the same scenes (run it on the client in Play), with the game window full screen.
+- The Mythic rescue is **staged** from the game's own pieces (the Spirit Whale model, frozen ice shards and confetti, the real banner). The real moment lasts under a second and the capture tool lags 1-2 s.
+- The debug and admin buttons and the tutorial hints are hidden in all of them.
+
+### Game icon concepts
+
+Also in `store-assets/launch/`, 512x512 with no text, rendered from the game's models (see the icon drafts in Phase 2):
+- `icon_concept_1.png`: a Snow Bunny bursting out of cracked ice. The clearest at small size.
+- `icon_concept_2.png`: a Polar Bear Cub in a glowing rainbow block, close up.
+- `icon_concept_3.png`: three pets in front of a big glowing block with a pick.
+
+## Phase 9: launch checklist
+
+`docs/LAUNCH_CHECKLIST.md` lists every step to do by hand, in order:
+- merge the branch, then save and back up the place;
+- the 24 Robux items (icons, names, prices, gift twins, pasting ids), and the `[PriceCheck] 24 items checked, 0 problems, 0 hidden` line;
+- DebugConfig empty, and the admin allowlist only you;
+- Lighting Technology set to Future;
+- music from the Toolbox (mood and tempo), and audio moderation;
+- the codes: ICELAUNCH and THAWED live, the LIKES codes switched on at each milestone;
+- the experience settings: server size 8, genre, devices, audio, maturity, icon, thumbnails, description;
+- publishing;
+- one real test purchase of a pass (with a second account, since yours owns every pass) and of a product;
+- what to watch in the first hour.

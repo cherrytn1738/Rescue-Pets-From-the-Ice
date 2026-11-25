@@ -21,27 +21,37 @@ local block = Instance.new("Part")
 block.Name = "GoldenGlacierBlock"
 block.Anchored = true
 block.Size = SIZE
-block.Color = Color3.fromRGB(255, 205, 60)
-block.Material = Enum.Material.Glass
-block.Transparency = 0.15
+-- golden ice (a flat Glass block with a strong light read as one blown-out yellow square under Future lighting)
+block.Color = Color3.fromRGB(255, 196, 70)
+block.Material = Enum.Material.Ice
+block.Transparency = 0.08
+block.Reflectance = 0.05
 local light = Instance.new("PointLight")
-light.Color = block.Color
-light.Range = 30
-light.Brightness = 3
+light.Color = Color3.fromRGB(255, 210, 110)
+light.Range = 24
+light.Brightness = 1.2
 light.Parent = block
 local gui = Instance.new("BillboardGui")
 gui.Size = UDim2.fromScale(14, 4)
-gui.StudsOffsetWorldSpace = Vector3.new(0, SIZE.Y / 2 + 3, 0)
+-- in front of the block's lower half (pushed toward the camera, so the block never hides it), so it stays
+-- mid-screen next to the block instead of climbing into the HUD's crystal counter
+gui.StudsOffsetWorldSpace = Vector3.new(0, -2, 0)
+gui.StudsOffset = Vector3.new(0, 0, SIZE.X / 2 + 2.5)
 gui.LightInfluence = 0
 gui.MaxDistance = 400
 gui.Parent = block
 local label = Instance.new("TextLabel")
-label.BackgroundTransparency = 1
+-- white on a dark plate: readable against the gold block and the snow
+label.BackgroundColor3 = Color3.fromRGB(40, 28, 6)
+label.BackgroundTransparency = 0.3
 label.Size = UDim2.fromScale(1, 1)
 label.Font = UITheme.Font
 label.TextScaled = true
-label.TextColor3 = Color3.fromRGB(255, 235, 140)
+label.TextColor3 = Color3.new(1, 1, 1)
 label.TextStrokeTransparency = 0
+local labelCorner = Instance.new("UICorner")
+labelCorner.CornerRadius = UDim.new(0.3, 0)
+labelCorner.Parent = label
 label.Parent = gui
 
 local landed = false
