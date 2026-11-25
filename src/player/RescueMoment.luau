@@ -8,6 +8,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
+local AudioConfig = require(ReplicatedStorage.AudioConfig)
 local CreatureConfig = require(ReplicatedStorage.CreatureConfig)
 local IceLooks = require(ReplicatedStorage.IceLooks)
 local NumberFormat = require(ReplicatedStorage.NumberFormat)
@@ -54,8 +55,7 @@ local function play(creatureId: string, view)
 	if animator then
 		animator:Play("Cheer", true, 0.1)
 	end
-	frostPuff(start.Position + Vector3.new(0, 2, 0))
-	Effects.Sound("RescueJingle")
+	frostPuff(start.Position + Vector3.new(0, 2, 0)) -- (the jingle plays with the shatter: IceBlocks)
 
 	local t0 = os.clock()
 	local connection
@@ -120,8 +120,8 @@ function RescueMoment.Start()
 		if payload.InventoryFull then
 			Banners.Toast("Your pet inventory is full (50). Delete some pets to keep new ones.", Color3.fromRGB(255, 120, 120))
 		end
-		if creature.Rarity == "Epic" or creature.Rarity == "Legendary" or creature.Rarity == "Mythic" then
-			Effects.Sound("BigFanfare")
+		if payload.First then -- a new creature in the Creature Book, after the jingle
+			task.delay(AudioConfig.Rules.BookDelay, Effects.Sound, "BookNew")
 		end
 		pendingCreature = payload.CreatureId
 	end)

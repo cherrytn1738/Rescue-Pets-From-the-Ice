@@ -84,7 +84,7 @@ return function(sources)
 
 	-- No old asset ids --------------------------------------------------------------------------------
 	-- The only images allowed in the UI files are the public library ones in UITheme.Assets; the
-	-- game's own pictures (Icons, Sheets, ShopIcons) start empty and sounds start empty.
+	-- game's own pictures (Icons, Sheets, ShopIcons) start empty. The sounds are the game's own (SoundRules spec).
 	local allowed = {}
 	for _, id in UITheme.Assets do
 		allowed[id] = true
@@ -93,7 +93,7 @@ return function(sources)
 	check(next(UITheme.Icons) == nil, "no icons yet")
 	check(next(UITheme.ShopIcons) == nil, "no shop pictures yet")
 	check(next(UITheme.Sheets.Groups) == nil, "no picture sheets yet")
-	check(next(AudioConfig.Ui) == nil and next(AudioConfig.Sfx) == nil, "no sounds yet")
+	check(AudioConfig.Ui.Click ~= nil and AudioConfig.Sfx.Tap ~= nil, "the game's own sounds")
 	check(AudioConfig.DefaultVolumes.SfxVolume > 0 and AudioConfig.DefaultVolumes.MusicVolume > 0, "default volumes")
 	for _, file in { "UITheme", "UIKit", "ShowcaseKit", "Audio", "AudioConfig", "NumberFormat", "HUD" } do
 		local text = assert(sources[file], file .. " exists")

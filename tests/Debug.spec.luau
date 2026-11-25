@@ -216,8 +216,13 @@ return function(sources)
 		end },
 		GoldenGlacierService = { SpawnNow = record("SpawnNow") },
 	}
+	local soundEvents = {}
 	local replicated = {
 		AnalyticsConfig = { Onboarding = {} },
+		AudioConfig = { Sfx = { Tap = {}, Shatter = {} }, Ui = { Click = {} } },
+		GameEvent = { FireClient = function(_, player, kind, payload)
+			table.insert(soundEvents, { player = player, kind = kind, payload = payload })
+		end },
 		CreatureConfig = { Creatures = { { Id = "SnowBunny", Name = "Snow Bunny", Rarity = "Common" } } },
 		LayerConfig = { FloorLayer = 5, Layers = { {}, {}, {}, {}, {}, {} } },
 		RebirthConfig = { MaxLayerFor = function()
@@ -295,6 +300,14 @@ return function(sources)
 
 	ok = run("ResetSave")
 	check(ok and calls[#calls].name == "ResetToNew" and calls[#calls].args[1] == me, "resetting a save goes through PlayerData.ResetToNew")
+	ok, message = run("PlaySound", { Sound = "Shatter" })
+	check(ok and #soundEvents == 1 and soundEvents[1].player == me and soundEvents[1].kind == "DebugSound"
+		and soundEvents[1].payload.Name == "Shatter", "the sound test plays the chosen sound on the target's client")
+	local soundNames = {}
+	for _, choice in ids.PlaySound.Params[1].Choices do
+		soundNames[choice.Value] = true
+	end
+	check(soundNames.Tap and soundNames.Shatter and soundNames.Click, "the sound test lists every sound effect and UI sound")
 	ok, message = run("ResetCodes")
 	check(ok and message == "Forgot 2 redeemed codes for Tester", "resetting codes goes through CodeService.ResetRedeemed")
 	ok = run("OfflineEarningsNow", { Seconds = 600 })

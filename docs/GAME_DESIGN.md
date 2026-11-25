@@ -457,7 +457,7 @@ Each plot is a 100 × 100 stud square of snow with the ice block in the middle, 
 
 **The map.**
 
-- **Plaza** in the centre: the spawn point, the Golden Glacier landing ring, three leaderboards, the codes board, the daily and group reward chests, and the VIP lounge behind a gate.
+- **Plaza** in the centre: the spawn point, the Golden Glacier landing ring, three leaderboards, the codes board, the daily and group reward chests, and the VIP lounge behind a gate (built only once the VIP pass is in the game's config).
 - **Plots:** eight plots in a ring around the plaza, each with its open front facing the centre, so players see other players' ice glowing as they walk around.
 - **Getting to your plot:** a glowing arrow and a short path lead from spawn to the player's plot; a Home button in the HUD walks or teleports them back.
 - **Around the ring:** a snowy winter world with no visible grid: frozen ponds between the plots, snowy hills with clumps of snowy pines beyond them, big hazy mountains on the horizon and a bright winter sky. Nothing stands between the plaza and any plot's open front.
@@ -578,21 +578,28 @@ Phones: side buttons on the left edge, nothing near the jump button or the botto
 
 ## Sound and effects
 
-Sound and effects carry most of the "every tap feels good" pillar. Every sound comes from Roblox's catalog or is made for the game; nothing is copied from other games.
+Sound and effects carry most of the "every tap feels good" pillar. Every sound comes from Roblox's catalog or is made for the game; nothing is copied from other games. The sound effects are the game's own, made in code (`tools/make_sfx.py`): bright, cartoony and icy.
 
 | Moment | Sound | Visual effect |
 | --- | --- | --- |
-| Tap | Short ice crunch, pitch rising during streaks | Ice chips, "+N", small crystal spray, pick swing |
-| Building hit | Softer clink per building type | Building animation, the ice shudders |
-| Crack stage | A louder crack | New crack layer, chunks falling, camera nudge |
-| 80% damage | A slow heartbeat | Creature wiggles, glow brightens |
+| Tap | Short icy crunch (four variants, a small random pitch), pitch rising slightly during streaks; at most 3 at once, so an autoclicker can't stack them | Ice chips, "+N", small crystal spray, pick swing |
+| Building hit | No sound per hit: now and then a quiet chip from your own plot, none from other plots | Building animation, the ice shudders |
+| Crack stage | A crack, deeper at each stage (20/40/60/80%) | New crack layer, chunks falling, camera nudge |
+| 80% damage | A slow heartbeat (not made yet) | Creature wiggles, glow brightens |
 | Shatter | Glass-burst crash | Ice shards fly out, crystal fountain, frost puff |
-| Rescue reveal | Happy jingle; bigger fanfare for Epic and up | Rarity banner, confetti in the rarity colour |
-| New layer | Deep rumble and a whoosh | Ground shake, camera dip, layer banner |
-| Buy building | Construction clunk | Station rises from the snow with a puff |
-| Rebirth | Wind swell | Screen frosts over and clears |
-| Golden Glacier | Alarm chime, then a crash | Golden block falls into the plaza with a countdown |
-| Music | Calm, light wintry loop on the plot; a faster track during Frost Rush | – |
+| Rescue reveal | A jingle per rarity, grander from Common to Mythic | Rarity banner, confetti in the rarity colour |
+| New creature in the book | A bright "ding-ding" | NEW! on the banner |
+| Book page complete | A chord flourish | – |
+| Golden pet | An extra golden sparkle | – |
+| Income | A very soft crystal tick, at most every few seconds, not while tapping | – |
+| New layer | Deep rumble | Ground shake, camera dip, layer banner |
+| Buy building / upgrade | A knock and a "ka-ching" / a rising sparkle; a soft "nope" when you can't | Station rises from the snow with a puff |
+| Buttons and windows | A soft pop; a swish up to open, down to close | – |
+| Rebirth | A big whoosh, then a chime | Screen frosts over and clears |
+| Golden Glacier | Alarm chime (not made yet), then a crash | Golden block falls into the plaza with a countdown |
+| Music | A light wintry loop in the plaza and a calm one in your plot, crossfading as you walk in or out (licensed tracks, still to pick); a faster track during Frost Rush (later) | – |
+
+Other players' plots are quiet: you hear only their Legendary and Mythic rescue jingles, quieter, within 60 studs. The Settings screen has separate Music and Sound effects volumes, saved with your progress.
 
 A "reduced effects" setting halves particles and turns off camera shake for low-end phones.
 

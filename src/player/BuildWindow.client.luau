@@ -121,7 +121,7 @@ for order, building in BuildingConfig.Buildings do
 		if ok and type(reply) == "table" then
 			feedback.Text = tostring(reply.message or "")
 			feedback.TextColor3 = if reply.ok then Colors.Good else Colors.Error
-			UIKit.PlaySound(if reply.ok then "Purchase" else "Invalid")
+			UIKit.PlaySound(if reply.ok then "BuyBuilding" else "Invalid")
 			if reply.ok then
 				-- the card flashes
 				ShowcaseKit.SetCardPalette(card, "Ice")

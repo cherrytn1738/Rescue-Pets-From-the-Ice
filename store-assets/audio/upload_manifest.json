@@ -1,0 +1,241 @@
+{
+ "assets": {
+  "BookNew.ogg": {
+   "assetId": "116859084848172",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "b5bde1f62a4fbef2ba2d431c763a213bcd8fdc40791a5cbf1933c4b81b149733",
+   "updated": "2026-11-25T11:46:56+00:00"
+  },
+  "BookPage.ogg": {
+   "assetId": "72693009271940",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "734e11f8bb50b4982e13ebafeddf7d58d526b0c41d20a51b94b6901212ee856e",
+   "updated": "2026-11-25T11:46:58+00:00"
+  },
+  "BuyBuilding.ogg": {
+   "assetId": "75418146893361",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "b84ceb7b90d3b5f5dea370ca14c37adab8e62ed443b1d5f199a2e997eb845003",
+   "updated": "2026-11-25T11:47:01+00:00"
+  },
+  "BuyUpgrade.ogg": {
+   "assetId": "75297340858020",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "22b68b107001429aa67496ab84ff93582c3997651e173a858ffe8996379d5db0",
+   "updated": "2026-11-25T11:47:03+00:00"
+  },
+  "Click.ogg": {
+   "assetId": "129253337286961",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "61f9d393d31c2c9b57a3f590aead3c95d640726b056e914f7b79a0751b7bf823",
+   "updated": "2026-11-25T11:47:05+00:00"
+  },
+  "Crack1.ogg": {
+   "assetId": "77419908506636",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "df68cb6d0bd019f658ef4bb469e4570e3e8240e73943b661bfd5ab0c1736dcfc",
+   "updated": "2026-11-25T11:47:07+00:00"
+  },
+  "Crack2.ogg": {
+   "assetId": "99080075358091",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "762d515654dcba4df2ce104a97facd4974b4977c74c2281977963088344fa05d",
+   "updated": "2026-11-25T11:47:09+00:00"
+  },
+  "Crack3.ogg": {
+   "assetId": "108098856889355",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "db35710bb2c8d4b351ec3d02a884af15e1e069a5eca0720460bfb3be7249378f",
+   "updated": "2026-11-25T11:47:12+00:00"
+  },
+  "Crack4.ogg": {
+   "assetId": "76333914492141",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "265f1881222bbe57096bcf3906f1920142cdc56f64afcc0c73fe44c0bcc58368",
+   "updated": "2026-11-25T11:47:14+00:00"
+  },
+  "CrystalTick.ogg": {
+   "assetId": "139889104044428",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "a1464908ec3298946616c25ac7fd4ad25ca317c3204dc604e462c9c87561870d",
+   "updated": "2026-11-25T11:47:16+00:00"
+  },
+  "GoldenSparkle.ogg": {
+   "assetId": "83955552934976",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "56e46d304f90b48cf0b42097070254ca3b21c91a2d3f1cae0b132a245ce31739",
+   "updated": "2026-11-25T11:47:18+00:00"
+  },
+  "Nope.ogg": {
+   "assetId": "84881498913979",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "d9510d9d8d58ba290ddab7e47c6f517e7d050eb111a6ef05175b370ed032baf0",
+   "updated": "2026-11-25T11:47:20+00:00"
+  },
+  "Rebirth.ogg": {
+   "assetId": "104386884141424",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "f36d6d2cf15c9cfcfe0ec4f2282bb5638f541888d37d2d6f39df1affa0cc4d54",
+   "updated": "2026-11-25T11:47:22+00:00"
+  },
+  "RescueCommon.ogg": {
+   "assetId": "106813164133930",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "327d16c5c2ad386abb24f081022b2490bc5612b819e3341d4c65f806c29a22e4",
+   "updated": "2026-11-25T11:47:24+00:00"
+  },
+  "RescueEpic.ogg": {
+   "assetId": "137387529764021",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "a5354961882cb944891ad9171abf6ca218e5963a1bb66cda7b77b8e3518bacfd",
+   "updated": "2026-11-25T11:47:26+00:00"
+  },
+  "RescueLegendary.ogg": {
+   "assetId": "133679996816314",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "fdd8f2db079d1b01e2cb8e51178aeae21764dd6878795311a42495b21794bf60",
+   "updated": "2026-11-25T11:47:28+00:00"
+  },
+  "RescueMythic.ogg": {
+   "assetId": "115484746980726",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "b963d0700661143a848ec7fb6ca22406207a87710b08df00ae855c0a70e427be",
+   "updated": "2026-11-25T11:47:30+00:00"
+  },
+  "RescueRare.ogg": {
+   "assetId": "76052515314353",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "46fb739349c888f0ef1f4cb1ddcc28f43594aa3a06f0516ddb8894d535f51f0a",
+   "updated": "2026-11-25T11:47:33+00:00"
+  },
+  "RescueUncommon.ogg": {
+   "assetId": "132347920075228",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "d12fe4035463275726f4961f64e91f16d448511d01b680ea700d59cd499dd889",
+   "updated": "2026-11-25T11:47:35+00:00"
+  },
+  "Shatter.ogg": {
+   "assetId": "93089824607966",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "e19a38367cff005820cae548e2a120021542b459c733160c12535c62a1e62846",
+   "updated": "2026-11-25T11:47:38+00:00"
+  },
+  "TapIce1.ogg": {
+   "assetId": "89493292392432",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "dc3431447c83726897b1b1c0c97e786d1d9b77693e623f2788e3037ded9afbf9",
+   "updated": "2026-11-25T11:46:51+00:00"
+  },
+  "TapIce2.ogg": {
+   "assetId": "78887809259112",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "a55567058a8f0aa645ba6340ac3b25ed2665c5bb52ca8d744b3c08de29d65c2e",
+   "updated": "2026-11-25T11:47:40+00:00"
+  },
+  "TapIce3.ogg": {
+   "assetId": "135293938975947",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "fbf65ba9286ba79c6f89caeb7df9424548b6bf535c38fddddcaeac79b0d76bfb",
+   "updated": "2026-11-25T11:47:42+00:00"
+  },
+  "TapIce4.ogg": {
+   "assetId": "98596548969935",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "c0f483228fa0b8d62561d0512a572ad4616823051364925f28b46cf39da29a46",
+   "updated": "2026-11-25T11:47:44+00:00"
+  },
+  "WindowClose.ogg": {
+   "assetId": "123968088944203",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "b13a93e20507943e747013773cd785aa87aeef272b1c6eb9c46901d80982c963",
+   "updated": "2026-11-25T11:47:47+00:00"
+  },
+  "WindowOpen.ogg": {
+   "assetId": "112841126634548",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "2f8fe4b071a3b662ba01ce9f803ae8aa1f722c65ddb48f80b405e8ef464e07eb",
+   "updated": "2026-11-25T11:47:49+00:00"
+  }
+ },
+ "creator": {
+  "groupId": "921449746"
+ }
+}

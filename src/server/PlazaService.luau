@@ -4,7 +4,7 @@ Server only. Greybox, built at start in Workspace.Plaza:
  - a round snow plaza around the spawn point, and a snow path from the plaza to each plot's open front;
  - three leaderboard boards (LeaderboardService fills them), the codes board (opens the Codes window),
    the daily chest and the group chest (RewardService), the Golden Glacier landing ring, and the VIP
-   lounge behind a gate (closed: there is no VIP pass yet);
+   lounge behind a gate (built only once MonetizationConfig has a pass with Key "VIP": hidden until then);
  - the Home button's request (GoHome): sends the player to their plot, at most every 2 seconds.
 Players spawn in the plaza (the place's SpawnLocation); a glowing guide line leads them home
 (PlotGuide.client).
@@ -14,12 +14,14 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
 local MapConfig = require(ReplicatedStorage.MapConfig)
+local MonetizationConfig = require(ReplicatedStorage.MonetizationConfig)
 local PlotService = require(script.Parent.PlotService)
 
 local PlazaService = {}
 
 PlazaService.GoldenSpot = Vector3.new(0, MapConfig.Ground, -34)
 
+local VIP_PASS = "VIP" -- the pass that opens the lounge (MonetizationConfig.Passes Key)
 local SNOW = Color3.fromRGB(236, 244, 252)
 local PATH = Color3.fromRGB(205, 225, 245)
 local folder
@@ -153,33 +155,36 @@ function PlazaService.Start(boards)
 		Color3.fromRGB(255, 210, 80), Enum.Material.Neon, Enum.PartType.Cylinder)
 	ring.Transparency = 0.6
 	ring.CanCollide = false
-	-- the VIP lounge behind its gate (closed until a VIP pass exists)
-	local lounge = spot(62, 22.5 + 45 * 7, 0)
-	part(folder, "VipFloor", Vector3.new(18, 0.6, 14), lounge * CFrame.new(0, 0.3, 4), Color3.fromRGB(80, 50, 120), Enum.Material.Fabric)
-	-- a gold rail fence round the floor, closed at the front, with the sign over the gate (a ForceField wall
-	-- here only shimmered and read as something broken; a solid one was a big flat slab beside a plot's path)
-	local gold = Color3.fromRGB(255, 205, 80)
-	local gate = Instance.new("Model")
-	gate.Name = "VipGate"
-	gate.Parent = folder
-	local function rails(name: string, from: Vector3, to: Vector3)
-		local length = (to - from).Magnitude
-		local along = CFrame.lookAt((from + to) / 2, to)
-		for _, y in { 1.6, 3.2 } do
-			part(gate, name .. "Rail", Vector3.new(0.4, 0.4, length), lounge * along * CFrame.new(0, y, 0), gold, Enum.Material.SmoothPlastic)
+	-- the VIP lounge behind its gate: only once a VIP pass is in MonetizationConfig (Key "VIP"); until then
+	-- there is nothing to show, so the plaza has no lounge
+	if MonetizationConfig.GetPass(VIP_PASS) then
+		local lounge = spot(62, 22.5 + 45 * 7, 0)
+		part(folder, "VipFloor", Vector3.new(18, 0.6, 14), lounge * CFrame.new(0, 0.3, 4), Color3.fromRGB(80, 50, 120), Enum.Material.Fabric)
+		-- a gold rail fence round the floor, closed at the front, with the sign over the gate (a ForceField wall
+		-- here only shimmered and read as something broken; a solid one was a big flat slab beside a plot's path)
+		local gold = Color3.fromRGB(255, 205, 80)
+		local gate = Instance.new("Model")
+		gate.Name = "VipGate"
+		gate.Parent = folder
+		local function rails(name: string, from: Vector3, to: Vector3)
+			local length = (to - from).Magnitude
+			local along = CFrame.lookAt((from + to) / 2, to)
+			for _, y in { 1.6, 3.2 } do
+				part(gate, name .. "Rail", Vector3.new(0.4, 0.4, length), lounge * along * CFrame.new(0, y, 0), gold, Enum.Material.SmoothPlastic)
+			end
+			for _, at in { from, to } do
+				part(gate, name .. "Post", Vector3.new(0.8, 4.2, 0.8), lounge * CFrame.new(at + Vector3.new(0, 2.1, 0)), gold, Enum.Material.SmoothPlastic)
+			end
 		end
-		for _, at in { from, to } do
-			part(gate, name .. "Post", Vector3.new(0.8, 4.2, 0.8), lounge * CFrame.new(at + Vector3.new(0, 2.1, 0)), gold, Enum.Material.SmoothPlastic)
+		rails("Front", Vector3.new(-9, 0, -3), Vector3.new(9, 0, -3))
+		rails("Left", Vector3.new(-9, 0, -3), Vector3.new(-9, 0, 11))
+		rails("Right", Vector3.new(9, 0, -3), Vector3.new(9, 0, 11))
+		for _, x in { -3, 3 } do
+			part(gate, "SignPost", Vector3.new(0.5, 6.5, 0.5), lounge * CFrame.new(x, 3.25, -3), gold, Enum.Material.SmoothPlastic)
 		end
+		local board = part(gate, "Sign", Vector3.new(9, 2, 0.4), lounge * CFrame.new(0, 6.2, -3), Color3.fromRGB(80, 50, 120), Enum.Material.SmoothPlastic)
+		sign(board, "VIP LOUNGE")
 	end
-	rails("Front", Vector3.new(-9, 0, -3), Vector3.new(9, 0, -3))
-	rails("Left", Vector3.new(-9, 0, -3), Vector3.new(-9, 0, 11))
-	rails("Right", Vector3.new(9, 0, -3), Vector3.new(9, 0, 11))
-	for _, x in { -3, 3 } do
-		part(gate, "SignPost", Vector3.new(0.5, 6.5, 0.5), lounge * CFrame.new(x, 3.25, -3), gold, Enum.Material.SmoothPlastic)
-	end
-	local board = part(gate, "Sign", Vector3.new(9, 2, 0.4), lounge * CFrame.new(0, 6.2, -3), Color3.fromRGB(80, 50, 120), Enum.Material.SmoothPlastic)
-	sign(board, "VIP LOUNGE")
 	-- a welcome sign over the spawn
 	local welcome = part(folder, "Welcome", Vector3.new(20, 6, 1), spot(24, 0, 10), Color3.fromRGB(40, 90, 150), Enum.Material.SmoothPlastic)
 	sign(welcome, "Rescue Pets From the Ice")

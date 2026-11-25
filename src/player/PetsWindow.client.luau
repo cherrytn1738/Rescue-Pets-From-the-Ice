@@ -233,6 +233,7 @@ combineButton.Activated:Connect(function()
 	if combineButton.Active and selected then
 		local reply = request("CombineGolden", selected)
 		if reply and reply.ok then
+			UIKit.PlaySound("GoldenSparkle")
 			selected = reply.uid
 		end
 	end

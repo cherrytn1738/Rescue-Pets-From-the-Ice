@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""upload_models.py - upload FBX models and PNG/JPG pictures to Roblox with the Open Cloud Assets API,
-always created by the game's group (GROUP_ID below).
+"""upload_models.py - upload FBX models, PNG/JPG pictures and OGG/MP3 audio to Roblox with the Open Cloud
+Assets API, always created by the game's group (GROUP_ID below).
 
 Python 3 standard library only (nothing to pip install). If `python` isn't on PATH, Blender's own
 Python works: "C:\\Program Files\\Blender Foundation\\Blender <ver>\\<ver>\\python\\bin\\python.exe".
@@ -11,8 +11,8 @@ asset:write) for the creator you upload as.
 
 An upload manifest (JSON, safe to commit: no secrets) maps each file to its asset id and a SHA-256
 of its content. Re-runs skip unchanged files and update an existing asset (a new version, same id)
-instead of creating a duplicate. Only .fbx Models can be updated: a changed picture becomes a new
-asset (a new id to swap into the game). An asset whose manifest entry doesn't name this game's group
+instead of creating a duplicate. Only .fbx Models can be updated: a changed picture or sound becomes a
+new asset (a new id to swap into the game). An asset whose manifest entry doesn't name this game's group
 as its creator is never updated in place either: a changed file becomes a new group asset with a new
 id. A pending operation is saved before polling, so a run that is cut off resumes on the next run
 instead of uploading again.
@@ -22,6 +22,7 @@ a user and never by another game's group. Group-owned assets load in the game wi
 
   python tools/upload_models.py assets/models/Pets1.fbx      # manifest: assets/models/upload_manifest.json
   python tools/upload_models.py assets/ui-icons/Shop.png    # manifest: assets/ui-icons/upload_manifest.json
+  python tools/upload_models.py store-assets/audio/*.ogg     # manifest: store-assets/audio/upload_manifest.json
   python tools/upload_models.py --check assets/models/Pets1.fbx   # re-check moderation of assets not approved yet
   python tools/upload_models.py --dry-run assets/models/*.fbx
 
@@ -30,7 +31,10 @@ Endpoints (create.roblox.com/docs/cloud, Assets API v1):
   PATCH /assets/v1/assets/{assetId}     update: same form; only .fbx Model content can be updated
   GET   /assets/v1/operations/{id}      poll until done; response.assetId, response.moderationResult
   GET   /assets/v1/assets/{assetId}     moderation state of an existing asset
-Limits: 20 MB per file; 120 create/update and 300 operation requests a minute per key.
+Limits: 20 MB per file; 120 create/update and 300 operation requests a minute per key. Audio has its own
+monthly upload quota and may need the uploader's ID verification: when Roblox refuses an audio upload
+(any 4xx other than a rate limit), the run stops there and prints Roblox's own message, so nothing is
+retried around a limit.
 """
 import argparse, glob, hashlib, json, os, random, sys, time, urllib.error, urllib.request, uuid
 from datetime import datetime, timezone
@@ -41,7 +45,12 @@ GROUP_ID = "921449746"  # the group that owns Rescue Pets From the Ice: every up
 GROUP_CREATOR = {"groupId": GROUP_ID}
 # extension -> (content type, assetType). Only .fbx Models can be updated in place.
 CONTENT_TYPES = {".fbx": ("model/fbx", "Model"), ".png": ("image/png", "Image"),
-                 ".jpg": ("image/jpeg", "Image"), ".jpeg": ("image/jpeg", "Image")}
+                 ".jpg": ("image/jpeg", "Image"), ".jpeg": ("image/jpeg", "Image"),
+                 ".ogg": ("audio/ogg", "Audio"), ".mp3": ("audio/mpeg", "Audio")}
+
+
+class Refused(Exception):
+    """Roblox refused an audio upload (a quota, ID verification, ...): stop the run, don't work around it."""
 
 
 class ApiError(Exception):
@@ -57,7 +66,7 @@ def short_message(raw):
         message = body.get("message") or (body.get("errors") or [{}])[0].get("message") or ""
     except (ValueError, AttributeError, IndexError):
         message = (raw or b"").decode("utf-8", "replace")
-    return " ".join(str(message).split())[:200] or "no message"
+    return " ".join(str(message).split())[:500] or "no message"
 
 
 def call(method, url, key, body=None, content_type=None, retry_unsafe=True, attempts=6):
@@ -210,7 +219,7 @@ def upload(args, key, manifest, manifest_path, path):
         request_json = {"assetType": asset_type, "assetId": entry["assetId"],
                         "creationContext": {"creator": GROUP_CREATOR}}
     else:
-        if entry.get("assetId"):  # a picture, or an asset the group doesn't own: a new group asset
+        if entry.get("assetId"):  # a picture or sound, or an asset the group doesn't own: a new group asset
             print("  %s: replaces asset %s with a NEW group asset (swap the new id into the game)" % (name, entry["assetId"]))
             entry["previousAssetId"] = entry.pop("assetId")
             entry.pop("moderationState", None)
@@ -229,6 +238,8 @@ def upload(args, key, manifest, manifest_path, path):
         operation = call(method, url, key, body, content_type, retry_unsafe=(method != "POST"))
     except ApiError as error:
         print("  %s: FAILED (%s)" % (name, error))
+        if asset_type == "Audio" and isinstance(error.status, int) and 400 <= error.status < 500 and error.status != 429:
+            raise Refused("%s: HTTP %s: %s" % (name, error.status, error))
         return False
     entry["operationId"], entry["pendingSha256"] = operation_id(operation), digest
     save_manifest(manifest_path, manifest)  # saved before polling, so a crash can't cause a duplicate
@@ -260,8 +271,8 @@ def check(args, key, manifest, manifest_path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Upload FBX models with the Roblox Open Cloud Assets API.")
-    parser.add_argument("files", nargs="*", help=".fbx files (wildcards work)")
+    parser = argparse.ArgumentParser(description="Upload models, pictures and audio with the Roblox Open Cloud Assets API.")
+    parser.add_argument("files", nargs="*", help=".fbx, .png, .jpg, .ogg or .mp3 files (wildcards work)")
     parser.add_argument("--manifest", help="upload manifest (default: upload_manifest.json beside the first file)")
     parser.add_argument("--description", default="Uploaded by upload_models.py")
     parser.add_argument("--timeout", type=float, default=300, help="seconds to wait for each operation")
@@ -286,7 +297,11 @@ def main():
             sys.exit("No such file: %s" % (", ".join(missing) or "(none given)"))
         ok = True
         for path in files:
-            ok = upload(args, key, manifest, manifest_path, path) and ok
+            try:
+                ok = upload(args, key, manifest, manifest_path, path) and ok
+            except Refused as refusal:
+                save_manifest(manifest_path, manifest)
+                sys.exit("STOPPED: Roblox refused an audio upload, so the rest were not sent.\n  %s" % refusal)
     sys.exit(0 if ok else 1)
 
 

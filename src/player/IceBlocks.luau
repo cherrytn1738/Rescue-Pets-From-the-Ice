@@ -13,20 +13,26 @@ block"; the look is in IceLooks):
  - (the HP bar, the crack %, the level and layer and the rarity are on your HUD while you're in your plot:
    HUD.client; nothing floats above the block, where it covered the ice);
  - the next block sliding in on its sled; the shatter (shards and a crystal fountain) for everyone, and
-   for the owner the rescue moment (RescueMoment).
-IceBlocks.Hit(plotIndex, strength) makes a block shudder (taps, buildings).
+   for the owner the rescue moment (RescueMoment);
+ - the sounds (AudioConfig, SoundRules): your own block's crack stages, shatter and rescue jingle, and now
+   and then a quiet chip as your buildings hit it; from other plots only Legendary and Mythic rescue
+   jingles, quieter, within AudioConfig.Rules.OtherPlots.MaxDistance studs.
+IceBlocks.Hit(plotIndex, strength) makes a block shudder (your taps: TapFeedback).
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
+local Audio = require(ReplicatedStorage.Audio)
+local AudioConfig = require(ReplicatedStorage.AudioConfig)
 local BlockRules = require(ReplicatedStorage.BlockRules)
 local CreatureConfig = require(ReplicatedStorage.CreatureConfig)
 local IceLooks = require(ReplicatedStorage.IceLooks)
 local LayerConfig = require(ReplicatedStorage.LayerConfig)
 local MapConfig = require(ReplicatedStorage.MapConfig)
 local PetLooks = require(ReplicatedStorage.Pets.PetLooks)
+local SoundRules = require(ReplicatedStorage.SoundRules)
 local Effects = require(script.Parent.Effects)
 
 local IceBlocks = {}
@@ -35,6 +41,15 @@ local player = Players.LocalPlayer
 local views = {} -- [plot] = view
 local rescueListeners = {}
 local container
+local chipGate = SoundRules.ChipGate(AudioConfig.Rules.BuildingChip, math.random)
+local lastOwnTapAt = -math.huge -- (IceBlocks.Hit on your own plot: a tap)
+
+-- How far the camera's subject (your character, or the camera) is from a point, in studs.
+local function listenerDistance(point: Vector3): number
+	local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+	local from = if root then root.Position else Workspace.CurrentCamera.CFrame.Position
+	return (from - point).Magnitude
+end
 
 local function containerFolder()
 	if not container or not container.Parent then
@@ -292,7 +307,16 @@ local function shatter(view, creatureId: string)
 			})
 		end)
 	end
-	Effects.Sound("Shatter")
+	-- the sound: your own block's shatter and jingle; another plot's jingle only for the rarest, nearby
+	local isMine = view.plot:GetAttribute("Owner") == player.UserId
+	if isMine then
+		Effects.Sound("Shatter")
+	end
+	local creature = creatureId and CreatureConfig.Get(creatureId)
+	local jingle, volume = SoundRules.RescueCue(isMine, creature and creature.Rarity, listenerDistance(origin), AudioConfig.Rules.OtherPlots)
+	if jingle then
+		task.delay(AudioConfig.Rules.JingleDelay, Audio.Play, jingle, { Volume = volume })
+	end
 	for _, callback in rescueListeners do
 		task.spawn(callback, view.index, creatureId, view)
 	end
@@ -336,9 +360,13 @@ local function update(view, dt: number)
 	end
 	view.present = present
 
-	-- building hits make it shudder a little (taps shake it harder: Hit)
+	-- building hits make it shudder a little (taps shake it harder: Hit); on your own block, now and then a
+	-- quiet chip (none just after your own tap: its sound covers it)
 	if view.lastHp and hp < view.lastHp - 1e-9 and present then
 		view.shake = math.max(view.shake, 0.08)
+		if chipGate:Allow(os.clock(), isMine, lastOwnTapAt) then
+			Audio.Play("BuildingChip")
+		end
 	end
 	view.lastHp = hp
 
@@ -346,7 +374,7 @@ local function update(view, dt: number)
 	if stage ~= view.stage then
 		if stage > view.stage and present then
 			if isMine then
-				Effects.Sound("Crack")
+				Effects.Sound("Crack" .. math.clamp(stage, 1, 4))
 				Effects.Shake(0.35, 0.25)
 			end
 			if stage >= 2 and view.stage < 2 then
@@ -435,6 +463,9 @@ function IceBlocks.Hit(plotIndex: number, strength: number?)
 	local view = IceBlocks.View(plotIndex)
 	if view then
 		view.shake = math.min(1, view.shake + (strength or 0.35))
+		if view.plot:GetAttribute("Owner") == player.UserId then
+			lastOwnTapAt = os.clock()
+		end
 	end
 end
 

@@ -1,13 +1,18 @@
 --[[
 TapFeedback (client): what a tap shows at once, before the server answers (docs/GAME_DESIGN.md,
-"Every hit"): the block shudders and a "+N" floats up from where you tapped. N is this client's
-estimate of the crystals the tap earns (the server pays the real amount).
+"Every hit"): the block shudders, the tap sound plays and a "+N" floats up from where you tapped. N is
+this client's estimate of the crystals the tap earns (the server pays the real amount). The tap sound
+always plays but is capped (AudioConfig.Rules.Tap, SoundRules.TapLimiter), so an autoclicker can't stack
+dozens; a fast streak lifts its pitch a little.
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
+local Audio = require(ReplicatedStorage.Audio)
+local AudioConfig = require(ReplicatedStorage.AudioConfig)
 local EconomyRules = require(ReplicatedStorage.EconomyRules)
+local SoundRules = require(ReplicatedStorage.SoundRules)
 local NumberFormat = require(ReplicatedStorage.NumberFormat)
 local UITheme = require(ReplicatedStorage.UITheme)
 local ClientState = require(script.Parent.ClientState)
@@ -104,22 +109,30 @@ function TapFeedback.Float(screenPosition: Vector2?, text: string, color: Color3
 end
 
 local streak, lastTapAt = 0, 0
+local tapSounds = SoundRules.TapLimiter(AudioConfig.Rules.Tap)
 function TapFeedback.Tap(screenPosition: Vector2?)
 	local index = player:GetAttribute("PlotIndex")
 	if type(index) == "number" then
 		IceBlocks.Hit(index, 0.3)
 		chips(index)
 	end
-	-- the crunch, higher during a fast streak (once the game has a crunch sound)
+	-- the tap sound (capped), a little higher during a fast streak
 	local now = os.clock()
 	streak = if now - lastTapAt < 0.35 then math.min(streak + 1, 20) else 0
 	lastTapAt = now
-	Effects.Sound("Crunch")
+	if tapSounds:Allow(now) then
+		Audio.Play("Tap", { Speed = SoundRules.TapSpeed(streak, AudioConfig.Rules.Tap) })
+	end
 	TapFeedback.Float(screenPosition, "+" .. NumberFormat.Short(math.max(1, TapFeedback.TapValue())))
 end
 
 function TapFeedback.Streak(): number
 	return streak
+end
+
+-- os.clock() of your last tap (the building chip and the income tick stay quiet just after one).
+function TapFeedback.LastTapAt(): number
+	return lastTapAt
 end
 
 return TapFeedback

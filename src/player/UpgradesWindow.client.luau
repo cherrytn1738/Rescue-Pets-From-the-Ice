@@ -61,7 +61,7 @@ local function buy(upgradeId: string)
 	if ok and type(reply) == "table" then
 		feedback.Text = tostring(reply.message or "")
 		feedback.TextColor3 = if reply.ok then Colors.Good else Colors.Error
-		UIKit.PlaySound(if reply.ok then "Purchase" else "Invalid")
+		UIKit.PlaySound(if reply.ok then "BuyUpgrade" else "Invalid")
 	else
 		feedback.Text = "The server didn't answer. Try again."
 		feedback.TextColor3 = Colors.Error

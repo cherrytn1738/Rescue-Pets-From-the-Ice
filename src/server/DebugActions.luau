@@ -35,6 +35,7 @@ local PlayerData = require(script.Parent.PlayerData)
 local Receipts = require(script.Parent.Receipts)
 local AnalyticsConfig = require(ReplicatedStorage.AnalyticsConfig)
 local AnalyticsRules = require(ReplicatedStorage.AnalyticsRules)
+local AudioConfig = require(ReplicatedStorage.AudioConfig)
 local CreatureConfig = require(ReplicatedStorage.CreatureConfig)
 local LayerConfig = require(ReplicatedStorage.LayerConfig)
 local RebirthConfig = require(ReplicatedStorage.RebirthConfig)
@@ -74,6 +75,18 @@ for _, creature in CreatureConfig.Creatures do
 	table.insert(creatureChoices, { Value = creature.Id, Label = `{creature.Name} ({creature.Rarity})` })
 end
 creatureChoices = choicesOr(creatureChoices, "(no creatures)")
+
+-- every sound effect and UI sound, to hear one on its own
+local soundChoices = {}
+for _, list in { { "Sfx", AudioConfig.Sfx }, { "Ui", AudioConfig.Ui } } do
+	for name in list[2] do
+		table.insert(soundChoices, { Value = name, Label = `{name} ({list[1]})` })
+	end
+end
+table.sort(soundChoices, function(a, b)
+	return a.Label < b.Label
+end)
+soundChoices = choicesOr(soundChoices, "(no sounds in AudioConfig)")
 
 local lastSimulated = {} -- [buyer] = { product, gift, purchaseId }: the "duplicate receipt" action replays it
 
@@ -263,6 +276,17 @@ local ACTIONS = {
 			PetService.Publish(target, data)
 			PlayerData.MarkImportant(target)
 			return `{target.Name} has {args.Rebirths} rebirths`
+		end,
+	},
+	{
+		Id = "PlaySound", Group = "Sound", Label = "Play a sound (on their client, full volume)",
+		Params = { { Name = "Sound", Label = "Sound", Kind = "choice", Choices = soundChoices, Default = soundChoices[1].Value } },
+		Run = function(target, args)
+			if args.Sound == NONE then
+				fail("AudioConfig has no sounds")
+			end
+			ReplicatedStorage.GameEvent:FireClient(target, "DebugSound", { Name = args.Sound })
+			return `{target.Name} hears {args.Sound}`
 		end,
 	},
 	{
