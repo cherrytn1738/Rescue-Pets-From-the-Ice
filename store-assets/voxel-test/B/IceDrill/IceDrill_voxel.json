@@ -1,0 +1,654 @@
+{
+ "id": "IceDrill",
+ "style": "B",
+ "voxel": 0.5,
+ "tiers": {
+  "1": {
+   "station": {
+    "IceDrillT1Iron": {
+     "colour": "3B4350",
+     "swatch": "Iron",
+     "glow": false,
+     "tris": 136
+    },
+    "IceDrillT1PatchGreen": {
+     "colour": "6E8B5A",
+     "swatch": "PatchGreen",
+     "glow": false,
+     "tris": 38
+    },
+    "IceDrillT1Pine": {
+     "colour": "C98A4E",
+     "swatch": "Pine",
+     "glow": false,
+     "tris": 64
+    },
+    "IceDrillT1PineDark": {
+     "colour": "8E5A2E",
+     "swatch": "PineDark",
+     "glow": false,
+     "tris": 164
+    },
+    "IceDrillT1PineLight": {
+     "colour": "E8B57A",
+     "swatch": "PineLight",
+     "glow": false,
+     "tris": 166
+    },
+    "IceDrillT1Rust": {
+     "colour": "B8673A",
+     "swatch": "Rust",
+     "glow": false,
+     "tris": 164
+    },
+    "IceDrillT1RustDark": {
+     "colour": "7A3F22",
+     "swatch": "RustDark",
+     "glow": false,
+     "tris": 28
+    },
+    "IceDrillT1Steel": {
+     "colour": "98A6B5",
+     "swatch": "Steel",
+     "glow": false,
+     "tris": 54
+    },
+    "IceDrillT1SteelDark": {
+     "colour": "5F6C7B",
+     "swatch": "SteelDark",
+     "glow": false,
+     "tris": 58
+    }
+   },
+   "upgrades": {
+    "IceDrillT1U1Iron": {
+     "colour": "3B4350",
+     "swatch": "Iron",
+     "glow": false,
+     "tris": 14
+    },
+    "IceDrillT1U1Steel": {
+     "colour": "98A6B5",
+     "swatch": "Steel",
+     "glow": false,
+     "tris": 6
+    },
+    "IceDrillT1U1SteelLight": {
+     "colour": "C9D3DE",
+     "swatch": "SteelLight",
+     "glow": false,
+     "tris": 76
+    },
+    "IceDrillT1U2Iron": {
+     "colour": "3B4350",
+     "swatch": "Iron",
+     "glow": false,
+     "tris": 24
+    },
+    "IceDrillT1U3Pine": {
+     "colour": "C98A4E",
+     "swatch": "Pine",
+     "glow": false,
+     "tris": 46
+    },
+    "IceDrillT1U5Diamond": {
+     "colour": "C8F4FF",
+     "swatch": "Diamond",
+     "glow": false,
+     "tris": 92
+    },
+    "IceDrillT1U5Gold": {
+     "colour": "FFD640",
+     "swatch": "Gold",
+     "glow": false,
+     "tris": 26
+    }
+   },
+   "size": [
+    7.5,
+    5.5,
+    7.5
+   ],
+   "stationTris": 872,
+   "upgradeTris": 284
+  },
+  "2": {
+   "station": {
+    "IceDrillT2Brass": {
+     "colour": "E0B54A",
+     "swatch": "Brass",
+     "glow": false,
+     "tris": 432
+    },
+    "IceDrillT2Copper": {
+     "colour": "D27D4A",
+     "swatch": "Copper",
+     "glow": false,
+     "tris": 296
+    },
+    "IceDrillT2EyeDark": {
+     "colour": "141820",
+     "swatch": "EyeDark",
+     "glow": false,
+     "tris": 2
+    },
+    "IceDrillT2Pine": {
+     "colour": "C98A4E",
+     "swatch": "Pine",
+     "glow": false,
+     "tris": 30
+    },
+    "IceDrillT2PineDark": {
+     "colour": "8E5A2E",
+     "swatch": "PineDark",
+     "glow": false,
+     "tris": 116
+    },
+    "IceDrillT2PineLight": {
+     "colour": "E8B57A",
+     "swatch": "PineLight",
+     "glow": false,
+     "tris": 94
+    },
+    "IceDrillT2Rubber": {
+     "colour": "22262E",
+     "swatch": "Rubber",
+     "glow": false,
+     "tris": 8
+    },
+    "IceDrillT2RustDark": {
+     "colour": "7A3F22",
+     "swatch": "RustDark",
+     "glow": false,
+     "tris": 52
+    },
+    "IceDrillT2Steel": {
+     "colour": "98A6B5",
+     "swatch": "Steel",
+     "glow": false,
+     "tris": 40
+    },
+    "IceDrillT2SteelLight": {
+     "colour": "C9D3DE",
+     "swatch": "SteelLight",
+     "glow": false,
+     "tris": 72
+    }
+   },
+   "upgrades": {
+    "IceDrillT2U1Steel": {
+     "colour": "98A6B5",
+     "swatch": "Steel",
+     "glow": false,
+     "tris": 90
+    },
+    "IceDrillT2U1SteelLight": {
+     "colour": "C9D3DE",
+     "swatch": "SteelLight",
+     "glow": false,
+     "tris": 8
+    },
+    "IceDrillT2U2Brass": {
+     "colour": "E0B54A",
+     "swatch": "Brass",
+     "glow": false,
+     "tris": 24
+    },
+    "IceDrillT2U3Brass": {
+     "colour": "E0B54A",
+     "swatch": "Brass",
+     "glow": false,
+     "tris": 44
+    },
+    "IceDrillT2U5CrystalCyanGlow": {
+     "colour": "7FF5FF",
+     "swatch": "CrystalCyan",
+     "glow": true,
+     "tris": 24
+    },
+    "IceDrillT2U5Diamond": {
+     "colour": "C8F4FF",
+     "swatch": "Diamond",
+     "glow": false,
+     "tris": 88
+    }
+   },
+   "size": [
+    9.0,
+    7.5,
+    10.0
+   ],
+   "stationTris": 1142,
+   "upgradeTris": 278
+  },
+  "3": {
+   "station": {
+    "IceDrillT3AuroraCyanGlow": {
+     "colour": "6EE6FF",
+     "swatch": "AuroraCyan",
+     "glow": true,
+     "tris": 94
+    },
+    "IceDrillT3DeepIce": {
+     "colour": "2F7FC0",
+     "swatch": "DeepIce",
+     "glow": false,
+     "tris": 148
+    },
+    "IceDrillT3GlacierBlue": {
+     "colour": "5AB4E6",
+     "swatch": "GlacierBlue",
+     "glow": false,
+     "tris": 716
+    },
+    "IceDrillT3IceBlue": {
+     "colour": "9FD6F5",
+     "swatch": "IceBlue",
+     "glow": false,
+     "tris": 580
+    },
+    "IceDrillT3NavyIce": {
+     "colour": "1C3F6E",
+     "swatch": "NavyIce",
+     "glow": false,
+     "tris": 232
+    },
+    "IceDrillT3SnowWhite": {
+     "colour": "F4FAFF",
+     "swatch": "SnowWhite",
+     "glow": false,
+     "tris": 1182
+    },
+    "IceDrillT3SteelDark": {
+     "colour": "5F6C7B",
+     "swatch": "SteelDark",
+     "glow": false,
+     "tris": 400
+    },
+    "IceDrillT3SteelLight": {
+     "colour": "C9D3DE",
+     "swatch": "SteelLight",
+     "glow": false,
+     "tris": 670
+    }
+   },
+   "upgrades": {
+    "IceDrillT3U1IceBlue": {
+     "colour": "9FD6F5",
+     "swatch": "IceBlue",
+     "glow": false,
+     "tris": 386
+    },
+    "IceDrillT3U1SteelLight": {
+     "colour": "C9D3DE",
+     "swatch": "SteelLight",
+     "glow": false,
+     "tris": 56
+    },
+    "IceDrillT3U2AuroraCyanGlow": {
+     "colour": "6EE6FF",
+     "swatch": "AuroraCyan",
+     "glow": true,
+     "tris": 48
+    },
+    "IceDrillT3U3AuroraCyan": {
+     "colour": "6EE6FF",
+     "swatch": "AuroraCyan",
+     "glow": false,
+     "tris": 10
+    },
+    "IceDrillT3U3SteelLight": {
+     "colour": "C9D3DE",
+     "swatch": "SteelLight",
+     "glow": false,
+     "tris": 194
+    },
+    "IceDrillT3U5CrystalCyanGlow": {
+     "colour": "7FF5FF",
+     "swatch": "CrystalCyan",
+     "glow": true,
+     "tris": 96
+    },
+    "IceDrillT3U5Diamond": {
+     "colour": "C8F4FF",
+     "swatch": "Diamond",
+     "glow": false,
+     "tris": 444
+    }
+   },
+   "size": [
+    16.0,
+    11.5,
+    15.5
+   ],
+   "stationTris": 4022,
+   "upgradeTris": 1234
+  },
+  "4": {
+   "station": {
+    "IceDrillT4ArcaneDeep": {
+     "colour": "3A2A7A",
+     "swatch": "ArcaneDeep",
+     "glow": false,
+     "tris": 386
+    },
+    "IceDrillT4AuroraGreenGlow": {
+     "colour": "5CFFB0",
+     "swatch": "AuroraGreen",
+     "glow": true,
+     "tris": 414
+    },
+    "IceDrillT4CrystalCyanGlow": {
+     "colour": "7FF5FF",
+     "swatch": "CrystalCyan",
+     "glow": true,
+     "tris": 158
+    },
+    "IceDrillT4FrostLight": {
+     "colour": "D6ECFF",
+     "swatch": "FrostLight",
+     "glow": false,
+     "tris": 34
+    },
+    "IceDrillT4Gold": {
+     "colour": "FFD640",
+     "swatch": "Gold",
+     "glow": false,
+     "tris": 704
+    },
+    "IceDrillT4Moonstone": {
+     "colour": "E6E0FF",
+     "swatch": "Moonstone",
+     "glow": false,
+     "tris": 596
+    },
+    "IceDrillT4RuneGlowGlow": {
+     "colour": "C9B6FF",
+     "swatch": "RuneGlow",
+     "glow": true,
+     "tris": 98
+    },
+    "IceDrillT4RuneViolet": {
+     "colour": "8E6BFF",
+     "swatch": "RuneViolet",
+     "glow": false,
+     "tris": 98
+    },
+    "IceDrillT4RuneVioletGlow": {
+     "colour": "8E6BFF",
+     "swatch": "RuneViolet",
+     "glow": true,
+     "tris": 176
+    },
+    "IceDrillT4StoneDark": {
+     "colour": "646A73",
+     "swatch": "StoneDark",
+     "glow": false,
+     "tris": 888
+    }
+   },
+   "upgrades": {
+    "IceDrillT4U1Moonstone": {
+     "colour": "E6E0FF",
+     "swatch": "Moonstone",
+     "glow": false,
+     "tris": 202
+    },
+    "IceDrillT4U1SteelLight": {
+     "colour": "C9D3DE",
+     "swatch": "SteelLight",
+     "glow": false,
+     "tris": 46
+    },
+    "IceDrillT4U2MagicPinkGlow": {
+     "colour": "FF7AD9",
+     "swatch": "MagicPink",
+     "glow": true,
+     "tris": 16
+    },
+    "IceDrillT4U2RuneVioletGlow": {
+     "colour": "8E6BFF",
+     "swatch": "RuneViolet",
+     "glow": true,
+     "tris": 72
+    },
+    "IceDrillT4U3Gold": {
+     "colour": "FFD640",
+     "swatch": "Gold",
+     "glow": false,
+     "tris": 12
+    },
+    "IceDrillT4U3Moonstone": {
+     "colour": "E6E0FF",
+     "swatch": "Moonstone",
+     "glow": false,
+     "tris": 44
+    },
+    "IceDrillT4U5CrystalCyanGlow": {
+     "colour": "7FF5FF",
+     "swatch": "CrystalCyan",
+     "glow": true,
+     "tris": 26
+    },
+    "IceDrillT4U5Diamond": {
+     "colour": "C8F4FF",
+     "swatch": "Diamond",
+     "glow": false,
+     "tris": 178
+    }
+   },
+   "size": [
+    13.0,
+    12.5,
+    21.5
+   ],
+   "stationTris": 3552,
+   "upgradeTris": 596
+  },
+  "5": {
+   "station": {
+    "IceDrillT5AuroraGreenGlow": {
+     "colour": "5CFFB0",
+     "swatch": "AuroraGreen",
+     "glow": true,
+     "tris": 158
+    },
+    "IceDrillT5Blush": {
+     "colour": "FF9AAE",
+     "swatch": "Blush",
+     "glow": false,
+     "tris": 146
+    },
+    "IceDrillT5Brass": {
+     "colour": "E0B54A",
+     "swatch": "Brass",
+     "glow": false,
+     "tris": 120
+    },
+    "IceDrillT5CrystalCyanGlow": {
+     "colour": "7FF5FF",
+     "swatch": "CrystalCyan",
+     "glow": true,
+     "tris": 32
+    },
+    "IceDrillT5DeepIce": {
+     "colour": "2F7FC0",
+     "swatch": "DeepIce",
+     "glow": false,
+     "tris": 46
+    },
+    "IceDrillT5Diamond": {
+     "colour": "C8F4FF",
+     "swatch": "Diamond",
+     "glow": false,
+     "tris": 10
+    },
+    "IceDrillT5EyeDark": {
+     "colour": "141820",
+     "swatch": "EyeDark",
+     "glow": false,
+     "tris": 120
+    },
+    "IceDrillT5EyeWhite": {
+     "colour": "FFFFFF",
+     "swatch": "EyeWhite",
+     "glow": false,
+     "tris": 20
+    },
+    "IceDrillT5Gold": {
+     "colour": "FFD640",
+     "swatch": "Gold",
+     "glow": false,
+     "tris": 1056
+    },
+    "IceDrillT5Gunmetal": {
+     "colour": "262C36",
+     "swatch": "Gunmetal",
+     "glow": false,
+     "tris": 2104
+    },
+    "IceDrillT5Iron": {
+     "colour": "3B4350",
+     "swatch": "Iron",
+     "glow": false,
+     "tris": 188
+    },
+    "IceDrillT5MoleFur": {
+     "colour": "7A5A48",
+     "swatch": "MoleFur",
+     "glow": false,
+     "tris": 2928
+    },
+    "IceDrillT5MoleFurLight": {
+     "colour": "A8836A",
+     "swatch": "MoleFurLight",
+     "glow": false,
+     "tris": 1098
+    },
+    "IceDrillT5SnowWhite": {
+     "colour": "F4FAFF",
+     "swatch": "SnowWhite",
+     "glow": false,
+     "tris": 16
+    },
+    "IceDrillT5Steel": {
+     "colour": "98A6B5",
+     "swatch": "Steel",
+     "glow": false,
+     "tris": 466
+    },
+    "IceDrillT5SteelDark": {
+     "colour": "5F6C7B",
+     "swatch": "SteelDark",
+     "glow": false,
+     "tris": 344
+    },
+    "IceDrillT5SteelLight": {
+     "colour": "C9D3DE",
+     "swatch": "SteelLight",
+     "glow": false,
+     "tris": 1184
+    },
+    "IceDrillT5StoneDark": {
+     "colour": "646A73",
+     "swatch": "StoneDark",
+     "glow": false,
+     "tris": 44
+    },
+    "IceDrillT5StoneLight": {
+     "colour": "BFC3C9",
+     "swatch": "StoneLight",
+     "glow": false,
+     "tris": 54
+    }
+   },
+   "upgrades": {
+    "IceDrillT5U1CrystalCyan": {
+     "colour": "7FF5FF",
+     "swatch": "CrystalCyan",
+     "glow": false,
+     "tris": 74
+    },
+    "IceDrillT5U1CrystalCyanGlow": {
+     "colour": "7FF5FF",
+     "swatch": "CrystalCyan",
+     "glow": true,
+     "tris": 34
+    },
+    "IceDrillT5U1Diamond": {
+     "colour": "C8F4FF",
+     "swatch": "Diamond",
+     "glow": false,
+     "tris": 138
+    },
+    "IceDrillT5U1DiamondGlow": {
+     "colour": "C8F4FF",
+     "swatch": "Diamond",
+     "glow": true,
+     "tris": 4
+    },
+    "IceDrillT5U1Gold": {
+     "colour": "FFD640",
+     "swatch": "Gold",
+     "glow": false,
+     "tris": 124
+    },
+    "IceDrillT5U2AuroraGreenGlow": {
+     "colour": "5CFFB0",
+     "swatch": "AuroraGreen",
+     "glow": true,
+     "tris": 58
+    },
+    "IceDrillT5U2Gold": {
+     "colour": "FFD640",
+     "swatch": "Gold",
+     "glow": false,
+     "tris": 130
+    },
+    "IceDrillT5U2Gunmetal": {
+     "colour": "262C36",
+     "swatch": "Gunmetal",
+     "glow": false,
+     "tris": 120
+    },
+    "IceDrillT5U3Brass": {
+     "colour": "E0B54A",
+     "swatch": "Brass",
+     "glow": false,
+     "tris": 300
+    },
+    "IceDrillT5U3Copper": {
+     "colour": "D27D4A",
+     "swatch": "Copper",
+     "glow": false,
+     "tris": 102
+    },
+    "IceDrillT5U3Gold": {
+     "colour": "FFD640",
+     "swatch": "Gold",
+     "glow": false,
+     "tris": 24
+    },
+    "IceDrillT5U5Gold": {
+     "colour": "FFD640",
+     "swatch": "Gold",
+     "glow": false,
+     "tris": 452
+    },
+    "IceDrillT5U5PineLight": {
+     "colour": "E8B57A",
+     "swatch": "PineLight",
+     "glow": false,
+     "tris": 10
+    }
+   },
+   "size": [
+    21.5,
+    21.5,
+    25.5
+   ],
+   "stationTris": 10134,
+   "upgradeTris": 1570
+  }
+ }
+}

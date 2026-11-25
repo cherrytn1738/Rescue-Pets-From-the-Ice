@@ -1,0 +1,230 @@
+{
+ "id": "FlamethrowerTurret",
+ "style": "A",
+ "voxel": 0.5,
+ "tiers": {
+  "5": {
+   "station": {
+    "FlamethrowerTurretT5Amber": {
+     "colour": "FFB23E",
+     "swatch": "Amber",
+     "glow": false,
+     "tris": 66
+    },
+    "FlamethrowerTurretT5AuroraCyanGlow": {
+     "colour": "6EE6FF",
+     "swatch": "AuroraCyan",
+     "glow": true,
+     "tris": 76
+    },
+    "FlamethrowerTurretT5Blush": {
+     "colour": "FF9AAE",
+     "swatch": "Blush",
+     "glow": false,
+     "tris": 34
+    },
+    "FlamethrowerTurretT5Brass": {
+     "colour": "E0B54A",
+     "swatch": "Brass",
+     "glow": false,
+     "tris": 184
+    },
+    "FlamethrowerTurretT5Copper": {
+     "colour": "D27D4A",
+     "swatch": "Copper",
+     "glow": false,
+     "tris": 396
+    },
+    "FlamethrowerTurretT5Cream": {
+     "colour": "FFF0D6",
+     "swatch": "Cream",
+     "glow": false,
+     "tris": 300
+    },
+    "FlamethrowerTurretT5EyeDark": {
+     "colour": "141820",
+     "swatch": "EyeDark",
+     "glow": false,
+     "tris": 12
+    },
+    "FlamethrowerTurretT5EyeWhite": {
+     "colour": "FFFFFF",
+     "swatch": "EyeWhite",
+     "glow": false,
+     "tris": 108
+    },
+    "FlamethrowerTurretT5FlameOrange": {
+     "colour": "FF8A2A",
+     "swatch": "FlameOrange",
+     "glow": false,
+     "tris": 10
+    },
+    "FlamethrowerTurretT5FlameOrangeGlow": {
+     "colour": "FF8A2A",
+     "swatch": "FlameOrange",
+     "glow": true,
+     "tris": 120
+    },
+    "FlamethrowerTurretT5FlameYellow": {
+     "colour": "FFD24A",
+     "swatch": "FlameYellow",
+     "glow": false,
+     "tris": 10
+    },
+    "FlamethrowerTurretT5FlameYellowGlow": {
+     "colour": "FFD24A",
+     "swatch": "FlameYellow",
+     "glow": true,
+     "tris": 6
+    },
+    "FlamethrowerTurretT5Gold": {
+     "colour": "FFD640",
+     "swatch": "Gold",
+     "glow": false,
+     "tris": 1516
+    },
+    "FlamethrowerTurretT5Gunmetal": {
+     "colour": "262C36",
+     "swatch": "Gunmetal",
+     "glow": false,
+     "tris": 1664
+    },
+    "FlamethrowerTurretT5LampYellowGlow": {
+     "colour": "FFE45C",
+     "swatch": "LampYellow",
+     "glow": true,
+     "tris": 24
+    },
+    "FlamethrowerTurretT5NavyIce": {
+     "colour": "1C3F6E",
+     "swatch": "NavyIce",
+     "glow": false,
+     "tris": 42
+    },
+    "FlamethrowerTurretT5Rubber": {
+     "colour": "22262E",
+     "swatch": "Rubber",
+     "glow": false,
+     "tris": 224
+    },
+    "FlamethrowerTurretT5SteelDark": {
+     "colour": "5F6C7B",
+     "swatch": "SteelDark",
+     "glow": false,
+     "tris": 76
+    },
+    "FlamethrowerTurretT5SteelLight": {
+     "colour": "C9D3DE",
+     "swatch": "SteelLight",
+     "glow": false,
+     "tris": 200
+    },
+    "FlamethrowerTurretT5StoneLight": {
+     "colour": "BFC3C9",
+     "swatch": "StoneLight",
+     "glow": false,
+     "tris": 46
+    },
+    "FlamethrowerTurretT5WarnRed": {
+     "colour": "FF5468",
+     "swatch": "WarnRed",
+     "glow": false,
+     "tris": 20
+    },
+    "FlamethrowerTurretT5WarnRedDark": {
+     "colour": "C2304A",
+     "swatch": "WarnRedDark",
+     "glow": false,
+     "tris": 1914
+    }
+   },
+   "upgrades": {
+    "FlamethrowerTurretT5U1Gold": {
+     "colour": "FFD640",
+     "swatch": "Gold",
+     "glow": false,
+     "tris": 36
+    },
+    "FlamethrowerTurretT5U1SteelLight": {
+     "colour": "C9D3DE",
+     "swatch": "SteelLight",
+     "glow": false,
+     "tris": 148
+    },
+    "FlamethrowerTurretT5U2FlameOrangeGlow": {
+     "colour": "FF8A2A",
+     "swatch": "FlameOrange",
+     "glow": true,
+     "tris": 40
+    },
+    "FlamethrowerTurretT5U2GlacierBlueGlow": {
+     "colour": "5AB4E6",
+     "swatch": "GlacierBlue",
+     "glow": true,
+     "tris": 24
+    },
+    "FlamethrowerTurretT5U2Gold": {
+     "colour": "FFD640",
+     "swatch": "Gold",
+     "glow": false,
+     "tris": 56
+    },
+    "FlamethrowerTurretT5U2Gunmetal": {
+     "colour": "262C36",
+     "swatch": "Gunmetal",
+     "glow": false,
+     "tris": 68
+    },
+    "FlamethrowerTurretT5U2SteelLight": {
+     "colour": "C9D3DE",
+     "swatch": "SteelLight",
+     "glow": false,
+     "tris": 12
+    },
+    "FlamethrowerTurretT5U3Brass": {
+     "colour": "E0B54A",
+     "swatch": "Brass",
+     "glow": false,
+     "tris": 180
+    },
+    "FlamethrowerTurretT5U3Copper": {
+     "colour": "D27D4A",
+     "swatch": "Copper",
+     "glow": false,
+     "tris": 120
+    },
+    "FlamethrowerTurretT5U3Gold": {
+     "colour": "FFD640",
+     "swatch": "Gold",
+     "glow": false,
+     "tris": 68
+    },
+    "FlamethrowerTurretT5U5AuroraVioletGlow": {
+     "colour": "B48CFF",
+     "swatch": "AuroraViolet",
+     "glow": true,
+     "tris": 28
+    },
+    "FlamethrowerTurretT5U5Gold": {
+     "colour": "FFD640",
+     "swatch": "Gold",
+     "glow": false,
+     "tris": 88
+    },
+    "FlamethrowerTurretT5U5RuneVioletGlow": {
+     "colour": "8E6BFF",
+     "swatch": "RuneViolet",
+     "glow": true,
+     "tris": 78
+    }
+   },
+   "size": [
+    20.0,
+    18.0,
+    33.0
+   ],
+   "stationTris": 7048,
+   "upgradeTris": 946
+  }
+ }
+}

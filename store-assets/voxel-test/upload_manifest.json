@@ -1,0 +1,223 @@
+{
+ "assets": {
+  "A/FlamethrowerTurret/fbx/FlamethrowerTurret_A_T5.fbx": {
+   "assetId": "105834024999864",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "4add7e674d5117d61a444cf62983abc59f5610536e86261a5ee733f371547b1a",
+   "updated": "2026-11-25T03:15:22+00:00"
+  },
+  "A/FlamethrowerTurret/fbx/FlamethrowerTurret_A_T5_Upgrades.fbx": {
+   "assetId": "109146497620878",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "e3eb0860c7d9a65655e8904a484605d9f0801bbeec100934500336c2dbb417b0",
+   "updated": "2026-11-25T03:15:30+00:00"
+  },
+  "A/IceDrill/fbx/IceDrill_A_T1.fbx": {
+   "assetId": "89672052790752",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "72c7ae6394a8af5493b1811bf81c9e8be031d0eca206f3e91856078f574c8e64",
+   "updated": "2026-11-25T03:15:44+00:00"
+  },
+  "A/IceDrill/fbx/IceDrill_A_T1_Upgrades.fbx": {
+   "assetId": "136382353280758",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "4b53ce9d39437d281523364f0143a471c57b6f8472657c847d73f63bcd2b5543",
+   "updated": "2026-11-25T03:15:52+00:00"
+  },
+  "A/IceDrill/fbx/IceDrill_A_T2.fbx": {
+   "assetId": "91026933918367",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "dcc20fd0007b0396d7ae585bddace110d6c57d72a2f1279406a4e56cc219e031",
+   "updated": "2026-11-25T03:16:05+00:00"
+  },
+  "A/IceDrill/fbx/IceDrill_A_T2_Upgrades.fbx": {
+   "assetId": "95415502433585",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "40b1f0fcc84d542f5e610e43d4a9dcfd4ac8936354896b1317152a41ffe621b5",
+   "updated": "2026-11-25T03:16:13+00:00"
+  },
+  "A/IceDrill/fbx/IceDrill_A_T3.fbx": {
+   "assetId": "125446498744850",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "5274fd40bcd1059cef3de37ff9af465ed36c8a3ef819b2801d1a0fd25de3ef6f",
+   "updated": "2026-11-25T03:16:21+00:00"
+  },
+  "A/IceDrill/fbx/IceDrill_A_T3_Upgrades.fbx": {
+   "assetId": "97640925769796",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "7fcb61c17de6017144734791a19949aa418374f912b2eea3f0cdb726a973e5d9",
+   "updated": "2026-11-25T03:16:34+00:00"
+  },
+  "A/IceDrill/fbx/IceDrill_A_T4.fbx": {
+   "assetId": "132656236135445",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "f1ec53bb8e129b72ded95a5d441b100465d127af126bc310d868b9b527c1e2c5",
+   "updated": "2026-11-25T03:16:42+00:00"
+  },
+  "A/IceDrill/fbx/IceDrill_A_T4_Upgrades.fbx": {
+   "assetId": "110696365013633",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "eda930cd1f6e76a012ca9277a0296a311140c3ef9c6f0946393b91872639d74e",
+   "updated": "2026-11-25T03:16:55+00:00"
+  },
+  "A/IceDrill/fbx/IceDrill_A_T5.fbx": {
+   "assetId": "119898815974839",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "22d07852d7d16d604558c35215ba339413fdb356f9180bb388e6da8f7788c60c",
+   "updated": "2026-11-25T03:17:03+00:00"
+  },
+  "A/IceDrill/fbx/IceDrill_A_T5_Upgrades.fbx": {
+   "assetId": "107989202206729",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "d54942fd6632e5b5969112228f98b26c9a90b7b484ceb45feb710cee9ec9b0ad",
+   "updated": "2026-11-25T03:17:16+00:00"
+  },
+  "B/FlamethrowerTurret/fbx/FlamethrowerTurret_B_T5.fbx": {
+   "assetId": "70644934285054",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "b76595695008a4532348aa16eda43042f04b997eefbd2b29015ca29932803339",
+   "updated": "2026-11-25T03:17:30+00:00"
+  },
+  "B/FlamethrowerTurret/fbx/FlamethrowerTurret_B_T5_Upgrades.fbx": {
+   "assetId": "119393483846944",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "6da6da43d06f281c2aab67dfae0395ef32d1c1c2c2f724e92bb753503db7d739",
+   "updated": "2026-11-25T03:17:38+00:00"
+  },
+  "B/IceDrill/fbx/IceDrill_B_T1.fbx": {
+   "assetId": "92393510681822",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "b81cb4196061dc7dd01d9aaa138d026009ece79403956b1bb97d48594643e281",
+   "updated": "2026-11-25T03:17:51+00:00"
+  },
+  "B/IceDrill/fbx/IceDrill_B_T1_Upgrades.fbx": {
+   "assetId": "124386915592217",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "d3bc040704068c9c48ce0b7333bfe2bde2efa72c926bce5f6d12508f486f9d25",
+   "updated": "2026-11-25T03:18:04+00:00"
+  },
+  "B/IceDrill/fbx/IceDrill_B_T2.fbx": {
+   "assetId": "110866970928853",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "41e05db04ef072eb38981151d5ef6be1c453d2cd4f1419af57b81833d8662850",
+   "updated": "2026-11-25T03:18:12+00:00"
+  },
+  "B/IceDrill/fbx/IceDrill_B_T2_Upgrades.fbx": {
+   "assetId": "97608711797246",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "a19ae459d2ceacb6f88d839b896a2ef4c750b60740aab44823ec2205ad3a758e",
+   "updated": "2026-11-25T03:18:25+00:00"
+  },
+  "B/IceDrill/fbx/IceDrill_B_T3.fbx": {
+   "assetId": "78237056807219",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "305ba32c4d3c86f996300f45fd72adcc0614bfa376e660887f4aa6820286048b",
+   "updated": "2026-11-25T03:18:33+00:00"
+  },
+  "B/IceDrill/fbx/IceDrill_B_T3_Upgrades.fbx": {
+   "assetId": "127074326407549",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "a498dc51d5c935201ca772a3a23f24256e40dcc1fae87ed17f5e7d378ff667eb",
+   "updated": "2026-11-25T03:18:41+00:00"
+  },
+  "B/IceDrill/fbx/IceDrill_B_T4.fbx": {
+   "assetId": "100394848510975",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "fd4307036b5c36e5366a06e9f0469d8e95ad407d7422fcc053fbc9e9c42cca2e",
+   "updated": "2026-11-25T03:18:54+00:00"
+  },
+  "B/IceDrill/fbx/IceDrill_B_T4_Upgrades.fbx": {
+   "assetId": "99246974682306",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "3ffa6d956f12270838a76b1952ee6745bdf6c4d75f0c278a99e4241f31c61df8",
+   "updated": "2026-11-25T03:19:08+00:00"
+  },
+  "B/IceDrill/fbx/IceDrill_B_T5.fbx": {
+   "assetId": "86362034567037",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "fa2560710712680aa9abd28127d30e51ec2de9ff0572fb891ee8bb9846d1d4b6",
+   "updated": "2026-11-25T03:19:21+00:00"
+  },
+  "B/IceDrill/fbx/IceDrill_B_T5_Upgrades.fbx": {
+   "assetId": "111161165201450",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "f3ac0f9b4bf39a7d95117d593e2277ca63194adee77e71397337d0ae7bbc8e73",
+   "updated": "2026-11-25T03:19:34+00:00"
+  }
+ },
+ "creator": {
+  "groupId": "921449746"
+ }
+}

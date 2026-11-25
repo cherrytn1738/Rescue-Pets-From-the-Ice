@@ -9,6 +9,15 @@
    "sha256": "77913f52ff6a7919e60c00a95c653565700b39ab8460ced1227a01c72da89af8",
    "updated": "2026-11-24T22:45:57+00:00"
   },
+  "StudOverlay.png": {
+   "assetId": "136809147161427",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "392db66fa227705919dab1017f9fa504ea158efdd6a0806d7633f5f673e8da17",
+   "updated": "2026-11-25T03:19:42+00:00"
+  },
   "particles/ember.png": {
    "assetId": "87423984170712",
    "creator": {

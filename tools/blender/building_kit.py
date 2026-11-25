@@ -2,7 +2,8 @@
 # pieces (bevelled beams and boxes, cylinders, gears, pipes and elbows, rivets and bolts, a warning
 # lamp, a crest, a chain, a flame, auger bits, a ladder, a name plate) that every building is built from.
 #
-# NOT the stud-voxel style: that one is for pets only (lihfolk-stud-voxel). Buildings use this kit.
+# The approved smooth style. The stud-voxel style for buildings (lihfolk-stud-voxel) is being tried out in
+# tools/blender/voxel/ (a style test, not in the game).
 #
 # Load after model_helpers.py, at the top level of a script:
 #     exec(open(HELPERS, encoding="utf-8").read()); exec(open(KIT, encoding="utf-8").read())

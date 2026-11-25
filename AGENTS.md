@@ -48,7 +48,7 @@ Keep the Rojo mappings in `default.project.json` stable unless a feature needs a
 - **Studio never touches live DataStores.** Studio playtests use the Studio stores (`IcePets_PlayerData_Studio`, `IcePets_PlayerData_StudioFresh`). `StudioUseLiveSaves` exists for a deliberate, announced check only. Specs use fakes and never touch any real store.
 - **Never force-push** (`git push --force`, `-f`, `--force-with-lease`), and don't rewrite pushed history.
 - **Uploads always go to group 921449746.** Every mesh, image, audio file, model and product icon is created by the group: `creationContext.creator.groupId = "921449746"` in Open Cloud's `/assets/v1/assets` request, never a `userId` and never another group. Use `python tools/upload_models.py <files>` (`.fbx` Models, `.png`/`.jpg` Images). It keeps an `upload_manifest.json` beside the files (asset ids, hashes, creator), skips unchanged files, updates group-owned Models in place, and makes a NEW asset for a changed picture (swap the new id into the game). `--dry-run` sends nothing; `--check` re-reads moderation.
-- **The voxel skill (`lihfolk-stud-voxel`) is for pets only**, never for buildings, terrain, props or the map.
+- **The voxel skill (`lihfolk-stud-voxel`) is for pets and buildings** (the stations and their upgrade sets), never for terrain, props or the map.
 - **Nothing from Steal Pets.** This repo started from copies of Steal Pets' reusable systems. Never reuse that game's DataStore names, asset ids, product ids, group or universe, and never edit its folder (`../StealPetsFromOthers`).
 
 ## Working Style
