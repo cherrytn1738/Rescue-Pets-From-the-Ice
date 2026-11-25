@@ -40,6 +40,10 @@ local STUDIO_FRESH_STORE = "IcePets_PlayerData_StudioFresh" -- a brand-new throw
 
 local SCHEMA_VERSION = 1
 local AUTOSAVE_SECONDS = 60
+-- MarkImportant saves on the next tick, but at most once every IMPORTANT_GAP_SECONDS per player: gameplay
+-- marks many things important (a rescue, a build, a pet), and one DataStore key shouldn't be written more
+-- often than every ~6 s. Robux grants don't wait: they use SaveNow.
+local IMPORTANT_GAP_SECONDS = 15
 local LEASE_SECONDS = 180 -- how long a claim lasts without being renewed
 local LEASE_SAFETY_SECONDS = 15 -- stop gameplay this long before the lease could run out
 local LEASE_HELD = "data is still in use by another server"
@@ -971,9 +975,16 @@ function PlayerData.AutosaveTick()
 		if session.loaded and not session.closing and not session.failed then
 			if os.time() >= session.expiresAt - LEASE_SAFETY_SECONDS then
 				fail(player, session, "autosave could not renew the lease in time")
-			elseif not session.saving and (session.importantSavePending or os.clock() >= session.nextSave) then
-				session.nextSave = os.clock() + AUTOSAVE_SECONDS
-				task.spawn(save, player, session, false)
+			elseif not session.saving then
+				local now = os.clock()
+				local important = session.importantSavePending and now - (session.lastImportantSave or -math.huge) >= IMPORTANT_GAP_SECONDS
+				if important or now >= session.nextSave then
+					if important then
+						session.lastImportantSave = now
+					end
+					session.nextSave = now + AUTOSAVE_SECONDS
+					task.spawn(save, player, session, false)
+				end
 			end
 		end
 	end

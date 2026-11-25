@@ -66,5 +66,11 @@ PlayerEffects.Start()
 DebugService.Start()
 AdminService.Start()
 
+-- Server-to-client remotes: a client firing them at the server is ignored (a handler, so Roblox doesn't
+-- queue the calls and warn about it).
+for _, name in { "GameEvent", "PurchaseNotice" } do
+	game:GetService("ReplicatedStorage"):WaitForChild(name).OnServerEvent:Connect(function() end)
+end
+
 PlayerData.Start()
 print("[Server] started")

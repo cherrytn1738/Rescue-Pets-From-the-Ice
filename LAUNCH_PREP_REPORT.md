@@ -21,10 +21,10 @@ _(Collected as the run goes.)_
 | 1. Audit | Done | see git log |
 | 2. Robux items | Done (icons: agent still rendering, committed separately) | see git log |
 | 3. Gaps | Done | see git log |
-| 4. New-player playthrough | Not started | |
+| 4. New-player playthrough | Done: first rebirth at 34.5 min (target 30-40) | see git log |
 | 5. Multiplayer | Not started | |
 | 6. Performance, phone, gamepad | Not started | |
-| 7. Saves and security | Not started | |
+| 7. Saves and security | Done (code and specs); abuse test from a client in Phase 5's session | see git log |
 | 8. Launch material | Not started | |
 | 9. Launch checklist | Not started | |
 
@@ -151,7 +151,7 @@ Steps 2-5 are `EconomyRules.Multiplier`; 6-9 are server-only extras (`Economy.Ad
 - The VIP lounge door is client-side (your own character's physics), since the lounge gives no advantage.
 - Item names: Crystal Pouch / Sack / Chest for the bundles.
 
-**Icon drafts:** being rendered from the game's own models by a background agent into `store-assets/icons/`; committed when done (see the Phase 8 section).
+**Icon drafts** (not uploaded): `store-assets/icons/` has a 512x512 draft for all 12 items, plus `contact_sheet.png` (all of them, with 64 px copies) and `README.md`. Each is rendered in headless Blender from the game's own models: creatures posed with their own clips, the real gold pick, a simple ice block and crystal gems. They're composited in Pillow with a bright gradient, a thick outline, sparkles and a short badge ("2X", "AUTO", "VIP", "+1", "+2", "LUCK x2", "10 MIN", "1 HOUR", "6 HOURS", "SHATTER!", "x2 SERVER", "?"). Regenerate with `python tools/icons/compose_icons.py --render` (about 100 s). The pass icons were checked inside the circle crop Roblox uses for passes. Known weak spots: the crown on VIP is 2D; the Lucky Ice silhouette reads as "a creature" more than a dragon; Shatter Now is busy at 64 px; the Mythic Block's rainbow is pastel. Note: the creature rarities follow `CreatureConfig` (e.g. Spirit Whale and Aurora Fox are Mythic there).
 
 ## Phase 3: gaps filled
 
@@ -169,3 +169,59 @@ Group bonus, daily chest and the reduced-effects setting were already built and 
 Deferred (with the reason in the gap table): Build-card 3D previews and silhouettes, model animation (moving extras, hit motions, Masterwork idle), the book's fly-in animation, the new-layer banner's ice preview, menu icons (art).
 
 Specs: Codes (the six milestone codes), Pick (golden skin), SoundRules (the two new sounds). 20/20 pass.
+
+## Phase 4: new-player playthrough
+
+A scripted player on a fresh save (StudioFreshSave): it taps 4 a second through the real tap remote, follows the tutorial, buys whatever pays back fastest (cost / extra crystals per second, the "sensible player" rule), equips its best pets after every rescue, redeems the launch code after its first building and the tutorial code when it's shown, and rebirths the moment it can. It never left its plot, so it never joined a Golden Glacier rush or opened the daily chest. The full log is in `docs/playthrough_2026-11-25.txt`.
+
+| Milestone | Time | Doc target |
+|---|---|---|
+| First tap / tutorial step 2 | 0.1 min | - |
+| First rescue | 0.4 min (24 s) | within 60 s: OK |
+| First building | 0.4 min (a Heat Lamp: it paid back faster than the Ice Pick Post; the tutorial accepts any building) | within 30 s: OK |
+| Tutorial done (THAWED shown) | 0.4 min | - |
+| Layer 2 (Blue Ice) | 4.4 min | - |
+| First Rare | 5.9 min (Glacier Otter) | - |
+| Layer 3 (Ancient Ice) | 13.7 min | - |
+| Layer 4 / level 31 / first rebirth | 34.5 min, +5 Frost Cores | 30-40 min: OK |
+
+Rescue gaps: 0.3-0.5 min for the first 9 levels, 0.7-1.1 min in Blue Ice, 1.3-3.0 min in Ancient Ice (levels 21-30). The doc says 1-3 minutes, slowing to 4-6 past level 30: the start is faster than that (good for onboarding) and the end matches. 30 rescues, 29 pets kept, 170 buildings by the rebirth; no Epic or better in the whole first run (Ancient Ice has 5% Epic and only 10 blocks were rolled there).
+
+Onboarding funnel, all 7 steps logged in order on the server: 1 Joined, 2 First tap, 3 First building, 4 First rescue, 5 First pet equipped, 6 Tutorial done, 7 First rebirth.
+
+Bug found and fixed: the Shatter Now offer threw an error every frame while the player's plot index wasn't known yet (`false ~= nil` passed a check).
+
+**Where a new player could get stuck or confused** (no balance changed; proposals):
+1. **This was a near-perfect player.** It bought the best-payback item the moment it could and equipped its best pets every time. A real new player buys less well and will likely need 40-50 minutes. Proposal: watch the live "First rebirth" funnel step and session length; if most players quit before it, lower `RebirthConfig.RequiredLevel` or `LayerConfig.BlockHp` growth a little.
+2. **Levels 25-30 drag**: 2-3 minutes a rescue while saving millions of crystals with nothing new to see (the last new building, the Flamethrower Turret, came at 17 min). Proposal: show the rebirth goal on the HUD from level 25 ("Rebirth at level 31: 3 more"), so the player knows the wait leads somewhere.
+3. **Equipping isn't automatic.** After the tutorial a player who never opens PETS keeps their first pet. Proposal: a "NEW BEST PET!" toast with an Equip button, or an auto-equip-best setting.
+4. **The pet inventory (50) fills during the second run** (29 pets after the first). Players will hit "inventory full" without a quick way out. Proposal: a "delete all Commons" button or auto-delete for duplicates of a set rarity.
+5. **The Ice Pick Post is a worse buy than the Heat Lamp** from the very start (0.1 damage/s for 15 vs 1 for 120). The tutorial points at the Post, which is fine as a first step, but players who follow "the next affordable building glows" will notice the Post never pays. No change suggested (it is the cheap starter), only noted.
+6. **No Epic in the first run**, so the Epic and better book pages and their rewards only appear after a rebirth. Fine for a long-term goal; the Rare at 6 minutes keeps the first session exciting.
+7. The bot never saw a Golden Glacier (it stayed home). Real players get a rush every 5-8 minutes, which will speed them up.
+
+## Phase 7: saves and security
+
+### Every remote and what the server checks
+
+No remote is created in code; every one is declared in `default.project.json`. An error inside a RemoteFunction handler reaches only the caller; the server never invokes a client. Every per-player limiter is cleared when the player leaves.
+
+| Remote | Server checks | Problem found | Fixed |
+|---|---|---|---|
+| TapBatch | whole number 1-1000, not NaN; only in your own plot; a 20/s bucket (1 s burst) shared with GoldenTap and Auto Pick; logs players who keep going over (every 30 s at most) | none | - |
+| GoldenTap | glacier active; same number checks and bucket; within 40 studs of the glacier | the distance uses your character's position (a teleport exploit can reach it, but walking there is allowed anyway) | accepted as is |
+| BuyBuilding | 0.1 s between buys; known building id; amount 1/10/100/"Max" only; price and spending on the server | none | - |
+| BuyUpgrade | same limiter; known id; unlock rules; price | none | - |
+| PetRequest | known action; 0.15 s apart; data ready; uids must be owned strings (64 chars), lists 1-60 | **High:** a repeated uid in Delete (`{"a","a"}`) removed a second, unpicked pet and could leave a deleted pet equipped; the next save then refused the data and kicked the player WITHOUT saving: a rollback tool (e.g. a free re-roll of a paid Mythic Block). Low: requests that changed nothing still forced a save; MarkSeen accepted a map | Yes: lists with repeats or extra keys are refused; Delete never `table.remove(list, nil)`; Equipped is cleaned after every request; no-op requests don't save; MarkSeen needs a plain list (spec checks added) |
+| RebirthRequest | action "Rebirth"; once per 2 s; data ready; level 31 | none | - |
+| RedeemCode | 1 s apart, 6 a minute (checked first); text cut to 64 and normalised; once per player | none | - |
+| PurchaseRequest | known action; key a string up to 32; 0.5 s apart; one open prompt at a time; data ready; real id (or simulated in Studio); gift: a whole-number recipient in this server, loaded, paid-random rules both ways | Low: a recipient id like 1e300 could make `GetPlayerByUserId` throw after the 30 s prompt lock was set (locking the player out of the shop) | Yes: ids must be under 2^53 and the recipient is looked up before the lock |
+| SaveSettings | a table; 0.5 s apart; volumes numbers, NaN refused, clamped 0-1; ReducedEffects a boolean | none | - |
+| ShopVisit (analytics) | shop "Robux"; 0.2 s apart, 40 a minute; Info key must be a real item | Medium: spamming "Open" started a new funnel visit each time (fake funnel numbers, and it spends the analytics budget) | Yes: one visit at a time, a new one at most every 15 s |
+| DebugRequest / AdminRequest | access checked on the server for every request (live: DebugConfig empty = nobody; Admin = you only); limiter; every argument checked against the action's params | Medium: every refused request wrote a warning (log flooding) | Yes: a refusal is logged at most once a minute per user |
+| GoHome | no arguments; once per 2 s; only to your own plot | Low: it let a jailed player out early | Yes: refused while jailed |
+| GameEvent, PurchaseNotice (server to client) | - | Low: a client firing them made Roblox queue the calls and warn | Yes: empty handlers |
+| (Saves) | - | Low: gameplay marked a save important many times a minute (rescue, build, pet), up to one write every 5 s per key | Yes: important saves at most every 15 s (Robux grants still save at once with SaveNow); spec checked |
+| (Crystals) | - | Low: crystals past 1e300 would make the save refuse the player every session | Yes: Grant caps at 1e300 |
+
+Not changed (a proposal): the daily chest pays 300 s x your current crystals/s, which includes a running Frost Rush or Server Frost Rush (claiming during a rush pays 2-10x). Once a day, so small; the fix would be to use the bundle-style income without rushes.

@@ -346,6 +346,49 @@ function PlotService.Release(player: Player)
 	end
 end
 
+-- Studio performance tests (debug "Fill empty plots"): every free plot gets a dummy owner with every
+-- building at 100 and every building upgrade (Masterworks), and a level-400 block holding `rarity`. The
+-- dummy is a plain table, never a Player: nothing else treats it as one. ClearDummies frees them again.
+local dummies = {}
+function PlotService.FillDummies(rarity: string, creatureId: string): number
+	local filled = 0
+	for index = 1, MapConfig.PlotCount do
+		if owners[index] == nil then
+			local dummy = { Name = "Dummy" .. index, DisplayName = "Dummy " .. index, UserId = -1000 - index }
+			owners[index] = dummy
+			dummies[index] = dummy
+			local plot = plots[index]
+			plot:SetAttribute("Owner", dummy.UserId)
+			plot:SetAttribute("OwnerName", dummy.DisplayName)
+			setOwnerText(plot, dummy.DisplayName)
+			local data = { Buildings = {}, Upgrades = {} }
+			for _, building in BuildingConfig.Buildings do
+				data.Buildings[building.Id] = 100
+				for upgrade = 1, 5 do
+					table.insert(data.Upgrades, building.Id .. "Upgrade" .. upgrade)
+				end
+			end
+			PlotService.RefreshBuildings(dummy :: any, data)
+			local block = plot.Block
+			for name, value in { Present = true, Level = 400, Layer = 5, CreatureId = creatureId, Rarity = rarity, Hp = 1e72, HpMax = 1.8e72, Stage = 2, ArriveAt = 0 } do
+				block:SetAttribute(name, value)
+			end
+			filled += 1
+		end
+	end
+	return filled
+end
+
+function PlotService.ClearDummies(): number
+	local cleared = 0
+	for index, dummy in dummies do
+		PlotService.Release(dummy :: any)
+		dummies[index] = nil
+		cleared += 1
+	end
+	return cleared
+end
+
 function PlotService.IndexOf(player: Player): number?
 	for index, owner in owners do
 		if owner == player then

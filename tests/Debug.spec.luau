@@ -209,7 +209,11 @@ return function(sources)
 		Receipts = { Simulate = record("Simulate") },
 		IceBlockService = { Shatter = record("Shatter"), ForceNextCreature = record("ForceNextCreature"), Reroll = record("Reroll") },
 		PetService = { Give = record("Give") },
-		PlotService = { SendHome = record("SendHome") },
+		PlotService = { SendHome = record("SendHome"), FillDummies = function()
+			return 6
+		end, ClearDummies = function()
+			return 6
+		end },
 		PickService = { SetTier = function(player, tier)
 			table.insert(calls, { name = "SetTier", args = { player, tier } })
 			return tier >= 1 and tier <= 6

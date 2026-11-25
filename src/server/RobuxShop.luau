@@ -101,8 +101,12 @@ end
 
 function actions.Gift(player: Player, productKey, recipientId)
 	local product = MonetizationConfig.GetGiftable(productKey) -- a product, or a pass
-	if not product or type(recipientId) ~= "number" or recipientId % 1 ~= 0 then
+	if not product or type(recipientId) ~= "number" or recipientId % 1 ~= 0 or math.abs(recipientId) >= 2 ^ 53 then
 		return reply(false, "Pick a player to gift to.")
+	end
+	local recipient = Players:GetPlayerByUserId(recipientId)
+	if not recipient then
+		return reply(false, "That player isn't in this server any more.")
 	end
 	if MonetizationConfig.IsPaidRandom(product) and not PaidRandomPolicy.IsAllowed(player) then
 		return reply(false, PaidRandomPolicy.REFUSED)
@@ -115,7 +119,7 @@ function actions.Gift(player: Player, productKey, recipientId)
 		return reply(false, "Wait a moment before starting another gift.")
 	end
 	promptOpenUntil[player] = os.clock() + PROMPT_SECONDS
-	local ok, message = Gifting.Prepare(player, product, Players:GetPlayerByUserId(recipientId))
+	local ok, message = Gifting.Prepare(player, product, recipient)
 	if not ok then
 		promptOpenUntil[player] = nil
 		return reply(false, message or "The gift couldn't be started.")

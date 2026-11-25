@@ -297,6 +297,27 @@ local ACTIONS = {
 		end,
 	},
 	{
+		Id = "FillDummyPlots", Group = "Testing switches", Label = "Fill every empty plot with a maxed dummy plot (performance tests)",
+		NoTarget = true,
+		Params = { { Name = "Creature", Label = "Creature in the dummies' blocks", Kind = "choice", Choices = creatureChoices, Default = creatureChoices[1].Value } },
+		Run = function(_, args)
+			studioOnly()
+			local creature = CreatureConfig.Get(args.Creature)
+			if not creature then
+				fail("Pick a creature")
+			end
+			return `Filled {PlotService.FillDummies(creature.Rarity, creature.Id)} empty plots with maxed dummies`
+		end,
+	},
+	{
+		Id = "ClearDummyPlots", Group = "Testing switches", Label = "Free the dummy plots again",
+		NoTarget = true,
+		Run = function()
+			studioOnly()
+			return `Freed {PlotService.ClearDummies()} dummy plots`
+		end,
+	},
+	{
 		Id = "SendHome", Group = "Player", Label = "Send to their plot",
 		Run = function(target)
 			if not PlotService.SendHome(target) then

@@ -15,6 +15,7 @@ local Workspace = game:GetService("Workspace")
 
 local MapConfig = require(ReplicatedStorage.MapConfig)
 local MonetizationConfig = require(ReplicatedStorage.MonetizationConfig)
+local PlayerEffects = require(script.Parent.PlayerEffects)
 local PlotService = require(script.Parent.PlotService)
 
 local PlazaService = {}
@@ -216,6 +217,9 @@ function PlazaService.Start(boards)
 			return
 		end
 		lastHome[player] = now
+		if PlayerEffects.Busy(player) == "jailed" then
+			return -- (HOME doesn't let a player out of the admin's jail early)
+		end
 		PlotService.SendHome(player)
 	end)
 	Players.PlayerRemoving:Connect(function(player)

@@ -86,8 +86,8 @@ end)
 RunService.RenderStepped:Connect(function()
 	local index = player:GetAttribute("PlotIndex")
 	local plots = Workspace:FindFirstChild("Plots")
-	local plot = type(index) == "number" and plots and plots:FindFirstChild("Plot" .. index)
-	local block = plot and plot:FindFirstChild("Block")
+	local plot = if type(index) == "number" and plots then plots:FindFirstChild("Plot" .. index) else nil
+	local block = if plot then plot:FindFirstChild("Block") else nil
 	local present = block ~= nil and block:GetAttribute("Present") == true
 	holder.Visible = present and inOwnPlot(index) and not UIKit.AnyWindowOpen()
 	if not holder.Visible then

@@ -601,6 +601,14 @@ return function(sources)
 	PlayerData.MarkImportant(saver)
 	PlayerData.AutosaveTick()
 	check(record(9).Codes[1] == "FIRST", "an important change is saved on the next tick")
+	table.insert(saverData.Codes, "QUICK")
+	PlayerData.MarkImportant(saver)
+	PlayerData.AutosaveTick()
+	check(#record(9).Codes == 1, "...but a second one within 15 s waits (one key isn't written every 5 s)")
+	now += 16
+	PlayerData.AutosaveTick()
+	check(record(9).Codes[2] == "QUICK", "...and is saved once 15 s have passed")
+	table.remove(saverData.Codes, 2)
 	table.insert(saverData.Codes, "SECOND")
 	now += 75
 	PlayerData.AutosaveTick()
@@ -661,6 +669,127 @@ return function(sources)
 	leave(tester)
 	fakeWorkspace:SetAttribute("StudioUseLiveSaves", nil)
 	inStudio = false
+
+	-- More corrupt fields: amounts past the cap fail closed; a block or settings that can't be read are
+	-- replaced (a new block is rolled, settings go back to defaults).
+	put(150, { SchemaVersion = 1, Crystals = 1e301 })
+	local tooRich = join(150)
+	check(not PlayerData.IsReady(tooRich) and record(150).Crystals == 1e301, "crystals past the cap fail closed, untouched")
+	leave(tooRich)
+	put(151, { SchemaVersion = 1, CurrentBlock = { CreatureId = "SnowBunny", HpLeft = "lots" }, Settings = "loud" })
+	local oddBlock = join(151)
+	data = PlayerData.Get(oddBlock)
+	check(PlayerData.IsReady(oddBlock) and data.CurrentBlock == nil, "a block whose HP can't be read is rolled again")
+	check(data.Settings.Music == 1 and data.Settings.Sounds == 1 and data.Settings.ReducedEffects == false, "settings that aren't a table go back to the defaults")
+	leave(oddBlock)
+
+	-- Every saved field round-trips: a save with every field away from its default, then leave and rejoin.
+	local fullUid = join(130)
+	local full = PlayerData.Edit(fullUid)
+	full.Crystals, full.CrystalsThisRun, full.CrystalsAllTime = 1234.5, 2345.5, 3456.5
+	full.BlockLevel, full.CurrentBlock = 12, { CreatureId = "SealPup", HpLeft = 77 }
+	full.Buildings.IcePickPost, full.Buildings.HeatLamp = 4, 2
+	table.insert(full.Upgrades, "IcePickPostUpgrade1")
+	table.insert(full.Pets, { Uid = "rt-1", CreatureId = "SnowBunny", Golden = false })
+	table.insert(full.Pets, { Uid = "rt-2", CreatureId = "SealPup", Golden = true })
+	table.insert(full.Equipped, "rt-2")
+	full.BookSeen.SnowBunny, full.BookSeen.SealPup = 3, 1
+	full.BookGolden.SealPup = true
+	table.insert(full.BookNew, "SealPup")
+	full.FrostCores, full.Rebirths, full.MaxLayerOpened, full.CreaturesRescued = 4, 2, 5, 11
+	full.TutorialStep = 3 -- (not 5: an unreadable step loads as 5)
+	full.Settings = { Music = 0.3, Sounds = 0.6, ReducedEffects = true }
+	full.DailyClaimDay = 20400
+	table.insert(full.Codes, "ROUNDTRIP")
+	full.GiftedPasses.AutoPick = true
+	full.MythicBlocks = 1
+	local before = realHttp:JSONEncode(full)
+	leave(fullUid)
+	fullUid = join(130)
+	local after = PlayerData.Get(fullUid)
+	local function sameFields(a, b, path)
+		for key, value in a do
+			if key == "Funnels" or key == "SchemaVersion" or key == "Session" or key == "LastWriteId" or key == "LeftAt" or key == "GiftInbox" then
+				continue
+			end
+			local other = b[key]
+			if type(value) == "table" and type(other) == "table" then
+				sameFields(value, other, path .. "." .. tostring(key))
+				sameFields(other, value, path .. "." .. tostring(key))
+			else
+				check(value == other, `{path}.{key} round-trips ({tostring(value)} vs {tostring(other)})`)
+			end
+		end
+	end
+	sameFields(realHttp:JSONDecode(before), after, "save")
+	local fresh = PlayerData.Get(join(131))
+	for key in fresh do
+		check(after[key] ~= nil or key == "CurrentBlock", `the round trip covers the field {key}`)
+	end
+	leave(fullUid)
+
+	-- Two servers, one save: a second live server can't take a held save; a stalled server whose lease
+	-- ran out loses it (its saves are refused) and the record stays the new owner's.
+	local players2 = { PlayerAdded = signal(), PlayerRemoving = signal(), list = {} }
+	function players2:GetPlayers()
+		return table.clone(self.list)
+	end
+	local services2 = table.clone(services)
+	services2.Players = players2
+	local server2Env = setmetatable({
+		game = {
+			GetService = function(_, name)
+				return assert(services2[name], "unexpected service " .. name)
+			end,
+			BindToClose = function() end,
+		},
+		workspace = fakeWorkspace,
+		task = fakeTask,
+		os = env.os,
+		require = env.require,
+		print = function() end,
+		warn = function() end,
+	}, { __index = getfenv(1) })
+	local chunk2 = assert(loadstring(sources.PlayerData, "PlayerData"))
+	setfenv(chunk2, server2Env)
+	local PlayerData2 = chunk2()
+	spawnEnabled = false -- (Start's autosave loop would run forever under the instant fake spawn)
+	PlayerData2.Start()
+	spawnEnabled = true
+	local function join2(userId)
+		local attributes = {}
+		local player = { UserId = userId, Parent = players2 }
+		function player:GetAttribute(name)
+			return attributes[name]
+		end
+		function player:SetAttribute(name, value)
+			attributes[name] = value
+		end
+		function player:Kick(reason)
+			self.KickReason = reason
+		end
+		table.insert(players2.list, player)
+		players2.PlayerAdded:Fire(player)
+		return player
+	end
+	local onA = join(140)
+	table.insert(PlayerData.Edit(onA).Codes, "SERVERA")
+	check(PlayerData.SaveNow(onA), "server A holds the save")
+	local heldBy = record(140).Session and record(140).Session.Id
+	local onB = join2(140)
+	check(not PlayerData2.IsReady(onB) and onB.KickReason ~= nil, "server B can't load a save server A holds: the player is told and kicked there")
+	check(record(140).Session.Id == heldBy and record(140).Codes[1] == "SERVERA", "...and B changed nothing in the record")
+	check(PlayerData.SaveNow(onA) and record(140).Codes[1] == "SERVERA", "server A keeps saving")
+	-- A stalls past its lease (no autosave renews it); B takes the expired lease over and saves.
+	now += 200
+	local onB2 = join2(140)
+	check(PlayerData2.IsReady(onB2), "server B takes over a lease that expired")
+	table.insert(PlayerData2.Edit(onB2).Codes, "SERVERB")
+	check(PlayerData2.SaveNow(onB2), "...and saves")
+	check(not PlayerData.IsReady(onA) and not PlayerData.SaveNow(onA), "server A stopped gameplay before its lease ran out, and can't save")
+	PlayerData.AutosaveTick()
+	check(onA.KickReason ~= nil, "...and its next autosave tick stops the session (the player is told and kicked)")
+	check(record(140).Codes[2] == "SERVERB" and record(140).Session.Id ~= heldBy, "...and the record stays server B's")
 
 	-- Shutdown saves everyone still here and releases their leases.
 	local stayer = join(12)

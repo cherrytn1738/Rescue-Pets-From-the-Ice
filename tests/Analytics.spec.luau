@@ -221,6 +221,10 @@ return function(sources)
 	Analytics.RobuxPrompted(ana, "TestPack")
 	check(take() == "", "a prompt after the window closed doesn't count")
 	visitEvent(ana, "Open", "Robux")
+	check(take() == "", "reopening straight away isn't a new visit (spamming Open can't inflate the funnel)")
+	visitEvent(ana, "Close", "Robux")
+	clock += 16
+	visitEvent(ana, "Open", "Robux")
 	Analytics.RobuxPrompted(ana, "TestPass")
 	check(take() == "Ana RobuxShop visit2 1 Opened shop | Ana RobuxShop visit2 2 Viewed item | Ana RobuxShop visit2 3 Prompt shown",
 		"a new visit is a new session; a buy button fills in Viewed item")

@@ -44,7 +44,8 @@ local function nextBig()
 	title.Text, subtitle.Text = item.title, item.subtitle or ""
 	title.TextColor3 = item.color or Color3.new(1, 1, 1)
 	bigFrame.Visible = true
-	local menu = UIKit.MenuScale()
+	-- (never wider than the screen: a small phone shrinks it a little more)
+	local menu = math.min(UIKit.MenuScale(), (UIKit.Viewport().X - 24) / bigFrame.Size.X.Offset)
 	bigScale.Scale = 0.2
 	TweenService:Create(bigScale, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Scale = menu }):Play()
 	task.delay(item.seconds or 2.6, function()
@@ -78,10 +79,16 @@ local toastScale = Instance.new("UIScale")
 toastScale.Parent = toastList
 
 function Banners.Toast(text: string, color: Color3?)
-	toastScale.Scale = UIKit.HudScale()
+	local scale = UIKit.HudScale()
+	toastScale.Scale = scale
+	toastList.Size = UDim2.fromOffset(math.min(800, (UIKit.Viewport().X - 24) / scale), 200) -- (fits a small phone)
 	local label = UIKit.Label(toastList, "Toast", text, 30, color)
 	label.Size = UDim2.new(1, 0, 0, 36)
 	label.TextXAlignment = Enum.TextXAlignment.Center
+	label.TextScaled = true -- (a long line shrinks to fit rather than running off the screen)
+	local limit = Instance.new("UITextSizeConstraint")
+	limit.MaxTextSize = 30
+	limit.Parent = label
 	task.delay(4, function()
 		local fade = TweenService:Create(label, TweenInfo.new(0.5), { TextTransparency = 1 })
 		fade:Play()
