@@ -572,7 +572,39 @@ function PlotService.RefreshBuildings(player: Player, data)
 		local badge = if station:IsA("Model") then station.PrimaryPart.Label else station.Label
 		local detail = EconomyRules.DetailLevel(data, building.Id)
 		badge.StudsOffsetWorldSpace = Vector3.new(0, height + 2, 0)
-		badge.Text.Text = `{building.Name} ×{owned}` .. (if detail >= BuildingConfig.MaxDetailLevel then " ★" else ` ({detail}/10)`)
+		-- a star per building upgrade (docs/GAME_DESIGN.md: "add a star to its badge"); a Masterwork says so
+		local stars = EconomyRules.BuildingUpgradeCount(data, building.Id)
+		local masterwork = detail >= BuildingConfig.MaxDetailLevel
+		badge.Text.Text = `{building.Name} ×{owned}` .. (if stars > 0 then " " .. string.rep("★", stars) else "")
+			.. (if masterwork then " MASTERWORK" else "")
+		-- the Masterwork's name plate: the owner's name, on a gold plate at the foot of the station
+		local holder = if station:IsA("Model") then station.PrimaryPart else station
+		local plate = holder:FindFirstChild("MasterworkPlate")
+		if masterwork and not plate then
+			plate = Instance.new("BillboardGui")
+			plate.Name = "MasterworkPlate"
+			plate.Size = UDim2.fromScale(9, 1.4)
+			plate.StudsOffsetWorldSpace = Vector3.new(0, 1.5, 0)
+			plate.MaxDistance = 70
+			plate.LightInfluence = 0
+			local back = Instance.new("TextLabel")
+			back.Name = "Text"
+			back.Size = UDim2.fromScale(1, 1)
+			back.BackgroundColor3 = Color3.fromRGB(120, 80, 10)
+			back.BackgroundTransparency = 0.2
+			back.TextColor3 = Color3.fromRGB(255, 220, 110)
+			back.TextStrokeTransparency = 0.2
+			back.Font = Enum.Font.FredokaOne
+			back.TextScaled = true
+			back.Text = `{player.DisplayName}'s Masterwork`
+			local corner = Instance.new("UICorner")
+			corner.CornerRadius = UDim.new(0.3, 0)
+			corner.Parent = back
+			back.Parent = plate
+			plate.Parent = holder
+		elseif not masterwork and plate then
+			plate:Destroy()
+		end
 		station:SetAttribute("Owned", owned)
 		station:SetAttribute("Detail", detail)
 		station:SetAttribute("Faded", faded)

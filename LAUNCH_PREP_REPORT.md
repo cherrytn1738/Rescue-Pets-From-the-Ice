@@ -20,7 +20,7 @@ _(Collected as the run goes.)_
 |---|---|---|
 | 1. Audit | Done | see git log |
 | 2. Robux items | Done (icons: agent still rendering, committed separately) | see git log |
-| 3. Gaps | In progress | |
+| 3. Gaps | Done | see git log |
 | 4. New-player playthrough | Not started | |
 | 5. Multiplayer | Not started | |
 | 6. Performance, phone, gamepad | Not started | |
@@ -52,49 +52,49 @@ Every section of the design doc was checked against the code (by reading it, not
 
 | Gap | Outcome |
 |---|---|
-| Milestone codes for likes missing | |
-| "Other players can come and watch" a rare block: the server is told (toast) but nothing points them to it, and its break isn't announced | |
-| Golden Glacier alarm chime missing | |
+| Milestone codes for likes missing | Built: LIKES1K/5K/10K/25K/50K/100K, 5-60 min of income, off until you switch each on |
+| "Other players can come and watch" a rare block: the server is told (toast) but nothing points them to it, and its break isn't announced | Built: a beam in the rarity colour over that plot until it breaks; the break is announced |
+| Golden Glacier alarm chime missing | Built (new sound, uploaded) |
 
 ### UI and screens
 
 | Gap | Outcome |
 |---|---|
-| Build card: no 3D preview; locked cards are "???" text, not dark silhouettes | |
-| Build card: next tier's glowing silhouette and "N more upgrades to Masterwork" hint missing | |
-| Rescue reveal: confetti in the rarity colour missing | |
-| New layer banner: the new ice preview missing | |
-| Creature Book first rescue: no fly-in / page-flip animation (the silhouette does fill in) | |
+| Build card: no 3D preview; locked cards are "???" text, not dark silhouettes | Deferred: needs the building templates on the client (they live in ServerStorage; copies would cost phone memory) |
+| Build card: next tier's glowing silhouette and "N more upgrades to Masterwork" hint missing | Hint built ("3 more to Masterwork"); silhouette deferred with the previews |
+| Rescue reveal: confetti in the rarity colour missing | Built |
+| New layer banner: the new ice preview missing | Deferred (the next block arriving in the new ice shows it a moment later) |
+| Creature Book first rescue: no fly-in / page-flip animation (the silhouette does fill in) | Deferred (polish) |
 | HUD: Shatter Now offer missing | Built (Phase 2) |
-| HUD menu and Upgrades icons are placeholders (text/emoji; UITheme.Icons empty) | |
-| Upgrade tile doesn't flash on purchase | |
+| HUD menu and Upgrades icons are placeholders (text/emoji; UITheme.Icons empty) | Deferred: needs icon art (a question for you) |
+| Upgrade tile doesn't flash on purchase | Built |
 
 ### Sound and effects
 
 | Gap | Outcome |
 |---|---|
-| Heartbeat at 80% silent (no sound) | |
-| Music ids empty (your pick); faster Frost Rush track (doc: later) | |
-| "Equip" sound has no entry (silent; not in the doc's table) | |
-| First copy of a building rises from the snow with a puff and camera nudge; puff per detail point: missing | |
-| Evolution moment (shake, white glow, "Your X evolved!" banner) missing | |
-| Building hits don't pop crystals | |
-| Pick tiers have no spark colour; ice upgrades don't change crystal colour (white, blue, gold) | |
-| No model animation: hit motions, moving extras (gears, pistons, rune rings), Masterwork idle | |
-| Crystal Ice sparkle rate isn't updated live when reduced effects is switched | |
-| New layer: shake but no separate camera dip | |
+| Heartbeat at 80% silent (no sound) | Built (new sound, uploaded) |
+| Music ids empty (your pick); faster Frost Rush track (doc: later) | Yours (LAUNCH_CHECKLIST.md) |
+| "Equip" sound has no entry (silent; not in the doc's table) | Left: the button click already sounds |
+| First copy of a building rises from the snow with a puff and camera nudge; puff per detail point: missing | Built (BuildMoments.client) |
+| Evolution moment (shake, white glow, "Your X evolved!" banner) missing | Built |
+| Building hits don't pop crystals | Built (your own plot, at most every 0.6 s) |
+| Pick tiers have no spark colour; ice upgrades don't change crystal colour (white, blue, gold) | Built |
+| No model animation: hit motions, moving extras (gears, pistons, rune rings), Masterwork idle | Deferred: needs moving parts split out of the 40 models (no new models this run) |
+| Crystal Ice sparkle rate isn't updated live when reduced effects is switched | Fixed |
+| New layer: shake but no separate camera dip | Built (Effects.Dip; off with reduced effects) |
 
 ### Gameplay and other
 
 | Gap | Outcome |
 |---|---|
-| Masterwork name plate with the player's name missing | |
-| Building badge shows "(detail/10)" rather than a star per upgrade | |
-| Creature Book rewards: Mythic page aurora trail and Golden page golden pick skin are text only | |
-| The next block slides in, but there is no sled object | |
-| Pace targets (rebirth at 30-40 min) not re-checked since the level-31 change (Phase 4) | |
-| Doc wording: "pet bonus speeds up every hit" / "Frost Cores make every block go faster", but pets and Frost Cores multiply crystals, not damage | |
-| Space and gamepad A also make the character jump while tapping | |
+| Masterwork name plate with the player's name missing | Built |
+| Building badge shows "(detail/10)" rather than a star per upgrade | Built (★ per upgrade, MASTERWORK at 10) |
+| Creature Book rewards: Mythic page aurora trail and Golden page golden pick skin are text only | Built (Trail on the character; gold Foil pick) |
+| The next block slides in, but there is no sled object | Built (wooden deck on runners, shown while sliding) |
+| Pace targets (rebirth at 30-40 min) not re-checked since the level-31 change (Phase 4) | See Phase 4 |
+| Doc wording: "pet bonus speeds up every hit" / "Frost Cores make every block go faster", but pets and Frost Cores multiply crystals, not damage | A question for you (the code follows the Economy formula) |
+| Space and gamepad A also make the character jump while tapping | Fixed: where you can tap they tap instead of jumping |
 
 Built and checked (not gaps): the group bonus (+10%, group 921449746), the daily chest, the launch and tutorial codes, the reduced-effects setting (particles halved, no camera shake), the rare-block announcement toast, the Golden Glacier rush (5-8 min, countdown, x3 / x5), three leaderboards, the tap cap with logging, the 4-a-second server tick, offline earnings (buildings only, 50%, 2 hours away = 3600 s of income), the analytics funnels, the Pets panel's locked-slot labels.
 
@@ -152,3 +152,20 @@ Steps 2-5 are `EconomyRules.Multiplier`; 6-9 are server-only extras (`Economy.Ad
 - Item names: Crystal Pouch / Sack / Chest for the bundles.
 
 **Icon drafts:** being rendered from the game's own models by a background agent into `store-assets/icons/`; committed when done (see the Phase 8 section).
+
+## Phase 3: gaps filled
+
+Built (each from the doc; see the gap table for every outcome):
+- **Sounds:** the 80% heartbeat and the Golden Glacier alarm chime (as the countdown starts), made in `tools/make_sfx.py`, uploaded as the group (Heartbeat 85965699278351, GoldenAlarm 78520467096529, pending moderation at upload), in AudioConfig. The generator now skips sounds whose samples haven't changed (Ogg files get a random serial number, which would have re-uploaded all 28).
+- **Likes milestone codes:** LIKES1K, LIKES5K, LIKES10K, LIKES25K, LIKES50K, LIKES100K (5, 10, 15, 20, 30, 60 minutes of the player's income), `Active = false` until you reach each milestone.
+- **Come and watch:** a beam in the rarity colour (Mythic: rainbow) over another player's plot while it holds a Legendary or Mythic block; the server announces the break ("X freed a Legendary Crystal Stag!") and the beam goes out.
+- **Building moments:** the first copy rises out of the snow (tested: pivot -4.4 -> 0.6 studs) with a puff and a camera nudge; a station milestone (10/25/50/100) flashes white with a bigger puff, a shake and "Your X evolved!"; a building upgrade flashes and puffs; the upgrade tile flashes.
+- **Effects:** rescue confetti in the rarity colour; building hits pop crystals on your own block; crystals white -> blue -> gold with ice upgrades (0 / 3 / 6 of 7 tiers); tap sparks by pick tier (orange, grey, white, gold, cyan, violet); the sled under an arriving block; the new-layer camera dip; Crystal Ice sparkles follow the reduced-effects setting live.
+- **Badges and rewards:** a ★ per building upgrade and MASTERWORK on the station badge (tested: "Ice Pick Post ×111 ★★★★★ MASTERWORK"); the Masterwork name plate ("<name>'s Masterwork", tested on all 8); the golden pick skin (Golden page; spec-checked); the aurora trail (Mythic page); the Build card's "N more to Masterwork".
+- **Controls:** where you can tap, Space and gamepad A tap instead of jumping (a high-priority ContextAction that sinks them); elsewhere they still jump.
+
+Group bonus, daily chest and the reduced-effects setting were already built and working (no change needed).
+
+Deferred (with the reason in the gap table): Build-card 3D previews and silhouettes, model animation (moving extras, hit motions, Masterwork idle), the book's fly-in animation, the new-layer banner's ice preview, menu icons (art).
+
+Specs: Codes (the six milestone codes), Pick (golden skin), SoundRules (the two new sounds). 20/20 pass.

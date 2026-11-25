@@ -16,7 +16,8 @@ IceBlockService: each player's ice block (docs/GAME_DESIGN.md, "The ice block", 
    Present, Level, CreatureId, Rarity, Layer, Hp, HpMax, Stage (0-4 crack stages), ArriveAt.
    Player attributes BlockLevel, BlockHp, BlockHpMax for the HUD.
  - Events to the owner on GameEvent: "Rescue", "NewLayer"; to everyone: "Announce" (a Legendary or
-   Mythic block arrived).
+   Mythic block arrived, with its PlotIndex, so others can come and watch: RareWatch.client; and again
+   with Freed = true when it breaks).
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -115,7 +116,7 @@ local function rollBlock(player: Player, data)
 	local rarity = CreatureConfig.GetRarity(creature.Rarity)
 	if rarity.Announce then
 		gameEvent:FireAllClients("Announce", {
-			Text = `{player.DisplayName}'s ice holds a {creature.Rarity} creature!`,
+			Text = `{player.DisplayName}'s ice holds a {creature.Rarity} creature! Follow the beam to watch it break.`,
 			Rarity = creature.Rarity,
 			PlotIndex = PlotService.IndexOf(player),
 		})
@@ -165,6 +166,15 @@ local function rescue(player: Player, data)
 	})
 	for _, callback in rescueListeners do
 		task.spawn(callback, player, data, creature.Id, pet, first)
+	end
+	-- a rare rescue: the whole server hears it was freed (and their beacons over this plot go out)
+	if CreatureConfig.GetRarity(creature.Rarity).Announce then
+		gameEvent:FireAllClients("Announce", {
+			Text = `{player.DisplayName} freed a {creature.Rarity} {creature.Name}!`,
+			Rarity = creature.Rarity,
+			PlotIndex = PlotService.IndexOf(player),
+			Freed = true,
+		})
 	end
 	-- every client plays the shatter for this plot (the owner also gets the reveal from "Rescue")
 	local plot = PlotService.PlotOf(player)

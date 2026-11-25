@@ -493,11 +493,11 @@ So rebirth isn't just starting over: it's how players reach places they couldn't
 Players share one world. Everyone can see each other's ice and what's glowing inside it, and server-wide golden blocks make players race each other.
 
 - **Plots:** 8 plots per server around a central plaza. Your ice block, your buildings breaking it and the pets following you are visible to everyone who walks by.
-- **Rare rescues are events:** when a Legendary or Mythic block arrives, the whole server is told, and other players can come and watch it break.
+- **Rare rescues are events:** when a Legendary or Mythic block arrives, the whole server is told, and other players can come and watch it break: a tall beam in the rarity's colour stands over that plot until the creature is freed, and the server is told again when it is.
 - **Golden Glacier rush:** every 5–8 minutes a golden ice block crashes into the plaza with a countdown and a sound. Everyone who taps it before it breaks gets a Frost Rush (×3 crystals for 60 seconds). The player who dealt the most damage gets ×5.
 - **Leaderboards:** boards in the plaza for all-time crystals, rebirths and creatures rescued.
 - **Daily reward and group reward:** a daily crystal chest, and +10% crystals for members of the group.
-- **Codes:** a launch code, a tutorial-completion code, and milestone codes for likes.
+- **Codes:** a launch code, a tutorial-completion code, and milestone codes for likes (1K, 5K, 10K, 25K, 50K and 100K likes, each paying 5 to 60 minutes of the player's own income; switched on when the game reaches the milestone).
 - **Later update:** tapping a friend's ice gives them crystals and you a small share.
 
 ## Monetization
@@ -542,6 +542,8 @@ Inside your plot, a tap anywhere on the screen swings your ice pick at the block
 | Phone and tablet | Tap anywhere that isn't a button |
 | PC | Click anywhere, or press Space |
 | Gamepad | R2 or A |
+
+Where you can tap (your plot, or next to a standing Golden Glacier), Space and A tap instead of jumping; anywhere else they jump as usual.
 
 **HUD.**
 
@@ -594,7 +596,7 @@ Sound and effects carry most of the "every tap feels good" pillar. Every sound c
 | Tap | Short icy crunch (four variants, a small random pitch), pitch rising slightly during streaks; at most 3 at once, so an autoclicker can't stack them | Ice chips, "+N", small crystal spray, pick swing |
 | Building hit | No sound per hit: now and then a quiet chip from your own plot, none from other plots | Building animation, the ice shudders |
 | Crack stage | A crack, deeper at each stage (20/40/60/80%) | New crack layer, chunks falling, camera nudge |
-| 80% damage | A slow heartbeat (not made yet) | Creature wiggles, glow brightens |
+| 80% damage | A slow heartbeat | Creature wiggles, glow brightens |
 | Shatter | Glass-burst crash | Ice shards fly out, crystal fountain, frost puff |
 | Rescue reveal | A jingle per rarity, grander from Common to Mythic | Rarity banner, confetti in the rarity colour |
 | New creature in the book | A bright "ding-ding" | NEW! on the banner |
@@ -605,7 +607,7 @@ Sound and effects carry most of the "every tap feels good" pillar. Every sound c
 | Buy building / upgrade | A knock and a "ka-ching" / a rising sparkle; a soft "nope" when you can't | Station rises from the snow with a puff |
 | Buttons and windows | A soft pop; a swish up to open, down to close | – |
 | Rebirth | A big whoosh, then a chime | Screen frosts over and clears |
-| Golden Glacier | Alarm chime (not made yet), then a crash | Golden block falls into the plaza with a countdown |
+| Golden Glacier | Alarm chime as the countdown starts, then a crash | Golden block falls into the plaza with a countdown |
 | Music | A light wintry loop in the plaza and a calm one in your plot, crossfading as you walk in or out (licensed tracks, still to pick); a faster track during Frost Rush (later) | – |
 
 Other players' plots are quiet: you hear only their Legendary and Mythic rescue jingles, quieter, within 60 studs. The Settings screen has separate Music and Sound effects volumes, saved with your progress.

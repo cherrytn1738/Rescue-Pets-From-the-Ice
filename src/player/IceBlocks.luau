@@ -31,6 +31,8 @@ local CreatureConfig = require(ReplicatedStorage.CreatureConfig)
 local IceLooks = require(ReplicatedStorage.IceLooks)
 local LayerConfig = require(ReplicatedStorage.LayerConfig)
 local MapConfig = require(ReplicatedStorage.MapConfig)
+local EconomyRules = require(ReplicatedStorage.EconomyRules)
+local HttpService = game:GetService("HttpService")
 local PetLooks = require(ReplicatedStorage.Pets.PetLooks)
 local SoundRules = require(ReplicatedStorage.SoundRules)
 local Effects = require(script.Parent.Effects)
@@ -43,6 +45,19 @@ local rescueListeners = {}
 local container
 local chipGate = SoundRules.ChipGate(AudioConfig.Rules.BuildingChip, math.random)
 local lastOwnTapAt = -math.huge -- (IceBlocks.Hit on your own plot: a tap)
+
+-- The crystal colour of a plot's owner (their ice upgrades, from their published Progress copy).
+local function crystalColourOf(plot): Color3
+	local owner = Players:GetPlayerByUserId(plot:GetAttribute("Owner") or 0)
+	local text = owner and owner:GetAttribute("Progress")
+	if type(text) == "string" then
+		local ok, progress = pcall(HttpService.JSONDecode, HttpService, text)
+		if ok and type(progress) == "table" and type(progress.Upgrades) == "table" then
+			return IceLooks.CrystalColour(EconomyRules.IceTiersTotal(progress))
+		end
+	end
+	return IceLooks.CrystalColour(0)
+end
 
 -- How far the camera's subject (your character, or the camera) is from a point, in studs.
 local function listenerDistance(point: Vector3): number
@@ -248,6 +263,26 @@ local function makeView(plot: Model)
 	aura.Size = Vector3.one * 6
 	aura.CFrame = base
 	weldTo(block, aura)
+	-- the sled the next block rides in on: a wooden deck on two runners, seen only while it slides
+	local sled = Instance.new("Model")
+	sled.Name = "Sled"
+	for _, spec in {
+		{ "Deck", Vector3.new(1, 0.5, 1), Vector3.new(0, 0.35, 0), Color3.fromRGB(150, 100, 60), Enum.Material.WoodPlanks },
+		{ "RunnerLeft", Vector3.new(0.08, 0.3, 1.15), Vector3.new(-0.42, 0, 0.05), Color3.fromRGB(205, 215, 230), Enum.Material.Metal },
+		{ "RunnerRight", Vector3.new(0.08, 0.3, 1.15), Vector3.new(0.42, 0, 0.05), Color3.fromRGB(205, 215, 230), Enum.Material.Metal },
+	} do
+		local piece = Instance.new("Part")
+		piece.Name = spec[1]
+		piece.Anchored, piece.CanCollide, piece.CanQuery, piece.CanTouch = true, false, false, false
+		piece.CastShadow = false
+		piece.Size = spec[2] -- (a share of the block's footprint; scaled each frame)
+		piece:SetAttribute("Share", spec[2])
+		piece:SetAttribute("Offset", spec[3])
+		piece.Color, piece.Material = spec[4], spec[5]
+		piece.Transparency = 1
+		piece.Parent = sled
+	end
+	sled.Parent = folder
 	local view = {
 		plot = plot,
 		index = index,
@@ -258,6 +293,7 @@ local function makeView(plot: Model)
 		core = core,
 		glow = glow,
 		aura = aura,
+		sled = sled,
 		shake = 0,
 		key = nil, -- level..creature: rebuild cracks and silhouette when it changes
 		stage = 0,
@@ -293,13 +329,14 @@ local function shatter(view, creatureId: string)
 			Life = 1.8,
 		})
 	end
-	-- the crystal fountain
+	-- the crystal fountain, in the owner's crystal colour (ice upgrades: white, blue, gold)
+	local crystal = crystalColourOf(view.plot)
 	for i = 1, Effects.Count(IceLooks.Particles.Fountain) do
 		task.delay(i * 0.02, function()
 			Effects.Debris({
 				Size = Vector3.one * (0.5 + math.random() * 0.4),
 				CFrame = CFrame.new(origin + Vector3.new(0, size.Y * 0.3, 0)) * CFrame.Angles(0, math.random() * 6, math.rad(45)),
-				Color = Color3.fromRGB(120, 230, 255),
+				Color = crystal,
 				Material = Enum.Material.Neon,
 				Velocity = Vector3.new((math.random() - 0.5) * 22, 34 + math.random() * 20, (math.random() - 0.5) * 22),
 				CanCollide = true,
@@ -367,6 +404,21 @@ local function update(view, dt: number)
 		if chipGate:Allow(os.clock(), isMine, lastOwnTapAt) then
 			Audio.Play("BuildingChip")
 		end
+		-- and pops a few crystals (your own block; at most every HitCrystalSeconds)
+		if isMine and os.clock() - (view.crystalPopAt or 0) >= IceLooks.HitCrystalSeconds then
+			view.crystalPopAt = os.clock()
+			local colour = crystalColourOf(view.plot)
+			for _ = 1, Effects.Count(2) do
+				Effects.Debris({
+					Size = Vector3.one * 0.4,
+					CFrame = view.block.CFrame * CFrame.new((math.random() - 0.5) * size.X * 0.6, size.Y * 0.35, (math.random() - 0.5) * size.Z * 0.6) * CFrame.Angles(0, 0, math.rad(45)),
+					Color = colour,
+					Material = Enum.Material.Neon,
+					Velocity = Vector3.new((math.random() - 0.5) * 10, 14 + math.random() * 8, (math.random() - 0.5) * 10),
+					Life = 0.9,
+				})
+			end
+		end
 	end
 	view.lastHp = hp
 
@@ -397,6 +449,17 @@ local function update(view, dt: number)
 	local sledOffset = CFrame.new(0, 0, (1 - eased) * IceLooks.SledDistance) -- (view.base is turned to face the front: +Z here is the back)
 	local blockCF = view.base * sledOffset * CFrame.new(0, height / 2 - 0.5, 0) * wobble
 	view.block.CFrame = blockCF
+	-- the sled under it, while it slides in
+	local sliding = present and slide < 1
+	local footprint = Vector3.new(size.X, 1, size.Z)
+	for _, piece in view.sled:GetChildren() do
+		piece.Transparency = if sliding then 0 else 1
+		if sliding then
+			local share, offset = piece:GetAttribute("Share"), piece:GetAttribute("Offset")
+			piece.Size = Vector3.new(share.X * footprint.X, share.Y, share.Z * footprint.Z)
+			piece.CFrame = view.base * sledOffset * CFrame.new(offset.X * footprint.X, offset.Y - 0.6, offset.Z * footprint.Z)
+		end
+	end
 	view.block.CanCollide = present
 	view.block.Color = look.Color
 	view.block.Material = look.Material
@@ -411,9 +474,16 @@ local function update(view, dt: number)
 		end
 	end
 	if view.extras then
+		local reduced = Effects.Reduced()
 		for _, part in view.extras:GetChildren() do
 			if part:IsA("BasePart") then
 				part.LocalTransparencyModifier = if present then 0 else 1
+			end
+		end
+		-- Crystal Ice's sparkles follow the reduced-effects setting as soon as it changes
+		for _, emitter in view.extras:GetDescendants() do
+			if emitter:IsA("ParticleEmitter") and emitter.Name == "Sparkles" then
+				emitter.Rate = if reduced then 3 else 7
 			end
 		end
 	end

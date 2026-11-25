@@ -98,7 +98,11 @@ for order, building in BuildingConfig.Buildings do
 		detail.Text = if show
 			then `Owned {owned} · {NumberFormat.Rate(each)} dmg/s each · {building.Breaks}`
 			else "Keep earning crystals to find out..."
-		pipLabel.Text = if show then pips(level) .. (if level >= BuildingConfig.MaxDetailLevel then "  MASTERWORK" else "") else ""
+		local toGo = BuildingConfig.MaxDetailLevel - level
+		pipLabel.Text = if not show then ""
+			elseif toGo <= 0 then pips(level) .. "  MASTERWORK"
+			elseif level > 0 then pips(level) .. `  {toGo} more to Masterwork`
+			else pips(level)
 		bar.Visible = show and owned > 0
 		local share = if totalDps and totalDps > 0 then dps / totalDps else 0
 		setBar(share, `{math.floor(share * 100 + 0.5)}% of building income`)

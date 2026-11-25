@@ -3,6 +3,7 @@ Effects (client): shared bits for world effects.
   Effects.Reduced()            the player's "reduced effects" setting (halves particles, no camera shake)
   Effects.Count(n)             n particles, halved with reduced effects
   Effects.Shake(strength, seconds)  a camera shake (skipped with reduced effects)
+  Effects.Dip(depth, seconds)  the camera dips down and comes back up (a new layer; skipped with reduced effects)
   Effects.Debris(props)        a short-lived loose part flying off (chips, shards, crystals)
   Effects.Sound(name)          a sound effect from AudioConfig (quiet until the game has sound ids)
 ]]
@@ -34,6 +35,14 @@ function Effects.Shake(strength: number, seconds: number)
 	end
 	shakeStrength = math.max(if os.clock() < shakeUntil then shakeStrength else 0, strength)
 	shakeUntil = math.max(shakeUntil, os.clock() + seconds)
+end
+
+local dipStart, dipSeconds, dipDepth = 0, 0, 0
+function Effects.Dip(depth: number, seconds: number)
+	if Effects.Reduced() then
+		return
+	end
+	dipStart, dipSeconds, dipDepth = os.clock(), seconds, depth
 end
 
 function Effects.Folder(): Folder
@@ -72,6 +81,11 @@ end
 
 RunService:BindToRenderStep("IceShake", Enum.RenderPriority.Camera.Value + 1, function()
 	local now = os.clock()
+	if now - dipStart < dipSeconds then
+		local share = math.sin(math.pi * (now - dipStart) / dipSeconds) -- down and back up
+		local camera = Workspace.CurrentCamera
+		camera.CFrame = camera.CFrame * CFrame.new(0, -dipDepth * share, 0) * CFrame.Angles(math.rad(-6 * share), 0, 0)
+	end
 	if now < shakeUntil then
 		local fade = math.clamp((shakeUntil - now) / 0.4, 0, 1)
 		local s = shakeStrength * fade

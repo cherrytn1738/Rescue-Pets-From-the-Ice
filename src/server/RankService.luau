@@ -37,14 +37,55 @@ local function goldTag(player: Player): boolean
 end
 
 local function bookRewards(data)
-	local title, border = nil, nil
+	local title, border, trail = nil, nil, nil
 	for _, page in EconomyRules.BookPages(data) do
 		if page.Complete then
 			title = page.Reward.Title or title
 			border = page.Reward.NameTagBorder or border
+			trail = page.Reward.Trail or trail
 		end
 	end
-	return title, border
+	return title, border, trail
+end
+
+-- The Creature Book's Mythic page: an aurora trail behind the player (everyone sees it).
+local function auroraTrail(player: Player, on: boolean)
+	local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+	if not root then
+		return
+	end
+	local trail = root:FindFirstChild("AuroraTrail")
+	if not on then
+		if trail then
+			trail:Destroy()
+		end
+		return
+	end
+	if trail then
+		return
+	end
+	local top = Instance.new("Attachment")
+	top.Name = "AuroraTop"
+	top.Position = Vector3.new(0, 1.2, 0.4)
+	top.Parent = root
+	local bottom = Instance.new("Attachment")
+	bottom.Name = "AuroraBottom"
+	bottom.Position = Vector3.new(0, -1.6, 0.4)
+	bottom.Parent = root
+	trail = Instance.new("Trail")
+	trail.Name = "AuroraTrail"
+	trail.Attachment0, trail.Attachment1 = top, bottom
+	trail.Lifetime = 0.9
+	trail.MinLength = 0.2
+	trail.LightEmission = 0.8
+	trail.FaceCamera = true
+	trail.Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0, Color3.fromRGB(120, 255, 200)),
+		ColorSequenceKeypoint.new(0.5, Color3.fromRGB(110, 170, 255)),
+		ColorSequenceKeypoint.new(1, Color3.fromRGB(220, 130, 255)),
+	})
+	trail.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.25), NumberSequenceKeypoint.new(1, 1) })
+	trail.Parent = root
 end
 
 local function tag(player: Player, data)
@@ -94,7 +135,8 @@ local function tag(player: Player, data)
 		end
 	end
 	local rank = RebirthConfig.RankFor(data.Rebirths)
-	local title, border = bookRewards(data)
+	local title, border, trail = bookRewards(data)
+	auroraTrail(player, trail == "Aurora")
 	local frame = gui.Tag
 	local vip = goldTag(player)
 	frame.NameLine.Text = (if vip then "VIP · " else "") .. player.DisplayName .. (if title then ` · {title}` else "")

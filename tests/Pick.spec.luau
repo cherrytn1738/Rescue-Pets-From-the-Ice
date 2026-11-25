@@ -46,6 +46,23 @@ return function(sources)
 			self.Parent = nil
 			self.destroyed = true
 		end
+		function n:GetDescendants()
+			local found = {}
+			for _, other in all do
+				local up = other.Parent
+				while up do
+					if up == self then
+						table.insert(found, other)
+						break
+					end
+					up = up.Parent
+				end
+			end
+			return found
+		end
+		function n:IsA(className)
+			return self.ClassName == className
+		end
 		table.insert(all, n)
 		return n
 	end
@@ -177,6 +194,17 @@ return function(sources)
 	check(heldTier(character) == 6 and published > before and important > 0, "...the cosmic pick is in hand at once, and the save is published and marked")
 	check(PickService.SetTier(player, 1) and #dataOf[player].Upgrades == 1 and owned.FrostTouch1 and heldTier(character) == 1, "SetTier 1: back to the wooden pick")
 	check(not PickService.SetTier(player, 0) and not PickService.SetTier(player, 7) and not PickService.SetTier(player, 2.5) and not PickService.SetTier(player, "3"), "SetTier refuses tiers that don't exist")
+	-- The Creature Book's Golden page (all 18 Golden) gives the golden pick skin.
+	local golden = {}
+	for _, creature in modules.CreatureConfig.Creatures do
+		golden[creature.Id] = true
+	end
+	dataOf[player].BookSeen, dataOf[player].BookGolden = {}, golden
+	PickService.Refresh(player)
+	check(character:FindFirstChild("IcePick"):GetAttribute("Skin") == "Golden" and heldTier(character) == 1, "a full Golden page: the same tier's pick in the golden skin")
+	dataOf[player].BookGolden = {}
+	PickService.Refresh(player)
+	check(character:FindFirstChild("IcePick"):GetAttribute("Skin") == "", "...and without it, the normal pick")
 	local stranger = newPlayer("NoData")
 	check(not PickService.SetTier(stranger, 3), "SetTier refuses a player whose data isn't ready")
 

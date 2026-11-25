@@ -166,7 +166,7 @@ return function(sources)
 	for stage = 1, 4 do
 		check(AudioConfig.Sfx["Crack" .. stage] ~= nil, `crack stage {stage} has a sound`)
 	end
-	for _, name in { "Shatter", "GoldenSparkle", "BuyBuilding", "BuyUpgrade", "Rebirth", "BookPage", "BookNew" } do
+	for _, name in { "Shatter", "GoldenSparkle", "BuyBuilding", "BuyUpgrade", "Rebirth", "BookPage", "BookNew", "Heartbeat", "GoldenAlarm" } do
 		check(AudioConfig.Sfx[name] ~= nil, `the {name} sound`)
 	end
 	-- music: two slots, empty until chosen

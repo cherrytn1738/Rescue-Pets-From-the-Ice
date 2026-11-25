@@ -48,4 +48,40 @@ IceLooks.SledSeconds = 0.9 -- the slide itself (the rest of the wait the block i
 IceLooks.GlowBoostAtStage4 = 1.8
 IceLooks.Particles = { Chips = 5, Sparkles = 3, Shards = 26, Fountain = 40 } -- halved with reduced effects
 
+-- The sparks your taps throw, by ice pick tier (docs/GAME_DESIGN.md, "Upgrades": wood, stone, iron, gold,
+-- diamond, cosmic, "each with its own spark colour").
+IceLooks.PickSparks = {
+	Color3.fromRGB(255, 170, 90), -- wood: warm orange
+	Color3.fromRGB(215, 215, 205), -- stone: pale grey
+	Color3.fromRGB(235, 245, 255), -- iron: white-hot
+	Color3.fromRGB(255, 215, 70), -- gold
+	Color3.fromRGB(120, 245, 255), -- diamond: cyan
+	Color3.fromRGB(205, 120, 255), -- cosmic: violet
+}
+
+-- The crystals (the tap spray, building-hit pops and the rescue fountain) by how many ice upgrade tiers the
+-- player owns (Bigger Burst, Crystal Yield, Fast Sled: 7 in all): white, then blue, then gold.
+IceLooks.CrystalColours = {
+	{ MinTiers = 0, Color = Color3.fromRGB(235, 248, 255) },
+	{ MinTiers = 3, Color = Color3.fromRGB(110, 200, 255) },
+	{ MinTiers = 6, Color = Color3.fromRGB(255, 210, 80) },
+}
+
+-- The crystal colour for this many ice upgrade tiers.
+function IceLooks.CrystalColour(iceTiers: number): Color3
+	local colour = IceLooks.CrystalColours[1].Color
+	for _, step in IceLooks.CrystalColours do
+		if iceTiers >= step.MinTiers then
+			colour = step.Color
+		end
+	end
+	return colour
+end
+
+-- Building hits on your own block pop a few crystals, at most this often (seconds).
+IceLooks.HitCrystalSeconds = 0.6
+
+-- Rescue confetti in the rarity colour (your own rescues).
+IceLooks.Confetti = 36
+
 return IceLooks

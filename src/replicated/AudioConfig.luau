@@ -35,7 +35,9 @@ local Files = {
 	Crack3 = id(108098856889355),
 	Crack4 = id(76333914492141),
 	CrystalTick = id(139889104044428),
+	GoldenAlarm = id(78520467096529),
 	GoldenSparkle = id(83955552934976),
+	Heartbeat = id(85965699278351),
 	Nope = id(84881498913979),
 	Rebirth = id(104386884141424),
 	RescueCommon = id(106813164133930),
@@ -101,6 +103,8 @@ AudioConfig.Sfx = {
 	BookReveal = { Id = Files.BookNew, Volume = 0.35 }, -- its card fills in (Book window)
 	NewLayer = { Id = Files.Crack4, Volume = 0.55, Speed = 0.7 }, -- a deeper layer opened: a low rumble
 	GoldenCrash = { Id = Files.Shatter, Volume = 0.5, Speed = 0.85 }, -- the Golden Glacier lands
+	GoldenAlarm = { Id = Files.GoldenAlarm, Volume = 0.5 }, -- the Golden Glacier's countdown starts (everyone)
+	Heartbeat = { Id = Files.Heartbeat, Volume = 0.35, Cooldown = 0.8 }, -- your block at 80%, every ~1.1 s
 }
 
 -- When sounds play (SoundRules; tests/SoundRules.spec.luau).

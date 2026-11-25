@@ -56,6 +56,9 @@ RunService.RenderStepped:Connect(function()
 	local now = Workspace:GetServerTimeNow()
 	local ground = spot() + Vector3.new(0, SIZE.Y / 2, 0)
 	if current == "Countdown" then
+		if lastState ~= "Countdown" then
+			Effects.Sound("GoldenAlarm") -- (everyone: the race is about to start)
+		end
 		local left = math.max(0, (state:GetAttribute("LandsAt") or now) - now)
 		local fall = math.clamp(1 - left / GameConfig.GoldenGlacier.CountdownSeconds, 0, 1)
 		local height = 140 * (1 - fall ^ 6)

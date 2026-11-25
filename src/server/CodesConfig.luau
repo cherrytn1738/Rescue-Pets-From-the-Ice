@@ -6,9 +6,8 @@ are announced.
 Each code:
  * Code     the text players type. Not case-sensitive, letters and digits only (CodeRules.Normalize).
  * Reward   what it gives: the same reward table a Robux product uses, granted through
-            PurchaseRewards (the reward kinds it knows are listed there; this game has none yet,
-            so a code can't give anything until the game adds its first reward kind).
-            Example once a kind exists: { Kind = "<kind>", Amount = 100 }
+            PurchaseRewards: { Kind = "Crystals", Amount = 100 } (a fixed amount, RewardService) or
+            { Kind = "CrystalBundle", Seconds = 600 } (minutes of the player's own income, RobuxPerks).
  * Active   false switches a code off (it then reads as expired).
  * Expires  optional, "YYYY-MM-DD": the code works until the end of that day, UTC.
 
@@ -24,6 +23,16 @@ return {
 	Codes = {
 		{ Code = "THAWED", Reward = { Kind = "Crystals", Amount = 250 }, Active = true }, -- shown when the tutorial is done
 		{ Code = "ICELAUNCH", Reward = { Kind = "Crystals", Amount = 500 }, Active = true }, -- the launch code
+		-- Milestone codes for likes (docs/GAME_DESIGN.md, "Social and events"). Off until the game reaches
+		-- the milestone: then set Active = true, publish, and announce the code (docs/LAUNCH_CHECKLIST.md).
+		-- Each pays minutes of the player's own income (the CrystalBundle reward kind), so it is worth the
+		-- same at every stage of the game.
+		{ Code = "LIKES1K", Reward = { Kind = "CrystalBundle", Seconds = 300 }, Active = false }, -- 1,000 likes
+		{ Code = "LIKES5K", Reward = { Kind = "CrystalBundle", Seconds = 600 }, Active = false }, -- 5,000 likes
+		{ Code = "LIKES10K", Reward = { Kind = "CrystalBundle", Seconds = 900 }, Active = false }, -- 10,000 likes
+		{ Code = "LIKES25K", Reward = { Kind = "CrystalBundle", Seconds = 1200 }, Active = false }, -- 25,000 likes
+		{ Code = "LIKES50K", Reward = { Kind = "CrystalBundle", Seconds = 1800 }, Active = false }, -- 50,000 likes
+		{ Code = "LIKES100K", Reward = { Kind = "CrystalBundle", Seconds = 3600 }, Active = false }, -- 100,000 likes
 	},
 
 	-- Attempts per player: at least MinSeconds apart, and at most PerMinute in any minute (stops
