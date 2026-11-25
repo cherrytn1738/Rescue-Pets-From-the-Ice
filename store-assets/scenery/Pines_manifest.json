@@ -1,0 +1,29 @@
+{
+ "file": "Pines.fbx",
+ "models": {
+  "PineTall": {
+   "parts": [
+    "PineTallTrunk",
+    "PineTallNeedles",
+    "PineTallSnow"
+   ],
+   "size": [
+    19.295,
+    34.2,
+    20.034
+   ]
+  },
+  "PineShort": {
+   "parts": [
+    "PineShortTrunk",
+    "PineShortNeedles",
+    "PineShortSnow"
+   ],
+   "size": [
+    13.341,
+    22.2,
+    12.634
+   ]
+  }
+ }
+}

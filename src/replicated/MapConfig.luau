@@ -25,6 +25,29 @@ MapConfig.Border = { Height = 3, Thickness = 2, FrontGap = 44 } -- the low snow 
 MapConfig.Arch = { ClearHeight = 20, BeamHeight = 3, BeamDepth = 2, PostSize = 3 }
 MapConfig.TapSpot = { X = 0, Z = 24 } -- where a player arrives in their plot: in front of the ice
 
+-- The ground inside every plot (plot space, as the pads). The floor is the place's snow terrain, shaped by
+-- tools/studio/build_world.luau from this table (re-run it after changing it, then save the place); the plot's
+-- own Base part is an invisible floor above it. The footpath is a part (PlotService). Everything stays clear
+-- of the pads, the mound and the open front.
+MapConfig.PlotGround = {
+	Footpath = { Width = 12, FromZ = 16, Color = Color3.fromRGB(198, 216, 238) }, -- from the mound to the open front
+	Drifts = { -- low snow drifts against the walls: centre, radius, height above the ground
+		{ X = 45, Z = 21, Radius = 7, Height = 3 },
+		{ X = 46, Z = 12, Radius = 5, Height = 2 },
+		{ X = -46, Z = 3, Radius = 4, Height = 2 },
+		{ X = -45, Z = -45, Radius = 7, Height = 3.5 },
+		{ X = 45, Z = -45, Radius = 7, Height = 3.5 },
+		{ X = -42, Z = 45, Radius = 6, Height = 2.5 },
+		{ X = 42, Z = 45, Radius = 6, Height = 2.5 },
+	},
+	IcePatches = { -- flat ice in the snow: centre, radius
+		{ X = -29, Z = 3, Radius = 5 },
+		{ X = 34, Z = 21, Radius = 4 },
+		{ X = 13, Z = -29, Radius = 4 },
+		{ X = -14, Z = 27, Radius = 4 },
+	},
+}
+
 -- The plot ring: plot i's centre and facing. Returns a CFrame whose LookVector points AWAY from the
 -- plaza, so +Z (the open front) faces the plaza.
 function MapConfig.PlotCFrame(index: number): CFrame

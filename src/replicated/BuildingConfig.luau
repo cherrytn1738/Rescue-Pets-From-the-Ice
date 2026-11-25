@@ -49,6 +49,15 @@ BuildingConfig.Fence = {
 	Parts = { "Post", "Pick", "Pivot", "Braces" }, -- the Scrappy station's meshes a post keeps
 }
 BuildingConfig.PlotSize = 100 -- studs, square
+-- The stations' name tags ("Ice Drill ×100 ★"; NameTags.client): small, shown only near the station or while
+-- you're in (or looking at) your own plot, and never over the HUD's top centre (the crystal counter).
+BuildingConfig.NameTags = {
+	Size = Vector2.new(7, 1.4), -- studs (the tag shrinks with distance like the world)
+	NearDistance = 28, -- studs from your character to a station: its tag shows
+	LookAngle = 30, -- degrees: the camera looking at your own plot's centre within this shows your plot's tags...
+	LookDistance = 150, -- ...from at most this far
+	TopCentre = Vector2.new(0.4, 0.25), -- kept clear: this share of the screen's width (centred) and height (from the top)
+}
 
 BuildingConfig.Buildings = {
 	{ Id = "IcePickPost", Name = "Ice Pick Post", Breaks = "A spring-loaded ice pick on a post", BaseCost = 15, DamagePerSecond = 0.1,

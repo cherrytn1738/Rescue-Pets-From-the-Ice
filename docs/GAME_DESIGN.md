@@ -451,12 +451,15 @@ Each plot is a 100 × 100 stud square of snow with the ice block in the middle, 
 - **Tapping spot:** the open area in front of the ice, where the player usually stands with their pets.
 - **Border:** a low snow wall in the player's rebirth colour, open at the front.
 - **Name sign:** an arch over the open front carrying the owner's name, its beam 20 studs up so the ice stays in view beneath it from the plaza and the path.
+- **Ground:** snow terrain with a few low drifts against the walls, flat ice patches, and a trodden footpath from the open front to the ice, all clear of the pads.
+- **Building badges:** small, and shown only near the building or while the player is in (or looking at) their own plot; never over the HUD's crystal counter at the top centre.
 
 **The map.**
 
 - **Plaza** in the centre: the spawn point, the Golden Glacier landing ring, three leaderboards, the codes board, the daily and group reward chests, and the VIP lounge behind a gate.
 - **Plots:** eight plots in a ring around the plaza, each with its open front facing the centre, so players see other players' ice glowing as they walk around.
 - **Getting to your plot:** a glowing arrow and a short path lead from spawn to the player's plot; a Home button in the HUD walks or teleports them back.
+- **Around the ring:** a snowy winter world with no visible grid: frozen ponds between the plots, snowy hills with clumps of snowy pines beyond them, big hazy mountains on the horizon and a bright winter sky. Nothing stands between the plaza and any plot's open front.
 
 ## Rebirth
 

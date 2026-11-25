@@ -80,6 +80,15 @@ local function label(parent: Instance, text: string, offset: Vector3, size: UDim
 	return gui
 end
 
+-- A station's name tag: small, and hidden until NameTags.client shows it (near the station, or your own plot).
+local function nameTag(parent: Instance): BillboardGui
+	local size = BuildingConfig.NameTags.Size
+	local gui = label(parent, "", Vector3.zero, UDim2.fromScale(size.X, size.Y))
+	gui.Enabled = false
+	gui:SetAttribute("NameTag", true)
+	return gui
+end
+
 local function buildPlot(index: number): Model
 	local cf = MapConfig.PlotCFrame(index)
 	local size = MapConfig.PlotSize
@@ -89,8 +98,15 @@ local function buildPlot(index: number): Model
 	model:SetAttribute("Owner", 0)
 	model:SetAttribute("OwnerName", "")
 
+	-- The floor: the place's snow terrain shows through (drifts and ice patches: MapConfig.PlotGround); the
+	-- Base is an invisible floor just above it.
 	local base = part(model, "Base", Vector3.new(size, 1, size), cf * CFrame.new(0, -0.3, 0), SNOW)
+	base.Transparency = 1
+	base.CastShadow = false
 	model.PrimaryPart = base
+	local footpath = MapConfig.PlotGround.Footpath
+	local pathLength = size / 2 - footpath.FromZ
+	part(model, "Footpath", Vector3.new(footpath.Width, 0.4, pathLength), cf * CFrame.new(0, 0.15, footpath.FromZ + pathLength / 2), footpath.Color)
 	local mound = MapConfig.Mound
 	part(model, "Mound", Vector3.new(mound.Size, mound.Height, mound.Size), cf * CFrame.new(0, mound.Height / 2, 0), SNOW_SHADE)
 	part(model, "MoundTop", Vector3.new(mound.Size - 6, 1, mound.Size - 6), cf * CFrame.new(0, mound.Height + 0.5, 0), SNOW)
@@ -417,7 +433,7 @@ function PlotService.RefreshBuildings(player: Player, data)
 				station = fenceStation(cf, building.Pad)
 				station.Name = building.Id
 				station:SetAttribute("Look", look)
-				label(station.PrimaryPart, "", Vector3.zero, UDim2.fromScale(11, 2.2))
+				nameTag(station.PrimaryPart)
 				station.Parent = folder
 			end
 			height = 2
@@ -426,7 +442,7 @@ function PlotService.RefreshBuildings(player: Player, data)
 				station = realStation(source, upgrades, faded)
 				station.Name = building.Id
 				station:SetAttribute("Look", look)
-				label(station.PrimaryPart, "", Vector3.zero, UDim2.fromScale(11, 2.2))
+				nameTag(station.PrimaryPart)
 				station:PivotTo(padCFrame(cf, building.Pad))
 				station.Parent = folder
 			end
@@ -437,7 +453,7 @@ function PlotService.RefreshBuildings(player: Player, data)
 				station = part(folder, building.Id, size, CFrame.identity, STAND_IN_COLOURS[building.Id], Enum.Material.SmoothPlastic)
 				station.CanCollide = false
 				station:SetAttribute("Look", look)
-				label(station, "", Vector3.zero, UDim2.fromScale(11, 2.2))
+				nameTag(station)
 			end
 			station.Size = size
 			station.CFrame = cf * CFrame.new(building.Pad.X, 0.6 + size.Y / 2, building.Pad.Z)

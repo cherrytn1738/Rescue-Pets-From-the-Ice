@@ -169,6 +169,30 @@ return function(sources)
 			check(gap > MapConfig.PlotSize * 1.05, `plots {index} and {other} don't overlap`)
 		end
 	end
+	-- The ground inside a plot (drifts, ice patches: build_world.luau shapes them into the terrain) stays inside the
+	-- plot and clear of every pad, the mound with the ice, and the footpath to the open front.
+	local ground = MapConfig.PlotGround
+	local mound = MapConfig.Mound.Size / 2
+	check(ground.Footpath.FromZ > mound and ground.Footpath.Width < MapConfig.Border.FrontGap, "the footpath runs from the mound through the open front")
+	local shapes = {}
+	for _, drift in ground.Drifts do
+		check(drift.Height > 0 and drift.Height < drift.Radius, "a drift is a low mound")
+		table.insert(shapes, drift)
+	end
+	for _, patch in ground.IcePatches do
+		table.insert(shapes, patch)
+	end
+	for _, shape in shapes do
+		local where = `the ground shape at ({shape.X}, {shape.Z})`
+		check(math.abs(shape.X) <= half and math.abs(shape.Z) <= half, where .. " is inside the plot")
+		check(math.max(math.abs(shape.X), math.abs(shape.Z)) - shape.Radius > mound, where .. " is off the mound")
+		check(math.abs(shape.X) - shape.Radius > ground.Footpath.Width / 2 or shape.Z + shape.Radius < ground.Footpath.FromZ, where .. " is off the footpath")
+		for _, building in modules.BuildingConfig.Buildings do
+			local pad = building.Pad
+			local clear = pad.Size / 2 + shape.Radius
+			check(math.abs(shape.X - pad.X) >= clear or math.abs(shape.Z - pad.Z) >= clear, where .. " is clear of the " .. building.Id .. " pad")
+		end
+	end
 	local rush = GameConfig.GoldenGlacier
 	check(rush.MinSeconds == 300 and rush.MaxSeconds == 480, "a Golden Glacier every 5-8 minutes")
 	check(rush.RushMultiplier == 3 and rush.RushSeconds == 60 and rush.TopMultiplier == 5, "Frost Rush: x3 for 60 s, x5 for the top tapper")

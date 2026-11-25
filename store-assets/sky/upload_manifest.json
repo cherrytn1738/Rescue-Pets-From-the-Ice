@@ -1,0 +1,61 @@
+{
+ "assets": {
+  "orient/OrientBk.png": {
+   "assetId": "109880805467637",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "04dadc5fef545ece211f3c8645828f1d616b006072a2cdc6c3c46d16e3fd153e",
+   "updated": "2026-11-25T08:41:42+00:00"
+  },
+  "orient/OrientDn.png": {
+   "assetId": "118535843995229",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "85db3235ae9350006f651a64ba96ee08738a9ea3cd101201bd9fed6da2a55bc8",
+   "updated": "2026-11-25T08:41:44+00:00"
+  },
+  "orient/OrientFt.png": {
+   "assetId": "101701459864741",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "efa8a15ee7a7f64e4d38c158f757a3505befc0556446ff901675c6c8beea7e39",
+   "updated": "2026-11-25T08:41:46+00:00"
+  },
+  "orient/OrientLf.png": {
+   "assetId": "111566302602612",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "be335a0fa64c4139e4f4f398c31663ef466fff530d60371f6ed7e31e3aa99bd2",
+   "updated": "2026-11-25T08:41:48+00:00"
+  },
+  "orient/OrientRt.png": {
+   "assetId": "78422228163807",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "f8db60d6a2bc3d110f6cd5ffb680a036fc7891fe138a0cb06f4c6a96a449bd5c",
+   "updated": "2026-11-25T08:41:50+00:00"
+  },
+  "orient/OrientUp.png": {
+   "assetId": "91139376372649",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "1a8619e721444ed71a3249fd364e9a16bfda0da13306525187f33d612fa46f0b",
+   "updated": "2026-11-25T08:41:52+00:00"
+  }
+ },
+ "creator": {
+  "groupId": "921449746"
+ }
+}

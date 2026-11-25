@@ -1,0 +1,25 @@
+{
+ "assets": {
+  "IceDrill/IceDrill_T5_AO.png": {
+   "assetId": "127282647089686",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "43acded309875cc4b8bb9a823219f56e3d32cce77cf5e5c0bcb5d1b8e9dab8d9",
+   "updated": "2026-11-25T08:39:14+00:00"
+  },
+  "IceDrill/fbx/IceDrill_T5_AO.fbx": {
+   "assetId": "99932455112348",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "53572381ce0417e78fcf4b22b2aa4b7669d814a88bafe8cc4afb2d7ec39472cf",
+   "updated": "2026-11-25T08:39:28+00:00"
+  }
+ },
+ "creator": {
+  "groupId": "921449746"
+ }
+}

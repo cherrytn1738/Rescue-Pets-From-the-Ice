@@ -1,4 +1,5 @@
 # run_voxel.py - the voxel VSTYLE TEST for buildings: builds one building's voxel tiers in headless Blender.
+# REJECTED (2026-11-25): the game keeps the smooth building models; the uploaded test assets stay unused.
 #   blender -b --factory-startup --python tools/blender/voxel/run_voxel.py -- <BuildingId> <A|B> [tiers] [render] [export]
 #     A: the stations hand-built on the voxel grid (tools/blender/voxel/<BuildingId>.py: A_TIERS)
 #     B: the approved models voxelized automatically (voxels.voxelize), then hand-fixed (FIX_B)

@@ -25,11 +25,15 @@ Then `python tools/write_asset_ids.py` writes the ids into `BuildingConfig.Model
 
 | Property | Value | Why |
 | --- | --- | --- |
-| RenderFidelity | **Automatic** | Roblox lowers a mesh's detail at a distance, so the extra geometry costs little across a plot or from the plaza |
+| RenderFidelity | **Precise** | full detail at every distance: Automatic dropped the stations to a blocky low level of detail across a plot and from the plaza, which made them read as low quality (the ice picks use it too) |
 | TextureID | the uploaded `assets/textures/BuildingPalette.png` | one palette texture for every building mesh; UVs sit in the middle of each colour swatch |
 | Color | white (255, 255, 255) | the texture carries the colour |
 | Material | SmoothPlastic | the toy look; glow meshes are the exception |
 | CastShadow | true, except glow meshes | |
+
+Precise only changes stations more than about 250 studs away (Automatic already draws full detail nearer). Measured in
+a 2-player test with two maxed plots, viewed from across the ring: 548k scene triangles with Precise against 443k with
+Automatic, and no measurable change in render CPU time.
 
 **Glow meshes** (names ending in `Glow`): Material **Neon**, with the palette texture kept so each glow
 keeps its colour. They cast no shadow. Keeping them separate lets the game pulse or dim them.

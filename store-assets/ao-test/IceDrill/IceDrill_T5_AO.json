@@ -1,0 +1,102 @@
+{
+ "aoDistance": 3.0,
+ "aoStrength": 0.85,
+ "id": "IceDrill",
+ "meshes": {
+  "IceDrillT5ArmL": {
+   "baked": true,
+   "tris": 2648
+  },
+  "IceDrillT5ArmLGear": {
+   "baked": true,
+   "tris": 492
+  },
+  "IceDrillT5ArmR": {
+   "baked": true,
+   "tris": 2648
+  },
+  "IceDrillT5ArmRGear": {
+   "baked": true,
+   "tris": 492
+  },
+  "IceDrillT5Armour": {
+   "baked": true,
+   "tris": 896
+  },
+  "IceDrillT5Back": {
+   "baked": true,
+   "tris": 2432
+  },
+  "IceDrillT5BitA": {
+   "baked": true,
+   "tris": 668
+  },
+  "IceDrillT5Body": {
+   "baked": true,
+   "tris": 3004
+  },
+  "IceDrillT5BodyGlow": {
+   "baked": false,
+   "tris": 192
+  },
+  "IceDrillT5BodyTrim": {
+   "baked": true,
+   "tris": 480
+  },
+  "IceDrillT5BodyTrimGlow": {
+   "baked": false,
+   "tris": 240
+  },
+  "IceDrillT5Eyes": {
+   "baked": true,
+   "tris": 96
+  },
+  "IceDrillT5EyesGlow": {
+   "baked": false,
+   "tris": 272
+  },
+  "IceDrillT5Fur": {
+   "baked": true,
+   "tris": 880
+  },
+  "IceDrillT5Head": {
+   "baked": true,
+   "tris": 4140
+  },
+  "IceDrillT5Helmet": {
+   "baked": true,
+   "tris": 384
+  },
+  "IceDrillT5Hoses": {
+   "baked": true,
+   "tris": 728
+  },
+  "IceDrillT5Legs": {
+   "baked": true,
+   "tris": 2944
+  },
+  "IceDrillT5Platform": {
+   "baked": true,
+   "tris": 1464
+  },
+  "IceDrillT5PlatformGlow": {
+   "baked": false,
+   "tris": 128
+  },
+  "IceDrillT5Snout": {
+   "baked": true,
+   "tris": 1612
+  },
+  "IceDrillT5Trim": {
+   "baked": true,
+   "tris": 140
+  },
+  "IceDrillT5TrimGlow": {
+   "baked": false,
+   "tris": 140
+  }
+ },
+ "texture": "IceDrill_T5_AO.png",
+ "textureSize": 1024,
+ "tier": 5
+}

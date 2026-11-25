@@ -15,7 +15,7 @@ Out:
       MeshParts welded to it, and Attachments Tip and Trail.
 
 Every MeshPart (store-assets/buildings/IMPORT_NOTES.md): the palette texture, white, SmoothPlastic,
-RenderFidelity Automatic; "...Glow" meshes Neon and no shadow; the base Box-collides, big body parts
+RenderFidelity Precise (full detail at every distance); "...Glow" meshes Neon and no shadow; the base Box-collides, big body parts
 Hull-collide, everything else Box and no collision. The import arrives 100x too big round the Blender
 origin (the pad centre), so every part is scaled back about the origin.
 ]]
@@ -39,6 +39,7 @@ local UpgradeConfig = require(fresh.UpgradeConfig)
 fresh:Destroy()
 
 local PALETTE = BuildingConfig.PaletteTextureId
+local PRECISE = true -- every station MeshPart at full detail (store-assets/buildings/IMPORT_NOTES.md)
 local report = {}
 
 local function say(line)
@@ -104,7 +105,7 @@ local function style(p: MeshPart, collide: boolean, fidelity: Enum.CollisionFide
 	p.Color = Color3.new(1, 1, 1)
 	p.Material = if glow then Enum.Material.Neon else Enum.Material.SmoothPlastic
 	p.CastShadow = not glow
-	p.RenderFidelity = Enum.RenderFidelity.Automatic
+	p.RenderFidelity = if PRECISE then Enum.RenderFidelity.Precise else Enum.RenderFidelity.Automatic
 	p.CollisionFidelity = fidelity
 	p.CanCollide = collide
 	p.CanQuery = collide
