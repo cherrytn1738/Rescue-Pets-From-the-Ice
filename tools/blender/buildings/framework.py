@@ -73,6 +73,57 @@ def building_config():
 
 CONFIG = building_config()
 
+import sys
+sys.path.insert(0, os.path.join(REPO, "tools", "blender", "buildings"))
+import importlib, heights as HEIGHTS
+importlib.reload(HEIGHTS)
+PADS, PAD_OF, TIER_HEIGHTS = HEIGHTS.from_config(REPO)
+
+
+# ---------- growing a tier to its height (docs: "Height grows fast with each tier") ----------
+
+def mesh_points(objs):
+    return {o.name: [tuple(o.matrix_world @ v.co) for v in o.data.vertices] for o in objs if o.type == "MESH"}
+
+
+def grow_tier(bid, t, station, others, atts, standins=()):
+    """Grows tier t of a building to its height: everything above its base scales uniformly about the base's
+    top centre (the base keeps its pad size), capped by the room on the plot (heights.py). station: the
+    station's mesh objects; others: its upgrade sets' mesh objects; standins: the render-only FX and aura
+    stand-ins (they grow too but don't use up room: they're particles in game); atts: its attachment frames
+    (changed in place). Returns the growth record for the manifest."""
+    meshes = mesh_points(station)
+    base_top, (cx, cy), base = HEIGHTS.split_base(meshes)
+    top = max(v[2] for vs in meshes.values() for v in vs)
+    slack = base_top + HEIGHTS.BASE_SLACK
+    grows = [o for o in station if o.name not in base]
+    for o in others:
+        vs = [o.matrix_world @ v.co for v in o.data.vertices]
+        if vs and max(v.z for v in vs) > slack:
+            grows.append(o)
+    outline = HEIGHTS.hull([(p.x, p.y) for o in grows for p in (o.matrix_world @ v.co for v in o.data.vertices)])
+    for o in standins:
+        vs = [o.matrix_world @ v.co for v in o.data.vertices]
+        if vs and max(v.z for v in vs) > slack:
+            grows.append(o)
+    index = PAD_OF[bid]
+    target = TIER_HEIGHTS[index][t - 1]
+    scale, reached = HEIGHTS.best_scale(PADS[index], HEIGHTS.neighbours(PADS, index), base_top, top, target, outline, (cx, cy))
+    centre = Vector((cx, cy, base_top))
+    m = Matrix.Translation(centre) @ Matrix.Diagonal((scale, scale, scale, 1.0)) @ Matrix.Translation(-centre)
+    for o in grows:
+        local = o.matrix_world.inverted() @ m @ o.matrix_world
+        o.data.transform(local)
+        o.data.update()
+    for name, frame_ in list(atts.items()):
+        if frame_.to_translation().z > slack:
+            moved = frame_.copy()
+            moved.translation = m @ frame_.to_translation()
+            atts[name] = moved
+    print("%s T%d grows x%.2f: top %.1f -> %.1f (target %d)%s" % (bid, t, scale, top, reached, target, "  SHORT: no room" if reached < target - 0.3 else ""))
+    return {"scale": round(scale, 4), "baseTop": round(base_top, 3), "centre": [round(cx, 3), round(cy, 3)], "top": round(reached, 2),
+            "target": target, "short": reached < target - 0.3, "base": sorted(n.replace("%sT%d" % (bid, t), "") for n in base)}
+
 
 # ---------- organic vs hard surfaces ----------
 
@@ -228,11 +279,6 @@ def build_building(module, bid):
         for name in STANDARD_ATTS:
             if name not in atts:
                 print("WARNING %s tier %d has no %s attachment" % (bid, t, name))
-        attach(b, atts)
-        bpy.context.view_layer.update()
-        lo, hi = bounds_of(b.made)
-        half = pad / 2 + 0.01
-        fits = -half <= lo.x and hi.x <= half and -half <= lo.y and hi.y <= half
         # the upgrade sets: one Builder per upgrade, in this tier's look
         ucoll = coll_in(scene, "%s %s Upgrades" % (bid, theme))
         fx = Builder("%sT%dFx" % (bid, t), ucoll)
@@ -256,11 +302,23 @@ def build_building(module, bid):
             aura.root.parent = b.root
             for obj in aura.made:
                 obj["aura"] = True
+        others = [o for u in range(1, 6) for ur in [bpy.data.objects.get("%sT%dU%d" % (bid, t, u))] if ur for o in ur.children if o.type == "MESH"]
+        standins = list(fx.made) + (list(aura.made) if t == 5 else [])
+        growth = grow_tier(bid, t, list(b.made), others, atts, standins)
+        attach(b, atts)
+        bpy.context.view_layer.update()
+        lo, hi = bounds_of(b.made)
+        base_objs = [o for o in b.made if o.name.replace("%sT%d" % (bid, t), "") in growth["base"]]
+        blo, bhi = bounds_of(base_objs)
+        half = pad / 2 + 0.01
+        # fits: the base on its pad, and everything above it in its room on the plot
+        room = [HEIGHTS.to_plot(PADS[PAD_OF[bid]], p.x, p.y) for o in b.made for p in (o.matrix_world @ v.co for v in o.data.vertices)]
+        fits = -half <= blo.x and bhi.x <= half and -half <= blo.y and bhi.y <= half and HEIGHTS.room_ok(PADS[PAD_OF[bid]], HEIGHTS.neighbours(PADS, PAD_OF[bid]), HEIGHTS.hull(room))
         manifest["tiers"].append({
             "tier": t, "theme": theme, "form": CONFIG[bid]["Stations"][t - 1],
             "meshes": counts(b.made), "upgrades": upgrades, "fx": counts(fx.made),
             "size": [round(hi.x - lo.x, 2), round(hi.y - lo.y, 2), round(hi.z - lo.z, 2)],
-            "fitsPad": fits, "attachments": {name: roblox_frame(m) for name, m in atts.items()},
+            "fitsPad": fits, "growth": growth, "attachments": {name: roblox_frame(m) for name, m in atts.items()},
         })
         total = sum(n for _, n in counts(b.made))
         biggest = max(counts(b.made), key=lambda m: m[1])
@@ -377,7 +435,11 @@ def render_masterwork(bid, path, eye=(0.78, -1.0, 0.5), lens=50):
 # ---------- export ----------
 
 def export_building(bid):
-    """FBX per tier (the station) and per tier's upgrade sets, ready for tools/upload_models.py."""
+    """FBX per tier (the station) and per tier's upgrade sets, ready for tools/upload_models.py. Exported at
+    a quarter scale (EXPORT_SCALE), so Studio's import arrives at 25x, not 100x: a grown tier's meshes can be
+    over 20 studs, and Roblox caps a part at 2048 studs on each axis."""
+    global EXPORT_SCALE
+    EXPORT_SCALE = 0.25
     out = os.path.join(OUT_ROOT, bid, "fbx")
     for t in range(1, 6):
         root = bpy.data.objects["%sT%d" % (bid, t)]

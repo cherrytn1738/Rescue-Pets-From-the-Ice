@@ -7,14 +7,15 @@ second it checks that each player holds the pick for their tier (EconomyRules.Pi
 pick, a rebirth, a debug reset or a respawn all end up with the right one. Without a template the player
 simply holds nothing (the game still plays: taps don't need the tool).
 
-The tool is only a look: tapping stays in TapInput.client (TapBatch), and PickSwing.client plays the
-swing on each tap. The Tool's attribute Tier says which pick it is.
+The tool is only a look: tapping stays in TapInput.client (TapBatch), which also plays the swing on each
+tap. The Tool's attribute Tier says which pick it is. SetTier is the debug menu's "Set ice pick tier".
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 
 local EconomyRules = require(ReplicatedStorage.EconomyRules)
+local UpgradeConfig = require(ReplicatedStorage.UpgradeConfig)
 local PlayerData = require(script.Parent.PlayerData)
 
 local PickService = {}
@@ -70,6 +71,32 @@ function PickService.Refresh(player: Player)
 	tool:SetAttribute("Tier", tier)
 	tool.Parent = player:FindFirstChildOfClass("Backpack") or character
 	humanoid:EquipTool(tool)
+end
+
+-- Debug: the player owns exactly the pick tiers up to `tier` (the IcePick<n> upgrades; other upgrades stay),
+-- and holds that pick at once. Returns whether it changed anything.
+function PickService.SetTier(player: Player, tier: number): boolean
+	local data = PlayerData.Edit(player)
+	if not data or type(tier) ~= "number" or tier < 1 or tier > #UpgradeConfig.IcePick or tier % 1 ~= 0 then
+		return false
+	end
+	local kept = {}
+	for _, id in data.Upgrades do
+		if not string.match(id, "^IcePick%d+$") then
+			table.insert(kept, id)
+		end
+	end
+	for n = 2, tier do
+		table.insert(kept, "IcePick" .. n)
+	end
+	table.clear(data.Upgrades) -- (in place: other systems hold this table)
+	for _, id in kept do
+		table.insert(data.Upgrades, id)
+	end
+	PlayerData.Publish(player)
+	PlayerData.MarkImportant(player)
+	PickService.Refresh(player)
+	return true
 end
 
 function PickService.Start()

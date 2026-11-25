@@ -25,9 +25,18 @@ local InsertService = game:GetService("InsertService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 
-local BuildingConfig = require(ReplicatedStorage.BuildingConfig)
-local BuildingModels = require(ReplicatedStorage.BuildingModels)
-local UpgradeConfig = require(ReplicatedStorage.UpgradeConfig)
+-- Fresh copies of the configs: Studio's require keeps the first copy it loaded in a session, so a config
+-- Rojo has updated since (new ids, new attachment points) would be missed. Clones are new modules.
+local fresh = Instance.new("Folder")
+fresh.Name = "BuildTemplatesConfigs"
+for _, name in { "BuildingConfig", "BuildingModels", "UpgradeConfig" } do
+	ReplicatedStorage[name]:Clone().Parent = fresh
+end
+fresh.Parent = ServerStorage
+local BuildingConfig = require(fresh.BuildingConfig)
+local BuildingModels = require(fresh.BuildingModels)
+local UpgradeConfig = require(fresh.UpgradeConfig)
+fresh:Destroy()
 
 local PALETTE = BuildingConfig.PaletteTextureId
 local report = {}
@@ -58,9 +67,10 @@ local function attachmentCFrame(a): CFrame
 	return CFrame.fromMatrix(a.Position, right.Unit, up)
 end
 
--- The MeshParts of an uploaded model, scaled back to studs about the origin. `expectedHeight` (studs)
--- tells the import scale.
-local function load(assetId: number, expectedHeight: number?)
+-- The MeshParts of an uploaded model, scaled back to studs about the origin. `expectedHeight` (studs, the
+-- model's top) tells the import scale: 100x by default, 25x for the buildings (exported at a quarter scale
+-- so no part passes Roblox's 2048-stud cap), 1x for a 1:1 import.
+local function load(assetId: number, expectedHeight: number?, knownFactor: number?)
 	local container = InsertService:LoadAsset(assetId)
 	local parts = {}
 	for _, d in container:GetDescendants() do
@@ -72,7 +82,11 @@ local function load(assetId: number, expectedHeight: number?)
 	for _, p in parts do
 		top = math.max(top, p.Position.Y + p.Size.Y / 2)
 	end
-	local factor = if expectedHeight and top < expectedHeight * 10 then 1 else 100
+	local factor = knownFactor or 100
+	if expectedHeight and not knownFactor then
+		local ratio = top / expectedHeight
+		factor = if ratio < 5 then 1 elseif ratio < 50 then 25 else 100
+	end
 	for _, p in parts do
 		local rotation = p.CFrame.Rotation
 		p.Size = p.Size / factor
@@ -157,7 +171,7 @@ local function buildBuilding(building)
 		local r = root(info.Attachments)
 		r.Parent = model
 		model.PrimaryPart = r
-		local parts, factor = load(stationId, info.Size.Y)
+		local parts, factor = load(stationId, info.Height or info.Size.Y)
 		local base = styleStation(parts)
 		for _, p in parts do
 			p.Parent = model
@@ -167,7 +181,7 @@ local function buildBuilding(building)
 		sets.Parent = model
 		local upgradeCount = 0
 		if ids.Upgrades[tier] then
-			local ups = load(ids.Upgrades[tier], info.Size.Y)
+			local ups = load(ids.Upgrades[tier], nil, factor) -- (exported like its station)
 			local prefix = building.Id .. "T" .. tier .. "U"
 			for _, p in ups do
 				local u = string.match(p.Name, "^" .. prefix .. "(%d)")

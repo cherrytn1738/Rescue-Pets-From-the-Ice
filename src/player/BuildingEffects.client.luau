@@ -44,19 +44,21 @@ local function attachmentCFrame(part: BasePart, modelSize: Vector3, a)
 	return CFrame.fromMatrix(scaled, right.Unit, up) -- the attachment's +Y (an emitter's Top) points out
 end
 
-local function makeEmitter(spec, parent: Instance)
+-- k: how much bigger this station is than its effects were made for (its tier's growth, and the faded shrink).
+local function makeEmitter(spec, parent: Instance, k: number)
 	local emitter = Instance.new("ParticleEmitter")
 	emitter.Name = spec.Name
 	emitter.Texture = EffectsConfig.Texture(spec.Texture)
 	emitter.Color = ColorSequence.new(spec.Color[1], spec.Color[2] or spec.Color[1])
-	emitter.Size = NumberSequence.new(spec.Size[1], spec.Size[2] or spec.Size[1])
+	emitter.Size = NumberSequence.new(spec.Size[1] * k, (spec.Size[2] or spec.Size[1]) * k)
 	emitter.Lifetime = numberRange(spec.Lifetime)
-	emitter.Speed = numberRange(spec.Speed or { 1, 2 })
+	local speed = spec.Speed or { 1, 2 }
+	emitter.Speed = NumberRange.new(speed[1] * k, (speed[2] or speed[1]) * k)
 	emitter.SpreadAngle = Vector2.new(spec.Spread or 0, spec.Spread or 0)
 	emitter.LightEmission = spec.LightEmission or 0
 	local transparency = spec.Transparency or { 0, 1 }
 	emitter.Transparency = NumberSequence.new(transparency[1], transparency[2])
-	emitter.Acceleration = spec.Acceleration or Vector3.zero
+	emitter.Acceleration = (spec.Acceleration or Vector3.zero) * k
 	emitter.RotSpeed = NumberRange.new(-(spec.Spin or 0), spec.Spin or 0)
 	emitter.Drag = spec.Drag or 0
 	emitter.EmissionDirection = Enum.NormalId.Top
@@ -87,10 +89,12 @@ local function build(station)
 	local tier = EffectsRules.TierFor(owned)
 	local model = BuildingModels.Buildings[id] and BuildingModels.Buildings[id][tier]
 	station.tier, station.owned = tier, owned
-	if tier == 0 or not model then
+	if tier == 0 or not model or inst:GetAttribute("Fence") then -- (the fence ring of old Ice Pick Posts has no effects)
 		return
 	end
 	local set = EffectsConfig.For(id, tier, detail >= 10)
+	-- the real stations grew to their tier heights (BuildingModels' Grow); their effects grow with them
+	local k = if station.real then (model.Grow or 1) * inst:GetScale() else 1
 	local folder = Instance.new("Folder")
 	folder.Name = "Effects"
 	folder.Parent = part
@@ -129,7 +133,7 @@ local function build(station)
 		end
 		local ring = {}
 		local radius = if station.real
-			then (spec.R or 2) * inst:GetScale()
+			then (spec.R or 2) * k
 			else (spec.R or 2) * math.min(part.Size.X, part.Size.Z) / math.max(model.Size.X, model.Size.Z, 0.1)
 		for k = 1, ORBIT_POINTS do
 			local att = Instance.new("Attachment")
@@ -143,7 +147,7 @@ local function build(station)
 	end
 	for _, spec in set.Ambient do
 		for _, att in attachFor(spec) do
-			local emitter = makeEmitter(spec, att)
+			local emitter = makeEmitter(spec, att, k)
 			emitter:SetAttribute("BaseRate", (spec.Rate or 0) / (if spec.Orbit then ORBIT_POINTS else 1))
 			table.insert(station.emitters, emitter)
 		end
@@ -151,7 +155,7 @@ local function build(station)
 	for _, spec in set.Hit do
 		local att = point(spec.Attachment)
 		if att then
-			table.insert(station.hits, makeEmitter(spec, att))
+			table.insert(station.hits, makeEmitter(spec, att, k))
 		end
 	end
 	for index, spec in set.Lights do
@@ -159,7 +163,7 @@ local function build(station)
 		if att and index <= RULES.MaxLightsPerBuilding then
 			local light = Instance.new("PointLight")
 			light.Name = spec.Name
-			light.Color, light.Brightness, light.Range, light.Shadows = spec.Color, spec.Brightness, spec.Range, false
+			light.Color, light.Brightness, light.Range, light.Shadows = spec.Color, spec.Brightness, math.min(spec.Range * k, 60), false
 			light:SetAttribute("BaseBrightness", spec.Brightness)
 			light:SetAttribute("Pulse", spec.Pulse or 0)
 			light.Parent = att
@@ -174,7 +178,7 @@ local function build(station)
 			beam.Attachment0, beam.Attachment1 = a0, a1
 			beam.Texture = EffectsConfig.Texture(spec.Texture)
 			beam.Color = ColorSequence.new(spec.Color)
-			beam.Width0, beam.Width1 = spec.Width, spec.Width * 0.4
+			beam.Width0, beam.Width1 = spec.Width * k, spec.Width * 0.4 * k
 			beam.LightEmission = 1
 			beam.TextureSpeed = spec.Speed or 0
 			beam.FaceCamera = true

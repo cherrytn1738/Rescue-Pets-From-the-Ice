@@ -210,6 +210,10 @@ return function(sources)
 		IceBlockService = { Shatter = record("Shatter"), ForceNextCreature = record("ForceNextCreature"), Reroll = record("Reroll") },
 		PetService = { Give = record("Give") },
 		PlotService = { SendHome = record("SendHome") },
+		PickService = { SetTier = function(player, tier)
+			table.insert(calls, { name = "SetTier", args = { player, tier } })
+			return tier >= 1 and tier <= 6
+		end },
 		GoldenGlacierService = { SpawnNow = record("SpawnNow") },
 	}
 	local replicated = {
@@ -284,6 +288,10 @@ return function(sources)
 	ok, message = run("SimulateReceipt", { Product = ids.SimulateReceipt.Params[1].Default, GiftTo = 0 })
 	check(not ok and string.find(message, "no products yet", 1, true), "with no products configured, simulating a receipt says so")
 	check(#calls == 0, "...and neither touched the monetization systems")
+
+	ok, message = run("SetPickTier", { Tier = 4 })
+	check(ok and calls[#calls].name == "SetTier" and calls[#calls].args[2] == 4 and message == "Tester holds pick tier 4", "the pick tier goes through PickService.SetTier")
+	check(ids.SetPickTier.Params[1].Min == 1 and ids.SetPickTier.Params[1].Max == 6, "pick tiers 1 to 6")
 
 	ok = run("ResetSave")
 	check(ok and calls[#calls].name == "ResetToNew" and calls[#calls].args[1] == me, "resetting a save goes through PlayerData.ResetToNew")

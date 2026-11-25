@@ -19,7 +19,10 @@ from mathutils import Vector, Matrix, Euler
 # 2048 / 100 units before that. Roblox's docs recommend "FBX_SCALE_UNITS" for a 1:1 import instead.
 # Set FBX_SCALE_MODE before exec() to try it, and read the import scale the grouping script prints.
 FBX_SCALE_MODE = globals().get("FBX_SCALE_MODE", "FBX_SCALE_NONE")
-IMPORT_FACTOR = 100.0 if FBX_SCALE_MODE == "FBX_SCALE_NONE" else 1.0
+# EXPORT_SCALE shrinks the FBX before Studio's 100x: 0.25 arrives at 25x, so a mesh may be 2048 / 25 = 82
+# units long (the tall building tiers need it). The template builder detects the factor.
+EXPORT_SCALE = globals().get("EXPORT_SCALE", 1.0)
+IMPORT_FACTOR = (100.0 if FBX_SCALE_MODE == "FBX_SCALE_NONE" else 1.0) * EXPORT_SCALE
 MAX_MESH_UNITS = 2048.0 / IMPORT_FACTOR * 0.98   # a Roblox part is at most 2048 studs on each axis
 MAX_TRIANGLES = 18000                             # per mesh; Roblox allows 20,000
 
@@ -323,7 +326,7 @@ def export_fbx(objects, path):
     bpy.context.view_layer.objects.active = objects[0]
     os.makedirs(os.path.dirname(path), exist_ok=True)
     bpy.ops.export_scene.fbx(filepath=path, use_selection=True, object_types={"MESH"},
-                             use_mesh_modifiers=True, apply_unit_scale=True, apply_scale_options=FBX_SCALE_MODE,
+                             use_mesh_modifiers=True, apply_unit_scale=True, apply_scale_options=FBX_SCALE_MODE, global_scale=EXPORT_SCALE,
                              axis_forward="-Z", axis_up="Y", add_leaf_bones=False, bake_anim=False)
     print("exported", path)
 

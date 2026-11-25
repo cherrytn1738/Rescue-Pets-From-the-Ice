@@ -154,6 +154,20 @@ Each building has one pad and grows through five looks as the player owns more c
 
 Each tier changes the silhouette, the materials and the glow, so players can tell tiers apart from across the plaza. Reaching a tier plays an evolution moment: the building shakes, glows white and bursts into its new form with a banner ("Your Ice Drill evolved!"). The Build card shows the next tier as a glowing silhouette, so players always know what they're chasing.
 
+**Height grows fast with each tier.** A Legendary should tower over the plot and be visible from the plaza. Heights are measured to the top of the model; the avatar is 5.5 studs and the ice block 14–20 studs.
+
+| Tier | Back pads (5–8) | Side pads (3–4) | Front pads (1–2) |
+| --- | --- | --- | --- |
+| 1: Scrappy | about 7 studs | about 7 studs | about 6 studs |
+| 2: Workshop | about 11 | about 10 | about 9 |
+| 3: Frost-tech | about 17 | about 15 | about 12 |
+| 4: Enchanted | about 25 | about 21 | about 15 |
+| 5: Legendary | about 34 | about 27 | about 18 |
+
+- **Taller, not wider:** the base stays the pad's size; only the structure above it grows. Characters may overhang their base a little, but never onto a neighbouring pad or the fence ring.
+- **The ice stays the centrepiece:** front pads stay lower than the ice block, so the open front never hides it from the plaza.
+- **Masterwork** keeps the Legendary height; its crown and extras may add a little on top.
+
 | Building | 1: Scrappy | 10: Workshop | 25: Frost-tech | 50: Enchanted | 100: Legendary |
 | --- | --- | --- | --- | --- | --- |
 | Ice Pick Post | Wooden post with a pick | Brass clockwork hammer arm | Crystal-tipped piston picks with blue coils | Enchanted picks orbiting a rune pillar | Frost Golem: a giant ice-golem fist pounding the ice |

@@ -28,6 +28,26 @@ BuildingConfig.Tiers = {
 BuildingConfig.MasterworkBonus = 0.10 -- +10% damage at detail level 10
 BuildingConfig.MaxDetailLevel = 10
 BuildingConfig.FadedScale = 0.6 -- an older station once the next building up is owned
+-- How tall each tier stands, in studs to the top of the model, by where its pad is (docs/GAME_DESIGN.md,
+-- "Height grows fast with each tier"). The Blender pipeline grows every tier to these
+-- (tools/blender/buildings/heights.py); a tier without the room for it stops short (BuildingModels' Height).
+BuildingConfig.TierHeights = {
+	Back = { 7, 11, 17, 25, 34 }, -- pads 5-8
+	Side = { 7, 10, 15, 21, 27 }, -- pads 3-4
+	Front = { 6, 9, 12, 15, 18 }, -- pads 1-2
+}
+BuildingConfig.PadGroups = { "Front", "Front", "Side", "Side", "Back", "Back", "Back", "Back" } -- by pad index
+-- Once faded, the Ice Pick Posts become the fence ring round the ice (docs: "the Ice Pick Posts become a fence
+-- around the ice"): posts made from the Scrappy station's post and pick, on a ring outside the mound, facing
+-- the ice, with the slots at the front left open (the tap spot is there).
+BuildingConfig.Fence = {
+	Building = "IcePickPost",
+	Radius = 23, -- studs from the ice's centre (the mound reaches 21 at its corners)
+	Slots = 12, -- places round the ring...
+	FrontGap = 1, -- ...minus this many each side of the front one (and the front one)
+	Scale = 0.75, -- of the Scrappy station
+	Parts = { "Post", "Pick", "Pivot", "Braces" }, -- the Scrappy station's meshes a post keeps
+}
 BuildingConfig.PlotSize = 100 -- studs, square
 
 BuildingConfig.Buildings = {

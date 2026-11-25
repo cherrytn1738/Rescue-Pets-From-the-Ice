@@ -315,6 +315,49 @@ local function realStation(source: Model, upgrades, faded: boolean): Model
 	return model
 end
 
+-- The fence ring the faded Ice Pick Posts become: posts round the ice, an invisible Root on the pad for the badge.
+local function fenceStation(plotCFrame: CFrame, pad): Model
+	local fence = BuildingConfig.Fence
+	local model = Instance.new("Model")
+	local root = Instance.new("Part")
+	root.Name = "Root"
+	root.Anchored = true
+	root.CanCollide, root.CanQuery, root.CanTouch = false, false, false
+	root.Transparency = 1
+	root.Size = Vector3.new(1, 0.2, 1)
+	root.CFrame = plotCFrame * CFrame.new(pad.X, 0.6, pad.Z)
+	root.Parent = model
+	model.PrimaryPart = root
+	model:SetAttribute("Fence", true)
+	local source = template(fence.Building, 1)
+	if not source then
+		return model
+	end
+	local prefix = fence.Building .. "T1"
+	for slot = 0, fence.Slots - 1 do
+		local fromFront = math.min(slot, fence.Slots - slot)
+		if fromFront <= fence.FrontGap then
+			continue
+		end
+		local angle = slot / fence.Slots * math.pi * 2
+		local post = Instance.new("Model")
+		post.Name = "FencePost" .. slot
+		for _, piece in source:GetChildren() do
+			if piece:IsA("MeshPart") and table.find(fence.Parts, string.sub(piece.Name, #prefix + 1)) then
+				local copy = piece:Clone()
+				copy.CanCollide, copy.CanQuery = false, false
+				copy.Parent = post
+			end
+		end
+		post.WorldPivot = CFrame.identity
+		post:ScaleTo(fence.Scale)
+		local at = Vector3.new(math.sin(angle) * fence.Radius, 0.2, math.cos(angle) * fence.Radius)
+		post:PivotTo(plotCFrame * CFrame.lookAt(at, Vector3.new(0, 0.2, 0)))
+		post.Parent = model
+	end
+	return model
+end
+
 -- How big a building's stand-in is: its pad, a little bigger at each count milestone; taller for
 -- buildings further up the list.
 local function standInSize(building, order: number, owned: number): Vector3
@@ -353,13 +396,23 @@ function PlotService.RefreshBuildings(player: Player, data)
 		local faded = order < topOrder
 		local upgrades, upgradeKey = ownedUpgrades(data, building.Id)
 		local source = template(building.Id, tier)
-		local look = `{tier}:{upgradeKey}:{faded}:{source ~= nil}`
+		local fenced = faded and building.Id == BuildingConfig.Fence.Building
+		local look = `{tier}:{upgradeKey}:{faded}:{source ~= nil}:{fenced}`
 		if station and station:GetAttribute("Look") ~= look then
 			station:Destroy()
 			station = nil
 		end
 		local height
-		if source then
+		if fenced then
+			if not station then
+				station = fenceStation(cf, building.Pad)
+				station.Name = building.Id
+				station:SetAttribute("Look", look)
+				label(station.PrimaryPart, "", Vector3.zero, UDim2.fromScale(11, 2.2))
+				station.Parent = folder
+			end
+			height = 2
+		elseif source then
 			if not station then
 				station = realStation(source, upgrades, faded)
 				station.Name = building.Id

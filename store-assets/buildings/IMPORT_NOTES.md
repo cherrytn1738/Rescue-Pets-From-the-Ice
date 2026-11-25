@@ -50,7 +50,15 @@ normals on import.
 
 - **Pivot and facing:** each station's pivot is the centre of its pad on the ground. Its front (-Z in
   Roblox, -Y in Blender) faces the ice, so turn the station to face the ice when you place it on its pad.
-- **Size:** every tier fits its pad (the manifest's `fitsPad`), and higher tiers grow taller, not wider.
+- **Size and height:** each tier is grown to its height from `BuildingConfig.TierHeights` (docs: "Height grows
+  fast with each tier") by `tools/blender/buildings/heights.py`. Everything above the base scales uniformly
+  about the base's top centre; the base keeps its pad size. The scale is capped so the structure stays in its
+  room: short of the half-way line to every other pad, off the fence ring round the ice and inside the plot.
+  The manifest's `growth` records the scale, the height reached and whether it fell short. `fitsPad` means
+  the base is on its pad and the rest is in its room.
+- **Import scale:** building FBX files are exported at a quarter scale, so Studio's import arrives at 25x
+  (not 100x). A grown tier has meshes over 20 studs, and Roblox caps a part at 2048 studs on each axis.
+  `tools/studio/build_templates.luau` detects the factor. The ice picks still arrive at 100x.
 - **Attachment points:**
   - **Names:** Work and Work2 (the working part), Lamp1, Lamp2, Gear1, Gear2, Steam1, Steam2, Hit,
     Trail, NamePlate, Aura and Top, plus Crown (and Eyes where there is one) on the Legendary.

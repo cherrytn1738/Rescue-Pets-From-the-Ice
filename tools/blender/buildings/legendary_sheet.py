@@ -2,7 +2,7 @@
 # stand-in, plus the 3-stud Snow Bunny and the 5.5-stud avatar for scale.
 #   blender -b --factory-startup --python tools/blender/buildings/legendary_sheet.py
 # Writes store-assets/buildings/Legendary_sheet.png.
-import os
+import json, os
 if "REPO" not in globals():
     REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 BUILDING = "Legendaries"
@@ -36,6 +36,16 @@ def legendary_sheet():
         module["AURA"](atts, fx)
         fx.finish()
         fx.root.parent = b.root
+        # grow it as the pipeline did (the building's manifest records its Legendary's growth)
+        manifest = json.load(open(os.path.join(REPO, "store-assets", "buildings", bid, bid + "_manifest.json"), encoding="utf-8"))
+        g = manifest["tiers"][4]["growth"]
+        centre = Vector((g["centre"][0], g["centre"][1], g["baseTop"]))
+        m = Matrix.Translation(centre) @ Matrix.Diagonal((g["scale"], g["scale"], g["scale"], 1.0)) @ Matrix.Translation(-centre)
+        for o in b.made + fx.made:
+            role = o.name.replace(bid + "Legend", "")
+            high = max((o.matrix_world @ v.co).z for v in o.data.vertices) > g["baseTop"] + HEIGHTS.BASE_SLACK
+            if (o in b.made and role not in g["base"]) or (o in fx.made and high):
+                o.data.transform(o.matrix_world.inverted() @ m @ o.matrix_world)
         roots.append((bid, b.root))
     rig, avatar, _ = reference(coll_in(scene, "Reference"))
     cam = stage(scene)

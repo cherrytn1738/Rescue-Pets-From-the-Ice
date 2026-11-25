@@ -26,6 +26,7 @@ local CodeService = require(script.Parent.CodeService)
 local GoldenGlacierService = require(script.Parent.GoldenGlacierService)
 local IceBlockService = require(script.Parent.IceBlockService)
 local PetService = require(script.Parent.PetService)
+local PickService = require(script.Parent.PickService)
 local PlotService = require(script.Parent.PlotService)
 local GamePasses = require(script.Parent.GamePasses)
 local Gifting = require(script.Parent.Gifting)
@@ -184,6 +185,17 @@ local ACTIONS = {
 			PlayerData.Publish(target)
 			PlayerData.MarkImportant(target)
 			return `{target.Name} is at block level {args.Level}`
+		end,
+	},
+	{
+		Id = "SetPickTier", Group = "Save", Label = "Set ice pick tier (owns exactly the picks up to it)",
+		Params = { amountParam("Tier", "Pick tier", 1, 6, 6) },
+		Run = function(target, args)
+			dataOf(target)
+			if not PickService.SetTier(target, args.Tier) then
+				fail(`Couldn't set {target.Name}'s pick tier`)
+			end
+			return `{target.Name} holds pick tier {args.Tier}`
 		end,
 	},
 	-- Ice block and pets

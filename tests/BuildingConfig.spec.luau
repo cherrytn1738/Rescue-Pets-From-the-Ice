@@ -24,6 +24,18 @@ return function(sources)
 		check(building.DamagePerSecond == DesignDoc.Number(row["Damage per second"]), row.Building .. " deals " .. row["Damage per second"] .. "/s")
 	end
 
+	-- Tier heights by pad group.
+	local heights = doc:Table({ "Tier", "Back pads (5–8)", "Side pads (3–4)", "Front pads (1–2)" })
+	check(#heights == 5, "five tier heights")
+	for index, row in heights do
+		check(BuildingConfig.TierHeights.Back[index] == DesignDoc.Number(row["Back pads (5–8)"]), "back pads, tier " .. index .. ": " .. row["Back pads (5–8)"])
+		check(BuildingConfig.TierHeights.Side[index] == DesignDoc.Number(row["Side pads (3–4)"]), "side pads, tier " .. index .. ": " .. row["Side pads (3–4)"])
+		check(BuildingConfig.TierHeights.Front[index] == DesignDoc.Number(row["Front pads (1–2)"]), "front pads, tier " .. index .. ": " .. row["Front pads (1–2)"])
+	end
+	for index, group in { "Front", "Front", "Side", "Side", "Back", "Back", "Back", "Back" } do
+		check(BuildingConfig.PadGroups[index] == group, "pad " .. index .. " is a " .. group .. " pad")
+	end
+
 	-- Tier themes, the five forms per building, upgrade parts, Legendary forms and auras.
 	local tiers = doc:Table({ "Tier", "Owned", "Theme", "Look" })
 	check(#tiers == 5 and #BuildingConfig.Tiers == 5, "five tier themes")
