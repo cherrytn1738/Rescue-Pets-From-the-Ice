@@ -69,6 +69,16 @@ class Studio:
         return None
 
 
+def press_escape():
+    """Closes Roblox's purchase prompt after its shot (Windows: a key press to the window in front)."""
+    if sys.platform != "win32":
+        return
+    import ctypes
+    ctypes.windll.user32.keybd_event(0x1B, 0, 0, 0)
+    time.sleep(0.05)
+    ctypes.windll.user32.keybd_event(0x1B, 0, 2, 0)
+
+
 def parse_json(text):
     match = re.search(r"[\[{].*[\]}]", text or "", re.S)
     return json.loads(match.group(0)) if match else None
@@ -165,6 +175,8 @@ def main():
                     if result.get("GlacierHpShare") is not None:
                         share = float(result["GlacierHpShare"])
                         studio.luau(f'local g = workspace.GoldenGlacier g:SetAttribute("Hp", math.max(1, math.floor(g:GetAttribute("HpMax") * {share}))) return "ok"', "Server", 60)
+                    for path in result.get("PreClose", []):
+                        studio.click(path, 400)
                     for path in result.get("Clicks", []):
                         studio.click(path, 700)
                     time.sleep(float(result.get("Wait", 1.5)))
@@ -181,6 +193,10 @@ def main():
                             tab_name = tab.rsplit(".", 1)[-1].removesuffix("Tab").lower()
                             save(png, file_for(f"{s['Name']}_tab{index}_{tab_name}", size), result["Region"], result["Viewport"], size)
                             taken += 1
+                    time.sleep(float(result.get("After", 0)))  # (a window that opens late, closed below)
+                    if result.get("Escape"):
+                        press_escape()
+                        time.sleep(1)
                     for path in result.get("Close", []):
                         studio.click(path, 400)
                     print(f"  ok   {label}", flush=True)

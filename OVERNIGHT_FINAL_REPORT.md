@@ -4,12 +4,37 @@ Branch `overnight-final` (from `main` at fca7285). Pushed after every phase; not
 
 ## Summary
 
-(written at the end of the run)
+All six phases are done on `overnight-final`, pushed after each phase and not merged. All 21 specs pass (5,151 checks). Every Studio test switch is cleared.
+
+- **Phase 1, play-throughs:**
+  - A fresh test player reached the first rebirth at **43.1 minutes** (+4 Frost Cores), against 34.5 last time. That's mostly luck: no Rare pet until level 24. All 7 onboarding steps logged.
+  - The returning-player checks all pass: offline earnings after 2 and 24 hours (capped), the daily chest across a day change, THAWED and ICELAUNCH once each, rejoining mid-block.
+  - Every reward kind answered `PurchaseGranted` through the simulated receipt.
+  - **Found:** a player who skips the tutorial's "equip your pet" step never gets auto-equip (question 1), and the welcome-back popup understates the offline cap (question 3).
+- **Phase 2, stability:**
+  - 66 minutes with 3 bots playing everything: **no script errors, no leaks**. The client growth is the pets, which is expected.
+  - DataStore use for a full 8-player server is about 10% of Roblox's allowance for saves and about 30% for leaderboard writes. Measured with new request counters.
+- **Phase 3, live ops:**
+  - **Soft shutdown:** use Restart Servers on the Creator Hub. Everyone's save is written, players see "Updating the game, back in a moment" and come straight back on a new server; there's a warning first if you delay the restart.
+  - **Announcements:** your admin window has Announce (this server) and AnnounceAll (every server).
+  - **Analytics:** two new progression funnels (layers reached, rebirth ranks), crystal economy events for every source and sink, and Golden Glacier events. What each answers is in the Phase 3 table.
+- **Phase 4, prices:** compared with 12 popular simulators. Six proposals (question 4); nothing changed.
+- **Phase 5, audit:**
+  - The allowlists are right, no switches are set, and a clean Play has no game errors or warnings.
+  - PriceCheck: 24 items, 0 problems. All 160 asset ids are group-owned and approved, and the ShatterOffer error hasn't come back.
+  - One Studio warning about asset 203785492 has an unknown source (nothing in the place uses it).
+- **Phase 6, visual pass:**
+  - **318 screenshots** in `store-assets/visual-review/` (models, ice, pets, world, every window and tab at desktop and both phone sizes, effects).
+  - `python tools/visual_review.py` retakes them all in about 25 minutes, or one category or shot.
+  - A gallery page with before/after (`store-assets/visual-review/index.html`).
+  - `docs/VISUAL_PASS_GUIDE.md`: 13 known issues, a 14-stop route with F2 steps, and the map of where every visual lives.
+
+**Please save the place in Studio and keep a backup copy** (File > Save to File As). Tonight changed nothing in the place itself (no templates or world). But it's the only copy of the templates, the world, the streaming settings and Lighting, and I cleared the Workspace test attributes, which is a change to the open place.
 
 ## Questions for you
 
-1. **Auto-equip and the tutorial:** auto-equip waits for the tutorial, and the tutorial waits for the player to equip their first pet by hand. A player who skips that step never has a pet equipped. My bot had 4 pets and 0 equipped after 13 minutes. Should auto-equip start anyway after, say, the third rescue, or should the tutorial equip the first pet itself?
-2. **First-run luck:** the first rebirth took 43 minutes tonight against 34.5 last time, mostly because no Rare came until level 24. Make the first block of layer 2 (or the 10th rescue) a guaranteed Rare to cut the luck? Or wait for the live "First rebirth" funnel step first?
+1. **Auto-equip and the tutorial:** auto-equip waits for the tutorial, and the tutorial waits for the player to equip their first pet by hand. A player who skips that step never has a pet equipped (my first bot had 4 pets and 0 equipped after 13 minutes). Should auto-equip start anyway after the third rescue, or should the tutorial equip the first pet itself?
+2. **First-run luck:** the first rebirth took 43 minutes tonight against 34.5 last time, mostly because no Rare came until level 24. Make the first block of layer 2 (or the 10th rescue) a guaranteed Rare? Or wait for the live "First rebirth" funnel step first?
 3. **Welcome-back popup text:** it says "You earn for up to 1h while you're away", but the rule is half your building income for up to 2 hours away. Change it to "You earn half your building income for up to 2 hours away"?
 4. **Prices** (Phase 4, nothing changed): 2x Crystals 249 > 349, Auto Pick 149 > 199, Extra Pet Slot 449 > 399, Pet Squad 899 > 699, Crystal Sack 149 > 99, Shatter Now 25 > 29. Which do you want? And should a 24-hour crystal pack (~999-1,199) and a Mythic Block 3-pack (~499) be added?
 5. **Pets window on phones:** with 50 pets it holds 50 live 3D previews. Use pictures instead, or build previews only when they scroll into view? (A visual-pass topic.)
@@ -20,15 +45,19 @@ Branch `overnight-final` (from `main` at fca7285). Pushed after every phase; not
 | Phase | State |
 |---|---|
 | 1. Regression play-throughs | Done |
-| 2. Long-run stability | Done: 66 min with 3 bots, no errors, no leaks; DataStore use measured |
-| 3. Live-ops readiness | Code and specs done; Studio checks after Phase 2 |
-| 4. Price research | Done (report only) |
-| 5. Final pre-publish audit | To do |
-| 6. Visual pass prep | Tools written; screenshots to do |
+| 2. Long-run stability | Done: 66 min with 3 bots; no errors, no leaks; DataStore use measured |
+| 3. Live-ops readiness | Done: soft shutdown, announcements, analytics (specs and Studio checks) |
+| 4. Price research | Done (report only; nothing changed) |
+| 5. Final pre-publish audit | Done |
+| 6. Visual pass prep | Done: 318 screenshots, the retake tool, the gallery, the guide |
 
 ## Visual changes made
 
-None so far. New UI pieces for the new features (built from the UI kit): the "Updating the game" screen and the server message panel (`ServerNotices.client`).
+**None to anything that existed.** Two new UI pieces for tonight's features, built from the UI kit (`ShowcaseKit.Panel`, `UIKit` labels) in `src/player/ServerNotices.client.luau`:
+- the full-screen "Updating the game, back in a moment!" screen;
+- the server message panel ("update coming" warnings and admin announcements).
+
+One bug fix in that new code: the update screen's title was cut off ("Updating the game,...") because its label had no fixed width to fit. It now fits on one line.
 
 ## Decisions I made
 
@@ -44,6 +73,11 @@ None so far. New UI pieces for the new features (built from the UI kit): the "Up
   Each has spec checks.
 - **New tool:** `tools/check_asset_ids.py`. It checks every asset id in the configs against Open Cloud (owner and moderation); `upload_models.py --check` only re-checks assets that weren't approved yet.
 - **DataStore counters:** `PlayerData.RequestCount()`, `LeaderboardService.Requests` and the debug action "Server: DataStore requests so far". Studio's budget numbers keep refilling, so they can't show usage; counting our own requests can.
+- **Screenshots are taken as you, in a solo Play:** the debug menu needs it, and Play is simplest for the helper. For the shots, the helper turns your Auto Pick off for the session (it would break blocks mid-shot), hides the HUD for model shots, and marks every creature seen so the Book doesn't pop open.
+- **"Update coming" preview:** the debug preview of a scheduled restart no longer schedules its one-minute follow-up (a preview shouldn't leave a second message behind).
+- **Two progression funnels instead of one:** layers and ranks don't come in a fixed order, and a funnel step completes every step before it. "First rebirth" and "rank 1" are the same step.
+- **Robux purchases in analytics:** crystal bundles are economy "IAP" sources. Sales and revenue of every pass and product are already on Roblox's Monetization pages, so no custom event duplicates them.
+- **Soft shutdown works with Roblox's own reconnect:** "Restart Servers" (the normal way to update) moves players itself, so the game only saves and shows the screen. The reserved-server hop is used only for "Shut Down All Servers", which would otherwise just disconnect everyone.
 
 ## Phase 1: regression play-throughs
 
@@ -210,6 +244,78 @@ Roblox's request limits (docs page "Data store error codes and limits", updated 
 
 **Headroom:** plenty. The tightest is the leaderboard writes at about 30% of their allowance, and they're fixed by the 2-minute refresh. No change needed. (The Studio budget numbers in the log just keep climbing, because Studio refills them without the live cap; they say nothing about usage, hence the counters.)
 
+## Phase 3: live-ops readiness
+
+### Soft shutdown: how to push an update
+
+Roblox now moves players itself when you restart servers, so the soft shutdown works with Roblox rather than against it:
+
+1. Publish the place in Studio (File > Publish to Roblox). **Publishing alone does nothing to running servers**: they keep the old version until they empty.
+2. On the Creator Hub, go to the game > **Configurations > Server management** > select the place > **Restart Servers**. Tick **"Restart only servers with outdated versions"**. Optionally tick "Delay server restart" (1-60 minutes).
+3. What players see:
+   - **With a delay:** a panel at once, "UPDATE COMING: This server restarts for an update in N minutes. Your progress is saved, and you'll come straight back.", and again at one minute. Every save is marked important.
+   - **At the restart:** "Updating the game, back in a moment!" over the whole screen. Every save is written and released, then Roblox teleports everyone on the server to one new server running the new version.
+4. **"Shut Down All Servers"** (the other Hub button) would normally just disconnect everyone. The game catches it: same screen, same saves, then everyone is teleported together to a temporary reserved server (the holding server). That server runs no gameplay and loads no saves. It sends them straight back to a new public server about 5 seconds later.
+5. Roblox's own maintenance restarts are treated like your restarts (screen and saves; Roblox moves players).
+
+**Tested:**
+- **SoftShutdown spec (28 checks, live path with fakes):**
+  - each close reason's plan;
+  - saves are written BEFORE anyone is teleported;
+  - everyone goes together to one reserved server of this place;
+  - a failing teleport is retried 3 times;
+  - the scheduled-restart warnings at the start and at one minute;
+  - the holding server sends each arrival back after 5 s, including a late arrival.
+- **Studio, in a 3-player session:**
+  - The admin window's **Announce** (as Player1) showed "Double crystals weekend starts now!" on all three screens.
+  - **AnnounceAll** answered "Studio: shown in this server only (never published to live servers)".
+  - A message with a line break was refused.
+  - The debug action "show everyone the update screen" put "Updating the game, back in a moment!" over every client's screen for 10 s and then removed it.
+  - "The 'update coming' warning" showed "This server restarts for an update in 5 minutes..." on every client, and the server logged `[SoftShutdown] restart scheduled (DeveloperUpdate) in 300 s`.
+
+**Can't be tested in Studio:**
+- Real teleports and a real Hub restart.
+- The close path itself: when Studio stops a test, its players have already left before the close runs, so the soft shutdown has no one to move (its plan is "None"); the spec covers it with players present.
+
+ The first time you restart servers after launch, watch one server: you should see the screen, then land on a new server with your progress.
+
+### Admin announcements (F3, you only)
+
+Two new commands in the admin window's Server section:
+- **Announce**: a message panel for everyone in this server.
+- **AnnounceAll**: the same in every server, through MessagingService.
+
+How they work:
+- Both ask "Sure?" first.
+- Messages are up to 150 characters of letters, digits, punctuation and spaces.
+- Every message goes through Roblox's text filter first; a message the filter can't check is never shown.
+- From Studio, AnnounceAll shows the message only in the test server and never publishes, so a test can't reach live servers.
+- Access: live, `AdminConfig.AllowedUserIds` is still only you (11704150663); `DebugConfig.AllowedUserIds` is still empty.
+
+### Analytics: what you'll see in Creator Analytics
+
+Charts fill in about 24 hours after the first events. Nothing is sent from Studio: Studio prints `[Analytics]` lines instead. Batched crystal events appear every 5 minutes, or at once with the debug action "Analytics: send the target's batched crystal events now".
+
+| Where on the Creator Hub | What | The question it answers |
+|---|---|---|
+| Analytics > **Funnels** > Onboarding (existing) | Joined > First tap > First building > First rescue > First pet equipped > Tutorial done > First rebirth | Where do new players drop off in their first session? |
+| Funnels > **RobuxShop** (existing) | Opened shop > Viewed item > Prompt shown > Purchased | Do players who open the shop look at items, and do the prompts convert? |
+| Funnels > **LayersReached** (new) | Layer 1 Fresh Snow > Layer 2 Blue Ice > Layer 3 Ancient Ice > Layer 4 Crystal Ice > Layer 5 Primordial Ice > Layer 6 Frozen Core | How deep do players get? Which layer is the wall where they stop? |
+| Funnels > **RebirthRanks** (new) | Rank 1 Ice Breaker (first rebirth) > Rank 3 Glacier Diver > Rank 6 Core Keeper > Rank 10 Glacier Legend | Do players keep rebirthing after the first time? How many reach the late ranks that open layer 6 and the extra pet slots? |
+| Analytics > **Economy** (new; currency "Crystals") | Sources by item: Taps, AutoPick, Buildings, Rescue, GoldenGlacierRush, ServerFrostRush, DailyChest, Offline, each code, each bundle (CrystalPouch / Sack / Chest). Sinks by item: each building id and each upgrade id. Transaction types: Gameplay, IAP, TimedReward, Code, Shop | Where do crystals come from at each stage? How much do Golden Glacier rushes and the Server Frost Rush really add? Is Auto Pick a big share? What do players spend on: which buildings and upgrades are popular and which are ignored? Are wallets piling up unspent (average balance)? |
+| Analytics > **Custom events** (new) | GoldenGlacierJoined (count), GoldenGlacierWon (value = the rush multiplier, field Place - Top / Place - Helper), GoldenGlacierEscaped (value = how many tapped it) | Do players go to the Golden Glacier? How often is it broken, and how often does it melt away? |
+| Monetization > Developer Products / Passes (built in by Roblox) | Sales and revenue per item | What sells? (No custom event duplicates this. The economy's IAP sources show what crystal bundles gave in crystals.) |
+
+**How each part works:**
+- **One-time funnels:** the progression funnels log each step once per player, ever. Each player's funnel session is a random id kept in the save, never the user id.
+- **Two funnels instead of one:** layers and ranks don't come in a fixed order (layer 5 can come before or after rank 3), and in a Roblox funnel a later step counts as completing every step before it.
+- **"First rebirth" and "rank 1":** these are the same moment (Ice Breaker is rank 1), so they are one step.
+- **Rush share:** a grant made during a rush is split. The part the rush added goes to GoldenGlacierRush or ServerFrostRush, and the rest to its own source. So the rushes' real contribution shows as its own line.
+- **Batching:** steady flows (taps, buildings, rescues, rush shares, building purchases) are added up per player and sent every 5 minutes, when the player leaves and at shutdown. One-off flows (daily chest, codes, offline, bundles, upgrades) are sent at once, with the balance after them.
+- **Rate budget:** about 1-3 events a minute per player, far under Roblox's 120 + 20 x players a minute.
+- **Debug crystals:** crystals from the debug menu are never sent.
+- **Specs:** the Analytics spec grew from 39 checks to 120. The PlayerData spec now covers the saved progression counts and session id.
+
 ## Phase 4: price research (report only; nothing changed)
 
 Prices come from Roblox's public pass and developer-product lists for 12 games, fetched without logging in on 2026-11-26. The product lists still mark old items as for sale, so I used items updated in 2025-26 and marked older ones.
@@ -280,3 +386,67 @@ PS99, BSS, TSR and BGSI have the most players, so they count most.
 - Fandom wikis refused automated fetches.
 - The PSX server-boost reading is from memory.
 - Prices are what a logged-out request saw; sales or regional pricing could change them.
+
+## Phase 5: final pre-publish audit
+
+| Check | Result |
+|---|---|
+| `DebugConfig.AllowedUserIds` | **Empty** (only a commented example). The Debug spec checks it. |
+| `AdminConfig.AllowedUserIds` | **Only 11704150663** (you). The Admin spec checks it. |
+| Studio test switches | **None set.** Workspace has no attributes left; `ProximityPromptService.Enabled` is on; streaming is on (240 / 96). |
+| A fresh Play's Output | **No script errors and no warnings from the game.** Three kinds of other lines (below). |
+| PriceCheck | `[PriceCheck] 24 items checked, 0 problems, 0 hidden (no id yet)` |
+| Every asset id in the configs | `python tools/check_asset_ids.py` (new tool; it asks Open Cloud about each id): **160 ids, all owned by group 921449746 and approved**. The Robux icon in `UITheme.Assets` is Roblox's public library image, on purpose. `upload_models.py --check` also found nothing pending. |
+| The ShatterOffer join error from the last pass | **Gone.** It wasn't in any Output tonight: the 43-minute playthrough, the returning-player sessions, the 66-minute and 21-minute 3-player runs, the clean Play. |
+| `docs/LAUNCH_CHECKLIST.md` | Updated: merge this branch, prices (Phase 4), playing as a test player, `check_asset_ids.py`, the update/soft-shutdown steps, announcements, the new analytics, the hotfix plan. |
+| Specs | 21 of 21 pass. |
+
+**Output lines that aren't the game's errors:**
+- `ContentId: rbxassetid://203785492 failed due to: Asset type does not match requested type` (3 times, at start). Nothing in the place or the scripts refers to this id: I searched every Instance property in every service and the whole repo. It appears on the server before any player loads, with blank test avatars too, so it most likely comes from Studio or one of Roblox's own scripts. **I couldn't remove it.** Check whether it shows in a live server's F9 console; if it does, tell me and I'll dig further.
+- `Assistant plugin version changed ...`: Studio's own MCP plugin (only in Studio).
+- The game's own Studio-only info lines (`[PlayerData] LOADED`, `[Analytics] ...`, `[Offline] ...`, `[HUD] ready`, `[Client] started`): these print only in Studio.
+
+## Phase 6: ready for your visual pass
+
+Nothing visual was changed in this phase; it only captures and organizes.
+
+### The screenshots
+
+`store-assets/visual-review/`: 318 JPGs (quality 90) in 8 folders:
+
+| Folder | What | Pictures |
+|---|---|---|
+| `buildings/` | All 8 buildings at T1-T5, at 100 owned with U1-U4, Masterwork (wide and close), the fence ring, all eight at Masterwork, the rise and "evolved" moments | 92 |
+| `picks/` | Tiers 1-6 in the hand, the golden skin | 7 |
+| `ice/` | Every layer 1-6 with every rarity inside, crack stages 0-4, the shatter, the sled arriving, a Mythic Block | 44 |
+| `pets/` | All 18 creatures following you, and each Golden version; 1 to 7 equipped; the aurora trail | 44 |
+| `rescue/` | The banner and confetti for each rarity, the NEW badge, the server announcement | 8 |
+| `world/` | Gate and name boards, walls, the ice stage, the rank-colour trim at 1/2/3/6/10 rebirths, the plaza (all three boards, daily chest, codes kiosk, VIP lounge), the home beacon, the Golden Glacier at crack stages 0-4, terrain/pines/sky, the plaza, the ring, the tapping spot | 25 |
+| `ui/` | The HUD (and with the rebirth goal), every window and every tab (Build, Upgrades, Pets, Book, Rebirth, Shop, Codes, Settings), the welcome-back popup, the Shatter Now button (normal and gold), the Golden Glacier tap bar, a toast, the Server Frost Rush banner, the update screen, the server message, the rebirth frost-over, the tutorial pointer. Each at desktop, 844x390 and 667x375 | 93 (21 shots at 3 sizes, plus every tab) |
+| `effects/` | Tap feedback, crystals flying, the Server Frost Rush, a maxed plot with reduced effects off and on | 5 |
+
+- **Size and sharpness:** Studio's viewport here is 1565x646, so a desktop shot is captured at 1148x646 and scaled to 1920x1080, which is a little soft. On a bigger monitor the helper captures more pixels automatically. Phone shots are captured at their real size.
+- **Who plays:** the shots are taken in a solo Play as you. So your name appears on the plot sign, the boards and some toasts, and you own every pass. That's fine for a review set; don't use these as store pictures.
+- **Not in the set:**
+  - Roblox's purchase prompt: Studio's test prompt doesn't show in a screen capture.
+  - The rare-block beam: it needs a second player.
+  - Building effects in motion: the shots are stills.
+
+  These are by-hand stops in the guide's route.
+
+### Retaking them
+
+- `python tools/visual_review.py` retakes everything (about 25 minutes); `python tools/visual_review.py buildings` retakes one category; `--only ice/crack_stage2` one shot. The steps are in `docs/VISUAL_PASS_GUIDE.md`.
+- The shots are defined in `tools/studio/visual_review_shots.luau`. Each sets the game up through the F2 debug actions, holds the camera and hides the HUD for model shots.
+- The first time a retake replaces a picture, the old one goes to `store-assets/visual-review-before/`, and the gallery (`store-assets/visual-review/index.html`, opens from disk) shows before and after side by side.
+- The set you have now is the "before".
+
+### The guide
+
+`docs/VISUAL_PASS_GUIDE.md`:
+- **Known visual issues:** your four, plus 9 more I noticed tonight in the shots and the code. Each says which file controls it.
+- **The route:** 14 stops in order, each with the F2 steps to set it up, what to look for, a checkbox and space for notes.
+- **The map:** which script, config, Blender script, template or theme token controls each model, screen and effect, and what to re-run after a change (upload as the group, swap the id, rebuild the template, save the place).
+- **The F2 table:** every debug action with its inputs, and recipes.
+
+New debug actions that make the pass easier: "Set one building's count and upgrades" and "Set the current block's HP left" (above).
