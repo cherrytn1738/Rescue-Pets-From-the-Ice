@@ -633,7 +633,9 @@ The server owns every number. The client sends tap counts and requests, and only
 - **Anti-cheat:** every RemoteEvent is rate-limited. The server computes all prices and checks every buy and equip. Auto Pick runs on the server, so autoclickers can never beat the 20-taps-a-second cap.
 - **Phones:** building animations, ice chips and crystal particles run on the client only. Each plot shows one model per building type with a count badge. Every building, pick and plot mesh uses RenderFidelity Automatic (Roblox's level of detail), not Precise.
 - **Streaming:** Workspace.StreamingEnabled is on, so distant plots stream out (target radius 240 studs, minimum 96, opportunistic stream-out). The plaza is a Persistent model (always loaded with its boards and chests); each station and the plot's own models are PersistentPerPlayer, always loaded for the plot's owner and streamed whole for everyone else. Plot models and their Block folders (the block's state) always reach every client, so ice blocks, beams, name tags and the Golden Glacier (drawn by the client) work at any distance.
-- **Analytics funnels:** Joined, First tap, First building, First rescue, First pet equipped, Tutorial done, First rebirth, plus a shop funnel.
+- **Analytics funnels:** Joined, First tap, First building, First rescue, First pet equipped, Tutorial done, First rebirth, plus a shop funnel. Two progression funnels (each step once per player): layers reached (1-6) and rebirth ranks (1, 3, 6, 10).
+- **Analytics events:** the crystal economy (every source: taps, Auto Pick, buildings, rescues, the Golden Glacier's and the Server Frost Rush's share, the daily chest, offline earnings, codes, bundles; every sink: buildings, upgrades), sent in 5-minute batches per player; Golden Glacier joins, wins and escapes as custom events.
+- **Updates:** restarting servers for an update saves everyone and shows "Updating the game, back in a moment" while players move to a new server (a reserved holding server when servers are shut down instead). The developer can announce a message to one server or all of them from the admin window.
 
 ## Data and code structure
 

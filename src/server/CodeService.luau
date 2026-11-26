@@ -62,7 +62,7 @@ function CodeService.Redeem(player: Player, text): { ok: boolean, message: strin
 	end
 	-- Grant and record together (Give never yields). A reward that can't apply now records nothing,
 	-- so the code still works once it can.
-	local given, problem = PurchaseRewards.Give(player, asProduct(code :: string, entry))
+	local given, problem = PurchaseRewards.Give(player, asProduct(code :: string, entry), { Source = "Code", Sku = code })
 	if not given then
 		log(`{player.Name} redeemed {code}: refused ({problem})`)
 		return { ok = false, message = problem or "That code can't be used right now." }

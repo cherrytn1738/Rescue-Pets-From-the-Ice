@@ -59,7 +59,9 @@ function PurchaseRewards.CanGive(player: Player, product, context): (boolean, st
 end
 
 function PurchaseRewards.Give(player: Player, product, context): (string?, string?)
-	context = context or {}
+	-- (Key: the product's key, for analytics; a caller's context may name its own Source and Sku)
+	context = table.clone(context or {})
+	context.Key = context.Key or product.Key
 	local ok, problem = PurchaseRewards.CanGive(player, product, context)
 	if not ok then
 		return nil, problem

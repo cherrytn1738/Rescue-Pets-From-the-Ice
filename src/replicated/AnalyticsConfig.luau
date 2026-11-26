@@ -45,6 +45,62 @@ AnalyticsConfig.Shops = {
 	},
 }
 
+-- Progression: two one-time funnels (each step logged once per player, ever), sent with the recurring
+-- funnel API under one funnel session per player (a random id kept in the save, `Funnels.ProgressId`;
+-- never the user id). Two funnels, not one, because layers and rebirth ranks don't come in a fixed
+-- order against each other (layer 5 can come before or after rank 3), and a funnel step completes
+-- every step before it. Layer steps are LayerConfig layer numbers 1-6; rank steps are the rebirth
+-- counts of the ranks in `Ranks` (RebirthConfig.Ranks: rank 1 is the first rebirth).
+AnalyticsConfig.Progression = {
+	Layers = {
+		Funnel = "LayersReached",
+		Steps = { "Layer 1 Fresh Snow", "Layer 2 Blue Ice", "Layer 3 Ancient Ice", "Layer 4 Crystal Ice", "Layer 5 Primordial Ice", "Layer 6 Frozen Core" },
+	},
+	Ranks = {
+		Funnel = "RebirthRanks",
+		Rebirths = { 1, 3, 6, 10 },
+		Steps = { "Rank 1 Ice Breaker", "Rank 3 Glacier Diver", "Rank 6 Core Keeper", "Rank 10 Glacier Legend" },
+	},
+}
+
+-- Economy events: every crystal earned and spent (LogEconomyEvent, currency "Crystals"). Steady
+-- flows (taps, buildings, rescues, the rush share) are added up per player and sent every
+-- FlushSeconds (and when the player leaves or the server closes), so a player costs about one event a
+-- minute; one-off flows (daily chest, codes, offline, bundles, upgrades) are sent at once.
+-- Each source: TransactionType (Roblox's Enum.AnalyticsEconomyTransactionType name, or a custom one)
+-- and Sku (the item column on the Creator Hub; a source with Sku = nil passes its own: a code, a
+-- product key, a building id). NEVER rename a currency, source Sku or transaction type once live.
+AnalyticsConfig.Economy = {
+	Currency = "Crystals",
+	FlushSeconds = 300,
+	Sources = {
+		Taps = { TransactionType = "Gameplay", Sku = "Taps", Batched = true },
+		AutoPick = { TransactionType = "Gameplay", Sku = "AutoPick", Batched = true },
+		Buildings = { TransactionType = "Gameplay", Sku = "Buildings", Batched = true },
+		Rescue = { TransactionType = "Gameplay", Sku = "Rescue", Batched = true },
+		-- the extra crystals a rush adds to taps, buildings and rescues (the part above x1)
+		GoldenGlacier = { TransactionType = "Gameplay", Sku = "GoldenGlacierRush", Batched = true },
+		ServerFrostRush = { TransactionType = "IAP", Sku = "ServerFrostRush", Batched = true },
+		DailyChest = { TransactionType = "TimedReward", Sku = "DailyChest" },
+		Offline = { TransactionType = "TimedReward", Sku = "Offline" },
+		Code = { TransactionType = "Code" }, -- Sku: the code
+		Bundle = { TransactionType = "IAP" }, -- Sku: the product key (CrystalPouch, ...)
+		Debug = nil, -- (debug-menu crystals are never sent)
+	},
+	Sinks = {
+		Building = { TransactionType = "Shop", Batched = true }, -- Sku: the building id
+		Upgrade = { TransactionType = "Shop" }, -- Sku: the upgrade id
+	},
+}
+
+-- Custom events (LogCustomEvent). NEVER rename one once live.
+AnalyticsConfig.Custom = {
+	GlacierJoined = "GoldenGlacierJoined", -- a player's first tap on a Golden Glacier (value 1)
+	GlacierWon = "GoldenGlacierWon", -- the glacier broke: each tapper's rush multiplier is the value;
+	-- CustomField01 "Place - Top" (most damage) or "Place - Helper"
+	GlacierEscaped = "GoldenGlacierEscaped", -- it melted away unbroken: value = players who tapped it
+}
+
 -- The ShopVisit RemoteEvent (the Robux shop window says it opened, closed, or an INFO was tapped).
 AnalyticsConfig.VisitRate = { MinSeconds = 0.2, PerMinute = 40 }
 

@@ -1,8 +1,18 @@
 -- ServerMain: starts every server system, in order (docs/GAME_DESIGN.md).
 -- Everything that reacts to a player's data loading (PlayerData.OnLoaded, OnGiftsArrived) must
 -- register before PlayerData.Start(), which loads the players already here.
+
+-- A soft shutdown's holding server (a reserved server on the way back from an update) runs nothing
+-- else: no gameplay, no saves (SoftShutdown).
+local SoftShutdown = require(script.Parent.SoftShutdown)
+if SoftShutdown.IsHoldingServer() then
+	SoftShutdown.RunHoldingServer()
+	return
+end
+
 local AdminService = require(script.Parent.AdminService)
 local Analytics = require(script.Parent.Analytics)
+local Announcements = require(script.Parent.Announcements)
 local CodeService = require(script.Parent.CodeService)
 local DebugService = require(script.Parent.DebugService)
 local Economy = require(script.Parent.Economy)
@@ -61,6 +71,11 @@ GoldenGlacierService.Start()
 RewardService.Start()
 RobuxPerks.Start() -- what each pass and product does (reward kinds, pass perks, Auto Pick, Server Frost Rush)
 
+-- Live ops: server-wide messages (admin announcements, every server via MessagingService) and the soft
+-- shutdown (saves, an update screen and straight back on a new server when servers restart).
+Announcements.Start()
+SoftShutdown.Start()
+
 -- Developer tools: the F2 debug menu (everyone in Studio, allowlist live) and the F3 admin window.
 PlayerEffects.Start()
 DebugService.Start()
@@ -71,6 +86,15 @@ AdminService.Start()
 for _, name in { "GameEvent", "PurchaseNotice" } do
 	game:GetService("ReplicatedStorage"):WaitForChild(name).OnServerEvent:Connect(function() end)
 end
+
+-- Analytics hooks (AnalyticsConfig): every crystal earned and spent, and the progression funnels after
+-- anything that can raise a layer or a rank.
+Economy.OnGrant(Analytics.CrystalsEarned)
+ShopService.OnBought(function(player, data, kind, id, _, cost)
+	Analytics.CrystalsSpent(player, kind, cost, data.Crystals, id)
+end)
+IceBlockService.OnRescue(Analytics.Progress)
+RebirthService.OnRebirth(Analytics.Progress)
 
 PlayerData.Start()
 print("[Server] started")

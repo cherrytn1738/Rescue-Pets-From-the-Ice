@@ -22,6 +22,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
+local Analytics = require(script.Parent.Analytics)
+local RewardService = require(script.Parent.RewardService)
+local SoftShutdown = require(script.Parent.SoftShutdown)
 local CodeService = require(script.Parent.CodeService)
 local GoldenGlacierService = require(script.Parent.GoldenGlacierService)
 local IceBlockService = require(script.Parent.IceBlockService)
@@ -39,6 +42,7 @@ local EconomyRules = require(ReplicatedStorage.EconomyRules)
 local AnalyticsConfig = require(ReplicatedStorage.AnalyticsConfig)
 local AnalyticsRules = require(ReplicatedStorage.AnalyticsRules)
 local AudioConfig = require(ReplicatedStorage.AudioConfig)
+local BuildingConfig = require(ReplicatedStorage.BuildingConfig)
 local CreatureConfig = require(ReplicatedStorage.CreatureConfig)
 local LayerConfig = require(ReplicatedStorage.LayerConfig)
 local RebirthConfig = require(ReplicatedStorage.RebirthConfig)
@@ -82,6 +86,12 @@ for _, creature in CreatureConfig.Creatures do
 	table.insert(creatureChoices, { Value = creature.Id, Label = `{creature.Name} ({creature.Rarity})` })
 end
 creatureChoices = choicesOr(creatureChoices, "(no creatures)")
+
+local buildingChoices = {}
+for _, building in BuildingConfig.Buildings do
+	table.insert(buildingChoices, { Value = building.Id, Label = building.Name })
+end
+buildingChoices = choicesOr(buildingChoices, "(no buildings)")
 
 -- every sound effect and UI sound, to hear one on its own
 local soundChoices = {}
@@ -228,6 +238,45 @@ local ACTIONS = {
 				fail(`Couldn't set {target.Name}'s pick tier`)
 			end
 			return `{target.Name} holds pick tier {args.Tier}`
+		end,
+	},
+	{
+		Id = "SetBuilding", Group = "Save", Label = "Set one building's count and upgrades (tiers, Masterwork: visual checks)",
+		Params = {
+			{ Name = "Building", Label = "Building", Kind = "choice", Choices = buildingChoices, Default = buildingChoices[1].Value },
+			amountParam("Count", "Owned (tiers at 1, 10, 25, 50, 100)", 0, 1000, 100),
+			amountParam("Upgrades", "Its upgrades bought (5 at 100 owned = Masterwork)", 0, 5, 0),
+		},
+		Run = function(target, args)
+			local data = dataOf(target)
+			local building = args.Building
+			data.Buildings[building] = if args.Count > 0 then args.Count else nil
+			local kept = {}
+			for _, id in data.Upgrades do
+				if string.sub(id, 1, #building + 7) ~= building .. "Upgrade" then
+					table.insert(kept, id)
+				end
+			end
+			for index = 1, args.Upgrades do
+				table.insert(kept, building .. "Upgrade" .. index)
+			end
+			data.Upgrades = kept
+			PlotService.RefreshBuildings(target, data)
+			PlayerData.MarkImportant(target)
+			PlayerData.Publish(target)
+			return `{target.Name} owns {args.Count} {building} with {args.Upgrades} upgrade(s)`
+		end,
+	},
+	{
+		Id = "SetBlockHp", Group = "Ice block", Label = "Set the current block's HP left (crack stages: visual checks)",
+		Params = { amountParam("Percent", "HP left (%)", 1, 100, 50) },
+		Run = function(target, args)
+			local data = dataOf(target)
+			if not data.CurrentBlock then
+				fail(`{target.Name} has no block on the mound right now (it's on its sled); try again in a moment`)
+			end
+			data.CurrentBlock.HpLeft = math.max(1, LayerConfig.BlockHp(data.BlockLevel) * args.Percent / 100)
+			return `{target.Name}'s block has {args.Percent}% of its HP left`
 		end,
 	},
 	-- Ice block and pets
@@ -384,7 +433,38 @@ local ACTIONS = {
 		Run = function(target)
 			local funnels = dataOf(target).Funnels or {}
 			local waiting = if type(funnels.Waiting) == "table" and #funnels.Waiting > 0 then ` (waiting: {table.concat(funnels.Waiting, ", ")})` else ""
-			return `{target.Name}: onboarding {tostring(funnels.Onboarding)} of {#AnalyticsConfig.Onboarding}{waiting}`
+			return `{target.Name}: onboarding {tostring(funnels.Onboarding)} of {#AnalyticsConfig.Onboarding}{waiting}; layers funnel {tostring(funnels.Layers)}, ranks funnel {tostring(funnels.Ranks)}`
+		end,
+	},
+	{
+		Id = "DailyChestYesterday", Group = "Progress", Label = "Daily chest: last opened yesterday (it can be opened again)",
+		Run = function(target)
+			local data = dataOf(target)
+			data.DailyClaimDay = RewardService.Today() - 1
+			PlayerData.MarkImportant(target)
+			return `{target.Name}'s daily chest was last opened yesterday: it opens again now`
+		end,
+	},
+	{
+		Id = "PreviewUpdateScreen", Group = "Progress", Label = "Soft shutdown: show everyone the update screen for 10 s",
+		Run = function()
+			SoftShutdown.PreviewScreen(10)
+			return "Update screen shown to everyone for 10 s (nobody is moved)"
+		end,
+	},
+	{
+		Id = "PreviewRestartWarning", Group = "Progress", Label = "Soft shutdown: the 'update coming' warning (as if in 5 min)",
+		Run = function()
+			SoftShutdown.PreviewScheduled(300)
+			return "Warning shown to everyone (as if a restart were 5 minutes away; nothing restarts)"
+		end,
+	},
+	{
+		Id = "AnalyticsFlush", Group = "Progress", Label = "Analytics: send the target's batched crystal events now",
+		Run = function(target)
+			dataOf(target)
+			local sent = Analytics.FlushEconomy(target)
+			return `{target.Name}: {sent} crystal events sent ([Analytics] lines in Output in Studio)`
 		end,
 	},
 	{

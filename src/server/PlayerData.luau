@@ -54,6 +54,10 @@ local REQUEST_SECONDS = 20 -- the deadline for one request, retries included
 local SHUTDOWN_SECONDS = 25 -- Roblox allows about 30 seconds for all BindToClose callbacks
 
 local ONBOARDING_STEPS = #AnalyticsConfig.Onboarding -- (Funnels)
+local PROGRESS_STEPS = { -- (Funnels: the progression funnels' step counts)
+	Layers = #AnalyticsConfig.Progression.Layers.Steps,
+	Ranks = #AnalyticsConfig.Progression.Ranks.Steps,
+}
 local MAX_ID_TEXT = 64 -- purchase ids, gift ids, names, store names and keys
 local MAX_USER_ID = 2 ^ 53 -- (Studio test players have negative ids)
 local MAX_CODES = 200 -- redeemed codes kept (the most recent)
@@ -186,7 +190,8 @@ end
 --        GiftedPasses ({ [pass key] = true }: passes received as gifts; Roblox has no record of those, so
 --        they are saved), MythicBlocks (Mythic Block products bought and not rolled yet);
 --        Codes (redeemed promo codes, CodeRules.Normalize's form); Funnels (how far the one-time
---        analytics funnels are logged, AnalyticsRules); LeftAt (store only: the server's os.time() at
+--        analytics funnels are logged: onboarding, and the progression funnels' Layers, Ranks and the
+--        player's funnel session ProgressId, AnalyticsRules); LeftAt (store only: the server's os.time() at
 --        the last save, for offline earnings). Plus Session and LastWriteId (lease bookkeeping).
 --      Nothing is live yet, so changes still go into schema 1; after launch every change bumps it.
 -- Rules: progress that can't be read fails closed (never rewritten with a default); unknown ids
@@ -435,7 +440,7 @@ local function validate(record)
 	if isNew then
 		data.Funnels = AnalyticsRules.New()
 	else
-		data.Funnels = AnalyticsRules.Clean(data.Funnels, ONBOARDING_STEPS)
+		data.Funnels = AnalyticsRules.Clean(data.Funnels, ONBOARDING_STEPS, PROGRESS_STEPS)
 	end
 
 	data.SchemaVersion = SCHEMA_VERSION
@@ -637,7 +642,7 @@ local function snapshot(session)
 			return nil
 		end
 	end
-	if not AnalyticsRules.IsClean(data.Funnels, ONBOARDING_STEPS) then
+	if not AnalyticsRules.IsClean(data.Funnels, ONBOARDING_STEPS, PROGRESS_STEPS) then
 		return nil
 	end
 	local copy = deepCopy(data)
@@ -993,6 +998,33 @@ function PlayerData.AutosaveTick()
 	end
 end
 
+-- The server is closing: stops gameplay saves for everyone, then saves and releases every session at
+-- once. Yields until all are written (true) or `seconds` pass (false). Safe to call more than once
+-- (SoftShutdown calls it before teleporting players, and BindToClose again).
+function PlayerData.CloseAll(seconds: number): boolean
+	shuttingDown = true
+	local pending = {}
+	for player, session in sessions do
+		table.insert(pending, session)
+		task.spawn(close, player, session)
+	end
+	local deadline = os.clock() + seconds
+	while os.clock() < deadline do
+		local done = true
+		for _, session in pending do
+			if not session.finished then
+				done = false
+				break
+			end
+		end
+		if done then
+			return true
+		end
+		task.wait(0.1)
+	end
+	return false
+end
+
 function PlayerData.Start()
 	if started then
 		return
@@ -1016,27 +1048,9 @@ function PlayerData.Start()
 	end)
 	-- Closing the server (and pressing Stop in Studio): save everyone at once, within the time limit.
 	game:BindToClose(function()
-		shuttingDown = true
-		local pending = {}
-		for player, session in sessions do
-			table.insert(pending, session)
-			task.spawn(close, player, session)
+		if not PlayerData.CloseAll(SHUTDOWN_SECONDS) then
+			warn("[PlayerData] shutdown deadline reached before every save finished")
 		end
-		local deadline = os.clock() + SHUTDOWN_SECONDS
-		while os.clock() < deadline do
-			local done = true
-			for _, session in pending do
-				if not session.finished then
-					done = false
-					break
-				end
-			end
-			if done then
-				return
-			end
-			task.wait(0.1)
-		end
-		warn("[PlayerData] shutdown deadline reached before every save finished")
 	end)
 end
 

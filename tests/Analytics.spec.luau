@@ -67,6 +67,73 @@ return function(sources)
 	check(Rules.IsClean(cleaned, STEPS) and not Rules.IsClean({ Onboarding = 2, Waiting = { 1 } }, STEPS), "IsClean")
 	check(not Rules.IsClean(nil, STEPS) and not Rules.IsClean({ Onboarding = 1 }, STEPS), "IsClean: not a table, or no Waiting list")
 
+	-- Saved progression counts (the progression funnels) ----------------------------------------------
+	local P = { Layers = 6, Ranks = 4 }
+	local old = Rules.Clean({ Onboarding = 1, Waiting = {} }, STEPS, P)
+	check(old.Layers == 0 and old.Ranks == 0 and old.ProgressId == nil, "a save from before the progression funnels starts them at 0")
+	local bad = Rules.Clean({ Onboarding = 1, Waiting = {}, Layers = 9, Ranks = "x", ProgressId = 5 }, STEPS, P)
+	check(bad.Layers == 6 and bad.Ranks == 4 and bad.ProgressId == nil, "unreadable progression counts count as done; a bad session id is dropped")
+	local kept = Rules.Clean({ Onboarding = 1, Waiting = {}, Layers = 2, Ranks = 1, ProgressId = "abc" }, STEPS, P)
+	check(kept.Layers == 2 and kept.Ranks == 1 and kept.ProgressId == "abc", "good progression counts and the session id are kept")
+	check(Rules.Clean({ Onboarding = 1, Waiting = {}, ProgressId = string.rep("a", 65) }, STEPS, P).ProgressId == nil, "an overlong session id is dropped")
+	check(Rules.Clean("junk", STEPS, P).Layers == 6, "a Funnels that isn't a table counts every progression step as done too")
+	check(Rules.IsClean(kept, STEPS, P) and Rules.IsClean(Rules.New(), STEPS, P), "IsClean with progression counts")
+	check(not Rules.IsClean({ Onboarding = 1, Waiting = {}, Layers = 7, Ranks = 0 }, STEPS, P)
+		and not Rules.IsClean({ Onboarding = 1, Waiting = {}, Layers = 1, Ranks = 0, ProgressId = 5 }, STEPS, P)
+		and not Rules.IsClean({ Onboarding = 1, Waiting = {} }, STEPS, P), "IsClean refuses bad or missing progression counts and a bad session id")
+
+	-- Progression steps -------------------------------------------------------------------------------
+	local steps, logged = Rules.ProgressSteps(0, 3, 6)
+	check(table.concat(steps, ",") == "1,2,3" and logged == 3, "reaching step 3 first logs 1, 2 and 3")
+	steps, logged = Rules.ProgressSteps(3, 2, 6)
+	check(#steps == 0 and logged == 3, "a lower step (a rebirth resets the level) logs nothing")
+	steps, logged = Rules.ProgressSteps(3, 9, 6)
+	check(table.concat(steps, ",") == "4,5,6" and logged == 6, "never past the last step")
+	check(#Rules.ProgressSteps(0, 0 / 0, 6) == 0 and #Rules.ProgressSteps(0, "3", 6) == 0, "an unreadable step logs nothing")
+	local ranks = { 1, 3, 6, 10 }
+	check(Rules.RankStep(0, ranks) == 0 and Rules.RankStep(1, ranks) == 1 and Rules.RankStep(2, ranks) == 1 and Rules.RankStep(5, ranks) == 2
+		and Rules.RankStep(10, ranks) == 4 and Rules.RankStep(99, ranks) == 4 and Rules.RankStep(nil, ranks) == 0, "RankStep: the rank step a rebirth count reaches")
+
+	-- Rush shares -------------------------------------------------------------------------------------
+	check(#Rules.RushShares({}) == 0, "no rush: no share")
+	local one = Rules.RushShares({ { Source = "GoldenGlacier", Multiplier = 2 } })
+	check(#one == 1 and one[1].Source == "GoldenGlacier" and math.abs(one[1].Share - 0.5) < 1e-9, "a x2 rush made half of a grant")
+	local two = Rules.RushShares({ { Source = "GoldenGlacier", Multiplier = 2 }, { Source = "ServerFrostRush", Multiplier = 2 } })
+	check(#two == 2 and math.abs(two[1].Share - 0.375) < 1e-9 and math.abs(two[2].Share - 0.375) < 1e-9, "two x2 rushes (x4): 3/4 of the grant, split evenly")
+	local mixed = Rules.RushShares({ { Source = "GoldenGlacier", Multiplier = 5 }, { Source = "ServerFrostRush", Multiplier = 2 } })
+	check(math.abs(mixed[1].Share + mixed[2].Share - 0.9) < 1e-9 and mixed[1].Share > mixed[2].Share, "x5 and x2 (x10): 90% of the grant, the bigger rush the bigger share")
+
+	-- The shipped progression, economy and custom definitions -----------------------------------------
+	local LayerConfig = assert(loadstring(sources.LayerConfig))()
+	local RebirthConfig = assert(loadstring(sources.RebirthConfig))()
+	check(#Config.Progression.Layers.Steps == #LayerConfig.Layers, "one layer step per layer")
+	for number, layer in LayerConfig.Layers do
+		check(Config.Progression.Layers.Steps[number] == `Layer {number} {layer.Name}`, `layer step {number} names layer {number}`)
+	end
+	check(#Config.Progression.Ranks.Steps == #Config.Progression.Ranks.Rebirths, "one rank step per rank")
+	for index, rebirths in Config.Progression.Ranks.Rebirths do
+		local rank = RebirthConfig.RankFor(rebirths)
+		check(rank and rank.Rank == rebirths and Config.Progression.Ranks.Steps[index] == `Rank {rebirths} {rank.Title}`, `rank step {index} is rank {rebirths}`)
+	end
+	check(Config.Progression.Ranks.Rebirths[1] == 1, "the first rank step is the first rebirth")
+	for _, funnel in Config.Progression do
+		for _, name in funnel.Steps do
+			check(shortStableName(name), `progression step "{name}" is short`)
+		end
+	end
+	check(Config.Progression.Layers.Funnel ~= Config.Progression.Ranks.Funnel and Config.Progression.Layers.Funnel ~= Config.Shops.Robux.Funnel, "every funnel has its own name")
+	check(Config.Economy.Currency == "Crystals" and Config.Economy.FlushSeconds >= 60, "one currency, sent at most every minute per player")
+	local sourceCount = 0
+	for key, source in Config.Economy.Sources do
+		sourceCount += 1
+		check(type(source.TransactionType) == "string" and #source.TransactionType > 0, `crystal source {key} has a transaction type`)
+	end
+	check(sourceCount == 10, "ten crystal sources (taps, Auto Pick, buildings, rescues, the two rushes, daily chest, offline, codes, bundles)")
+	check(Config.Economy.Sinks.Building.Batched and not Config.Economy.Sinks.Upgrade.Batched, "building purchases are batched, upgrades sent at once")
+	for _, name in Config.Custom do
+		check(type(name) == "string" and #name <= 32, `custom event {name}`)
+	end
+
 	-- Shop visits -------------------------------------------------------------------------------------
 	local visit, first = Rules.NewVisit("abc")
 	check(visit.Id == "abc" and table.concat(first, ",") == "1", "a visit logs Opened shop at once")
@@ -97,6 +164,12 @@ return function(sources)
 	function fakeAnalytics:LogFunnelStepEvent(player, funnel, sessionId, step, name)
 		table.insert(events, `{player.Name} {funnel} {sessionId or "-"} {step} {name}`)
 	end
+	function fakeAnalytics:LogEconomyEvent(player, flowType, currency, amount, balance, transactionType, sku)
+		table.insert(events, `{player.Name} economy {flowType.Name} {currency} {amount} {balance} {transactionType} {sku}`)
+	end
+	function fakeAnalytics:LogCustomEvent(player, name, value, fields)
+		table.insert(events, `{player.Name} custom {name} {value} {fields and fields.CustomField01 or "-"}`)
+	end
 	local function listeners()
 		local list = {}
 		return list, {
@@ -107,8 +180,11 @@ return function(sources)
 	end
 	local fakePlayers = { PlayerRemoving = select(2, listeners()) }
 	local function newPlayer(name)
-		return { Name = name, __fakePlayer = true, Parent = fakePlayers, IsA = function(_, class)
+		local attributes = {}
+		return { Name = name, __fakePlayer = true, Parent = fakePlayers, Attributes = attributes, IsA = function(_, class)
 			return class == "Player"
+		end, GetAttribute = function(_, key)
+			return attributes[key]
 		end }
 	end
 	local visitListeners, visitSignal = listeners()
@@ -125,6 +201,12 @@ return function(sources)
 		end },
 		ReplicatedStorage = {
 			AnalyticsConfig = TestConfig, AnalyticsRules = Rules, MonetizationConfig = fakeMonetization,
+			LayerConfig = { LayerForLevel = function(level)
+				return if type(level) == "number" then { Number = math.min(6, (level - 1) // 10 + 1) } else nil
+			end },
+			NumberFormat = { Short = function(value)
+				return tostring(value)
+			end },
 			WaitForChild = function(_, name)
 				assert(name == "ShopVisit", "unexpected remote " .. name)
 				return { OnServerEvent = visitSignal }
@@ -147,7 +229,8 @@ return function(sources)
 	local env = setmetatable({
 		game = { GetService = function(_, name)
 			return assert(services[name], "unexpected service " .. name)
-		end },
+		end, BindToClose = function() end },
+		task = { spawn = function() end }, -- (the flush loop never runs in the spec)
 		script = { Parent = parent },
 		require = function(module)
 			return module
@@ -238,6 +321,63 @@ return function(sources)
 	check(take() == "", "the ShopVisit remote is rate-limited")
 	Analytics.ShopOpened(ana, "Gear")
 	check(take() == "", "a shop that isn't in the config logs nothing")
+
+	-- Progression funnels: one session per player, kept in the save
+	local dan = newPlayer("Dan")
+	datas[dan] = { Funnels = Rules.New(), BlockLevel = 1, MaxLayerOpened = 5, Rebirths = 0 }
+	fire(loadedList, dan, datas[dan])
+	local joined = take()
+	local id = datas[dan].Funnels.ProgressId
+	check(type(id) == "string" and joined == `Dan onboarding 1 Joined | Dan LayersReached {id} 1 Layer 1 Fresh Snow`,
+		"joining logs layer 1 under the player's own progression session (no rank yet)")
+	check(datas[dan].Funnels.Layers == 1 and datas[dan].Funnels.Ranks == 0, "...and the progress is in the save")
+	datas[dan].BlockLevel = 31
+	Analytics.Progress(dan)
+	check(take() == `Dan LayersReached {id} 2 Layer 2 Blue Ice | Dan LayersReached {id} 3 Layer 3 Ancient Ice | Dan LayersReached {id} 4 Layer 4 Crystal Ice`,
+		"skipped layers are filled in, in order, in the same session")
+	datas[dan].BlockLevel = 1
+	datas[dan].Rebirths = 3
+	Analytics.Progress(dan)
+	check(take() == `Dan RebirthRanks {id} 1 Rank 1 Ice Breaker | Dan RebirthRanks {id} 2 Rank 3 Glacier Diver`, "a rebirth logs its ranks; the reset level logs no layer")
+	Analytics.Progress(dan)
+	check(take() == "" and datas[dan].Funnels.ProgressId == id, "nothing twice, and the session id stays")
+	Analytics.Progress(ben)
+	check(take() == "", "no progression while the player's data isn't ready")
+
+	-- Crystals: steady flows add up until the flush; one-off flows go at once with their balance
+	Analytics.CrystalsEarned(dan, "Taps", 10, 100)
+	Analytics.CrystalsEarned(dan, "Taps", 5, 105)
+	Analytics.CrystalsEarned(dan, "Buildings", 20, 125)
+	Analytics.CrystalsSpent(dan, "Building", 50, 75, "HeatLamp")
+	Analytics.CrystalsSpent(dan, "Building", 70, 5, "HeatLamp")
+	check(take() == "", "taps, buildings and building purchases wait for the flush")
+	Analytics.CrystalsEarned(dan, "DailyChest", 300, 305)
+	Analytics.CrystalsEarned(dan, "Code", 250, 555, "THAWED")
+	Analytics.CrystalsEarned(dan, "Bundle", 1000, 1555, "CrystalPouch")
+	Analytics.CrystalsSpent(dan, "Upgrade", 100, 1455, "StonePick")
+	check(take() == "Dan economy Source Crystals 300 305 TimedReward DailyChest | Dan economy Source Crystals 250 555 Code THAWED"
+		.. " | Dan economy Source Crystals 1000 1555 IAP CrystalPouch | Dan economy Sink Crystals 100 1455 Shop StonePick",
+		"the daily chest, a code, a bundle and an upgrade are sent at once, with the balance after them")
+	Analytics.CrystalsEarned(dan, "Debug", 5, 0)
+	Analytics.CrystalsEarned(dan, "Taps", -1, 0)
+	Analytics.CrystalsEarned(dan, "Taps", 0 / 0, 0)
+	Analytics.CrystalsEarned(dan, "Taps", math.huge, 0)
+	Analytics.CrystalsEarned({ Name = "Dummy" }, "DailyChest", 5, 0)
+	check(take() == "", "unknown sources, bad amounts and non-players send nothing")
+	dan.Attributes.Crystals = 1455
+	check(Analytics.FlushEconomy(dan) == 3, "the flush sends one event per batched flow")
+	local flushed = table.clone(events)
+	table.sort(flushed)
+	table.clear(events)
+	check(table.concat(flushed, " | ") == "Dan economy Sink Crystals 120 1455 Shop HeatLamp | Dan economy Source Crystals 15 1455 Gameplay Taps | Dan economy Source Crystals 20 1455 Gameplay Buildings",
+		"...added up, with the balance at the flush")
+	check(Analytics.FlushEconomy(dan) == 0 and take() == "", "a second flush has nothing to send")
+
+	-- Custom events
+	Analytics.Custom(dan, "GlacierWon", 5, "Place - Top")
+	Analytics.Custom(dan, "GlacierJoined")
+	Analytics.Custom(dan, "NotAnEvent")
+	check(take() == "Dan custom GoldenGlacierWon 5 Place - Top | Dan custom GoldenGlacierJoined 1 -", "custom events by their config key; unknown keys send nothing")
 
 	-- The shipped funnel: the real config's first step (Joined) is logged as step 1.
 	services.ReplicatedStorage.AnalyticsConfig = Config

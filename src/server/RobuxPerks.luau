@@ -126,10 +126,10 @@ Kinds.CrystalBundle = {
 	CanGive = function(_, reward)
 		return type(reward.Seconds) == "number" and reward.Seconds > 0, PurchaseRewards.UNKNOWN_KIND
 	end,
-	Give = function(player, reward)
+	Give = function(player, reward, context)
 		local data = PlayerData.Edit(player)
 		local amount = RobuxPerks.BundleAmount(player, data, reward.Seconds)
-		Economy.Grant(player, data, amount)
+		Economy.Grant(player, data, amount, context.Source or "Bundle", context.Sku or context.Key)
 		return `{NumberFormat.Short(amount)} crystals`
 	end,
 }
@@ -174,7 +174,7 @@ Kinds.MythicBlock = {
 
 function RobuxPerks.Start()
 	Economy.AddExtra(RobuxPerks.PassMultiplier)
-	Economy.AddExtra(RobuxPerks.ServerRushMultiplier, true)
+	Economy.AddExtra(RobuxPerks.ServerRushMultiplier, true, "ServerFrostRush")
 	IceBlockService.AddLuck(RobuxPerks.IsLucky)
 	-- Auto Pick: the server taps for you while you're in your own plot, inside the 20-a-second cap.
 	Economy.OnTick(function(player, _, dt)
