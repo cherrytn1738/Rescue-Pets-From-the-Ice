@@ -150,7 +150,7 @@ local function onClose(reason)
 	end
 end
 
-local function onRestartScheduled(restartTime, source)
+local function onRestartScheduled(restartTime, source, preview: boolean?)
 	local secondsLeft = if typeof(restartTime) == "DateTime" then restartTime.UnixTimestamp - os.time() else 60
 	local sourceName = if typeof(source) == "EnumItem" then source.Name else "Unknown"
 	log(`restart scheduled ({sourceName}) in {secondsLeft} s`)
@@ -158,7 +158,7 @@ local function onRestartScheduled(restartTime, source)
 		PlayerData.MarkImportant(player)
 	end
 	Announcements.Show("UPDATE COMING", SoftShutdown.ScheduledText(secondsLeft), 10)
-	if secondsLeft > 90 then
+	if secondsLeft > 90 and not preview then
 		task.delay(secondsLeft - 60, function()
 			Announcements.Show("UPDATE COMING", SoftShutdown.ScheduledText(60), 10)
 		end)
@@ -167,7 +167,7 @@ end
 
 -- Debug and admin: what players see when a restart is scheduled, and the update screen, without closing.
 function SoftShutdown.PreviewScheduled(secondsLeft: number)
-	onRestartScheduled(DateTime.fromUnixTimestamp(os.time() + secondsLeft), Enum.CloseReason.DeveloperUpdate)
+	onRestartScheduled(DateTime.fromUnixTimestamp(os.time() + secondsLeft), Enum.CloseReason.DeveloperUpdate, true)
 end
 
 function SoftShutdown.PreviewScreen(seconds: number)

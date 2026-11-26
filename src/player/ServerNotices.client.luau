@@ -41,7 +41,7 @@ updateScale.Parent = updatePanel
 local updateTitle = UIKit.Label(updatePanel, "Title", "", 56, TITLE_COLOUR)
 updateTitle.TextXAlignment = Enum.TextXAlignment.Center
 updateTitle.Position = UDim2.fromOffset(20, 28)
-updateTitle.Size = UDim2.new(1, -40, 0, 70)
+updateTitle.Size = UDim2.fromOffset(600, 70) -- (an offset width: FitOneLine measures it)
 UIKit.FitOneLine(updateTitle, 56)
 local updateText = UIKit.Label(updatePanel, "Text", "Your progress is saved.", 30, nil, true)
 updateText.TextXAlignment = Enum.TextXAlignment.Center

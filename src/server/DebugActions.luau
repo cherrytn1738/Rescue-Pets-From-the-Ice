@@ -473,7 +473,7 @@ local ACTIONS = {
 		Id = "PreviewRestartWarning", Group = "Progress", Label = "Soft shutdown: the 'update coming' warning (as if in 5 min)",
 		Run = function()
 			SoftShutdown.PreviewScheduled(300)
-			return "Warning shown to everyone (as if a restart were 5 minutes away; nothing restarts)"
+			return "Warning shown to everyone (as if a restart were 5 minutes away; nothing restarts, and no one-minute warning follows)"
 		end,
 	},
 	{
