@@ -470,12 +470,15 @@ end
 
 -- One UpdateAsync with bounded retries and backoff, inside one deadline. The transform must not
 -- yield and may run more than once, so it resets anything it reports at its top.
+local updateRequests = 0 -- UpdateAsync calls made by this server (PlayerData.RequestCount, debug menu)
+
 local function update(storeName, key, transform, deadline)
 	local lastError = "request deadline passed"
 	for attempt = 1, MAX_ATTEMPTS do
 		if os.clock() >= deadline then
 			break
 		end
+		updateRequests += 1
 		local ok, result = pcall(function()
 			return DataStoreService:GetDataStore(storeName):UpdateAsync(key, function(current)
 				if os.clock() >= deadline then
@@ -494,6 +497,11 @@ local function update(storeName, key, transform, deadline)
 		end
 	end
 	return false, lastError
+end
+
+-- How many UpdateAsync requests this server has made (loads, saves, gifts), for the DataStore budget.
+function PlayerData.RequestCount(): number
+	return updateRequests
 end
 
 -- Gameplay may use a player's data only while this is true.

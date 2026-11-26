@@ -28,6 +28,7 @@ local SoftShutdown = require(script.Parent.SoftShutdown)
 local CodeService = require(script.Parent.CodeService)
 local GoldenGlacierService = require(script.Parent.GoldenGlacierService)
 local IceBlockService = require(script.Parent.IceBlockService)
+local LeaderboardService = require(script.Parent.LeaderboardService)
 local PetService = require(script.Parent.PetService)
 local PickService = require(script.Parent.PickService)
 local PlotService = require(script.Parent.PlotService)
@@ -443,6 +444,22 @@ local ACTIONS = {
 			data.DailyClaimDay = RewardService.Today() - 1
 			PlayerData.MarkImportant(target)
 			return `{target.Name}'s daily chest was last opened yesterday: it opens again now`
+		end,
+	},
+	{
+		Id = "DataStoreRequests", Group = "Progress", Label = "Server: DataStore requests so far (per minute, and the budget left)", NoTarget = true,
+		Run = function()
+			local minutes = math.max(1 / 60, Workspace.DistributedGameTime / 60)
+			local updates, sets, sorted = PlayerData.RequestCount(), LeaderboardService.Requests.SetAsync, LeaderboardService.Requests.GetSortedAsync
+			local budget = {}
+			for _, kind in { "UpdateAsync", "SetIncrementSortedAsync", "GetSortedAsync" } do
+				local ok, left = pcall(function()
+					return game:GetService("DataStoreService"):GetRequestBudgetForRequestType(Enum.DataStoreRequestType[kind])
+				end)
+				table.insert(budget, `{kind} {if ok then left else "?"}`)
+			end
+			return string.format("In %.1f min with %d players: UpdateAsync %d (%.1f/min), leaderboard SetAsync %d (%.1f/min), GetSortedAsync %d (%.1f/min). Budget left now: %s",
+				minutes, #Players:GetPlayers(), updates, updates / minutes, sets, sets / minutes, sorted, sorted / minutes, table.concat(budget, ", "))
 		end,
 	},
 	{

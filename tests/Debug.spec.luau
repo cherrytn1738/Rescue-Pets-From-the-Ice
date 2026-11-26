@@ -220,6 +220,7 @@ return function(sources)
 			return tier >= 1 and tier <= 6
 		end },
 		GoldenGlacierService = { SpawnNow = record("SpawnNow") },
+		LeaderboardService = { Requests = { SetAsync = 6, GetSortedAsync = 3 } },
 		RewardService = { Today = function()
 			return 20000
 		end },
@@ -304,7 +305,7 @@ return function(sources)
 			end
 		end
 	end
-	for _, id in { "SaveNow", "ShowSave", "ResetSave", "OfflineEarningsNow", "AnalyticsProgress", "AnalyticsRestart", "AnalyticsFlush", "DailyChestYesterday", "SetBuilding", "SetBlockHp", "PreviewUpdateScreen", "PreviewRestartWarning", "ResetCodes", "GivePass", "RemovePass", "SimulateReceipt", "DuplicateReceipt", "FreshSave", "UseLiveSaves", "FakeTimeAway", "PaidRandomRestricted", "TeleportToPlayer", "SetWalkSpeed", "Respawn" } do
+	for _, id in { "SaveNow", "ShowSave", "ResetSave", "OfflineEarningsNow", "AnalyticsProgress", "AnalyticsRestart", "AnalyticsFlush", "DailyChestYesterday", "SetBuilding", "SetBlockHp", "DataStoreRequests", "PreviewUpdateScreen", "PreviewRestartWarning", "ResetCodes", "GivePass", "RemovePass", "SimulateReceipt", "DuplicateReceipt", "FreshSave", "UseLiveSaves", "FakeTimeAway", "PaidRandomRestricted", "TeleportToPlayer", "SetWalkSpeed", "Respawn" } do
 		check(ids[id] ~= nil, `the debug menu has {id}`)
 	end
 	check(ids.ResetSave.Confirm and ids.UseLiveSaves.Confirm, "resetting a save and switching to live saves both ask first")
