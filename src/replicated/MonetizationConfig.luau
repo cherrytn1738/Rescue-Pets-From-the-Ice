@@ -49,20 +49,20 @@ local MonetizationConfig = {}
 --  * GoldNameTag / Lounge (VIP): a gold name tag, and the VIP lounge in the plaza lets you in.
 --  * Lucky: doubles the chance of Legendary and Mythic blocks (BlockRules, Lucky Ice).
 --  * PetSlots: equip slots the pass adds (PetService).
--- Not created on the Creator Hub yet (Id = 0): in Studio the shop and the debug menu give them for the
--- session.
+-- Created on Roblox by tools/create_products.py (ids also in docs/ROBUX_PRODUCTS.md and
+-- store-assets/icons/products_manifest.json).
 MonetizationConfig.Passes = {
-	{ Key = "DoubleCrystals", Name = "2x Crystals", Id = 0, GiftId = 0, ExpectedPrice = 249, CrystalMultiplier = 2,
+	{ Key = "DoubleCrystals", Name = "2x Crystals", Id = 2102063611, GiftId = 3736501716, ExpectedPrice = 249, CrystalMultiplier = 2,
 		Description = "Doubles all your crystals, forever." },
-	{ Key = "AutoPick", Name = "Auto Pick", Id = 0, GiftId = 0, ExpectedPrice = 149, AutoTapsPerSecond = 5,
+	{ Key = "AutoPick", Name = "Auto Pick", Id = 2100372547, GiftId = 3736501737, ExpectedPrice = 149, AutoTapsPerSecond = 5,
 		Description = "Taps the ice 5 times a second for you while you're in your plot." },
-	{ Key = "VIP", Name = "VIP", Id = 0, GiftId = 0, ExpectedPrice = 299, CrystalMultiplier = 1.2, GoldNameTag = true, Lounge = true,
+	{ Key = "VIP", Name = "VIP", Id = 2098692454, GiftId = 3736501753, ExpectedPrice = 299, CrystalMultiplier = 1.2, GoldNameTag = true, Lounge = true,
 		Description = "+20% crystals, a gold name tag and the VIP lounge in the plaza." },
-	{ Key = "ExtraPetSlot", Name = "Extra Pet Slot", Id = 0, GiftId = 0, ExpectedPrice = 449, PetSlots = 1,
+	{ Key = "ExtraPetSlot", Name = "Extra Pet Slot", Id = 2099292504, GiftId = 3736501769, ExpectedPrice = 449, PetSlots = 1,
 		Description = "One more pet follows you." },
-	{ Key = "PetSquad", Name = "Pet Squad", Id = 0, GiftId = 0, ExpectedPrice = 899, PetSlots = 2,
+	{ Key = "PetSquad", Name = "Pet Squad", Id = 2101811657, GiftId = 3736501785, ExpectedPrice = 899, PetSlots = 2,
 		Description = "Two more pets follow you (with Extra Pet Slot, +3 in all)." },
-	{ Key = "LuckyIce", Name = "Lucky Ice", Id = 0, GiftId = 0, ExpectedPrice = 349, Lucky = true,
+	{ Key = "LuckyIce", Name = "Lucky Ice", Id = 2100576395, GiftId = 3736501801, ExpectedPrice = 349, Lucky = true,
 		Description = "Doubles your chance of Legendary and Mythic blocks." },
 }
 -- A pass given as a gift: the "Pass" reward kind saves it for the recipient (RobuxPerks).
@@ -76,18 +76,18 @@ end
 -- for Seconds, your name announced; another one adds Seconds), MythicBlock (your next block rolls from
 -- Odds: a paid random item).
 MonetizationConfig.Products = {
-	{ Key = "CrystalPouch", Name = "Crystal Pouch", Tab = "Products", Id = 0, GiftId = 0, ExpectedPrice = 29,
+	{ Key = "CrystalPouch", Name = "Crystal Pouch", Tab = "Products", Id = 3736501812, GiftId = 3736501820, ExpectedPrice = 29,
 		Description = "10 minutes of your crystal income, right now.", Reward = { Kind = "CrystalBundle", Seconds = 600 } },
-	{ Key = "CrystalSack", Name = "Crystal Sack", Tab = "Products", Id = 0, GiftId = 0, ExpectedPrice = 149,
+	{ Key = "CrystalSack", Name = "Crystal Sack", Tab = "Products", Id = 3736501831, GiftId = 3736501841, ExpectedPrice = 149,
 		Description = "1 hour of your crystal income, right now.", Reward = { Kind = "CrystalBundle", Seconds = 3600 } },
-	{ Key = "CrystalChest", Name = "Crystal Chest", Tab = "Products", Id = 0, GiftId = 0, ExpectedPrice = 499,
+	{ Key = "CrystalChest", Name = "Crystal Chest", Tab = "Products", Id = 3736501853, GiftId = 3736501858, ExpectedPrice = 499,
 		Description = "6 hours of your crystal income, right now.", Reward = { Kind = "CrystalBundle", Seconds = 21600 } },
-	{ Key = "ShatterNow", Name = "Shatter Now", Tab = "Products", Id = 0, GiftId = 0, ExpectedPrice = 25,
+	{ Key = "ShatterNow", Name = "Shatter Now", Tab = "Products", Id = 3736501870, GiftId = 3736501879, ExpectedPrice = 25,
 		Description = "Breaks your current ice block instantly and frees the creature.", Reward = { Kind = "ShatterNow" } },
-	{ Key = "ServerFrostRush", Name = "Server Frost Rush", Tab = "Products", Id = 0, GiftId = 0, ExpectedPrice = 99,
+	{ Key = "ServerFrostRush", Name = "Server Frost Rush", Tab = "Products", Id = 3736501890, GiftId = 3736501900, ExpectedPrice = 99,
 		Description = "x2 crystals for everyone in the server for 15 minutes, with your name announced.",
 		Reward = { Kind = "ServerFrostRush", Multiplier = 2, Seconds = 900 } },
-	{ Key = "MythicBlock", Name = "Mythic Block", Tab = "Products", Id = 0, GiftId = 0, ExpectedPrice = 199,
+	{ Key = "MythicBlock", Name = "Mythic Block", Tab = "Products", Id = 3736501911, GiftId = 3736501923, ExpectedPrice = 199,
 		Description = "Your next ice block rolls with much better odds. Tap INFO for the odds.",
 		Reward = { Kind = "MythicBlock" }, PaidRandom = true,
 		-- Shown in the shop before purchase; the roll uses exactly these (BlockRules.RollMythicBlock). The

@@ -4,7 +4,11 @@ The checklist for creating this game's game passes and developer products on the
 
 All items belong to the game (universe 10778596196, owned by group 921449746). Icons are uploaded as the group (`python tools/upload_models.py <png>`); drafts for review are in `store-assets/icons/`.
 
-## Creating an item
+## Created
+
+All 24 items were created through Open Cloud on 2026-11-26 by `python tools/create_products.py` (on sale, icons from `store-assets/icons/`); their ids are in the tables below, in `MonetizationConfig.luau` and in `store-assets/icons/products_manifest.json`. The script is safe to re-run: it matches existing items by name and never makes duplicates (`--dry-run` lists without creating). To change a price or description later, use the Creator Hub, then update the table and `ExpectedPrice`.
+
+## Creating an item by hand
 
 1. Creator Hub → the game → Monetization → **Passes** (bought once) or **Developer Products** (bought any number of times) → Create.
 2. Name, description and icon (512 x 512 PNG, uploaded as the group). Set the price and make it **On Sale**.
@@ -23,23 +27,23 @@ Copy the name, description and price straight onto the Creator Hub. Paste each i
 
 | Key | Name | Price (Robux) | Store description | Id | Gift product (developer product, same price) | Gift id |
 |---|---|---|---|---|---|---|
-| DoubleCrystals | 2x Crystals | 249 | Doubles all your crystals, forever. | | Gift: 2x Crystals | |
-| AutoPick | Auto Pick | 149 | Taps the ice 5 times a second for you while you're in your plot. | | Gift: Auto Pick | |
-| VIP | VIP | 299 | +20% crystals, a gold name tag and the VIP lounge in the plaza. | | Gift: VIP | |
-| ExtraPetSlot | Extra Pet Slot | 449 | One more pet follows you. | | Gift: Extra Pet Slot | |
-| PetSquad | Pet Squad | 899 | Two more pets follow you (with Extra Pet Slot, +3 in all). | | Gift: Pet Squad | |
-| LuckyIce | Lucky Ice | 349 | Doubles your chance of Legendary and Mythic blocks. | | Gift: Lucky Ice | |
+| DoubleCrystals | 2x Crystals | 249 | Doubles all your crystals, forever. | 2102063611 | Gift: 2x Crystals | 3736501716 |
+| AutoPick | Auto Pick | 149 | Taps the ice 5 times a second for you while you're in your plot. | 2100372547 | Gift: Auto Pick | 3736501737 |
+| VIP | VIP | 299 | +20% crystals, a gold name tag and the VIP lounge in the plaza. | 2098692454 | Gift: VIP | 3736501753 |
+| ExtraPetSlot | Extra Pet Slot | 449 | One more pet follows you. | 2099292504 | Gift: Extra Pet Slot | 3736501769 |
+| PetSquad | Pet Squad | 899 | Two more pets follow you (with Extra Pet Slot, +3 in all). | 2101811657 | Gift: Pet Squad | 3736501785 |
+| LuckyIce | Lucky Ice | 349 | Doubles your chance of Legendary and Mythic blocks. | 2100576395 | Gift: Lucky Ice | 3736501801 |
 
 ### Developer products
 
 | Key | Name | Price (Robux) | Store description | Id | Gift product (same price) | Gift id |
 |---|---|---|---|---|---|---|
-| CrystalPouch | Crystal Pouch | 29 | 10 minutes of your crystal income, right now. | | Gift: Crystal Pouch | |
-| CrystalSack | Crystal Sack | 149 | 1 hour of your crystal income, right now. | | Gift: Crystal Sack | |
-| CrystalChest | Crystal Chest | 499 | 6 hours of your crystal income, right now. | | Gift: Crystal Chest | |
-| ShatterNow | Shatter Now | 25 | Breaks your current ice block instantly and frees the creature. | | Gift: Shatter Now | |
-| ServerFrostRush | Server Frost Rush | 99 | x2 crystals for everyone in the server for 15 minutes, with your name announced. | | Gift: Server Frost Rush | |
-| MythicBlock | Mythic Block | 199 | Your next ice block rolls with much better odds: 50% Rare, 30% Epic, 15% Legendary, 5% Mythic. | | Gift: Mythic Block | |
+| CrystalPouch | Crystal Pouch | 29 | 10 minutes of your crystal income, right now. | 3736501812 | Gift: Crystal Pouch | 3736501820 |
+| CrystalSack | Crystal Sack | 149 | 1 hour of your crystal income, right now. | 3736501831 | Gift: Crystal Sack | 3736501841 |
+| CrystalChest | Crystal Chest | 499 | 6 hours of your crystal income, right now. | 3736501853 | Gift: Crystal Chest | 3736501858 |
+| ShatterNow | Shatter Now | 25 | Breaks your current ice block instantly and frees the creature. | 3736501870 | Gift: Shatter Now | 3736501879 |
+| ServerFrostRush | Server Frost Rush | 99 | x2 crystals for everyone in the server for 15 minutes, with your name announced. | 3736501890 | Gift: Server Frost Rush | 3736501900 |
+| MythicBlock | Mythic Block | 199 | Your next ice block rolls with much better odds: 50% Rare, 30% Epic, 15% Legendary, 5% Mythic. | 3736501911 | Gift: Mythic Block | 3736501923 |
 
 Gift product description (the same for each): "A gift: <name> for another player in your server."
 
@@ -47,7 +51,7 @@ Gift product description (the same for each): "A gift: <name> for another player
 
 - **Passes** count the moment they're bought (no rejoin), and gifted passes count the moment the gift arrives.
 - **2x Crystals** and **VIP** multiply every crystal (x2 and x1.2). **Auto Pick** taps 5 times a second on the server while you stand in your own plot; with your own taps it stays inside the 20-taps-a-second cap. **Lucky Ice** doubles the Legendary and Mythic chances of every block you roll (taken from Common). **VIP** also turns your name tag gold and opens the lounge door in the plaza. The pet-slot passes add equip slots.
-- **Crystal bundles** pay 10 min / 1 h / 6 h of your income: building damage per second plus your tap damage at 4 taps a second, times your crystal multiplier at that moment.
+- **Crystal bundles** pay 10 min / 1 h / 6 h of your income: the HUD's crystals per second with the permanent bonuses but no rushes, your taps counted at least 4 a second (`Economy.SteadyIncome`).
 - **Shatter Now** breaks the block on your mound. It can't be bought while the next block is still on its sled (the button hides then, and the server refuses). Its HUD button grows, turns gold and pulses when a Rare or better creature is inside.
 - **Server Frost Rush** gives x2 crystals to everyone in the server for 15 minutes and announces the buyer; another one while it runs adds 15 minutes. It isn't saved, so it ends if the server shuts down.
 - **Mythic Block**: your next block rolls 50% Rare / 30% Epic / 15% Legendary / 5% Mythic, from the whole roster (so the odds hold on any layer). It waits in your save until your next block arrives.

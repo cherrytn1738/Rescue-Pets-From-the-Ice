@@ -1,5 +1,23 @@
 {
  "assets": {
+  "CodesKiosk.fbx": {
+   "assetId": "99536553992465",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "d814ce31a9288f343432df184f037fb82434215d0f7b4b5852b072370d8a3385",
+   "updated": "2026-11-26T10:50:02+00:00"
+  },
+  "DailyChestStand.fbx": {
+   "assetId": "125874282900680",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "335d62622adb79b5479e9fd25a1448d9dc5b08979c5e3d75ad2c656731b5e98a",
+   "updated": "2026-11-26T10:50:16+00:00"
+  },
   "LeaderboardBoard.fbx": {
    "assetId": "105555700752777",
    "creator": {

@@ -40,10 +40,12 @@ MapConfig.PlotModels = {
 	PlotWallLong = 84064124507568,
 	PlotWallShort = 128971708238167,
 }
--- The plaza's own models (tools/blender/plaza_boards.py, uploaded as the group; built into
+-- The plaza's own models (tools/blender/plaza_boards.py and plaza_props.py, uploaded as the group; built into
 -- ServerStorage.PlazaTemplates by tools/studio/build_templates.luau with ONLY = "Plaza").
 MapConfig.PlazaModels = {
 	LeaderboardBoard = 105555700752777,
+	DailyChestStand = 125874282900680,
+	CodesKiosk = 99536553992465,
 }
 MapConfig.TapSpot = { X = 0, Z = 24 } -- where a player arrives in their plot: in front of the ice
 -- The light column over your own plot's entrance while you're outside it (PlotGuide.client): it starts above the

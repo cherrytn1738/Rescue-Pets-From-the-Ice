@@ -1,6 +1,76 @@
 {
  "exportScale": 0.1,
  "models": {
+  "CodesKiosk": {
+   "bounds": {
+    "x": [
+     -8.87,
+     8.87
+    ],
+    "y": [
+     -2.43,
+     2.0
+    ],
+    "z": [
+     -0.08,
+     16.2
+    ]
+   },
+   "meshes": {
+    "CodesKioskCrystals": 288,
+    "CodesKioskGifts": 1608,
+    "CodesKioskIce": 1752,
+    "CodesKioskPanel": 60,
+    "CodesKioskSnow": 2640,
+    "CodesKioskStone": 200,
+    "CodesKioskWood": 6840
+   },
+   "panel": {
+    "bottom": 1.5,
+    "front": -0.45,
+    "top": 10.5,
+    "width": 12.0
+   },
+   "size": [
+    17.74,
+    16.27,
+    4.43
+   ],
+   "top": 16.2,
+   "triangles": 13388
+  },
+  "DailyChestStand": {
+   "bounds": {
+    "x": [
+     -4.44,
+     4.4
+    ],
+    "y": [
+     -3.3,
+     3.26
+    ],
+    "z": [
+     -0.01,
+     6.61
+    ]
+   },
+   "meshes": {
+    "DailyChestStandCrystals": 160,
+    "DailyChestStandCrystalsGlow": 288,
+    "DailyChestStandGold": 2092,
+    "DailyChestStandIce": 868,
+    "DailyChestStandSnow": 1380,
+    "DailyChestStandStone": 1760,
+    "DailyChestStandWood": 1596
+   },
+   "size": [
+    8.84,
+    6.62,
+    6.56
+   ],
+   "top": 6.61,
+   "triangles": 8144
+  },
   "LeaderboardBoard": {
    "bounds": {
     "x": [

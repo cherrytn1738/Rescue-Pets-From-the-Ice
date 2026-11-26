@@ -458,7 +458,7 @@ Each plot is a 100 × 100 stud square of snow with the ice block in the middle, 
 
 **The map.**
 
-- **Plaza** in the centre: the spawn point, the Golden Glacier landing ring, three leaderboards, the codes board, the daily and group reward chests, and the VIP lounge behind a gate (built only once the VIP pass is in the game's config).
+- **Plaza** in the centre: the spawn point, the Golden Glacier landing ring, three leaderboards, the codes board, the daily and group reward chests, and the VIP lounge behind a gate (built only once the VIP pass exists on Roblox, with a real id).
 - **Plots:** eight plots in a ring around the plaza, each with its open front facing the centre, so players see other players' ice glowing as they walk around.
 - **Getting to your plot:** a glowing arrow and a short path lead from spawn to the player's plot; a Home button in the HUD walks or teleports them back.
 - **Around the ring:** a snowy winter world with no visible grid: frozen ponds between the plots, snowy hills with clumps of snowy pines beyond them, big hazy mountains on the horizon and a bright winter sky. Nothing stands between the plaza and any plot's open front.
@@ -497,9 +497,9 @@ Players share one world. Everyone can see each other's ice and what's glowing in
 
 - **Plots:** 8 plots per server around a central plaza. Your ice block, your buildings breaking it and the pets following you are visible to everyone who walks by.
 - **Rare rescues are events:** when a Legendary or Mythic block arrives, the whole server is told, and other players can come and watch it break: a tall beam in the rarity's colour stands over that plot until the creature is freed, and the server is told again when it is.
-- **Golden Glacier rush:** every 5–8 minutes a golden ice block crashes into the plaza with a countdown and a sound. Everyone who taps it before it breaks gets a Frost Rush (×3 crystals for 60 seconds). The player who dealt the most damage gets ×5. It looks like an ice block in gold: see-through golden ice with a frosted top, a glowing crystal core turning inside, sparkles, and cracks that spread in four stages (20, 40, 60 and 80% of its HP gone) while the core burns brighter.
+- **Golden Glacier rush:** every 5–8 minutes a golden ice block crashes into the plaza with a countdown and a sound. Everyone who taps it before it breaks gets a Frost Rush (×3 crystals for 60 seconds). The player who dealt the most damage gets ×5. It looks like an ice block in gold: deep amber-gold glass with a shiny gold rim along every edge, a faceted gold crystal core turning inside round a hot light, sparkles, and cracks that spread in four stages (20, 40, 60 and 80% of its HP gone) while the core burns brighter. Within tap range, the taps and seconds left show on your HUD (a gold bar under the crystal counter), where players standing round it can't cover them; from further away a sign floats above it.
 - **Leaderboards:** carved ice-and-wood boards in the plaza (log posts with snow caps, an ice frame with icicles, a wooden header with a crown medallion; the plot parts' toy style) for all-time crystals, rebirths and creatures rescued.
-- **Daily reward and group reward:** a daily crystal chest (5 minutes of your income, without rushes, like the crystal bundles), and +10% crystals for members of the group.
+- **Daily reward and group reward:** a daily crystal chest (a carved wood-and-ice treasure chest of glowing crystals on a snowy plinth, next to the codes kiosk: a little log-and-roof stand in the same toy style) (5 minutes of your income, without rushes, like the crystal bundles), and +10% crystals for members of the group.
 - **Codes:** a launch code, a tutorial-completion code, and milestone codes for likes (1K, 5K, 10K, 25K, 50K and 100K likes, each paying 5 to 60 minutes of the player's own income; switched on when the game reaches the milestone).
 - **Later update:** tapping a friend's ice gives them crystals and you a small share.
 

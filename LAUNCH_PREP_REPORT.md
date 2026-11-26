@@ -2,6 +2,81 @@
 
 Branch `overnight-launch-prep` (from `main` at 348b0e5), merged into `main` in the launch fix pass (first section).
 
+## Pre-launch pass (2026-11-26)
+
+All 20 specs pass (5,019 checks). On `main`.
+
+**Answers, as built**
+- **VIP lounge:** it's built only when the VIP pass has a real id (`MonetizationConfig.IsLive`), in Studio and live. It has one now, so it shows.
+- **Kept as is:** "Delete all below" skips Golden pets, and auto-equip waits for the tutorial.
+
+**Part A: every Robux item created through Open Cloud**
+- `tools/create_products.py`:
+  - **Sources:** it reads the doc's Items tables, checks every price against `MonetizationConfig`'s `ExpectedPrice`, and takes the icon from `store-assets/icons/<Key>.png`.
+  - **Safe to re-run:** it lists what already exists in the universe and matches by name, so it never makes duplicates.
+  - **Rate:** it stays under 3 calls a second.
+  - **Outputs:** it keeps `store-assets/icons/products_manifest.json` and writes every `Id` and `GiftId` into `MonetizationConfig.luau` and `docs/ROBUX_PRODUCTS.md`. `--dry-run` creates and writes nothing.
+- **The runs:** the dry run listed 0 existing items and 24 to create. The real run created all 24, on sale. A second dry run found all 24 and would create nothing. **Roblox refused nothing.**
+- **Ids:**
+
+| Item | Id | Gift id |
+|---|---|---|
+| 2x Crystals (pass) | 2102063611 | 3736501716 |
+| Auto Pick (pass) | 2100372547 | 3736501737 |
+| VIP (pass) | 2098692454 | 3736501753 |
+| Extra Pet Slot (pass) | 2099292504 | 3736501769 |
+| Pet Squad (pass) | 2101811657 | 3736501785 |
+| Lucky Ice (pass) | 2100576395 | 3736501801 |
+| Crystal Pouch | 3736501812 | 3736501820 |
+| Crystal Sack | 3736501831 | 3736501841 |
+| Crystal Chest | 3736501853 | 3736501858 |
+| Shatter Now | 3736501870 | 3736501879 |
+| Server Frost Rush | 3736501890 | 3736501900 |
+| Mythic Block | 3736501911 | 3736501923 |
+
+- **PriceCheck:** Studio Play logged `[PriceCheck] 24 items checked, 0 problems, 0 hidden (no id yet)`. It appears on every Play since.
+- **Shop:** as a test player (who owns no pass), all 12 cards show their real prices: 249, 149, 299, 449, 899, 349, 29, 149, 499, 25, 99 and 199, with the Mythic Block's INFO odds. No card has a "no id" sticker. The developer account sees the passes as OWNED, as designed.
+- **Purchase path:** a real id now opens Roblox's own (Studio test) prompt, which the tools can't click. So I tested each reward kind with the debug menu's simulated receipt, which runs through the real receipt handler, and every one answered `PurchaseGranted`:
+  - CrystalBundle (all three sizes);
+  - ShatterNow;
+  - ServerFrostRush;
+  - MythicBlock;
+  - Pass, as a gifted Auto Pick: it arrived and `Owns_AutoPick` turned on;
+  - a gifted Crystal Pouch.
+- **Spec:** the Monetization spec now checks that every Id and GiftId matches the doc's table and that no two items share an id. PriceCheck sees 24 items, none hidden.
+
+**Part B: visuals**
+- **Golden Glacier:**
+  - deep amber-gold glass (ice read as sand; neon edges bloomed lemon yellow);
+  - a shiny gold (Foil) rim along all 12 edges;
+  - a faceted, reflective gold gem stood on its point, ringed by diamond-section crystals round a hot light;
+  - stronger sparkles;
+  - the same four crack stages.
+  - **Readout:** within tap range it's on your HUD as a gold bar under the crystal counter ("207 / 300 taps left · 36s"), so players can't cover it. From further away a sign floats above the glacier.
+- **Daily chest and codes kiosk** (`tools/blender/plaza_props.py`, uploaded as the group, both approved):
+  - `DailyChestStand` (125874282900680): a wood-and-gold chest with a half-open ice lid full of glowing crystals, on a snowy plinth, with a "DAILY CHEST" label floating above it.
+  - `CodesKiosk` (99536553992465): log posts, a snowy peaked roof with icicles and gifts, and the CODES sign on its panel.
+  - They're built into `ServerStorage.PlazaTemplates`. The old Parts stay invisible underneath with their prompts and collision.
+- **Ice pick icons:**
+  - each tier now has its own head colour and glow, plus a numbered badge: 1 wood brown, 2 stone grey, 3 steel blue, 4 gold, 5 diamond cyan, 6 cosmic violet;
+  - all six re-uploaded and approved: 131315085446588, 76309498309335, 98117823681410, 89124148260955, 103611508689600 and 110555225812857, swapped into `UITheme.Icons`.
+- **Frozen Core:** a Legendary in layer-6 ice now shows: the dark ice is see-through, with the silhouette, the orange veins and the amber glow.
+
+**Shots**
+- `store-assets/launch/thumb_golden_glacier_rush.png`: retaken (three players, no name tags, 5.1M crystals at +5.6K/s).
+- `store-assets/ingame/prelaunch/`:
+  - `plaza_daily_chest.png`, `plaza_codes_kiosk.png`, `plaza_leaderboards.png`, `plaza_vip_lounge.png`;
+  - `upgrades_pick_icons.png`, `upgrades_owned_pick_icons.png`, `pick_icons_96_and_48px.png`;
+  - `frozen_core_legendary.png`.
+  - In the daily chest shot, the floating label is still the old, larger size; it's smaller in code now. The leaderboard shot shows Studio test names.
+
+**Check by eye**
+- **Creator Hub:** all 24 items (names, descriptions, prices, icons, On Sale).
+- **Golden Glacier** in a real rush: gold enough? The gem is plain SmoothPlastic, so check that it reads faceted under your lighting. Also check the HUD bar.
+- **Plaza props:** the daily chest's glowing crystals use a Neon "Glow" mesh, so check they don't bloom too much. Also check the label size, and the codes kiosk from the plaza.
+- **VIP lounge:** it's visible now that the pass is real. It's still the plain fence and floor (not remodelled).
+- **Rojo:** the plugin logged one "Disconnected" warning at the start of a Play, but kept syncing afterwards. If an edit ever doesn't show up in Studio, reconnect the plugin.
+
 ## Launch fix pass (2026-11-25)
 
 `overnight-launch-prep` is merged into `main` (a normal merge). Everything below is on `main`. All 20 specs pass (5,006 checks).

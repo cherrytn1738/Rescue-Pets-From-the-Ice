@@ -1,0 +1,50 @@
+{
+ "AutoPick": {
+  "GiftId": 3736501737,
+  "Id": 2100372547
+ },
+ "CrystalChest": {
+  "GiftId": 3736501858,
+  "Id": 3736501853
+ },
+ "CrystalPouch": {
+  "GiftId": 3736501820,
+  "Id": 3736501812
+ },
+ "CrystalSack": {
+  "GiftId": 3736501841,
+  "Id": 3736501831
+ },
+ "DoubleCrystals": {
+  "GiftId": 3736501716,
+  "Id": 2102063611
+ },
+ "ExtraPetSlot": {
+  "GiftId": 3736501769,
+  "Id": 2099292504
+ },
+ "LuckyIce": {
+  "GiftId": 3736501801,
+  "Id": 2100576395
+ },
+ "MythicBlock": {
+  "GiftId": 3736501923,
+  "Id": 3736501911
+ },
+ "PetSquad": {
+  "GiftId": 3736501785,
+  "Id": 2101811657
+ },
+ "ServerFrostRush": {
+  "GiftId": 3736501900,
+  "Id": 3736501890
+ },
+ "ShatterNow": {
+  "GiftId": 3736501879,
+  "Id": 3736501870
+ },
+ "VIP": {
+  "GiftId": 3736501753,
+  "Id": 2098692454
+ }
+}

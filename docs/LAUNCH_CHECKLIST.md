@@ -10,20 +10,12 @@ Every step you do by hand to launch Rescue Pets From the Ice, in order. Tick eac
 - [ ] Workspace attributes: none of the Studio test switches may be set (`StudioFreshSave`, `StudioUseLiveSaves`, `StudioTimeAway`, `StudioPaidRandomRestricted`); on the client switches `StudioScreenSize`, `StudioGamepad` are never saved. Check Workspace > Attributes is empty of them.
 - [ ] `ProximityPromptService.Enabled` is ticked (it is saved with the place; the UI kit turns it off while a window is open in Edit mode).
 
-## 2. Robux items (24 to create)
+## 2. Robux items (all 24 created)
 
-For each item in `docs/ROBUX_PRODUCTS.md` (6 passes, 6 products, and a "Gift: <name>" developer product for each of the 12):
-
-- [ ] Upload its icon as the group: `python tools/upload_models.py store-assets/icons/<Key>.png` (drafts are in `store-assets/icons/`; replace any you don't like first).
-- [ ] Creator Hub > the game > Monetization > Passes / Developer Products > Create: the name, description and price from the table, the icon, **On Sale**.
-- [ ] Create its gift product (a developer product): "Gift: <name>", same price, "A gift: <name> for another player in your server."
-- [ ] Paste the item's id into `Id` and the gift product's id into `GiftId` in `src/replicated/MonetizationConfig.luau` (find it by Key). Check `ExpectedPrice` matches what you set.
-
-Then:
-
-- [ ] Run the specs again (the Monetization spec checks the config against the design doc).
-- [ ] Start a Play in Studio and read Output: **`[PriceCheck] 24 items checked, 0 problems, 0 hidden`**. Any warning names the item: a wrong id, an item not on sale, or a price that differs from `ExpectedPrice`. Fix and Play again until it is clean.
-- [ ] The VIP lounge appears in the plaza once the VIP pass is in the config (it already is); check it once in Play.
+- [x] All 24 items (6 passes, 6 products, 12 "Gift: <name>" products) were created on sale through Open Cloud by `python tools/create_products.py` on 2026-11-26, with the icons from `store-assets/icons/`. Their ids are in `src/replicated/MonetizationConfig.luau`, `docs/ROBUX_PRODUCTS.md` and `store-assets/icons/products_manifest.json`.
+- [x] Studio Play: `[PriceCheck] 24 items checked, 0 problems, 0 hidden`.
+- [ ] Look at each item on the Creator Hub (Monetization > Passes / Developer Products): name, description, price, icon and On Sale as you want them. The script is safe to re-run; it never makes duplicates.
+- [ ] The VIP lounge is built only once the VIP pass has a real id (it now has): check it once in Play.
 
 ## 3. Who can use the developer tools
 

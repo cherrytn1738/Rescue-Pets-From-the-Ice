@@ -1,7 +1,8 @@
 # UI icons
 
-The in-game button and window icons: 256x256 PNG, transparent background, no text, a thick dark outline (about
-7 px) so they read at 48 px on a coloured button. Not uploaded anywhere. Made by `tools/icons/render_icons.py`
+The in-game button and window icons: 256x256 PNG, transparent background, no text (except the pick tiers' numeral
+badge), a thick dark outline (about 7 px) so they read at 48 px on a coloured button. Uploaded as group 921449746
+(`upload_manifest.json`; ids in `UITheme.Icons`). Made by `tools/icons/render_icons.py`
 (headless Blender, `ui` mode: the game's own creature models, the tier-1 building stations from
 `store-assets/buildings/<Id>/<Id>.blend`, the ice pick tiers and simple props) and `tools/icons/compose_icons.py --ui`
 (Pillow: outline, soft glow, shadow, sparkles, small 2D extras). Regenerate with
@@ -27,7 +28,7 @@ on a checkerboard.
 | `Building_FlamethrowerTurret.png` | Build window | The tier-1 Flamethrower Turret station, same camera |
 | `Building_LavaPump.png` | Build window | The tier-1 Lava Pump station, same camera |
 | `Building_SunMirrorTower.png` | Build window | The tier-1 Sun Mirror Tower station, same camera |
-| `Pick1.png` ... `Pick6.png` | Upgrades window, ice pick tiers | The wooden, stone, iron, gold, diamond and cosmic picks, all at the same angle |
+| `Pick1.png` ... `Pick6.png` | Upgrades window, ice pick tiers | The six picks at the same angle, each head pushed to its own colour (icon only; the models are unchanged) with a glow of that colour behind it, and a round tier badge (bold white 1-6, dark outline) bottom right: 1 warm brown wood, 2 grey stone, 3 dark steel-blue iron, 4 gold, 5 cyan crystal (diamond), 6 violet cosmic |
 | `FrostTouch.png` | Upgrades window, Frost Touch | The iron pick with ice on its head inside a glowing cyan frost swirl, snowflakes |
 | `BiggerBurst.png` | Upgrades window, ice upgrade | A fountain of cyan crystals bursting up out of a shattered ice block |
 | `CrystalYield.png` | Upgrades window, ice upgrade | A crystal pile with a green 3D plus |

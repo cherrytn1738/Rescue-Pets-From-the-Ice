@@ -4,7 +4,7 @@ Server only. Greybox, built at start in Workspace.Plaza:
  - a round snow plaza around the spawn point, and a snow path from the plaza to each plot's open front;
  - three leaderboard boards (LeaderboardService fills them), the codes board (opens the Codes window),
    the daily chest and the group chest (RewardService), the Golden Glacier landing ring, and the VIP
-   lounge behind a gate (built only once MonetizationConfig has a pass with Key "VIP": hidden until then);
+   lounge behind a gate (built only once the VIP pass in MonetizationConfig has a real Id: hidden until then);
  - the Home button's request (GoHome): sends the player to their plot, at most every 2 seconds.
 Players spawn in the plaza (the place's SpawnLocation); a glowing guide line leads them home
 (PlotGuide.client).
@@ -70,6 +70,44 @@ local function spot(radius: number, degrees: number, height: number): CFrame
 	local a = math.rad(degrees)
 	local position = Vector3.new(math.sin(a) * radius, MapConfig.Ground + height, math.cos(a) * radius)
 	return CFrame.lookAt(position, Vector3.new(0, position.Y, 0))
+end
+
+-- The plaza's own model (ServerStorage.PlazaTemplates.<name>, built by tools/studio/build_templates.luau),
+-- standing on the ground at groundCFrame over a plain Part that turns invisible and keeps its prompt, collision
+-- and SurfaceGui sign. Returns the model, or nil when the template is missing (the plain Part stays).
+local function dressPart(target: BasePart, name: string, groundCFrame: CFrame): Model?
+	local templates = ServerStorage:FindFirstChild("PlazaTemplates")
+	local template = templates and templates:FindFirstChild(name)
+	if not template then
+		warn(`[Plaza] ServerStorage.PlazaTemplates.{name} is missing: a plain part stands in`)
+		return nil
+	end
+	local look = template:Clone()
+	look.Name = name
+	look:PivotTo(groundCFrame)
+	look.Parent = target.Parent
+	target.Transparency = 1
+	return look
+end
+
+-- A floating label over a prop (the daily chest's model has a blank sign of its own)
+local function floatingLabel(target: BasePart, text: string, height: number)
+	local gui = Instance.new("BillboardGui")
+	gui.Name = "Label"
+	gui.Size = UDim2.fromScale(6, 1.4)
+	gui.StudsOffsetWorldSpace = Vector3.new(0, height, 0)
+	gui.LightInfluence = 0
+	gui.MaxDistance = 120
+	gui.Parent = target
+	local label = Instance.new("TextLabel")
+	label.BackgroundTransparency = 1
+	label.Size = UDim2.fromScale(1, 1)
+	label.Font = Enum.Font.FredokaOne
+	label.TextScaled = true
+	label.TextColor3 = Color3.fromRGB(150, 230, 255)
+	label.TextStrokeTransparency = 0
+	label.Text = text
+	label.Parent = gui
 end
 
 -- A leaderboard: the carved ice-and-wood board (ServerStorage.PlazaTemplates.LeaderboardBoard, built by
@@ -159,12 +197,17 @@ function PlazaService.Start(boards)
 	end
 	-- the codes board
 	local codes = part(folder, "CodesBoard", Vector3.new(12, 9, 1), spot(58, 22.5 + 45 * 6, 6), Color3.fromRGB(110, 70, 200), Enum.Material.SmoothPlastic)
-	sign(codes, "CODES")
+	sign(codes, "CODES") -- (on the invisible Part, just in front of the kiosk's panel)
 	prompt(codes, "CodesPrompt", "Enter a code", "Codes board")
+	dressPart(codes, "CodesKiosk", spot(58, 22.5 + 45 * 6, 0))
 	-- the chests
 	local daily = part(folder, "DailyChest", Vector3.new(6, 4, 4), spot(50, 22.5 + 45 * 1, 2), Color3.fromRGB(120, 200, 255), Enum.Material.Ice)
-	sign(daily, "DAILY")
 	prompt(daily, "DailyPrompt", "Open", "Daily crystal chest")
+	if dressPart(daily, "DailyChestStand", spot(50, 22.5 + 45 * 1, 0)) then
+		floatingLabel(daily, "DAILY CHEST", 7)
+	else
+		sign(daily, "DAILY")
+	end
 	local group = part(folder, "GroupChest", Vector3.new(6, 4, 4), spot(50, 22.5 + 45 * 2, 2), Color3.fromRGB(255, 205, 80), Enum.Material.Foil)
 	sign(group, "GROUP +10%")
 	prompt(group, "GroupPrompt", "Check", "Group reward")
@@ -175,7 +218,8 @@ function PlazaService.Start(boards)
 	ring.CanCollide = false
 	-- the VIP lounge behind its gate: only once a VIP pass is in MonetizationConfig (Key "VIP"); until then
 	-- there is nothing to show, so the plaza has no lounge
-	if MonetizationConfig.GetPass(VIP_PASS) then
+	-- (only once the VIP pass exists on Roblox: a real Id, in Studio too)
+	if MonetizationConfig.IsLive(MonetizationConfig.GetPass(VIP_PASS)) then
 		local lounge = spot(62, 22.5 + 45 * 7, 0)
 		part(folder, "VipFloor", Vector3.new(18, 0.6, 14), lounge * CFrame.new(0, 0.3, 4), Color3.fromRGB(80, 50, 120), Enum.Material.Fabric)
 		-- a gold rail fence round the floor, closed at the front, with the sign over the gate (a ForceField wall

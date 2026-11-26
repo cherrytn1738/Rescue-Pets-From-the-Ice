@@ -1107,10 +1107,98 @@ for _bid in BUILDING_IDS:
     globals()['ui_Building_' + _bid] = (lambda b: (lambda: ui_building(b)))(_bid)
 
 
+# The pick icons push each tier's head colour much further than the game models' palette swatches, so the six
+# tiers tell apart at 48 px (the models themselves are unchanged). Per tier: (dark, main, light) sRGB that the
+# head's own palette shading is remapped to (its most common shade becomes `main`), metallic, self-light.
+PICK_HEADS = {
+    1: ((74, 32, 8), (172, 84, 32), (228, 150, 88), 0.0, 0.15),       # warm brown wood
+    2: ((52, 54, 60), (150, 153, 160), (226, 228, 232), 0.0, 0.05),   # grey stone
+    3: ((14, 26, 58), (58, 92, 160), (150, 190, 245), 0.45, 0.08),    # dark steel-blue iron
+    4: ((140, 70, 0), (255, 196, 20), (255, 245, 150), 0.55, 0.12),   # gold
+    5: ((0, 110, 160), (40, 220, 255), (210, 255, 255), 0.0, 0.35),   # cyan crystal
+    6: ((45, 0, 120), (120, 45, 255), (205, 150, 255), 0.0, 0.5),     # violet cosmic
+}
+
+
+PICK_HEAD_SCALE = 1.15
+
+
+def _median_luminance(ob):
+    """the area-weighted median linear luminance of the palette swatches on the head's two points (the faces
+    away from the handle, |x| > 0.35; the collar, rope and gems don't count)"""
+    me = ob.data
+    img = next(n for n in me.materials[0].node_tree.nodes if n.type == 'TEX_IMAGE').image
+    w, h = img.size
+    px = np.array(img.pixels[:], dtype=np.float32).reshape(h, w, 4)
+    uv = me.uv_layers.active.data
+    samples = []
+    for p in me.polygons:
+        if abs(p.center.x) < 0.35:
+            continue
+        u = sum(uv[i].uv.x for i in p.loop_indices) / p.loop_total
+        v = sum(uv[i].uv.y for i in p.loop_indices) / p.loop_total
+        r, g, b = px[min(h - 1, max(0, int(v * h))), min(w - 1, max(0, int(u * w))), :3]
+        if img.colorspace_settings.name == 'sRGB':
+            r, g, b = (((c + 0.055) / 1.055) ** 2.4 if c > 0.04045 else c / 12.92 for c in (r, g, b))
+        samples.append((0.2126 * r + 0.7152 * g + 0.0722 * b, p.area))
+    samples.sort()
+    half, acc = sum(a for _, a in samples) / 2, 0.0
+    for lum, a in samples:
+        acc += a
+        if acc >= half:
+            return max(lum, 1e-3)
+    return 0.2
+
+
+def pick_head_material(tier, ob):
+    """the palette texture's luminance, divided by the head's median, through a dark-main-light ramp"""
+    dark, main, light, metal, emit = PICK_HEADS[tier]
+    median = _median_luminance(ob)
+    src = ob.data.materials[0]
+    img = next(n for n in src.node_tree.nodes if n.type == 'TEX_IMAGE').image
+    m = bpy.data.materials.new('PickHeadT%d' % tier)
+    m.use_nodes = True
+    nt = m.node_tree
+    P = next(n for n in nt.nodes if n.type == 'BSDF_PRINCIPLED')
+    tex = nt.nodes.new('ShaderNodeTexImage')
+    tex.image, tex.interpolation = img, 'Closest'
+    bw = nt.nodes.new('ShaderNodeRGBToBW')
+    scale = nt.nodes.new('ShaderNodeMath')
+    scale.operation, scale.inputs[1].default_value = 'MULTIPLY', 0.5 / median    # the median shade lands at 0.5
+    ramp = nt.nodes.new('ShaderNodeValToRGB')
+    els = ramp.color_ramp.elements
+    els[0].position, els[0].color = 0.15, lin(dark)
+    els[1].position, els[1].color = 0.9, lin(light)
+    mid = els.new(0.5)
+    mid.color = lin(main)
+    nt.links.new(tex.outputs['Color'], bw.inputs[0])
+    nt.links.new(bw.outputs[0], scale.inputs[0])
+    nt.links.new(scale.outputs[0], ramp.inputs['Fac'])
+    nt.links.new(ramp.outputs['Color'], P.inputs['Base Color'])
+    nt.links.new(ramp.outputs['Color'], P.inputs['Emission Color'])
+    P.inputs['Emission Strength'].default_value = emit
+    P.inputs['Metallic'].default_value = metal
+    P.inputs['Roughness'].default_value = 0.32 if metal else 0.45
+    if 'Coat Weight' in P.inputs:
+        P.inputs['Coat Weight'].default_value = 0.3
+    return m
+
+
 def _pick_icon(tier):
     picks, root = add_pick(tier, (0, 0, 0), PICK_ROT)
+    for o in picks:
+        # the cosmic head's points are glow meshes: tint them too (they keep some self-light)
+        if 'Head' in o.name and o.data.materials and o.data.materials[0].name.startswith('BuildingPalette') \
+                and ('Glow' not in o.data.materials[0].name or tier == 6):
+            o.data.materials[0] = pick_head_material(tier, o)
+    head = root.matrix_world @ Vector((0, 0, 3.15))
+    grow = Matrix.Translation(head) @ Matrix.Scale(PICK_HEAD_SCALE, 4) @ Matrix.Translation(-head)
+    for o in picks:
+        if 'Head' in o.name:            # a slightly bigger head: more of the tier colour at 48 px
+            o.matrix_world = grow @ o.matrix_world
+    bpy.context.view_layer.update()
     camera(picks, yaw=0, pitch=8, lens=60, fill=0.9)
-    render_layers(ui_out('Pick%d' % tier), [('main', picks)])
+    render_layers(ui_out('Pick%d' % tier), [('main', picks)], {'head': head})
 
 
 for _t in range(1, 7):

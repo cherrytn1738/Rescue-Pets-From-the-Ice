@@ -336,43 +336,55 @@ def render_views(objects, out_dir):
 
 # ---------- build, check, export ----------
 
-coll = begin("PlazaBoards")
-image = bpy.data.images.get("BuildingPalette") or bpy.data.images.load(os.path.join(REPO, "assets", "textures", "BuildingPalette.png"))
-image.name = "BuildingPalette"
-materials = palette_materials(image)
-models = {"LeaderboardBoard": leaderboard(21)}
-manifest = {"exportScale": EXPORT_SCALE, "models": {}}
-problems = []
-os.makedirs(OUT, exist_ok=True)
-for name, parts in models.items():
-    objs = [p.finish(coll, materials) for p in parts]
-    lo, hi = bounds(objs)
-    info = {"meshes": {o.name: tris_of(o) for o in objs}, "size": [round(hi.x - lo.x, 2), round(hi.z - lo.z, 2), round(hi.y - lo.y, 2)],
-            "top": round(hi.z, 2), "bounds": {"x": [round(lo.x, 2), round(hi.x, 2)], "y": [round(lo.y, 2), round(hi.y, 2)], "z": [round(lo.z, 2), round(hi.z, 2)]}}
-    info["triangles"] = sum(info["meshes"].values())
-    panel = next(o for o in objs if o.name.endswith("Panel"))
-    plo, phi = bounds([panel])
-    info["panel"] = {"front": round(plo.y, 3), "width": round(phi.x - plo.x, 3), "bottom": round(plo.z, 3), "top": round(phi.z, 3)}
-    # nothing may stand in front of the panel's face inside its rectangle
-    for o in objs:
-        if o is panel:
-            continue
-        for v in o.data.vertices:
-            p = o.matrix_world @ v.co
-            if abs(p.x) < PANEL["Width"] / 2 - 0.05 and PANEL["Bottom"] + 0.05 < p.z < TOP - 0.05 and p.y < PANEL["Front"]:
-                problems.append("%s has a vertex in front of the panel at %s" % (o.name, tuple(round(c, 2) for c in p)))
-                break
-    for o in objs:
-        if info["meshes"][o.name] > MAX_TRIS:
-            problems.append("%s has %d triangles" % (o.name, info["meshes"][o.name]))
-    problems += check(objs)
-    manifest["models"][name] = info
-    print(name, json.dumps(info))
-    export_fbx(objs, os.path.join(OUT, name + ".fbx"))
-    if RENDER:
-        render_views(objs, os.path.join(OUT, "render"))
-with open(os.path.join(OUT, "plaza_manifest.json"), "w", encoding="utf-8") as handle:
-    json.dump(manifest, handle, indent=1, sort_keys=True)
-for p in problems:
-    print("PROBLEM:", p)
-print("PLAZA_BOARDS_DONE", "problems:", len(problems))
+def read_manifest():
+    """plaza_manifest.json as it stands (plaza_props.py writes its models into the same file)."""
+    path = os.path.join(OUT, "plaza_manifest.json")
+    manifest = {"exportScale": EXPORT_SCALE, "models": {}}
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as handle:
+            manifest["models"].update(json.load(handle).get("models", {}))
+    return manifest
+
+
+# plaza_props.py sets PLAZA_HELPERS_ONLY and execs this file for the helpers above, without building the board
+if not globals().get("PLAZA_HELPERS_ONLY", False):
+    coll = begin("PlazaBoards")
+    image = bpy.data.images.get("BuildingPalette") or bpy.data.images.load(os.path.join(REPO, "assets", "textures", "BuildingPalette.png"))
+    image.name = "BuildingPalette"
+    materials = palette_materials(image)
+    models = {"LeaderboardBoard": leaderboard(21)}
+    manifest = read_manifest()
+    problems = []
+    os.makedirs(OUT, exist_ok=True)
+    for name, parts in models.items():
+        objs = [p.finish(coll, materials) for p in parts]
+        lo, hi = bounds(objs)
+        info = {"meshes": {o.name: tris_of(o) for o in objs}, "size": [round(hi.x - lo.x, 2), round(hi.z - lo.z, 2), round(hi.y - lo.y, 2)],
+                "top": round(hi.z, 2), "bounds": {"x": [round(lo.x, 2), round(hi.x, 2)], "y": [round(lo.y, 2), round(hi.y, 2)], "z": [round(lo.z, 2), round(hi.z, 2)]}}
+        info["triangles"] = sum(info["meshes"].values())
+        panel = next(o for o in objs if o.name.endswith("Panel"))
+        plo, phi = bounds([panel])
+        info["panel"] = {"front": round(plo.y, 3), "width": round(phi.x - plo.x, 3), "bottom": round(plo.z, 3), "top": round(phi.z, 3)}
+        # nothing may stand in front of the panel's face inside its rectangle
+        for o in objs:
+            if o is panel:
+                continue
+            for v in o.data.vertices:
+                p = o.matrix_world @ v.co
+                if abs(p.x) < PANEL["Width"] / 2 - 0.05 and PANEL["Bottom"] + 0.05 < p.z < TOP - 0.05 and p.y < PANEL["Front"]:
+                    problems.append("%s has a vertex in front of the panel at %s" % (o.name, tuple(round(c, 2) for c in p)))
+                    break
+        for o in objs:
+            if info["meshes"][o.name] > MAX_TRIS:
+                problems.append("%s has %d triangles" % (o.name, info["meshes"][o.name]))
+        problems += check(objs)
+        manifest["models"][name] = info
+        print(name, json.dumps(info))
+        export_fbx(objs, os.path.join(OUT, name + ".fbx"))
+        if RENDER:
+            render_views(objs, os.path.join(OUT, "render"))
+    with open(os.path.join(OUT, "plaza_manifest.json"), "w", encoding="utf-8") as handle:
+        json.dump(manifest, handle, indent=1, sort_keys=True)
+    for p in problems:
+        print("PROBLEM:", p)
+    print("PLAZA_BOARDS_DONE", "problems:", len(problems))

@@ -16,7 +16,7 @@ snowflakes) and a chunky outlined text badge. Composited at 1024 and downscaled 
 
 Writes store-assets/icons/<Name>.png (the 12 Robux items), store-assets/launch/icon_concept_<n>.png (the
 three game icon concepts, no text) and store-assets/icons/contact_sheet.png; with --ui, the in-game button and
-window icons (256x256, transparent, no text) to store-assets/ui-icons/<Key>.png and their contact_sheet.png
+window icons (256x256, transparent, no text but the pick tiers' numeral badge) to store-assets/ui-icons/<Key>.png and their contact_sheet.png
 (each icon on its card colour at 96 and 48 px). Nothing is uploaded.
 Blender: the newest C:\\Program Files\\Blender Foundation\\*\\blender.exe, or set BLENDER_EXE.
 Fonts: Arial Black (C:\\Windows\\Fonts\\ariblk.ttf) for badges, Segoe UI Bold for the sheet labels.
@@ -530,9 +530,20 @@ UI_SPECS = {
 }
 for _b in UI_BUILDINGS:
     UI_SPECS['Building_' + _b] = dict(card='Window', what='The tier-1 %s station, three-quarter view' % _b, glow=(220, 240, 255), sparkles=0)
+# the pick tiers: each head pushed to its own colour (render_icons.PICK_HEADS), a glow of that colour behind the
+# head, and a round tier-number badge in the bottom-right corner. tier: (what, head glow, badge top, badge bottom)
+PICK_TIERS = {
+    1: ('warm brown wooden head', (255, 170, 90), (225, 130, 60), (130, 62, 20)),
+    2: ('grey stone head', (225, 228, 235), (165, 168, 176), (84, 86, 94)),
+    3: ('dark steel-blue iron head', (185, 215, 255), (120, 160, 220), (40, 66, 130)),
+    4: ('gold head', (255, 220, 70), (255, 200, 40), (190, 110, 0)),
+    5: ('cyan crystal head', (90, 235, 255), (60, 215, 255), (0, 120, 180)),
+    6: ('violet cosmic head', (175, 120, 255), (160, 90, 255), (75, 20, 170)),
+}
 _PICK_NAMES = ['Wooden', 'Stone', 'Iron', 'Gold', 'Diamond', 'Cosmic']
 for _t in range(1, 7):
-    UI_SPECS['Pick%d' % _t] = dict(card='Window', what='Ice pick tier %d (%s)' % (_t, _PICK_NAMES[_t - 1]), glow=(220, 240, 255), sparkles=1)
+    UI_SPECS['Pick%d' % _t] = dict(card='Window', what='Ice pick tier %d (%s): %s, tier badge %d' % (_t, _PICK_NAMES[_t - 1], PICK_TIERS[_t][0], _t),
+                                   glow=(220, 240, 255), sparkles=0, tier=_t, box=(70, 50, 890, 870))
 UI_SPECS.update({
     'FrostTouch': dict(card='Window', what='The iron pick crusted with ice inside a glowing frost swirl, snowflakes',
                        glow=(170, 230, 255), extras=['snowflakes'], sparkles=0),
@@ -571,6 +582,28 @@ def draw_streaks(canvas, union):
     canvas.alpha_composite(colour_layer(m, (255, 255, 255)))
 
 
+def tier_badge(canvas, tier, r=182):
+    """a round badge in the tier's colour in the bottom-right corner, a bold white numeral with a dark outline"""
+    cx = cy = S - r - 34
+    disc = Image.new('L', (S, S), 0)
+    ImageDraw.Draw(disc).ellipse((cx - r, cy - r, cx + r, cy + r), fill=255)
+    _, _, top, bottom = PICK_TIERS[tier]
+    canvas.alpha_composite(colour_layer(dilate(disc, 30), INK))
+    fill = gradient((S, S), top, bottom, cy - r, cy + r)
+    fill.putalpha(disc)
+    canvas.alpha_composite(fill)
+    shine = Image.new('L', (S, S), 0)                           # a soft highlight on the upper half
+    ImageDraw.Draw(shine).ellipse((cx - r * 0.72, cy - r * 0.86, cx + r * 0.72, cy - r * 0.05), fill=60)
+    canvas.alpha_composite(colour_layer(shine.filter(ImageFilter.GaussianBlur(8)), (255, 255, 255)))
+    font = ImageFont.truetype(FONT, int(r * 1.62))
+    text = str(tier)
+    l, t, rr, b = font.getbbox(text)
+    x, y = cx - (l + rr) / 2, cy - (t + b) / 2 + 4
+    d = ImageDraw.Draw(canvas)
+    d.text((x, y + 10), text, font=font, fill=INK, stroke_width=26, stroke_fill=INK)     # a dark drop under it
+    d.text((x, y), text, font=font, fill=(255, 255, 255), stroke_width=26, stroke_fill=INK)
+
+
 def edge_fade(margin=70):
     """1 inside, fading to 0 at the frame's edge: the soft glow never ends in a hard line at the border"""
     ramp = np.clip(np.minimum(np.arange(S), S - 1 - np.arange(S)) / margin, 0, 1).astype(np.float32)
@@ -592,6 +625,12 @@ def compose_ui(work, key):
         gr = spec.get('glow_radius', 40)
         halo = dilate(solid(gmask), UI_RING + gr * 0.5).filter(ImageFilter.GaussianBlur(gr * 0.6))
         canvas.alpha_composite(colour_layer(ImageChops.multiply(halo, edge_fade()), spec['glow'], 0.45))
+    if spec.get('tier'):
+        hx, hy = xf(meta['points']['head'])
+        blob = Image.new('L', (S, S), 0)
+        ImageDraw.Draw(blob).ellipse((hx - 260, hy - 200, hx + 260, hy + 200), fill=255)
+        blob = blob.filter(ImageFilter.GaussianBlur(90))
+        canvas.alpha_composite(colour_layer(ImageChops.multiply(blob, edge_fade()), PICK_TIERS[spec['tier']][1], 0.95))
     shadow = dilate(solid(union), UI_RING).filter(ImageFilter.GaussianBlur(10))
     moved = Image.new('L', (S, S), 0)
     moved.paste(shadow, (0, 14))
@@ -608,6 +647,8 @@ def compose_ui(work, key):
             draw_snowflake(canvas, l + (r - l) * fx, t + (b - t) * fy, rr, rot, FROST)
     for x, y, rr in free_spots(union, spec.get('sparkles', 0), sum(map(ord, key)), radius=0.44):
         ui_sparkle(canvas, x, y, rr * 1.3)
+    if spec.get('tier'):
+        tier_badge(canvas, spec['tier'])
     os.makedirs(OUT_UI, exist_ok=True)
     path = os.path.join(OUT_UI, key + '.png')
     canvas.resize((UI_SIZE, UI_SIZE), Image.LANCZOS).save(path, optimize=True)
