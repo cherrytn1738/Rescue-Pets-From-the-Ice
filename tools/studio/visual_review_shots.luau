@@ -375,12 +375,14 @@ local PREPARE = {
 	buildings = function()
 		dbg("ResetSave")
 		task.wait(3)
+		dbg("SetTutorialStep", { Step = 5 }) -- (the tutorial's spotlight would lock the HUD)
 		dbg("SetBlockLevel", { Level = 400 })
 		home()
 	end,
 	picks = function()
 		dbg("ResetSave") -- (no Golden page yet, so the tiers show their own look; the golden skin is last)
 		task.wait(3)
+		dbg("SetTutorialStep", { Step = 5 })
 		dbg("SetBlockLevel", { Level = 400 }) -- (no rescue banners: the developer's Auto Pick taps in the plot)
 		home()
 	end,
@@ -485,14 +487,83 @@ shot("buildings/moment_evolved", function()
 	return { Wait = 0.35 }
 end)
 
--- Picks: each tier in the hand, and the golden skin.
-for tier = 1, 6 do
+-- Picks: each tier in the hand (close up, standing), then from the normal play camera mid-swing (frozen as
+-- the point comes down at the ice) and walking; the golden skin last.
+local function animator(): Animator?
+	local humanoid = me.Character and me.Character:FindFirstChildOfClass("Humanoid")
+	return humanoid and humanoid:FindFirstChildOfClass("Animator")
+end
+-- (the mid-swing shots pause the character's Animate script and hold its own slash animation still: Animate
+-- would swap a frozen slash back to the plain hold after 0.3 s)
+local function unfreeze()
+	local anim = animator()
+	for _, track in (if anim then anim:GetPlayingAnimationTracks() else {}) do
+		if track.Speed == 0 then
+			track:Stop(0) -- (an earlier shot's held swing: each shot runs this file afresh)
+		end
+	end
+	local animate = me.Character and me.Character:FindFirstChild("Animate")
+	if animate and animate:IsA("LocalScript") then
+		animate.Enabled = true
+	end
+end
+local function holdSwing(seconds: number)
+	local animate = me.Character and me.Character:FindFirstChild("Animate")
+	local slash = animate and animate:FindFirstChild("toolslash")
+	local source = slash and slash:FindFirstChildWhichIsA("Animation")
+	local anim = animator()
+	if not (animate and source and anim) then
+		return
+	end
+	animate.Enabled = false
+	local track = anim:LoadAnimation(source)
+	track.Priority = Enum.AnimationPriority.Action
+	track:Play(0)
+	task.wait(seconds)
+	track:AdjustSpeed(0)
+end
+local function playCamera()
+	follow(Vector3.new(4, 4.5, 10.5), Vector3.new(0.5, 2.2, -2), 70)
+end
+local function swingShot()
+	unfreeze()
+	standAt(plotPoint(0, 26, 4), plotPoint(0, 0, 4))
+	-- the play camera turned to the character's right side (as a player turns it), so the swing's arc shows
+	follow(Vector3.new(9, 4, 4), Vector3.new(0, 2, -2.5), 70)
+	task.wait(0.8)
+	holdSwing(0.18) -- (the point at the bottom of the strike, in front of the character)
+	return { Wait = 0.6 }
+end
+local function walkShot()
+	unfreeze()
+	standAt(plotPoint(-28, 30, 4), plotPoint(28, 30, 4))
+	release()
+	playCamera()
+	local humanoid = me.Character and me.Character:FindFirstChildOfClass("Humanoid")
+	if humanoid then
+		humanoid:MoveTo(plotPoint(30, 30, 4))
+	end
+	return { Wait = 1.1 }
+end
+local PICK_LOOKS = { 1, 2, 3, 4, 5, 6 }
+for _, tier in PICK_LOOKS do
 	shot(`picks/pick_tier{tier}`, function()
+		unfreeze()
 		dbg("SetPickTier", { Tier = tier })
 		task.wait(1)
 		standAt(plotPoint(0, 26, 4), plotPoint(0, 0, 4))
 		follow(Vector3.new(4.6, 3.0, -6.8), Vector3.new(0.9, 2.4, -0.2), 42)
 		return { Wait = 1.5 }
+	end)
+	shot(`picks/pick_tier{tier}_swing`, function()
+		dbg("SetPickTier", { Tier = tier })
+		task.wait(1)
+		return swingShot()
+	end)
+	shot(`picks/pick_tier{tier}_walk`, function()
+		dbg("SetPickTier", { Tier = tier })
+		task.wait(1)
+		return walkShot()
 	end)
 end
 shot("picks/pick_golden_skin", function()
@@ -507,6 +578,8 @@ shot("picks/pick_golden_skin", function()
 	follow(Vector3.new(4.6, 3.0, -6.8), Vector3.new(0.9, 2.4, -0.2), 42)
 	return { Wait = 1.5 }
 end)
+shot("picks/pick_golden_skin_swing", swingShot) -- (after the golden skin shot: the skin is already on)
+shot("picks/pick_golden_skin_walk", walkShot)
 
 -- Ice: every layer with every rarity, the crack stages, the shatter, the sled, the Mythic Block.
 for layer, level in LAYER_LEVELS do
@@ -635,6 +708,7 @@ end)
 shot("rescue/new_badge", function()
 	dbg("ResetSave")
 	task.wait(3)
+	dbg("SetTutorialStep", { Step = 5 })
 	home()
 	freshBlock(3, "SnowBunny")
 	blockShot(false)
@@ -829,13 +903,50 @@ shot("ui/rebirth_frost_over", function()
 	return { Wait = 0.6 }
 end, PHONES)
 
-shot("ui/tutorial_pointer_step1", function()
+-- The tutorial's spotlight (a fresh save): the screen dark but for the cut-out, the step's words beside it.
+-- Step 1 keeps the old shot's name (the gallery compares it with the old pointing finger).
+local function tutorialAt(step: number)
 	staging.tutorial = true
 	dbg("ResetSave")
 	task.wait(3)
 	home()
 	uiCamera()
-	return { Wait = 5 } -- (banners from earlier shots finish first)
+	if step == 2 then
+		dbg("AddCrystals", { Amount = 20 }) -- (15 crystals move step 1 on)
+	elseif step == 4 then
+		dbg("SetTutorialStep", { Step = 4 })
+		petOf("SnowBunny", false) -- (a first pet to equip; nothing auto-equips during the tutorial)
+	end
+	task.wait(1.5)
+end
+-- A shot that leaves a window open under the spotlight (its close button is locked): the tutorial ends just
+-- after the capture, so the window's close button works again and the next shot starts clean.
+local function endTutorialAfter(seconds: number)
+	task.delay(seconds, function()
+		dbg("SetTutorialStep", { Step = 5 })
+	end)
+end
+shot("ui/tutorial_pointer_step1", function()
+	tutorialAt(1)
+	return { Wait = 2 }
+end, PHONES)
+shot("ui/tutorial_step2_build", function()
+	tutorialAt(2)
+	return { Wait = 1 }
+end, PHONES)
+shot("ui/tutorial_step2_buy", function()
+	tutorialAt(2)
+	endTutorialAfter(4.5)
+	return { Clicks = { menu("Build") }, Wait = 1.2, After = 3.5, Close = { closeOf("Build") } }
+end, PHONES)
+shot("ui/tutorial_step4_pets", function()
+	tutorialAt(4)
+	return { Wait = 1 }
+end, PHONES)
+shot("ui/tutorial_step4_equip", function()
+	tutorialAt(4)
+	endTutorialAfter(4.5)
+	return { Clicks = { menu("Pets") }, Wait = 1.2, After = 3.5, Close = { closeOf("Pets") } }
 end, PHONES)
 
 shot("ui/server_message", function()
@@ -854,6 +965,21 @@ shot("effects/tap_feedback", function()
 		task.wait(0.12)
 	end
 	return { Wait = 0.1, TapWhileShooting = true }
+end)
+-- Your click on the ice: the white burst and the "+N" popping up near it (real mouse clicks on the block).
+shot("effects/click_burst", function()
+	dbg("SetPickTier", { Tier = 6 }) -- (a bigger "+N")
+	freshBlock(400, "SnowBunny")
+	home()
+	blockShot(true)
+	task.wait(1.5)
+	local centre = MapConfig.BlockBase(plotIndex()).Position + Vector3.new(0, 6, 0)
+	local point = camera:WorldToScreenPoint(centre)
+	local taps = {}
+	for _ = 1, 16 do -- (about 2.5 s of clicks; the capture happens part way through)
+		table.insert(taps, { math.floor(point.X + math.random(-40, 40)), math.floor(point.Y + math.random(-30, 30)) })
+	end
+	return { TapAt = taps, Wait = 1.2 }
 end)
 shot("effects/crystals_flying", function()
 	freshBlock(15, "GlacierOtter")
@@ -895,8 +1021,10 @@ elseif string.sub(SHOT, 1, 9) == "?prepare:" then
 	if PREPARE[category] then
 		PREPARE[category]()
 	end
+	dbg("SetTutorialStep", { Step = 5 }) -- (the tutorial's spotlight locks the HUD; its own shots set their step)
 	return "prepared " .. category
 elseif SHOT == "?cleanup" then
+	unfreeze() -- (a held pick swing)
 	ReplicatedStorage.SaveSettings:FireServer({ ReducedEffects = false }) -- (the effects shots turn it on)
 	for _, name in { "VisualReviewCamera", "VisualReviewStage" } do
 		pcall(function()

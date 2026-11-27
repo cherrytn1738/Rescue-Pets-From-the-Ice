@@ -323,6 +323,8 @@ return function(sources)
 	ok, message = run("SetPickTier", { Tier = 4 })
 	check(ok and calls[#calls].name == "SetTier" and calls[#calls].args[2] == 4 and message == "Tester holds pick tier 4", "the pick tier goes through PickService.SetTier")
 	check(ids.SetPickTier.Params[1].Min == 1 and ids.SetPickTier.Params[1].Max == 6, "pick tiers 1 to 6")
+	check(ids.SetTutorialStep ~= nil and ids.SetTutorialStep.Params[1].Min == 1 and ids.SetTutorialStep.Params[1].Max == 5,
+		"the debug menu sets the tutorial step, 1 to 5 (the spotlight's steps)")
 
 	ok = run("ResetSave")
 	local resetCalls = {}

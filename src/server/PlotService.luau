@@ -179,6 +179,9 @@ local function dress(model: Model, cf: CFrame)
 		hide(model.Mound)
 		hide(model.MoundTop)
 	end
+	-- Walls overlap where they meet (the back corners, the front corners, and a neighbour plot's wall), and the
+	-- same mesh at the same height there flickered: each wall sinks a different little way (at most 0.2 studs) into the ground.
+	local SINK = { Back = 0, Left = 0.06, Right = 0.12, FrontLeft = 0.2, FrontRight = 0.2 }
 	for _, name in { "Back", "Left", "Right", "FrontLeft", "FrontRight" } do
 		local wall = border[name]
 		local source = look(if string.sub(name, 1, 5) == "Front" then "PlotWallShort" else "PlotWallLong")
@@ -187,7 +190,7 @@ local function dress(model: Model, cf: CFrame)
 			local turn = if name == "Left" or name == "Right" then CFrame.Angles(0, math.pi / 2, 0) else CFrame.identity
 			local copy = source:Clone()
 			copy.Name = name .. "Look"
-			copy:PivotTo(cf * CFrame.new(at.X, 0, at.Z) * turn)
+			copy:PivotTo(cf * CFrame.new(at.X, -SINK[name], at.Z) * turn)
 			streamLook(copy)
 			copy.Parent = border
 			hide(wall)

@@ -57,6 +57,8 @@ block.Reflectance = 0.25
 block.CastShadow = true
 model.PrimaryPart = block
 -- The rim: twelve shiny gold (Foil) edge bars, so it reads as gold from any distance (Neon bloomed lemon yellow).
+-- Only the X bars run the full length and fill the corners; the Y and Z bars stop at them, so no two bars
+-- share a face (shared faces flickered).
 do
 	local h = SIZE / 2
 	for _, axis in { "X", "Y", "Z" } do
@@ -66,9 +68,9 @@ do
 				if axis == "X" then
 					size, at = Vector3.new(SIZE.X + RIM, RIM, RIM), Vector3.new(0, a * h.Y, b * h.Z)
 				elseif axis == "Y" then
-					size, at = Vector3.new(RIM, SIZE.Y + RIM, RIM), Vector3.new(a * h.X, 0, b * h.Z)
+					size, at = Vector3.new(RIM, SIZE.Y - RIM, RIM), Vector3.new(a * h.X, 0, b * h.Z)
 				else
-					size, at = Vector3.new(RIM, RIM, SIZE.Z + RIM), Vector3.new(a * h.X, b * h.Y, 0)
+					size, at = Vector3.new(RIM, RIM, SIZE.Z - RIM), Vector3.new(a * h.X, b * h.Y, 0)
 				end
 				piece("Rim", size, GOLD_RIM, Enum.Material.Foil, 0, CFrame.new(at))
 			end

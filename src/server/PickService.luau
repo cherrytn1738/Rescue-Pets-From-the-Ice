@@ -101,6 +101,7 @@ function PickService.Refresh(player: Player)
 	end
 	local tool = source:Clone()
 	tool.Name = "IcePick"
+	tool.Grip = UpgradeConfig.PickGrip -- (the config's grip, whatever the template was built with)
 	tool:SetAttribute("Tier", tier)
 	tool:SetAttribute("Skin", skin)
 	applySkin(tool, skin)

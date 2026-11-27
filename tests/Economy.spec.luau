@@ -229,5 +229,10 @@ return function(sources)
 	check(near(Economy.SteadyIncome(earner, save), tapping), "tapping 20 a second: the HUD's tap rate counts")
 	check(Economy.SteadyIncome(earner, save) < Economy.CrystalsPerSecond(earner, save), "...still below the HUD's rate while a rush runs")
 
+	-- The click's "+N" (TapValue, published for TapFeedback): what one tap pays, rushes and passes included
+	check(near(Economy.TapValue(earner, save), modules.EconomyRules.TapDamage(save) * Economy.Multiplier(earner, save)),
+		"TapValue is one tap's damage times the full multiplier (what IceBlockService.Damage pays per tap)")
+	check(Economy.TapValue(earner, save) > modules.EconomyRules.TapDamage(save) * permanent, "...and counts the rush running")
+
 	return passed
 end

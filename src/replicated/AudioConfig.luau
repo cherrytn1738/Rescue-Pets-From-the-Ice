@@ -14,7 +14,7 @@ may play again; default 0.05), RollOffMin / RollOffMax (studs, for sounds in the
 a 3D sound is kept). A 2D cue may instead have Layers: a list of entries played together (each may start
 Delay seconds later), with the cue's one Cooldown.
 
-Names the UI kit plays: Ui.Click (a button press), Ui.Locked (a press on a button that can't act), Ui.Open
+Names the UI kit plays: Ui.Click (a button press), Ui.Hover (the mouse onto anything clickable), Ui.Locked (a press on a button that can't act), Ui.Open
 and Ui.Close (a window), Ui.Invalid (an error), Ui.Reward.
 ]]
 local AudioConfig = {}
@@ -38,6 +38,7 @@ local Files = {
 	GoldenAlarm = id(78520467096529),
 	GoldenSparkle = id(83955552934976),
 	Heartbeat = id(85965699278351),
+	Hover = id(78999419117044),
 	Nope = id(84881498913979),
 	Rebirth = id(104386884141424),
 	RescueCommon = id(106813164133930),
@@ -66,6 +67,8 @@ AudioConfig.DefaultVolumes = { MusicVolume = 1, SfxVolume = 1 }
 -- UI sounds (UIKit buttons and windows).
 AudioConfig.Ui = {
 	Click = { Id = Files.Click, Volume = 0.35, PitchJitter = 0.04, Voices = 2 },
+	-- the mouse moving onto anything clickable (HoverClick.client; desktop only): very short and very quiet
+	Hover = { Id = Files.Hover, Volume = 0.07, PitchJitter = 0.03, Voices = 2, Cooldown = 0.08 },
 	Locked = { Id = Files.Nope, Volume = 0.25, Cooldown = 0.3 },
 	Open = { Id = Files.WindowOpen, Volume = 0.35 },
 	Close = { Id = Files.WindowClose, Volume = 0.3 },
@@ -121,6 +124,8 @@ AudioConfig.Rules = {
 	-- The income tick: while crystals rise, a chance (Chance) every MinGap seconds, so it comes now and then
 	-- rather than like a clock; not while you're tapping.
 	CrystalTick = { MinGap = 2, Chance = 0.35, QuietAfterTap = 0.8 },
+	-- The hover tick (HoverClick.client): at most one every MinGap seconds.
+	Hover = { MinGap = 0.08 },
 	-- A rescue's jingle starts this long after the shatter; a new creature's book ding BookDelay after the
 	-- rescue, and a completed book page PageDelay after the change.
 	JingleDelay = 0.15,

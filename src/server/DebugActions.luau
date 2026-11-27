@@ -231,6 +231,18 @@ local ACTIONS = {
 		end,
 	},
 	{
+		-- (the tutorial moves on by itself when the save already allows it: step 1 with 15 crystals is step 2)
+		Id = "SetTutorialStep", Group = "Save", Label = "Set the tutorial step (1 tap, 2 build, 3 free, 4 equip, 5 done)",
+		Params = { amountParam("Step", "Tutorial step", 1, 5, 1) },
+		Run = function(target, args)
+			local data = dataOf(target)
+			data.TutorialStep = args.Step
+			PlayerData.Publish(target)
+			PlayerData.MarkImportant(target)
+			return `{target.Name} is on tutorial step {args.Step}`
+		end,
+	},
+	{
 		Id = "SetPickTier", Group = "Save", Label = "Set ice pick tier (owns exactly the picks up to it)",
 		Params = { amountParam("Tier", "Pick tier", 1, 6, 6) },
 		Run = function(target, args)

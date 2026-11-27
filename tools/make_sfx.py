@@ -383,6 +383,14 @@ def click():
     return trim(pop)
 
 
+def hover():
+    """The softest tick (the mouse moving onto something clickable): a tiny rounded wooden-glass tap, ~30 ms."""
+    t = t_axis(0.035)
+    freq = 1900 + 500 * decay(t, 0.006)
+    tick = np.sin(TAU * np.cumsum(freq) / RATE) * decay(t, 0.03) * attack(t, 0.0015)
+    return trim(lowpass(tick, 4000))
+
+
 def window_open():
     rng = np.random.default_rng(900)
     t = t_axis(0.18)
@@ -464,6 +472,7 @@ SOUNDS = {
     "BuyUpgrade": buy_upgrade,
     "Nope": nope,
     "Click": click,
+    "Hover": hover,
     "WindowOpen": window_open,
     "WindowClose": window_close,
     "Rebirth": rebirth,

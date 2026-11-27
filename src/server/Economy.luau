@@ -6,8 +6,8 @@ Economy: crystals on the server (docs/GAME_DESIGN.md, "Economy" and "Technical d
    passes, Frost Rush, the group bonus): other systems register those with AddExtra.
  - The server tick (GameConfig.TicksPerSecond): every building's damage goes into the player's block
    (IceBlockService.Damage, which pays the crystals), and the display attributes are refreshed:
-   Crystals and CrystalsPerSecond (building damage/s plus the player's recent tapping, times the
-   multiplier).
+   Crystals, CrystalsPerSecond (building damage/s plus the player's recent tapping, times the
+   multiplier) and TapValue (the crystals one tap earns: TapValue()).
  - Offline earnings: building income only, at OfflineEarningsRules.Settings (50%, 2 hours).
  - Tap rate: RecordTaps(player, taps) keeps the last few seconds of taps for crystals/s.
 ]]
@@ -153,6 +153,12 @@ function Economy.CrystalsPerSecond(player: Player, data): number
 	return damage * Economy.Multiplier(player, data)
 end
 
+-- The crystals one tap earns right now: what IceBlockService.Damage pays for a tap (the tap's damage times
+-- every multiplier, rushes included). Published as the TapValue attribute for the click's "+N" (TapFeedback).
+function Economy.TapValue(player: Player, data): number
+	return EconomyRules.TapDamage(data) * Economy.Multiplier(player, data)
+end
+
 -- "Your income" for crystal bundles and the daily chest: the HUD's crystals per second without rushes
 -- (permanent bonuses only). Taps count at the player's recent rate, but at least
 -- MonetizationConfig.BundleTapsPerSecond, so opening the shop (and so stopping tapping) or being new
@@ -181,6 +187,7 @@ local function tick(dt: number)
 			end
 			player:SetAttribute("Crystals", data.Crystals)
 			player:SetAttribute("CrystalsPerSecond", Economy.CrystalsPerSecond(player, data))
+			player:SetAttribute("TapValue", Economy.TapValue(player, data))
 		end
 	end
 end

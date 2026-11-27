@@ -100,7 +100,7 @@ This is a starting value. The economy simulation tunes it so a rescue comes ever
 
 [Concept image in the Claude doc: Crack stages: an Epic Mini Yeti gets clearer at 20, 40, 60 and 80 percent, then breaks free at 100 percent\]
 
-**Every hit.** Ice chips fly, a "+N" number floats up, crystals spray out, and a crunch plays. Its pitch rises slightly during fast tapping streaks.
+**Every hit.** Ice chips fly, crystals spray out, and a crunch plays. Its pitch rises slightly during fast tapping streaks. Where the player clicked or touched, a small white flash with a few short white streaks bursts out (about 0.25 s), and "+N" pops up 30-70 px away at a random angle: the crystals that tap earned (the server's figure, so it matches the counter), in the chunky UI font, white with a dark outline and short numbers (+6, +1.2K), popping in with a little jiggle, then floating up and fading in about 0.7 s. With a gamepad it shows at the ice block. Auto Pick's taps don't show it, and reduced effects keeps the number but drops the streaks.
 
 **The rescue moment.** The ice explodes into shards with a crystal fountain worth about 30 seconds of the player's income. The creature shakes off the frost, a banner shows its rarity, and it runs to the player. A new, slightly bigger block then slides into the plot on a sled from the glacier.
 
@@ -559,12 +559,12 @@ Where you can tap (your plot, or next to a standing Golden Glacier), gamepad A t
 - **Build panel:** buy ×1, ×10, ×100 or Max. The next affordable building glows.
 - **Phones:** nothing near the jump button or the bottom edge.
 
-**Tutorial,** with an arrow guiding each step:
+**Tutorial,** with a spotlight on each step: the whole screen, HUD included, goes dark (black at about 60%) except a cut-out with rounded corners and a soft pulsing glow round what to click, with the step's short instruction beside it. Only the lit thing can be clicked; walking and turning the camera still work. It fades between steps (about 0.2 s), follows the ice block on screen as the camera moves, and with a gamepad the lit button is selected. Off your plot only the words show. The steps:
 
-1. Tap the ice.
-2. At 15 crystals, build an Ice Pick Post.
-3. Free the first creature.
-4. Equip your new pet.
+1. Tap the ice (the block is lit).
+2. At 15 crystals, build an Ice Pick Post (BUILD, then the Ice Pick Post's buy button).
+3. Free the first creature (the block).
+4. Equip your new pet (PETS, then EQUIP BEST).
 5. Done: show the tutorial code.
 
 The style follows the roblox-ui-style showcase kit from Steal Safari Pets, recoloured with icy blues and white.
@@ -599,7 +599,8 @@ Sound and effects carry most of the "every tap feels good" pillar. Every sound c
 
 | Moment | Sound | Visual effect |
 | --- | --- | --- |
-| Tap | Short icy crunch (four variants, a small random pitch), pitch rising slightly during streaks; at most 3 at once, so an autoclicker can't stack them | Ice chips, "+N", small crystal spray, pick swing |
+| Tap | Short icy crunch (four variants, a small random pitch), pitch rising slightly during streaks; at most 3 at once, so an autoclicker can't stack them | Ice chips, small crystal spray, pick swing; at the cursor a white burst and the "+N" earned |
+| Hover | A very short, very quiet tick when the mouse moves onto anything clickable (buttons, cards, tabs, the ice block, the chests and kiosk); on entering only, at most one every 0.08 s, desktop only | – |
 | Building hit | No sound per hit: now and then a quiet chip from your own plot, none from other plots | Building animation, the ice shudders |
 | Crack stage | A crack, deeper at each stage (20/40/60/80%) | New crack layer, chunks falling, camera nudge |
 | 80% damage | A slow heartbeat | Creature wiggles, glow brightens |

@@ -138,5 +138,12 @@ return function(sources)
 	check(NumberFormat.Money(2500000) == "$2.5M", "money")
 	check(NumberFormat.MoneyPrecise(186910) == "$186.91K", "precise money never rounds up")
 
+	-- The tutorial's spotlight (Spotlight): black at about 60%, a 0.2 s fade, above windows and below the debug windows
+	local spot = UITheme.Spotlight
+	check(spot ~= nil and spot.Darkness >= 0.55 and spot.Darkness <= 0.65, "the spotlight darkens to about 60% black")
+	check(spot ~= nil and spot.FadeSeconds > 0.1 and spot.FadeSeconds <= 0.3, "it fades in and out in about 0.2 s")
+	check(spot ~= nil and spot.DisplayOrder > 20 and spot.DisplayOrder < 30, "above the windows (20), below banners and the debug windows (30)")
+	check(spot ~= nil and spot.Corner > 0 and spot.Padding >= 0 and typeof(spot.Glow) == "Color3", "rounded corners and a glow colour")
+
 	return passed
 end

@@ -1,44 +1,36 @@
--- The tutorial's arrow and words (docs/GAME_DESIGN.md, "UI and controls"), following the saved step
+-- The tutorial's spotlight and words (docs/GAME_DESIGN.md, "UI and controls"), following the saved step
 -- (TutorialService on the server moves it on):
 --   1 Tap the ice!  2 Build an Ice Pick Post (15 crystals)  3 Free your first creature  4 Equip your new pet
 --   5 done: the tutorial code is shown once.
--- The arrow is a bouncing pointer over the ice block (steps 1 and 3) or next to the HUD button to press
--- (BUILD for step 2, PETS for step 4); off your plot, the guide line (PlotGuide) shows the way home.
+-- Each step lights what to click (Spotlight: the rest of the screen goes dark and can't be clicked):
+--   the ice block in your plot (steps 1 and 3; off your plot only the words show, and the guide line,
+--   PlotGuide, shows the way home), the BUILD button and then the Ice Pick Post's buy button in the Build
+--   window (step 2), the PETS button and then EQUIP BEST in the Pets window (step 4).
+-- Another window open (a popup, the shop) hides the spotlight until it closes.
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
-local Workspace = game:GetService("Workspace")
 
-local BlockRules = require(ReplicatedStorage.BlockRules)
 local MapConfig = require(ReplicatedStorage.MapConfig)
 local UIKit = require(ReplicatedStorage.UIKit)
 local ClientState = require(script.Parent:WaitForChild("ClientState"))
+local IceBlocks = require(script.Parent:WaitForChild("IceBlocks"))
+local Spotlight = require(script.Parent:WaitForChild("Spotlight"))
 
 local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Each step: the words while its window is closed, the HUD button that opens it, and inside that window
+-- the control to press (found by name) with its own words.
 local STEPS = {
 	{ Text = "Tap the ice to crack it!", Target = "Ice" },
-	{ Text = "Build an Ice Pick Post: press BUILD", Target = "Build" },
+	{ Text = "Build an Ice Pick Post: press BUILD", Target = "Build", Window = "BuildWindow",
+		Find = { "IcePickPost", "BuyButton" }, InWindow = "Buy the Ice Pick Post!" },
 	{ Text = "Keep tapping: free your first creature!", Target = "Ice" },
-	{ Text = "Equip your new pet: press PETS", Target = "Pets" },
+	{ Text = "Equip your new pet: press PETS", Target = "Pets", Window = "PetsWindow",
+		Find = { "EquipBest" }, InWindow = "Press EQUIP BEST to equip your pet!" },
 }
 
-local _, root = UIKit.Screen("Tutorial", 8)
-local bubble = UIKit.Label(root, "Bubble", "", 34, Color3.fromRGB(255, 240, 150))
-bubble.AnchorPoint = Vector2.new(0.5, 0)
-bubble.Position = UDim2.new(0.5, 0, 0, 170)
-bubble.Size = UDim2.fromOffset(700, 44)
-bubble.TextXAlignment = Enum.TextXAlignment.Center
-local pointer = UIKit.Label(root, "Pointer", "👉", 60)
-pointer.Size = UDim2.fromOffset(70, 70)
-pointer.Visible = false
-
--- the 3D arrow over the ice: a glowing wedge pointing down, spinning
-local cone = Instance.new("WedgePart")
-cone.Name = "TutorialArrow"
-cone.Anchored, cone.CanCollide, cone.CanQuery, cone.CanTouch = true, false, false, false
-cone.Material = Enum.Material.Neon
-cone.Color = Color3.fromRGB(255, 225, 80)
-cone.Size = Vector3.new(1, 3, 3)
 local buttons = {}
 
 local codeShown = false
@@ -51,36 +43,66 @@ ClientState.Event("TutorialDone", function(payload)
 	Banners.Big("Tutorial done!", `Free code: {payload.Code} (CODES button)`, Color3.fromRGB(130, 255, 200), 6)
 end)
 
+local function inOwnPlot(index: number): boolean
+	local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+	if not root then
+		return false
+	end
+	local localPos = MapConfig.PlotCFrame(index):PointToObjectSpace(root.Position)
+	local half = MapConfig.PlotSize / 2 + MapConfig.TapMargin
+	return math.abs(localPos.X) <= half and math.abs(localPos.Z) <= half
+end
+
+-- The control inside an open window: the path of names under it (the first match of each).
+local function findIn(window: ScreenGui, path: { string }): GuiObject?
+	local node: Instance? = window
+	for _, name in path do
+		node = node and node:FindFirstChild(name, true)
+	end
+	return if node and node:IsA("GuiObject") then node else nil
+end
+
+local function menuButton(name: string): GuiButton?
+	if buttons[name] == nil then
+		buttons[name] = false
+		task.spawn(function()
+			buttons[name] = UIKit.MenuButton(name)
+		end)
+	end
+	return buttons[name] or nil
+end
+
 RunService.RenderStepped:Connect(function()
 	local data = ClientState.Data()
 	local step = data and data.TutorialStep or 5
 	local info = STEPS[step]
-	bubble.Visible = info ~= nil and not UIKit.AnyWindowOpen()
-	pointer.Visible = false
-	cone.Parent = nil
 	if not info then
+		Spotlight.Hide()
 		return
 	end
-	bubble.Text = info.Text
-	local bob = math.sin(os.clock() * 5)
 	if info.Target == "Ice" then
+		if UIKit.AnyWindowOpen() then
+			Spotlight.Hide()
+			return
+		end
 		local index = player:GetAttribute("PlotIndex")
-		local level = player:GetAttribute("BlockLevel") or 1
-		if index then
-			local top = MapConfig.BlockBase(index).Position + Vector3.new(0, BlockRules.Height(level) + 4 + bob, 0)
-			cone.CFrame = CFrame.new(top) * CFrame.Angles(0, os.clock(), 0) * CFrame.Angles(math.rad(-90), 0, 0)
-			cone.Parent = Workspace
+		local view = type(index) == "number" and IceBlocks.View(index) or nil
+		if view and view.present and inOwnPlot(index) then
+			Spotlight.Show(view.block, info.Text)
+		else
+			Spotlight.Show(nil, info.Text)
 		end
+		return
+	end
+	local window = playerGui:FindFirstChild(info.Window)
+	local windowOpen = window ~= nil and window:IsA("ScreenGui") and window.Enabled
+	if windowOpen then
+		local control = findIn(window, info.Find)
+		Spotlight.Show(control, if control then info.InWindow else info.Text)
+	elseif UIKit.AnyWindowOpen() then
+		Spotlight.Hide() -- (another window: the spotlight waits until it closes)
 	else
-		if not buttons[info.Target] then
-			task.spawn(function()
-				buttons[info.Target] = UIKit.MenuButton(info.Target)
-			end)
-		end
-		local button = buttons[info.Target]
-		if button and button.AbsoluteSize.X > 0 then
-			pointer.Visible = not UIKit.AnyWindowOpen()
-			pointer.Position = UDim2.fromOffset(button.AbsolutePosition.X + button.AbsoluteSize.X + 6 + bob * 6, button.AbsolutePosition.Y + button.AbsoluteSize.Y / 2 - 35)
-		end
+		local button = menuButton(info.Target)
+		Spotlight.Show(button, info.Text)
 	end
 end)

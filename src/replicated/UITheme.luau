@@ -156,6 +156,22 @@ UITheme.Scale = { Baseline = Vector2.new(1050, 620), Min = 0.52, Max = 1.18, Men
 UITheme.Motion = { Hover = 1.05, Press = 0.94, HoverTime = 0.08, PressTime = 0.05, ReleaseTime = 0.12, OpenTime = 0.22, CloseTime = 0.12 }
 
 UITheme.Blur = { Menu = 8 } -- while a window is open
+-- The tutorial's spotlight (Spotlight): the screen goes black at Darkness (0..1 opacity) round a cut-out with rounded
+-- Corner (px), Padding px round the target, and a Glow ring pulsing PulseSpeed (radians/s); the instruction is
+-- TextSize, at most TextWidth px wide. Above windows (20), below banners and notices (30+) and the debug windows.
+UITheme.Spotlight = {
+	DisplayOrder = 25,
+	Darkness = 0.6,
+	Corner = 14,
+	Padding = 8,
+	Glow = rgb(190, 240, 255),
+	PulseSpeed = 4,
+	TextSize = 32,
+	TextColor = rgb(255, 240, 150),
+	TextWidth = 440,
+	TextBacking = 0.55, -- the words' dark rounded backing (opacity)
+	FadeSeconds = 0.2,
+}
 UITheme.WindowTransparency = 0.08
 
 return UITheme

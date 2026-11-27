@@ -163,6 +163,7 @@ return function(sources)
 	PickService.Refresh(player)
 	local tool = character:FindFirstChild("IcePick")
 	check(tool ~= nil and tool.source == picks[1] and heldTier(character) == 1, "a new player holds the wooden pick (Pick1), named IcePick")
+	check(tool ~= nil and tool.Grip == UpgradeConfig.PickGrip, "the pick is held with the config's grip (head along the swing)")
 
 	PickService.Refresh(player)
 	check(character:FindFirstChild("IcePick") == tool, "refreshing again keeps the same tool (no flicker)")

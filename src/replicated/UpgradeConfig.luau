@@ -36,7 +36,10 @@ UpgradeConfig.PickModelIds = { 87084297887291, 90204611101082, 114047905090497, 
 for _, tier in UpgradeConfig.IcePick do
 	tier.ModelId = UpgradeConfig.PickModelIds[tier.Tier]
 end
-UpgradeConfig.PickGrip = CFrame.identity
+-- How the hand holds the pick (Tool.Grip; PickService sets it on every pick it hands out). The models have the
+-- shaft along +Y and the head along X with its point at -X: a quarter turn about the shaft lays the head along
+-- the swing (forward and back), so the point leads the slash into the ice.
+UpgradeConfig.PickGrip = CFrame.Angles(0, math.rad(90), 0)
 
 UpgradeConfig.FrostTouch = {
 	{ Id = "FrostTouch1", Name = "Frost Touch I", TapShareOfBuildingDps = 0.01, Cost = 50_000, UnlockOwns = "WreckingCrane" },

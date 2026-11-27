@@ -240,6 +240,25 @@ function EffectsConfig.For(buildingId: string, tier: number, masterwork: boolean
 end
 
 -- The texture to use for a key: its uploaded id, or the placeholder.
+-- Your tap's feedback at the cursor (TapFeedback): a white burst where you clicked or touched, and the crystals
+-- the tap earned ("+N") popping up near it. Numbers and bursts come from small pools: at most MaxNumbers and
+-- MaxBursts on screen at once (an autoclicker reuses the oldest).
+EffectsConfig.ClickBurst = {
+	BurstSeconds = 0.25, -- the flash and its streaks
+	FlashSize = { 10, 46 }, -- px, start and end
+	Streaks = 6, -- short white lines shooting out (none with reduced effects)
+	StreakReach = { 8, 40 }, -- px from the click, start and end
+	StreakLength = { 16, 5 }, -- px, start and end
+	MaxBursts = 6,
+	NumberSeconds = 0.7, -- the "+N": pops in, wobbles, floats up and fades
+	NumberDistance = { 30, 70 }, -- px from the click, at a random angle
+	NumberHeight = 40, -- px tall
+	NumberRise = 34, -- px it floats up
+	PopScale = 1.3, -- it overshoots to this, then settles at 1
+	Wobble = 10, -- degrees of the first rotate wobble
+	MaxNumbers = 12,
+}
+
 function EffectsConfig.Texture(key: string): string
 	return EffectsConfig.Textures[key] or EffectsConfig.Placeholder
 end

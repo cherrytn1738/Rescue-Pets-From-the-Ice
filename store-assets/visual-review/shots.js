@@ -556,43 +556,127 @@ window.SHOTS = [
   "category": "picks",
   "name": "pick_golden_skin",
   "file": "picks/pick_golden_skin.jpg",
-  "before": null
+  "before": "../visual-review-before/picks/pick_golden_skin.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "pick_golden_skin_swing",
+  "file": "picks/pick_golden_skin_swing.jpg",
+  "before": "../visual-review-before/picks/pick_golden_skin_swing.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "pick_golden_skin_walk",
+  "file": "picks/pick_golden_skin_walk.jpg",
+  "before": "../visual-review-before/picks/pick_golden_skin_walk.jpg"
  },
  {
   "category": "picks",
   "name": "pick_tier1",
   "file": "picks/pick_tier1.jpg",
-  "before": null
+  "before": "../visual-review-before/picks/pick_tier1.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "pick_tier1_swing",
+  "file": "picks/pick_tier1_swing.jpg",
+  "before": "../visual-review-before/picks/pick_tier1_swing.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "pick_tier1_walk",
+  "file": "picks/pick_tier1_walk.jpg",
+  "before": "../visual-review-before/picks/pick_tier1_walk.jpg"
  },
  {
   "category": "picks",
   "name": "pick_tier2",
   "file": "picks/pick_tier2.jpg",
-  "before": null
+  "before": "../visual-review-before/picks/pick_tier2.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "pick_tier2_swing",
+  "file": "picks/pick_tier2_swing.jpg",
+  "before": "../visual-review-before/picks/pick_tier2_swing.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "pick_tier2_walk",
+  "file": "picks/pick_tier2_walk.jpg",
+  "before": "../visual-review-before/picks/pick_tier2_walk.jpg"
  },
  {
   "category": "picks",
   "name": "pick_tier3",
   "file": "picks/pick_tier3.jpg",
-  "before": null
+  "before": "../visual-review-before/picks/pick_tier3.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "pick_tier3_swing",
+  "file": "picks/pick_tier3_swing.jpg",
+  "before": "../visual-review-before/picks/pick_tier3_swing.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "pick_tier3_walk",
+  "file": "picks/pick_tier3_walk.jpg",
+  "before": "../visual-review-before/picks/pick_tier3_walk.jpg"
  },
  {
   "category": "picks",
   "name": "pick_tier4",
   "file": "picks/pick_tier4.jpg",
-  "before": null
+  "before": "../visual-review-before/picks/pick_tier4.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "pick_tier4_swing",
+  "file": "picks/pick_tier4_swing.jpg",
+  "before": "../visual-review-before/picks/pick_tier4_swing.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "pick_tier4_walk",
+  "file": "picks/pick_tier4_walk.jpg",
+  "before": "../visual-review-before/picks/pick_tier4_walk.jpg"
  },
  {
   "category": "picks",
   "name": "pick_tier5",
   "file": "picks/pick_tier5.jpg",
-  "before": null
+  "before": "../visual-review-before/picks/pick_tier5.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "pick_tier5_swing",
+  "file": "picks/pick_tier5_swing.jpg",
+  "before": "../visual-review-before/picks/pick_tier5_swing.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "pick_tier5_walk",
+  "file": "picks/pick_tier5_walk.jpg",
+  "before": "../visual-review-before/picks/pick_tier5_walk.jpg"
  },
  {
   "category": "picks",
   "name": "pick_tier6",
   "file": "picks/pick_tier6.jpg",
-  "before": null
+  "before": "../visual-review-before/picks/pick_tier6.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "pick_tier6_swing",
+  "file": "picks/pick_tier6_swing.jpg",
+  "before": "../visual-review-before/picks/pick_tier6_swing.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "pick_tier6_walk",
+  "file": "picks/pick_tier6_walk.jpg",
+  "before": "../visual-review-before/picks/pick_tier6_walk.jpg"
  },
  {
   "category": "ice",
@@ -1174,151 +1258,151 @@ window.SHOTS = [
   "category": "world",
   "name": "golden_glacier_stage0",
   "file": "world/golden_glacier_stage0.jpg",
-  "before": null
+  "before": "../visual-review-before/world/golden_glacier_stage0.jpg"
  },
  {
   "category": "world",
   "name": "golden_glacier_stage1",
   "file": "world/golden_glacier_stage1.jpg",
-  "before": null
+  "before": "../visual-review-before/world/golden_glacier_stage1.jpg"
  },
  {
   "category": "world",
   "name": "golden_glacier_stage2",
   "file": "world/golden_glacier_stage2.jpg",
-  "before": null
+  "before": "../visual-review-before/world/golden_glacier_stage2.jpg"
  },
  {
   "category": "world",
   "name": "golden_glacier_stage3",
   "file": "world/golden_glacier_stage3.jpg",
-  "before": null
+  "before": "../visual-review-before/world/golden_glacier_stage3.jpg"
  },
  {
   "category": "world",
   "name": "golden_glacier_stage4",
   "file": "world/golden_glacier_stage4.jpg",
-  "before": null
+  "before": "../visual-review-before/world/golden_glacier_stage4.jpg"
  },
  {
   "category": "world",
   "name": "home_beacon",
   "file": "world/home_beacon.jpg",
-  "before": null
+  "before": "../visual-review-before/world/home_beacon.jpg"
  },
  {
   "category": "world",
   "name": "overview_plaza",
   "file": "world/overview_plaza.jpg",
-  "before": null
+  "before": "../visual-review-before/world/overview_plaza.jpg"
  },
  {
   "category": "world",
   "name": "overview_ring",
   "file": "world/overview_ring.jpg",
-  "before": null
+  "before": "../visual-review-before/world/overview_ring.jpg"
  },
  {
   "category": "world",
   "name": "overview_tapping_spot",
   "file": "world/overview_tapping_spot.jpg",
-  "before": null
+  "before": "../visual-review-before/world/overview_tapping_spot.jpg"
  },
  {
   "category": "world",
   "name": "plaza_boardcrystals",
   "file": "world/plaza_boardcrystals.jpg",
-  "before": null
+  "before": "../visual-review-before/world/plaza_boardcrystals.jpg"
  },
  {
   "category": "world",
   "name": "plaza_boardrebirths",
   "file": "world/plaza_boardrebirths.jpg",
-  "before": null
+  "before": "../visual-review-before/world/plaza_boardrebirths.jpg"
  },
  {
   "category": "world",
   "name": "plaza_boardrescued",
   "file": "world/plaza_boardrescued.jpg",
-  "before": null
+  "before": "../visual-review-before/world/plaza_boardrescued.jpg"
  },
  {
   "category": "world",
   "name": "plaza_codes_kiosk",
   "file": "world/plaza_codes_kiosk.jpg",
-  "before": null
+  "before": "../visual-review-before/world/plaza_codes_kiosk.jpg"
  },
  {
   "category": "world",
   "name": "plaza_daily_chest",
   "file": "world/plaza_daily_chest.jpg",
-  "before": null
+  "before": "../visual-review-before/world/plaza_daily_chest.jpg"
  },
  {
   "category": "world",
   "name": "plaza_leaderboards",
   "file": "world/plaza_leaderboards.jpg",
-  "before": null
+  "before": "../visual-review-before/world/plaza_leaderboards.jpg"
  },
  {
   "category": "world",
   "name": "plaza_vip_lounge",
   "file": "world/plaza_vip_lounge.jpg",
-  "before": null
+  "before": "../visual-review-before/world/plaza_vip_lounge.jpg"
  },
  {
   "category": "world",
   "name": "plot_gate_and_name_boards",
   "file": "world/plot_gate_and_name_boards.jpg",
-  "before": null
+  "before": "../visual-review-before/world/plot_gate_and_name_boards.jpg"
  },
  {
   "category": "world",
   "name": "plot_ice_stage",
   "file": "world/plot_ice_stage.jpg",
-  "before": null
+  "before": "../visual-review-before/world/plot_ice_stage.jpg"
  },
  {
   "category": "world",
   "name": "plot_walls_and_stage",
   "file": "world/plot_walls_and_stage.jpg",
-  "before": null
+  "before": "../visual-review-before/world/plot_walls_and_stage.jpg"
  },
  {
   "category": "world",
   "name": "rank_trim_10_rebirths",
   "file": "world/rank_trim_10_rebirths.jpg",
-  "before": null
+  "before": "../visual-review-before/world/rank_trim_10_rebirths.jpg"
  },
  {
   "category": "world",
   "name": "rank_trim_1_rebirths",
   "file": "world/rank_trim_1_rebirths.jpg",
-  "before": null
+  "before": "../visual-review-before/world/rank_trim_1_rebirths.jpg"
  },
  {
   "category": "world",
   "name": "rank_trim_2_rebirths",
   "file": "world/rank_trim_2_rebirths.jpg",
-  "before": null
+  "before": "../visual-review-before/world/rank_trim_2_rebirths.jpg"
  },
  {
   "category": "world",
   "name": "rank_trim_3_rebirths",
   "file": "world/rank_trim_3_rebirths.jpg",
-  "before": null
+  "before": "../visual-review-before/world/rank_trim_3_rebirths.jpg"
  },
  {
   "category": "world",
   "name": "rank_trim_6_rebirths",
   "file": "world/rank_trim_6_rebirths.jpg",
-  "before": null
+  "before": "../visual-review-before/world/rank_trim_6_rebirths.jpg"
  },
  {
   "category": "world",
   "name": "terrain_pines_sky",
   "file": "world/terrain_pines_sky.jpg",
-  "before": null
+  "before": "../visual-review-before/world/terrain_pines_sky.jpg"
  },
  {
   "category": "ui",
@@ -1504,19 +1588,91 @@ window.SHOTS = [
   "category": "ui",
   "name": "tutorial_pointer_step1",
   "file": "ui/tutorial_pointer_step1.jpg",
-  "before": null
+  "before": "../visual-review-before/ui/tutorial_pointer_step1.jpg"
  },
  {
   "category": "ui",
   "name": "tutorial_pointer_step1_667x375",
   "file": "ui/tutorial_pointer_step1_667x375.jpg",
-  "before": null
+  "before": "../visual-review-before/ui/tutorial_pointer_step1_667x375.jpg"
  },
  {
   "category": "ui",
   "name": "tutorial_pointer_step1_844x390",
   "file": "ui/tutorial_pointer_step1_844x390.jpg",
-  "before": null
+  "before": "../visual-review-before/ui/tutorial_pointer_step1_844x390.jpg"
+ },
+ {
+  "category": "ui",
+  "name": "tutorial_step2_build",
+  "file": "ui/tutorial_step2_build.jpg",
+  "before": "../visual-review-before/ui/tutorial_step2_build.jpg"
+ },
+ {
+  "category": "ui",
+  "name": "tutorial_step2_build_667x375",
+  "file": "ui/tutorial_step2_build_667x375.jpg",
+  "before": "../visual-review-before/ui/tutorial_step2_build_667x375.jpg"
+ },
+ {
+  "category": "ui",
+  "name": "tutorial_step2_build_844x390",
+  "file": "ui/tutorial_step2_build_844x390.jpg",
+  "before": "../visual-review-before/ui/tutorial_step2_build_844x390.jpg"
+ },
+ {
+  "category": "ui",
+  "name": "tutorial_step2_buy",
+  "file": "ui/tutorial_step2_buy.jpg",
+  "before": "../visual-review-before/ui/tutorial_step2_buy.jpg"
+ },
+ {
+  "category": "ui",
+  "name": "tutorial_step2_buy_667x375",
+  "file": "ui/tutorial_step2_buy_667x375.jpg",
+  "before": "../visual-review-before/ui/tutorial_step2_buy_667x375.jpg"
+ },
+ {
+  "category": "ui",
+  "name": "tutorial_step2_buy_844x390",
+  "file": "ui/tutorial_step2_buy_844x390.jpg",
+  "before": "../visual-review-before/ui/tutorial_step2_buy_844x390.jpg"
+ },
+ {
+  "category": "ui",
+  "name": "tutorial_step4_equip",
+  "file": "ui/tutorial_step4_equip.jpg",
+  "before": "../visual-review-before/ui/tutorial_step4_equip.jpg"
+ },
+ {
+  "category": "ui",
+  "name": "tutorial_step4_equip_667x375",
+  "file": "ui/tutorial_step4_equip_667x375.jpg",
+  "before": "../visual-review-before/ui/tutorial_step4_equip_667x375.jpg"
+ },
+ {
+  "category": "ui",
+  "name": "tutorial_step4_equip_844x390",
+  "file": "ui/tutorial_step4_equip_844x390.jpg",
+  "before": "../visual-review-before/ui/tutorial_step4_equip_844x390.jpg"
+ },
+ {
+  "category": "ui",
+  "name": "tutorial_step4_pets",
+  "file": "ui/tutorial_step4_pets.jpg",
+  "before": "../visual-review-before/ui/tutorial_step4_pets.jpg"
+ },
+ {
+  "category": "ui",
+  "name": "tutorial_step4_pets_667x375",
+  "file": "ui/tutorial_step4_pets_667x375.jpg",
+  "before": "../visual-review-before/ui/tutorial_step4_pets_667x375.jpg"
+ },
+ {
+  "category": "ui",
+  "name": "tutorial_step4_pets_844x390",
+  "file": "ui/tutorial_step4_pets_844x390.jpg",
+  "before": "../visual-review-before/ui/tutorial_step4_pets_844x390.jpg"
  },
  {
   "category": "ui",
@@ -1877,6 +2033,12 @@ window.SHOTS = [
   "name": "window_upgrades_tab2_owned_844x390",
   "file": "ui/window_upgrades_tab2_owned_844x390.jpg",
   "before": null
+ },
+ {
+  "category": "effects",
+  "name": "click_burst",
+  "file": "effects/click_burst.jpg",
+  "before": "../visual-review-before/effects/click_burst.jpg"
  },
  {
   "category": "effects",

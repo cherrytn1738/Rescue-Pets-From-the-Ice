@@ -11,7 +11,8 @@ front (screen captures need it; a sleeping display makes them time out), and a s
 Play). The shots are defined in tools/studio/visual_review_shots.luau; this script runs each shot's
 setup on the client, clicks what it asks for, waits, captures the viewport, crops the shot's region and
 saves it as JPG (quality 90): desktop shots at 1920x1080, phone shots at their own size (844x390,
-667x375), named <category>/<name>[_<size>].jpg.
+667x375), named <category>/<name>[_<size>].jpg. A shot may ask for real mouse clicks at screen points first (TapAt: the
+click burst on the ice).
 
 Before / after: the first time a run replaces a picture, the old one is kept in
 store-assets/visual-review-before/ (same names), and store-assets/visual-review/index.html shows them
@@ -19,7 +20,7 @@ side by side. Delete that folder to start a new comparison.
 
 The game state changes a lot (the save is reset by some categories): use a throwaway Studio save.
 """
-import argparse, base64, io, json, os, re, shutil, sys, time
+import argparse, base64, io, json, os, re, shutil, sys, threading, time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
@@ -60,6 +61,19 @@ class Studio:
                    {"action": "mouseButtonDown", "mouse_button": "left"}, {"action": "wait", "wait_time_ms": 80},
                    {"action": "mouseButtonUp", "mouse_button": "left"}, {"action": "wait", "wait_time_ms": wait_ms}]
         return self.mcp.call("user_mouse_input", {"actions": actions, "datamodel_type": "Client", "studio_id": self.studio_id}, 60)
+
+    def tap_at_aside(self, points):
+        """Real mouse clicks at these points (GUI coordinates: below the top bar, as Camera:WorldToScreenPoint
+        gives them; user_mouse_input's x/y use the same space), on a second connection (made once) so they go on
+        while this one captures."""
+        if not getattr(self, "aside", None):
+            self.aside = StudioMcp()
+        actions = []
+        for x, y in points:
+            actions += [{"action": "moveTo", "x": x, "y": y}, {"action": "wait", "wait_time_ms": 30},
+                        {"action": "mouseButtonDown", "mouse_button": "left"}, {"action": "wait", "wait_time_ms": 40},
+                        {"action": "mouseButtonUp", "mouse_button": "left"}, {"action": "wait", "wait_time_ms": 90}]
+        return self.aside.call("user_mouse_input", {"actions": actions, "datamodel_type": "Client", "studio_id": self.studio_id}, 60)
 
     def capture(self, name):
         result = self.mcp.request("tools/call", {"name": "screen_capture", "arguments": {"capture_id": name, "studio_id": self.studio_id}}, 120)
@@ -179,8 +193,16 @@ def main():
                         studio.click(path, 400)
                     for path in result.get("Clicks", []):
                         studio.click(path, 700)
+                    tapping = None
+                    if result.get("TapAt"):
+                        # real clicks on the world (the click burst): a second MCP connection keeps clicking while
+                        # this one captures, since a capture arrives too late for a 0.25 s burst after the last click
+                        tapping = threading.Thread(target=studio.tap_at_aside, args=(result["TapAt"],))
+                        tapping.start()
                     time.sleep(float(result.get("Wait", 1.5)))
                     png = studio.capture(f"vr_{taken}")
+                    if tapping:
+                        tapping.join()
                     if not png:
                         raise RuntimeError("no picture (is Studio in front and the display awake?)")
                     save(png, file_for(s["Name"], size), result["Region"], result["Viewport"], size)

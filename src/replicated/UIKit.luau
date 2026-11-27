@@ -677,6 +677,7 @@ function UIKit.Screen(name: string, displayOrder: number): (ScreenGui, Frame)
 	gui.DisplayOrder = displayOrder
 	gui.ResetOnSpawn = false
 	gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	gui:SetAttribute("UIKitScreen", true) -- (the game's own screens: the tutorial's spotlight locks only these)
 	local root = Instance.new("Frame")
 	root.Name = "Root"
 	root.BackgroundTransparency = 1

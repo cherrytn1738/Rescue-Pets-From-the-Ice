@@ -101,5 +101,17 @@ return function(sources)
 		check(Effects.TextureFiles[key] ~= nil, "the shared texture " .. key)
 	end
 
+	-- The click burst and "+N" at the cursor (TapFeedback)
+	local burst = Effects.ClickBurst
+	check(burst ~= nil, "EffectsConfig.ClickBurst exists")
+	if burst then
+		check(math.abs(burst.BurstSeconds - 0.25) < 0.05, "the burst lasts about 0.25 s")
+		check(math.abs(burst.NumberSeconds - 0.7) < 0.1, "the number lasts about 0.7 s")
+		check(burst.NumberDistance[1] == 30 and burst.NumberDistance[2] == 70, "the number appears 30-70 px from the click")
+		check(burst.MaxNumbers >= 1 and burst.MaxNumbers <= 12, "at most about 12 numbers at once (a reused pool)")
+		check(burst.MaxBursts >= 1 and burst.MaxBursts <= 12 and burst.Streaks >= 3, "a small pool of bursts, each with a few streaks")
+		check(burst.PopScale > 1 and burst.Wobble > 0, "the number pops past full size and wobbles")
+	end
+
 	return passed
 end

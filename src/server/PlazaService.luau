@@ -221,13 +221,15 @@ function PlazaService.Start(boards)
 	-- (only once the VIP pass exists on Roblox: a real Id, in Studio too)
 	if MonetizationConfig.IsLive(MonetizationConfig.GetPass(VIP_PASS)) then
 		local lounge = spot(62, 22.5 + 45 * 7, 0)
-		part(folder, "VipFloor", Vector3.new(18, 0.6, 14), lounge * CFrame.new(0, 0.3, 4), Color3.fromRGB(80, 50, 120), Enum.Material.Fabric)
+		-- (its top sits 0.15 above the plaza disc's: at the same height the two surfaces flickered)
+		part(folder, "VipFloor", Vector3.new(18, 0.6, 14), lounge * CFrame.new(0, 0.45, 4), Color3.fromRGB(80, 50, 120), Enum.Material.Fabric)
 		-- a gold rail fence round the floor, closed at the front, with the sign over the gate (a ForceField wall
 		-- here only shimmered and read as something broken; a solid one was a big flat slab beside a plot's path)
 		local gold = Color3.fromRGB(255, 205, 80)
 		local gate = Instance.new("Model")
 		gate.Name = "VipGate"
 		gate.Parent = folder
+		local posted = {} -- one post per corner (two identical posts in one spot flickered)
 		local function rails(name: string, from: Vector3, to: Vector3)
 			local length = (to - from).Magnitude
 			local along = CFrame.lookAt((from + to) / 2, to)
@@ -235,7 +237,11 @@ function PlazaService.Start(boards)
 				part(gate, name .. "Rail", Vector3.new(0.4, 0.4, length), lounge * along * CFrame.new(0, y, 0), gold, Enum.Material.SmoothPlastic)
 			end
 			for _, at in { from, to } do
-				part(gate, name .. "Post", Vector3.new(0.8, 4.2, 0.8), lounge * CFrame.new(at + Vector3.new(0, 2.1, 0)), gold, Enum.Material.SmoothPlastic)
+				local key = tostring(at)
+				if not posted[key] then
+					posted[key] = true
+					part(gate, name .. "Post", Vector3.new(0.8, 4.2, 0.8), lounge * CFrame.new(at + Vector3.new(0, 2.1, 0)), gold, Enum.Material.SmoothPlastic)
+				end
 			end
 		end
 		rails("FrontLeft", Vector3.new(-9, 0, -3), Vector3.new(-3, 0, -3))

@@ -16,6 +16,7 @@ local UserInputService = game:GetService("UserInputService")
 local GameConfig = require(ReplicatedStorage.GameConfig)
 local MapConfig = require(ReplicatedStorage.MapConfig)
 local UIKit = require(ReplicatedStorage.UIKit)
+local Spotlight = require(script.Parent.Spotlight)
 local TapFeedback = require(script.Parent.TapFeedback)
 
 local player = Players.LocalPlayer
@@ -73,8 +74,8 @@ local TAP_KEYS = {
 local SINK_KEYS = { Enum.KeyCode.ButtonA }
 
 local function tap(screenPosition: Vector2?)
-	if UIKit.AnyWindowOpen() then
-		return
+	if UIKit.AnyWindowOpen() or not Spotlight.AllowsTap(screenPosition) then
+		return -- (the tutorial's spotlight: only the lit block can be tapped)
 	end
 	local mine, onGolden = inOwnPlot(), false
 	if not mine then

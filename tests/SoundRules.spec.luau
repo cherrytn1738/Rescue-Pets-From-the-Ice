@@ -176,5 +176,13 @@ return function(sources)
 	end
 	check(AudioConfig.Music.FadeSeconds > 0, "music crossfades")
 
+	-- The hover tick (HoverClick.client): an uploaded sound, very quiet, at most one every 0.08 s
+	local hover = AudioConfig.Ui.Hover
+	check(hover ~= nil and type(hover.Id) == "string" and string.match(hover.Id, "^rbxassetid://%d+$") ~= nil, "Ui.Hover has an uploaded id")
+	check(hover ~= nil and hover.Volume > 0 and hover.Volume <= 0.12, "the hover tick is very quiet")
+	check(hover ~= nil and hover.Volume < AudioConfig.Ui.Click.Volume, "...quieter than a click")
+	check(RULES.Hover and RULES.Hover.MinGap == 0.08, "at most one hover tick every 0.08 s")
+	check(hover ~= nil and (hover.Cooldown or 0) >= RULES.Hover.MinGap, "...the sound's own cooldown agrees")
+
 	return passed
 end
