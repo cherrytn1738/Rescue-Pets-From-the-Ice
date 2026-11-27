@@ -194,6 +194,30 @@ function TapFeedback.StrikePoint(block: BasePart, screenPosition: Vector2?): (Ve
 	return cf:PointToWorldSpace(inside), normal
 end
 
+-- A small white glint where the pick strikes (one pooled emitter, moved to the point).
+local glintEmitter
+local function glint(at: Vector3)
+	if not glintEmitter or not glintEmitter.Parent then
+		local holder = Instance.new("Attachment")
+		holder.Name = "TapGlint"
+		holder.Parent = workspace.Terrain
+		glintEmitter = Instance.new("ParticleEmitter")
+		glintEmitter.Texture = EffectsConfig.Texture("Sparkle")
+		glintEmitter.Rate = 0
+		glintEmitter.Speed = NumberRange.new(0)
+		glintEmitter.Lifetime = NumberRange.new(EffectsConfig.TapGlint.Life)
+		glintEmitter.Size = NumberSequence.new({ NumberSequenceKeypoint.new(0, EffectsConfig.TapGlint.Size * 0.4),
+			NumberSequenceKeypoint.new(0.3, EffectsConfig.TapGlint.Size), NumberSequenceKeypoint.new(1, 0) })
+		glintEmitter.Rotation = NumberRange.new(0, 90)
+		glintEmitter.LightEmission = 1
+		glintEmitter.Brightness = 3
+		glintEmitter.ZOffset = 1
+		glintEmitter.Parent = holder
+	end
+	glintEmitter.Parent.WorldPosition = at
+	glintEmitter:Emit(1)
+end
+
 -- Ice chips off the spot you hit, a little crystal spray and your pick's sparks (the doc's "Every hit").
 local function chips(index: number, screenPosition: Vector2?)
 	local view = IceBlocks.View(index)
@@ -207,6 +231,7 @@ local function chips(index: number, screenPosition: Vector2?)
 	toCamera = if toCamera.Magnitude > 0 then toCamera.Unit else normal
 	local out = (normal + toCamera * CHIPS.TowardCamera).Unit
 	local at = point + normal * 0.15
+	glint(at)
 	local function direction(): Vector3
 		local stray = Vector3.new(math.random() - 0.5, math.random() - 0.5, math.random() - 0.5) * 2 * CHIPS.Spread
 		return (out + stray + Vector3.new(0, 0.35, 0)).Unit

@@ -14,7 +14,8 @@ IceBlockService: each player's ice block (docs/GAME_DESIGN.md, "The ice block", 
    income is paid, the level goes up, and the next block arrives after the sled ride
    (EconomyRules.SledSeconds).
  - The block's state is copied to the plot's Block folder as attributes (every client draws it):
-   Present, Level, CreatureId, Rarity, Layer, Hp, HpMax, Stage (0-4 crack stages), ArriveAt.
+   Present, Level, CreatureId, Rarity, Layer, Hp, HpMax, Stage (0-4 crack stages), ArriveAt, MythicBlock (a Mythic
+   Block bought with Robux: CurrentBlock.Mythic).
    Player attributes BlockLevel, BlockHp, BlockHpMax for the HUD.
  - Events to the owner on GameEvent: "Rescue", "NewLayer"; to everyone: "Announce" (a Legendary or
    Mythic block arrived, with its PlotIndex, so others can come and watch: RareWatch.client; and again
@@ -89,6 +90,7 @@ local function publish(player: Player, data)
 		folder:SetAttribute("Rarity", creature.Rarity)
 		folder:SetAttribute("Hp", block.HpLeft)
 		folder:SetAttribute("Stage", BlockRules.CrackStage(block.HpLeft, hpMax))
+		folder:SetAttribute("MythicBlock", block.Mythic == true)
 	end
 	folder:SetAttribute("ArriveAt", if state.arriveAt then Workspace:GetServerTimeNow() + (state.arriveAt - os.clock()) else 0)
 	player:SetAttribute("BlockLevel", data.BlockLevel)
@@ -102,12 +104,14 @@ local function rollBlock(player: Player, data)
 	local creature
 	local forced = rollOverride[player]
 	local mythicBlock = MonetizationConfig.GetProduct("MythicBlock")
+	local fromMythicBlock = false
 	if forced and CreatureConfig.Get(forced) then
 		creature = CreatureConfig.Get(forced)
 		rollOverride[player] = nil
 	elseif (data.MythicBlocks or 0) > 0 and mythicBlock and mythicBlock.Odds then
 		creature = BlockRules.RollMythicBlock(mythicBlock.Odds, random:NextNumber(), random:NextNumber())
 		data.MythicBlocks -= 1
+		fromMythicBlock = true -- (the block looks the part: IceBlockLook's glowing corner crystals)
 		PlayerData.MarkImportant(player)
 		PlayerData.Publish(player)
 		gameEvent:FireClient(player, "Notice", { Text = `Your Mythic Block arrived: a {creature.Rarity} creature is inside!` })
@@ -115,7 +119,7 @@ local function rollBlock(player: Player, data)
 		local atLeast = BlockRules.NeedsFirstRunGuarantee(data.Rebirths, data.CreaturesRescued, data.BookSeen, CreatureConfig.FirstRunGuarantee)
 		creature = BlockRules.RollCreature(layer.Number, random:NextNumber(0, 100), random:NextNumber(), isLucky(player), atLeast)
 	end
-	data.CurrentBlock = { CreatureId = creature.Id, HpLeft = LayerConfig.BlockHp(data.BlockLevel) }
+	data.CurrentBlock = { CreatureId = creature.Id, HpLeft = LayerConfig.BlockHp(data.BlockLevel), Mythic = if fromMythicBlock then true else nil }
 	local rarity = CreatureConfig.GetRarity(creature.Rarity)
 	if rarity.Announce then
 		gameEvent:FireAllClients("Announce", {

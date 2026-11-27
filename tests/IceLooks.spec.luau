@@ -1,4 +1,5 @@
--- IceLooks spec: the redesigned ice block's options, uploaded ids and settings (IceBlockLook draws them).
+-- IceLooks spec: the ice block's look (IceBlockLook draws it): the kit and textures, every layer and rarity, the
+-- creature, the auras and the effect rules they follow.
 return function(sources)
 	local passed = 0
 	local function check(condition, message)
@@ -7,44 +8,89 @@ return function(sources)
 	end
 
 	local IceLooks = assert(loadstring(sources.IceLooks))()
+	local LayerConfig = assert(loadstring(sources.LayerConfig))()
+	local CreatureConfig = assert(loadstring(sources.CreatureConfig))()
 
-	-- Every option has its uploaded model, and the textures it uses are uploaded
-	check(#IceLooks.Options == 3, "three look options to choose from")
-	for _, option in IceLooks.Options do
-		local id = IceLooks.OptionModelIds[option]
-		check(type(id) == "number" and id > 0, "option " .. option .. " has an uploaded model")
+	-- The kit and every texture it uses are uploaded
+	check(type(IceLooks.KitModelId) == "number" and IceLooks.KitModelId > 0, "the ice block kit is uploaded")
+	local function uploaded(id)
+		return type(id) == "string" and string.match(id, "^rbxassetid://%d+$") ~= nil
 	end
-	for _, key in { "Atlas", "Glow", "Shimmer" } do
-		local id = IceLooks.Textures[key]
-		check(type(id) == "string" and string.match(id, "^rbxassetid://%d+$") ~= nil, key .. " texture is uploaded")
+	for _, key in { "Glow", "Shimmer", "Halo", "Ray", "Flame" } do
+		check(uploaded(IceLooks.Textures[key]), key .. " texture is uploaded")
 	end
-	check(IceLooks.TemplateHeight == 14, "the templates are built at the level-1 height")
+	check(IceLooks.TemplateHeight == LayerConfig.Block.HeightAtFirstLevel, "the kit is built at the level-1 height")
+	check(IceLooks.Variants >= 2 and IceLooks.Variants <= 3, "two or three shape variants")
 
-	-- The shell: just above transparent (Roblox only honours a texture's alpha then), and still frosted at the
-	-- last crack stage
+	-- A look for every layer, with its own uploaded atlas
+	check(#IceLooks.LayerLooks == #LayerConfig.Layers, "one look per layer")
+	for number, layer in LayerConfig.Layers do
+		local look = IceLooks.LayerLooks[number]
+		check(look.Atlas == layer.Id and uploaded(IceLooks.Textures[look.Atlas]), layer.Name .. " has its own uploaded atlas")
+		check(look.GlowEmission >= 0 and look.GlowEmission <= 1 and look.GlowBrightness > 0 and look.GlowBrightness <= 2.5,
+			layer.Name .. ": the creature's glow stays modest (no milky wash)")
+		check(look.Extra == nil or look.Extra == "Drifts" or look.Extra == "CrystalClusters" or look.Extra == "Veins", layer.Name .. ": a known extra")
+		if look.Extra == "Veins" then
+			check(typeof(look.VeinColor) == "Color3", layer.Name .. ": its veins have a colour")
+		end
+	end
+	check(IceLooks.LayerLooks[1].GlowEmission <= 0.2, "on white snow the glow is a colour, not added light (it went milky)")
+	check(IceLooks.LayerLooks[1].NoCrystals == true, "Fresh Snow is snow: no icicles or crystals")
+	check(IceLooks.LayerLooks[3].DenseBubbles == true, "Ancient Ice is full of trapped bubbles")
+	check(IceLooks.LayerLooks[6].InnerLight ~= nil, "the Frozen Core is lit from inside")
+
+	-- Every rarity: Common has no glow, the glow grows with the rarity; Legendary is amber, not yellow
+	local last = -1
+	for _, name in { "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic" } do
+		local info = IceLooks.Rarities[name]
+		check(info ~= nil and typeof(info.Colour) == "Color3", name .. " has a look")
+		check(info.Glow >= last and info.Glow <= 1, name .. ": the glow grows with the rarity")
+		last = info.Glow
+		check(CreatureConfig.GetRarity(name) ~= nil, name .. " is a real rarity")
+	end
+	check(IceLooks.Rarities.Common.Glow == 0, "Common has no glow")
+	local amber = IceLooks.Rarities.Legendary.Colour
+	check(amber.R > 0.9 and amber.G < 0.65 and amber.B < 0.3, "Legendary is amber (gold reads green through blue ice)")
+	check(IceLooks.Rarities.Mythic.Rainbow == true and not IceLooks.Rarities.Legendary.Rainbow, "Mythic cycles the rainbow")
+	check(IceLooks.Rarities.Epic.Motes and not IceLooks.Rarities.Rare.Motes, "motes from Epic up")
+
+	-- The creature: a solid outline, eyes that blink, a little colour at the last two crack stages, never all of it
+	local creature = IceLooks.Creature
+	check(creature.Outline >= 0 and creature.Outline < 0.3, "the outline is clearly visible")
+	check(creature.Blink.Every[1] >= 2 and creature.Blink.Every[2] >= creature.Blink.Every[1] and creature.Blink.Seconds < 0.4, "the eyes blink now and then, briefly")
+	check(creature.Reveal[1] == nil and creature.Reveal[2] == nil, "no colours show before crack stage 3")
+	check(creature.Reveal[3] > 0 and creature.Reveal[4] > creature.Reveal[3] and creature.Reveal[4] < 0.6, "a little colour at stages 3 and 4, the rest a surprise")
+
+	-- The auras: only Epic and up, growing with the rarity; ring and rays never opaque
+	local auras = IceLooks.Auras
+	check(auras.Common == nil and auras.Uncommon == nil and auras.Rare == nil, "no aura below Epic")
+	check(auras.Epic.Wisps and auras.Legendary.Flames and auras.Legendary.Embers and auras.Legendary.Rays and auras.Legendary.Pulse, "Epic wisps; Legendary flames, embers, rays and a pulse")
+	check(auras.Mythic.Sparkles and auras.Mythic.PulseEvery > 1, "Mythic: spiralling sparkles and a bright pulse every few seconds")
+	check(auras.Epic.Halo < auras.Legendary.Halo and auras.Legendary.Halo < auras.Mythic.Halo, "the ring grows with the rarity")
+	for name, aura in { Epic = auras.Epic, Legendary = auras.Legendary, Mythic = auras.Mythic } do
+		check(aura.HaloTransparency >= 0.2 and aura.HaloTransparency < 1, name .. ": the ring shows but never covers")
+		check(auras.Burst[name] and auras.Burst[name] > 0, name .. ": a bigger burst on the shatter")
+	end
+	local legendaryRays = auras.Legendary.Rays
+	check(legendaryRays.Transparency >= 0.2 and legendaryRays.Count <= 8, "a few soft light rays")
+	check(auras.HaloEmission <= 0.5, "the ring is mostly colour (added light vanishes on snow and sky)")
+	check(auras.HaloFadeBottom > 0 and auras.HaloFadeBottom < 0.5, "the ring fades towards the ground (the stage stays clean)")
+	check(auras.FadeSeconds > 0 and auras.FadeSeconds < 1, "an aura fades quickly when the block shatters")
+	check(auras.ParticleBox > 1, "flames and wisps come off outside the ice")
+
+	-- The block: just above transparent, frost thinning, a small tap squash, the shatter's pieces
 	local new = IceLooks.New
-	check(new.ShellTransparency > 0 and new.ShellTransparency < 0.1, "the shell runs just above transparent")
+	check(new.ShellTransparency > 0 and new.ShellTransparency < 0.1, "the shell runs just above transparent (the atlas's alpha counts)")
 	check(new.ThinPerStage > 0 and new.ShellTransparency + 4 * new.ThinPerStage < 0.5, "the frost thins with each crack stage but never vanishes")
-	check(new.CreatureCentre > 0.2 and new.CreatureCentre < 0.6 and new.CreatureLift >= 0 and new.CreatureLift < 0.2, "the creature stands low in the block")
-
-	-- The glow: soft and behind the creature, never a solid white wash
-	check(new.Glow.Size > 0.5 and new.Glow.Size <= 1.3, "the glow is about the block's height across")
-	check(new.Glow.Behind > 0 and new.Glow.Behind < 0.4, "the glow sits behind the creature, inside the block")
-	check(new.Glow.Transparency > 0 and new.Glow.Transparency < 0.8, "the glow shows, but never fully opaque")
-	check(new.Glow.Brightness > 0 and new.Glow.Brightness <= 3, "the glow's brightness stays modest (no milky wash)")
-	check(new.Glow.Whiten >= 0 and new.Glow.Whiten < 0.5, "the glow keeps the rarity colour")
-	check(IceLooks.Glow.Common == nil, "Common has no glow")
-
-	-- Particles and the shimmer: few and slow
+	check(new.TapSquash.Amount > 0 and new.TapSquash.Amount <= 0.05 and new.TapSquash.Seconds < 0.3, "a tap squashes the block about 3%, quickly")
+	check(new.Chunks.PerStage[1] >= 1 and new.Chunks.PerStage[2] <= 2, "one or two chunks break off at each crack stage")
+	check(new.Pieces.Life > new.Pieces.FadeFrom, "the shatter's pieces fade out before they go")
+	check(new.Glow.Size > 0.5 and new.Glow.Size < 1, "the creature's glow is smaller than the block (it washed the whole block)")
+	check(new.LightScale > 0 and new.LightScale < 1, "the block's light is dimmed under the new look")
 	for name, range in { MoteLife = new.Motes.Lifetime, MoteSpeed = new.Motes.Speed, MistSize = new.Mist.Size, MistLife = new.Mist.Lifetime, MistSpeed = new.Mist.Speed } do
 		check(range[1] > 0 and range[1] <= range[2], name .. " is a range, low to high")
 	end
-	check(new.Motes.Rate > 0 and new.Motes.Rate <= 5, "a few drifting motes")
-	check(new.Mist.Rate > 0 and new.Mist.Rate <= 5, "a little mist")
 	check(new.Shimmer.Period >= 3 and new.Shimmer.TileHeights >= 2, "the shimmer sweeps slowly, now and then")
-	for option in new.ShellTint do
-		check(table.find(IceLooks.Options, option) ~= nil, "a shell tint belongs to an option (" .. option .. ")")
-	end
 
 	return passed
 end

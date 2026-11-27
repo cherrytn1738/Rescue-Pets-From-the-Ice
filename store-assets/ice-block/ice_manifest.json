@@ -1,66 +1,60 @@
 {
- "atlas": "assets/textures/ice/IceBlueAtlas.png",
+ "blockTotals": {
+  "V1": 4002,
+  "V1+Bubbles": 4746,
+  "V1+Clusters": 4722,
+  "V1+Veins": 4810,
+  "V1Mythic": 4890,
+  "V2": 3266,
+  "V2+Bubbles": 4070,
+  "V2+Clusters": 3986,
+  "V2+Veins": 4074,
+  "V2Mythic": 4490,
+  "V3": 3814,
+  "V3+Bubbles": 4674,
+  "V3+Clusters": 4534,
+  "V3+Veins": 4622,
+  "V3Mythic": 4546
+ },
  "exportScale": 0.1,
  "height": 14.0,
- "models": {
-  "IceBlockA": {
-   "meshes": {
-    "IceBlockACrack1": 18,
-    "IceBlockACrack2": 40,
-    "IceBlockACrack3": 132,
-    "IceBlockACrack4": 162,
-    "IceBlockACrystals": 214,
-    "IceBlockAInner": 460,
-    "IceBlockAShell": 68,
-    "IceBlockASnow": 512
-   },
-   "size": [
-    10.8,
-    16.36,
-    11.11
-   ],
-   "top": 16.36,
-   "triangles": 1606
-  },
-  "IceBlockB": {
-   "meshes": {
-    "IceBlockBCrack1": 22,
-    "IceBlockBCrack2": 64,
-    "IceBlockBCrack3": 158,
-    "IceBlockBCrack4": 226,
-    "IceBlockBCrystals": 792,
-    "IceBlockBInner": 808,
-    "IceBlockBShell": 252,
-    "IceBlockBSnow": 1532
-   },
-   "size": [
-    15.17,
-    17.35,
-    14.81
-   ],
-   "top": 16.65,
-   "triangles": 3854
-  },
-  "IceBlockC": {
-   "meshes": {
-    "IceBlockCCrack1": 22,
-    "IceBlockCCrack2": 62,
-    "IceBlockCCrack3": 138,
-    "IceBlockCCrack4": 220,
-    "IceBlockCGlass": 1584,
-    "IceBlockCGlow": 576,
-    "IceBlockCInner": 736,
-    "IceBlockCShell": 652,
-    "IceBlockCSnow": 812
-   },
-   "size": [
-    14.36,
-    16.31,
-    14.68
-   ],
-   "top": 15.45,
-   "triangles": 4802
-  }
+ "meshes": {
+  "IceChunk1": 16,
+  "IceChunk2": 20,
+  "IceChunk3": 18,
+  "IceCrack1": 22,
+  "IceCrack2": 64,
+  "IceCrack3": 158,
+  "IceCrack4": 226,
+  "IceCrystalClusters": 720,
+  "IceDenseBubbles": 1652,
+  "IceDrifts": 960,
+  "IceMythicGlass": 1152,
+  "IceMythicGlow": 576,
+  "IcePiece01": 60,
+  "IcePiece02": 24,
+  "IcePiece03": 52,
+  "IcePiece04": 92,
+  "IcePiece05": 86,
+  "IcePiece06": 68,
+  "IcePiece07": 82,
+  "IcePiece08": 36,
+  "IcePiece09": 34,
+  "IcePiece10": 28,
+  "IcePiece11": 46,
+  "IceShell": 252,
+  "IceV1Crystals": 840,
+  "IceV1Inner": 908,
+  "IceV1Snow": 1532,
+  "IceV2Crystals": 504,
+  "IceV2Inner": 848,
+  "IceV2Snow": 1192,
+  "IceV3Crystals": 996,
+  "IceV3Inner": 792,
+  "IceV3Snow": 1304,
+  "IceVeins": 808
  },
+ "pieces": 11,
+ "top": 16.85,
  "width": 11.2
 }

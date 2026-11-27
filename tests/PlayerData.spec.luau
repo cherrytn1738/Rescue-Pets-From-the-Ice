@@ -711,6 +711,20 @@ return function(sources)
 	check(data.Settings.Music == 1 and data.Settings.Sounds == 1 and data.Settings.ReducedEffects == false, "settings that aren't a table go back to the defaults")
 	leave(oddBlock)
 
+	-- A Mythic Block (bought with Robux) keeps its look through a rejoin; anything but true is dropped
+	put(152, { SchemaVersion = 1, CurrentBlock = { CreatureId = "AuroraFox", HpLeft = 40, Mythic = true } })
+	local mythicUid = join(152)
+	data = PlayerData.Get(mythicUid)
+	check(PlayerData.IsReady(mythicUid) and data.CurrentBlock.Mythic == true and data.CurrentBlock.HpLeft == 40, "a Mythic Block is loaded as one")
+	PlayerData.Edit(mythicUid).CurrentBlock.HpLeft = 30
+	leave(mythicUid)
+	check(record(152).CurrentBlock.Mythic == true and record(152).CurrentBlock.HpLeft == 30, "a Mythic Block is saved as one")
+	put(153, { SchemaVersion = 1, CurrentBlock = { CreatureId = "AuroraFox", HpLeft = 40, Mythic = "yes" } })
+	local oddMythic = join(153)
+	data = PlayerData.Get(oddMythic)
+	check(PlayerData.IsReady(oddMythic) and data.CurrentBlock.Mythic == nil and data.CurrentBlock.HpLeft == 40, "a Mythic flag that isn't true is dropped, the block kept")
+	leave(oddMythic)
+
 	-- Every saved field round-trips: a save with every field away from its default, then leave and rejoin.
 	local fullUid = join(130)
 	local full = PlayerData.Edit(fullUid)

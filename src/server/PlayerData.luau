@@ -111,7 +111,7 @@ local function cleanBlock(block)
 	if type(block) ~= "table" or not CreatureConfig.Get(block.CreatureId) or not isAmount(block.HpLeft) then
 		return nil
 	end
-	return { CreatureId = block.CreatureId, HpLeft = block.HpLeft }
+	return { CreatureId = block.CreatureId, HpLeft = block.HpLeft, Mythic = if block.Mythic == true then true else nil }
 end
 
 -- One pet: { Uid, CreatureId, Golden, Locked (true, or absent) }. A pet whose creature this game doesn't
@@ -179,7 +179,7 @@ end
 
 -- Schema history (bump SCHEMA_VERSION and add a step for every change once the game is live):
 --   1  The game (docs/GAME_DESIGN.md, "Data and code structure"): Crystals, CrystalsThisRun,
---        CrystalsAllTime, BlockLevel, CurrentBlock ({ CreatureId, HpLeft } or none), Buildings
+--        CrystalsAllTime, BlockLevel, CurrentBlock ({ CreatureId, HpLeft, Mythic } or none; Mythic true for a Mythic Block bought with Robux), Buildings
 --        ({ [building id] = count }), Upgrades (upgrade ids), Pets ({ Uid, CreatureId, Golden }),
 --        Equipped (pet uids), BookSeen ({ [creature id] = rescue count }), FrostCores, Rebirths,
 --        MaxLayerOpened, CreaturesRescued, TutorialStep. The doc's codesRedeemed is Codes, lastOnline is

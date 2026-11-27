@@ -8,7 +8,7 @@ the templates live in the place file (ServerStorage), not in Git.
   ONLY = "Picks"          the six ice picks
   ONLY = "Plot"           the plot's own parts (MapConfig.PlotModels: the arch, the ice stage, the walls)
   ONLY = "Plaza"          the plaza's parts (MapConfig.PlazaModels: the leaderboard board)
-  ONLY = "Ice"            the ice block's looks (IceLooks.OptionModelIds: tools/blender/ice_block.py)
+  ONLY = "Ice"            the ice block's kit (IceLooks.KitModelId: tools/blender/ice_block.py)
 
 Out:
   ServerStorage.BuildingTemplates.<Id>.T<tier>   a Model: "Root" (its PrimaryPart: an invisible part at
@@ -20,9 +20,10 @@ Out:
       space, its pivot at the origin on the ground; nothing collides (the plot's own Parts do). "...Trim" meshes
       are untextured with the attribute RankColour: RankService gives them the owner's rebirth colour.
   ServerStorage.PlazaTemplates.<LeaderboardBoard>   the same, in plaza-spot space (PlazaService places it).
-  ServerStorage.IceTemplates.IceBlock<A|B|C>   a Model of the block's MeshParts in block space (its pivot on the
-      ground at the middle, front -Z) at the level-1 size; each part has a Role attribute (Shell, Inner, Snow,
-      Crystals, Glass, Glow, Crack1-4). IceBlockService copies the folder to ReplicatedStorage for the clients.
+  ServerStorage.IceTemplates.Kit   a Model of every ice block mesh in block space (its pivot on the ground at the
+      middle, front -Z) at the level-1 size: the body, cracks, shape variants, layer extras, Mythic Block crystals,
+      shatter pieces and chunks (IceBlockLook picks a block's parts). IceBlockService copies the folder to
+      ReplicatedStorage for the clients.
 
 Every MeshPart (store-assets/buildings/IMPORT_NOTES.md): the palette texture, white, SmoothPlastic,
 RenderFidelity Automatic (Roblox's level of detail: a full server of maxed plots was 1.3M triangles at
@@ -312,55 +313,46 @@ local function buildPlotPart(name: string, assetId: number, folderName: string?)
 	say(string.format("%s.%s: %d meshes (%d rank trim), size %.1f x %.1f x %.1f", out.Name, name, #parts, trims, size.X, size.Y, size.Z))
 end
 
--- The ice block's look: every mesh takes the ice atlas; the shell, the inner bubbles and C's glass crystals are
--- just above transparent (Roblox then honours the atlas's alpha), the glow cores Neon, the rest opaque.
+-- The ice block's kit: every mesh takes an ice atlas (IceBlockLook swaps in the layer's); the shell, bubbles, Mythic
+-- glass, shatter pieces and chunks are just above transparent (Roblox then honours the atlas's alpha); the veins and
+-- the Mythic crystal cores are Neon, untextured (coloured in game); the rest opaque.
 local ICE_IMPORT = 10 -- tools/blender/ice_block.py exports at a tenth, like the plot parts
-local function buildIceBlock(option: string, assetId: number)
+local SEE_THROUGH = { Shell = true, DenseBubbles = true, MythicGlass = true }
+local function buildIceKit(assetId: number)
 	local out = folder(ServerStorage, "IceTemplates")
-	local name = "IceBlock" .. option
-	local old = out:FindFirstChild(name)
-	if old then
-		old:Destroy()
+	for _, old in out:GetChildren() do
+		old:Destroy() -- (the old look options too)
 	end
 	local model = Instance.new("Model")
-	model.Name = name
-	local roles = {}
+	model.Name = "Kit"
+	local count = 0
 	for _, p in load(assetId, nil, ICE_IMPORT) do
-		local role = string.match(p.Name, "^IceBlock%u(.+)$") or "Shell"
+		local role = string.match(p.Name, "^Ice(.+)$") or p.Name
 		style(p, false, Enum.CollisionFidelity.Box)
-		p.TextureID = IceLooks.Textures.Atlas
-		p.CastShadow = role == "Shell" or role == "Snow"
-		if role == "Shell" or role == "Inner" or role == "Glass" then
+		p.TextureID = IceLooks.Textures.BlueIce
+		p.CastShadow = role == "Shell" or string.match(role, "Snow$") ~= nil
+		if SEE_THROUGH[role] or string.match(role, "Inner$") or string.match(role, "^Piece") or string.match(role, "^Chunk") then
 			p.Transparency = IceLooks.New.ShellTransparency
-		elseif role == "Glow" then
+		elseif role == "Veins" or role == "MythicGlow" then
 			p.TextureID = ""
 			p.Material = Enum.Material.Neon
 			p.Color = Color3.fromRGB(150, 240, 255)
 		end
 		p:SetAttribute("Role", role)
-		table.insert(roles, role)
 		p.Parent = model
+		count += 1
 	end
 	model.WorldPivot = CFrame.identity
 	model.Parent = out
 	local size = model:GetExtentsSize()
-	table.sort(roles)
-	say(string.format("IceTemplates.%s: %d meshes (%s), size %.1f x %.1f x %.1f", name, #roles, table.concat(roles, " "), size.X, size.Y, size.Z))
+	say(string.format("IceTemplates.Kit: %d meshes, size %.1f x %.1f x %.1f", count, size.X, size.Y, size.Z))
 end
 
 if ONLY == "Ice" then
-	if not IceLooks.Textures.Atlas then
-		return "IceLooks.Textures.Atlas is missing (tools/write_asset_ids.py)"
+	if not IceLooks.Textures.BlueIce or not IceLooks.KitModelId then
+		return "IceLooks.Textures.BlueIce or IceLooks.KitModelId is missing (tools/write_asset_ids.py)"
 	end
-	for _, option in IceLooks.Options do
-		local assetId = IceLooks.OptionModelIds[option]
-		if assetId then
-			buildIceBlock(option, assetId)
-		else
-			say(`SKIPPED ice option {option}: no asset id`)
-		end
-		task.wait()
-	end
+	buildIceKit(IceLooks.KitModelId)
 	return table.concat(report, "\n")
 end
 if not PALETTE then

@@ -389,10 +389,8 @@ local PREPARE = {
 	end,
 	ice = function()
 		dbg("SetRebirths", { Rebirths = 3 }) -- layer 6 open
-		home()
-	end,
-	["ice-options"] = function()
-		dbg("ClearDummyPlots")
+		onlyBuildings({}) -- (no building hits: the low blocks would break before their shot)
+		ReplicatedStorage.SaveSettings:FireServer({ ReducedEffects = false })
 		home()
 	end,
 	pets = function()
@@ -633,57 +631,102 @@ shot("ice/shatter", function()
 	blockShot(false)
 	task.wait(1)
 	dbg("ForceRescue")
-	return { Wait = 0.25 }
+	waitFor(function() -- (the block's own pieces, flung apart)
+		return workspace:FindFirstChild("ClientEffects") ~= nil and workspace.ClientEffects:FindFirstChild("IcePiece01") ~= nil
+	end, 3)
+	task.wait(0.15)
+	return { Wait = 0 }
 end)
 shot("ice/sled_arrival", function()
 	freshBlock(15, "GlacierOtter")
 	blockShot(false)
 	task.wait(1)
 	dbg("ForceRescue")
-	return { Wait = 2.6 }
+	-- the next block slides in on its sled when it becomes present (IceLooks.SledSeconds)
+	local block = workspace.Plots:FindFirstChild("Plot" .. plotIndex()).Block
+	waitFor(function()
+		return block:GetAttribute("Present") == false
+	end, 3)
+	waitFor(function()
+		return block:GetAttribute("Present") == true
+	end, 10)
+	task.wait(0.3)
+	return { Wait = 0 }
 end)
 shot("ice/mythic_block", function()
 	freshBlock(15, "SnowBunny")
 	dbg("SimulateReceipt", { Product = "MythicBlock", GiftTo = 0 })
 	task.wait(0.5)
 	dbg("ForceRescue")
-	blockShot(true)
-	return { Wait = 5 }
+	hold(plotPoint(11, 40, 15), plotPoint(0, 0, 12), 55)
+	return { Wait = 5.5 }
 end)
 
--- Ice options (the block redesign, part 1): each look (IceLooks.Options, the Studio switch StudioIceOption) on
--- the Blue Ice layer with a Rare creature: from the tapping spot (the play camera), close up, from the plaza (every
--- free plot filled with the same block) and at crack stage 3.
-local ICE_OPTION_LEVEL = 15
-for _, option in { "A", "B", "C" } do
-	local function setUp()
-		workspace:SetAttribute("StudioIceOption", option)
-		freshBlock(ICE_OPTION_LEVEL, rarityCreature("Rare"))
+-- The rarity auras up close (Epic, Legendary, Mythic) on the bright, the deep and the dark layers.
+for _, rarity in { "Epic", "Legendary", "Mythic" } do
+	for _, layer in { 1, 3, 6 } do
+		shot(`ice/aura_{rarity}_layer{layer}`, function()
+			freshBlock(LAYER_LEVELS[layer], rarityCreature(rarity))
+			hold(plotPoint(11, 40, 15), plotPoint(0, 0, 12), 55)
+			return { Wait = 2.5 }
+		end)
 	end
-	local function closeUp()
-		hold(plotPoint(8, 27, 11), plotPoint(0, 0, 12), 50)
-	end
-	shot(`ice-options/{option}_tapping`, function()
-		setUp()
+end
+shot("ice/aura_Legendary_reduced", function() -- (reduced effects: the ring and fewer particles, no rays or flames)
+	ReplicatedStorage.SaveSettings:FireServer({ ReducedEffects = true })
+	freshBlock(LAYER_LEVELS[2], rarityCreature("Legendary"))
+	hold(plotPoint(11, 40, 15), plotPoint(0, 0, 12), 55)
+	task.wait(1)
+	return { Wait = 2 }
+end)
+-- Each layer from the tapping spot (the play camera), with an Epic creature.
+for layer, level in LAYER_LEVELS do
+	shot(`ice/tapping_layer{layer}`, function()
+		ReplicatedStorage.SaveSettings:FireServer({ ReducedEffects = false })
+		freshBlock(level, rarityCreature("Epic"))
 		home()
 		follow(Vector3.new(4, 7, 12), Vector3.new(0, 3, -16), 60)
 		return { Wait = 2.5 }
 	end)
-	shot(`ice-options/{option}_close`, function()
-		setUp()
-		closeUp()
-		return { Wait = 2 }
-	end)
-	shot(`ice-options/{option}_crack3`, function()
-		setUp()
-		dbg("SetBlockHp", { Percent = 39 })
-		closeUp()
-		return { Wait = 2 }
-	end)
-	shot(`ice-options/{option}_plaza`, function()
-		setUp()
-		dbg("FillDummyPlots", { Creature = rarityCreature("Rare"), Level = ICE_OPTION_LEVEL, Layer = 2, Stage = 0 })
-		-- from above the plaza's middle, towards your plot: it and both neighbours in view, under their gates
+end
+-- The block at the tapping spot with the HUD, at phone sizes.
+shot("ice/tapping_phone", function()
+	freshBlock(LAYER_LEVELS[2], rarityCreature("Legendary"))
+	home()
+	staging.hud = true
+	follow(Vector3.new(4, 7, 12), Vector3.new(0, 3, -16), 60)
+	return { Wait = 2.5 }
+end, PHONES)
+-- A tap: the squash and the white glint where the pick strikes (real clicks on the block).
+shot("ice/tap_glint", function()
+	freshBlock(LAYER_LEVELS[2], rarityCreature("Rare"))
+	hold(plotPoint(8, 27, 11), plotPoint(0, 0, 12), 50)
+	task.wait(0.6)
+	local view = workspace.ClientIce:FindFirstChild("IceView" .. plotIndex())
+	local block = view and view:FindFirstChild("IceBlock")
+	local taps = {}
+	if block then
+		for i = 1, 6 do
+			local point = camera:WorldToScreenPoint(block.Position + Vector3.new((i % 3 - 1) * 1.5, (i % 2) * 2, 0))
+			table.insert(taps, { math.floor(point.X), math.floor(point.Y) })
+		end
+	end
+	return { TapAt = taps, Wait = 0.45 }
+end)
+-- A crack stage: chunks break off the top and fall.
+shot("ice/crack_chunks", function()
+	freshBlock(LAYER_LEVELS[3], rarityCreature("Rare"))
+	hold(plotPoint(9, 32, 13), plotPoint(0, 0, 11), 55)
+	task.wait(1)
+	dbg("SetBlockHp", { Percent = 59 })
+	return { Wait = 0.35 }
+end)
+-- From the plaza: every free plot holds the same rare block (the auras must read across the plaza).
+for _, case in { { "legendary_layer2", "Legendary", 2 }, { "mythic_layer5", "Mythic", 5 }, { "legendary_layer1", "Legendary", 1 } } do
+	shot(`ice/plaza_{case[1]}`, function()
+		dbg("ClearDummyPlots")
+		freshBlock(LAYER_LEVELS[case[3]], rarityCreature(case[2]))
+		dbg("FillDummyPlots", { Creature = rarityCreature(case[2]), Level = LAYER_LEVELS[case[3]], Layer = case[3], Stage = 0 })
 		local angle = (plotIndex() - 1) / MapConfig.PlotCount * math.pi * 2
 		local out = Vector3.new(math.sin(angle), 0, math.cos(angle))
 		standAt(-out * 20 + Vector3.new(0, 4, 0), Vector3.zero)
@@ -1228,7 +1271,6 @@ elseif string.sub(SHOT, 1, 9) == "?prepare:" then
 	return "prepared " .. category
 elseif SHOT == "?cleanup" then
 	unfreeze() -- (a held pick swing)
-	workspace:SetAttribute("StudioIceOption", nil) -- (the ice options' look switch)
 	dbg("ClearDummyPlots") -- (the plaza shots fill the free plots)
 	ReplicatedStorage.SaveSettings:FireServer({ ReducedEffects = false }) -- (the effects shots turn it on)
 	for _, name in { "VisualReviewCamera", "VisualReviewStage" } do
@@ -1252,10 +1294,10 @@ for _, entry in SHOTS do
 	if entry.Name == SHOT then
 		-- model shots hide the HUD; UI, rescue moments and effects keep it
 		local category = string.split(SHOT, "/")[1]
-		staging.hud = not (category == "buildings" or category == "picks" or category == "ice" or category == "ice-options" or category == "pets" or category == "world")
+		staging.hud = not (category == "buildings" or category == "picks" or category == "ice" or category == "pets" or category == "world")
 		staging.tutorial = false
 		-- the big moments only where they're the subject (building moments, rescues, UI, effects)
-		staging.banners = not (category == "picks" or category == "ice" or category == "ice-options" or category == "pets" or category == "world")
+		staging.banners = not (category == "picks" or category == "ice" or category == "pets" or category == "world")
 		stage()
 		local preClose = openWindows()
 		local result = entry.Run() or {}

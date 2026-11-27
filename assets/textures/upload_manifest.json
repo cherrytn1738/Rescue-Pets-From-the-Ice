@@ -18,15 +18,59 @@
    "sha256": "392db66fa227705919dab1017f9fa504ea158efdd6a0806d7633f5f673e8da17",
    "updated": "2026-11-25T03:19:42+00:00"
   },
-  "ice/IceBlueAtlas.png": {
-   "assetId": "104417678687508",
+  "ice/IceAncientIceAtlas.png": {
+   "assetId": "111223972877647",
    "creator": {
     "groupId": "921449746"
    },
    "moderationState": "Approved",
-   "previousAssetId": "112335353202278",
-   "sha256": "716b5f86f9f521839eb2ec516a8e217e0d0365e381a1f62dcd299c69ea64827c",
-   "updated": "2026-11-27T13:01:29+00:00"
+   "sha256": "03ecc86e8de08978470ea6eefcfdf55d7459b256b73d70ea685a0cbc7cff7224",
+   "updated": "2026-11-27T13:57:42+00:00"
+  },
+  "ice/IceBlueIceAtlas.png": {
+   "assetId": "118232142318427",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "f7e180d8eb52f9df3eb116d9188346f1f307093cc8413f265362cd010936535f",
+   "updated": "2026-11-27T13:57:44+00:00"
+  },
+  "ice/IceCrystalIceAtlas.png": {
+   "assetId": "126663887658563",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "a14a190c46dd17e345498807123b34452e61b144ec327e907c4932089097ef31",
+   "updated": "2026-11-27T13:57:46+00:00"
+  },
+  "ice/IceFlame.png": {
+   "assetId": "71126004192467",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "1be839ec6d3af36fd0694ef445d46236eaea487415cb7867fb7fe396e9326510",
+   "updated": "2026-11-27T13:57:48+00:00"
+  },
+  "ice/IceFreshSnowAtlas.png": {
+   "assetId": "114602828856860",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "fde838803e51c44c7dbe2ce55a70e42cc5c0877deff4fb90d732b3d07d795a6c",
+   "updated": "2026-11-27T13:57:50+00:00"
+  },
+  "ice/IceFrozenCoreAtlas.png": {
+   "assetId": "125764290350747",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "25ec47c3b2e4a65099e846e49ec2622427135b456f64a70054dac0f610db3955",
+   "updated": "2026-11-27T13:57:52+00:00"
   },
   "ice/IceGlow.png": {
    "assetId": "138336382402637",
@@ -37,6 +81,34 @@
    "previousAssetId": "88858438522837",
    "sha256": "fd8772d5973681d739598e6562cbf158d1af8c9f1e0d6932f65b820f865d81c7",
    "updated": "2026-11-27T12:52:54+00:00"
+  },
+  "ice/IceHalo.png": {
+   "assetId": "95835941638534",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "previousAssetId": "73909961518460",
+   "sha256": "36cb1b2de603e3ec0d11c6b46978982c02452972220d3b8a983fb5f322fa98b8",
+   "updated": "2026-11-27T14:10:06+00:00"
+  },
+  "ice/IcePrimordialIceAtlas.png": {
+   "assetId": "100770305195930",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "693d3d393b3b8459ba57857006ca609ddedcfe34f72107c49a954897e381b345",
+   "updated": "2026-11-27T13:57:57+00:00"
+  },
+  "ice/IceRay.png": {
+   "assetId": "116885948215574",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "5abee1fd0244e403beb8f01b28fd11613de64d417a9c6e1a35ad2138259fa777",
+   "updated": "2026-11-27T13:57:59+00:00"
   },
   "ice/IceShimmer.png": {
    "assetId": "119012227357167",

@@ -275,6 +275,9 @@ EffectsConfig.TapChips = {
 	Life = { Chip = 0.7, Crystal = 0.8, Spark = 0.32 },
 }
 
+-- The white glint where the pick strikes the ice (TapFeedback): its size in studs and how long it shows.
+EffectsConfig.TapGlint = { Size = 1.8, Life = 0.2 }
+
 function EffectsConfig.Texture(key: string): string
 	return EffectsConfig.Textures[key] or EffectsConfig.Placeholder
 end

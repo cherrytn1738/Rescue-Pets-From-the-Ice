@@ -6,12 +6,12 @@ ASSET_IDS.md. Run it after tools/upload_models.py; re-running it is safe.
 Reads:   store-assets/buildings/upload_manifest.json  (stations and upgrade part sets, Models)
          store-assets/tools/upload_manifest.json      (ice picks, Models)
          assets/textures/upload_manifest.json         (the building palette, particle and ice textures, Images)
-         store-assets/ice-block/upload_manifest.json  (the ice block's look options, Models)
+         store-assets/ice-block/upload_manifest.json  (the ice block's kit, a Model)
 Writes the generated block (between "-- BEGIN ASSET IDS" and "-- END ASSET IDS") in
          src/replicated/BuildingConfig.luau   BuildingConfig.PaletteTextureId, BuildingConfig.ModelIds
          src/replicated/UpgradeConfig.luau    UpgradeConfig.PickModelIds
          src/replicated/EffectsConfig.luau    EffectsConfig.Textures
-         src/replicated/IceLooks.luau         IceLooks.Textures, IceLooks.OptionModelIds
+         src/replicated/IceLooks.luau         IceLooks.Textures, IceLooks.KitModelId
 and ASSET_IDS.md (every asset, its file and its moderation state).
 """
 import json, os, re, sys
@@ -22,8 +22,9 @@ PICKS = ["Wooden", "Stone", "Iron", "Gold", "Diamond", "Cosmic"]
 TEXTURE_KEYS = {"soft_glow.png": "SoftGlow", "sparkle.png": "Sparkle", "snowflake.png": "Snowflake", "ember.png": "Ember",
                 "smoke_puff.png": "SmokePuff", "star.png": "Star", "water_droplet.png": "WaterDroplet",
                 "rune_1.png": "Rune1", "rune_2.png": "Rune2", "rune_3.png": "Rune3", "rune_4.png": "Rune4"}
-ICE_TEXTURES = {"IceBlueAtlas.png": "Atlas", "IceGlow.png": "Glow", "IceShimmer.png": "Shimmer"}
-ICE_OPTIONS = ["A", "B", "C"]
+ICE_LAYERS = ["FreshSnow", "BlueIce", "AncientIce", "CrystalIce", "PrimordialIce", "FrozenCore"]  # LayerConfig ids
+ICE_TEXTURES = dict([("Ice%sAtlas.png" % layer, layer) for layer in ICE_LAYERS]
+                    + [("IceGlow.png", "Glow"), ("IceShimmer.png", "Shimmer"), ("IceHalo.png", "Halo"), ("IceRay.png", "Ray"), ("IceFlame.png", "Flame")])
 
 
 def manifest(path):
@@ -95,12 +96,9 @@ def main():
         aid, state = asset(textures, "ice/" + file)
         block.append('\t%s = %s,\n' % (key, '"rbxassetid://%s"' % aid if aid else "nil"))
         rows.append(("Image", "Ice block texture " + key, "assets/textures/ice/" + file, aid, state))
-    block.append("}\nIceLooks.OptionModelIds = {\n")
-    for option in ICE_OPTIONS:
-        aid, state = asset(ice, "IceBlock%s.fbx" % option)
-        block.append("\t%s = %s,\n" % (option, aid or "nil"))
-        rows.append(("Model", "Ice block option " + option, "store-assets/ice-block/IceBlock%s.fbx" % option, aid, state))
-    block.append("}\n-- END ASSET IDS\n")
+    aid, state = asset(ice, "IceBlockKit.fbx")
+    rows.append(("Model", "Ice block kit", "store-assets/ice-block/IceBlockKit.fbx", aid, state))
+    block.append("}\nIceLooks.KitModelId = %s\n-- END ASSET IDS\n" % (aid or "nil"))
     replace_block("src/replicated/IceLooks.luau", "".join(block))
 
     md = ["# Asset ids", "",

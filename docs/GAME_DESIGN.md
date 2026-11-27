@@ -78,31 +78,36 @@ Each block has HP, a creature frozen inside, and five crack stages. When its HP 
 
 This is a starting value. The economy simulation tunes it so a rescue comes every 1–3 minutes at the intended pace.
 
-**What's inside is rolled when the block arrives.** The server picks the creature as soon as a new block spawns, so its silhouette and glow can show from the first tap. Rare and better creatures glow through the ice in their rarity's colour:
+**The look.** A rounded, bevelled block in the buildings' toy style: frosty white edges and glints, colour deepening from the top down, a clearer middle with trapped bubbles and frost streaks, a snow cap with icicles, small crystals and snow round the base, a slow shimmer sweeping across the faces and a little frost mist at its foot. Each layer has its own version (Fresh Snow packed white snow with drifts, Blue Ice clear pale blue, Ancient Ice deep blue full of bubbles, Crystal Ice clear cyan with faceted crystal clusters and sparkles, Primordial Ice dark teal with glowing veins, the Frozen Core black ice lit from inside with orange veins), and three shape variants (snow cap, icicles, base crystals) are picked at random per block. A Mythic Block bought with Robux has glowing crystal clusters bursting out of its corners and a rainbow aura, whatever it holds.
 
-| Rarity | Glow through the ice |
-| --- | --- |
-| Common, Uncommon | None, just a dark silhouette |
-| Rare | Soft blue |
-| Epic | Purple |
-| Legendary | Pulsing amber, and the server is told |
-| Mythic | Shifting rainbow, and the server is told |
+**What's inside is rolled when the block arrives.** The server picks the creature as soon as a new block spawns, so its silhouette and glow can show from the first tap. The creature is a dark silhouette with a frosty outline in its rarity's colour (soft white for Common) and two glowing eyes that blink now and then. Uncommon and better creatures glow through the ice, and Epic and better give the block an aura (a soft ring of light behind it, seen across the plaza, plus effects near you):
+
+| Rarity | Glow through the ice | Aura off the block |
+| --- | --- | --- |
+| Common | None | None |
+| Uncommon | Soft green | None |
+| Rare | Soft blue | None |
+| Epic | Purple, with drifting motes | Purple wisps rising off the top and edges like cold vapour |
+| Legendary | Pulsing amber, and the server is told | Amber ring, flickering flame wisps round the block, rising embers, a slow pulse, soft light rays from the top |
+| Mythic | Shifting rainbow, and the server is told | A large rainbow ring cycling colours, sparkles spiralling up, a bright pulse every few seconds |
+
+Auras follow the effect rules (your plot at full rate, others at half within 60 studs; the ring and rays show at any distance; reduced effects keeps the ring and fewer particles), never wash over the block or hide the creature, and fade quickly when the block shatters.
 
 **Crack stages.** The ice shows its damage in five steps, and the creature gets clearer at each one:
 
 | Damage | What changes |
 | --- | --- |
-| 20% | Hairline cracks; the silhouette is a dark blur |
-| 40% | Chunks fall off; the creature's shape is clear |
-| 60% | Its eyes are visible and blink |
-| 80% | It wiggles inside, the glow gets brighter, a heartbeat sound starts |
+| 20% | Hairline cracks appear on the surface; one or two chunks break off and fall (at every stage) |
+| 40% | The cracks spread; the frost thins, so the creature's shape is clear |
+| 60% | Long cracks; a little of the creature's real colours shows through the frost |
+| 80% | It wiggles inside, more of its colours show, the glow gets brighter, a heartbeat sound starts |
 | 100% | The ice shatters and the creature breaks free |
 
 [Concept image in the Claude doc: Crack stages: an Epic Mini Yeti gets clearer at 20, 40, 60 and 80 percent, then breaks free at 100 percent\]
 
-**Every hit.** Ice chips, crystal bits and the pick's sparks burst out of the exact spot the player clicked or touched (where that ray meets the block, out along the face and towards the camera; a tap that misses the block uses the nearest point of the face towards the camera, a gamepad the middle of that face), and a crunch plays. Its pitch rises slightly during fast tapping streaks. Where the player clicked or touched, a small white flash with a few short white streaks bursts out (about 0.25 s), and "+N" pops up 30-70 px away at a random angle: the crystals that tap earned (the server's figure, so it matches the counter), in the chunky UI font, white with a dark outline and short numbers (+6, +1.2K), popping in with a little jiggle, then floating up and fading in about 0.7 s. With a gamepad it shows at the ice block. Auto Pick's taps don't show it, and reduced effects keeps the number but drops the streaks.
+**Every hit.** The block squashes about 3% and springs back (a new tap restarts it, never stacking), a small white glint flashes where the pick strikes, and ice chips, crystal bits and the pick's sparks burst out of the exact spot the player clicked or touched (where that ray meets the block, out along the face and towards the camera; a tap that misses the block uses the nearest point of the face towards the camera, a gamepad the middle of that face), and a crunch plays. Its pitch rises slightly during fast tapping streaks. Where the player clicked or touched, a small white flash with a few short white streaks bursts out (about 0.25 s), and "+N" pops up 30-70 px away at a random angle: the crystals that tap earned (the server's figure, so it matches the counter), in the chunky UI font, white with a dark outline and short numbers (+6, +1.2K), popping in with a little jiggle, then floating up and fading in about 0.7 s. With a gamepad it shows at the ice block. Auto Pick's taps don't show it, and reduced effects keeps the number but drops the streaks.
 
-**The rescue moment.** The ice explodes into shards with a crystal fountain worth about 30 seconds of the player's income. The creature shakes off the frost, a banner shows its rarity, and it runs to the player. A new, slightly bigger block then slides into the plot on a sled from the glacier.
+**The rescue moment.** The block breaks into its own pre-cut pieces, which burst out and fade (a rare block also bursts in its aura's colour), with a crystal fountain worth about 30 seconds of the player's income. The creature shakes off the frost, a banner shows its rarity, and it runs to the player. A new, slightly bigger block then slides into the plot on a sled from the glacier.
 
 ## Economy
 
@@ -272,6 +277,7 @@ Higher tiers don't just look different, they feel alive: each tier adds a layer 
 - The reduced-effects setting turns off hit effects and halves ambient particles.
 - A Legendary's ground ring is a loop of small glowing parts on its plinth, not particles, so like the lights it shows at any distance and every Legendary reads from the plaza. A faded station loses it.
 - Ambient particles use saturated, slightly dark colours so they read on snow and a pale sky; glow (light emission) is kept for embers, runes and aura rings.
+- The ice block's rarity auras follow the same rules: their particles (wisps, flames, embers, spiralling sparkles) by the plot and distance, while the ring of light behind the block and the Legendary rays are beams, so a rare block reads from across the plaza. Reduced effects keeps the ring and halves the particles, with no rays, flames or spirals.
 
 ## Upgrades in detail
 
@@ -323,7 +329,7 @@ Every rescued creature becomes a pet. Equipped pets follow the player and add to
 | Rarity | Crystal bonus when equipped | Glow through the ice |
 | --- | --- | --- |
 | Common | +10% | None |
-| Uncommon | +25% | None |
+| Uncommon | +25% | Soft green |
 | Rare | +50% | Soft blue |
 | Epic | +100% | Purple |
 | Legendary | +200% | Pulsing amber |

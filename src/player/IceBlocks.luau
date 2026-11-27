@@ -18,7 +18,8 @@ block"; the look is in IceLooks):
    and then a quiet chip as your buildings hit it; from other plots only Legendary and Mythic rescue
    jingles, quieter, within AudioConfig.Rules.OtherPlots.MaxDistance studs.
 IceBlocks.Hit(plotIndex, strength) makes a block shudder (your taps: TapFeedback).
-The redesigned look (IceBlockLook) replaces the classic one when the Studio switch StudioIceOption picks an option.
+The look itself is IceBlockLook (the carved block, per layer and rarity, with the auras, chunks and shatter pieces);
+the classic look below (a plain Part with Extras) only shows while the kit template is missing.
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -332,7 +333,8 @@ local function shatter(view, creatureId: string)
 	local size = block.Size
 	local look = IceLooks.Layers[view.layer or 1] or IceLooks.Layers[1]
 	local origin = block.Position
-	for _ = 1, Effects.Count(IceLooks.Particles.Shards) do
+	IceBlockLook.Shatter(view) -- (its own pre-cut pieces; the classic look's shards below only without it)
+	for _ = 1, if view.look then 0 else Effects.Count(IceLooks.Particles.Shards) do
 		local offset = Vector3.new((math.random() - 0.5) * size.X, (math.random() - 0.5) * size.Y, (math.random() - 0.5) * size.Z)
 		local out = Vector3.new(offset.X, 0, offset.Z).Unit
 		if out ~= out then
@@ -401,17 +403,20 @@ local function update(view, dt: number)
 	end
 
 	-- a new block: its look, cracks, silhouette (the redesigned look when the Studio switch picks one)
-	local option = IceBlockLook.Option()
-	local key = `{level}:{creatureId}:{layer}:{option or "classic"}`
+	local kitLook = IceBlockLook.Available()
+	local mythic = attrs:GetAttribute("MythicBlock") == true
+	local key = `{level}:{creatureId}:{layer}:{mythic}:{kitLook}`
 	if present and creatureId and key ~= view.key then
 		view.key = key
 		view.layer = layer
 		view.block.Size = size
 		view.block.CFrame = view.base * CFrame.new(0, height / 2 - 0.5, 0)
 		buildSilhouette(view, creatureId, height)
-		if option then
+		if kitLook then
 			clearClassic(view)
-			IceBlockLook.Build(view, option, height, rarity)
+			-- the shape variant: random per block, the same on every client
+			local variant = (level * 7 + view.index * 3 + #creatureId) % IceLooks.Variants + 1
+			IceBlockLook.Build(view, height, layer, rarity, variant, mythic)
 		else
 			IceBlockLook.Clear(view)
 			view.glow.Parent = view.core
@@ -457,7 +462,9 @@ local function update(view, dt: number)
 				Effects.Sound("Crack" .. math.clamp(stage, 1, 4))
 				Effects.Shake(0.35, 0.25)
 			end
-			if stage >= 2 and view.stage < 2 then
+			if view.look then
+				IceBlockLook.BreakChunks(view, stage)
+			elseif stage >= 2 and view.stage < 2 then
 				for _ = 1, Effects.Count(5) do
 					local top = view.block.CFrame * CFrame.new((math.random() - 0.5) * size.X, size.Y / 2, (math.random() - 0.5) * size.Z)
 					Effects.Debris({ Size = Vector3.one * (1 + math.random() * 1.4), CFrame = top, Color = look.Color, Material = look.Material,
@@ -493,7 +500,7 @@ local function update(view, dt: number)
 	view.block.Material = look.Material
 	local frost = look.Transparency + (look.Clear - look.Transparency) * (stage / 4)
 	view.block.Transparency = if present and not view.look then frost else 1
-	IceBlockLook.Update(view, present, stage, rarity, os.clock())
+	IceBlockLook.Update(view, present, stage, os.clock(), dt)
 
 	-- cracks by stage
 	for index, group in view.cracks or {} do
@@ -524,7 +531,7 @@ local function update(view, dt: number)
 		local lift = if view.look then height * IceLooks.New.CreatureLift else 0.2
 		sil.model:PivotTo(view.base * sledOffset * CFrame.new(0, lift, 0) * wiggle * (if present then CFrame.identity else CFrame.new(0, -500, 0)))
 		local eyesOn = present and stage >= 3 and (now % 3.2) > 0.18
-		if eyesOn ~= sil.eyes then
+		if eyesOn ~= sil.eyes and not view.look then -- (the look's eyes glow and blink from the start)
 			sil.eyes = eyesOn
 			PetLooks.ShowEyes(sil.model, sil.data, eyesOn)
 		end
@@ -542,7 +549,8 @@ local function update(view, dt: number)
 			color = Color3.fromHSV((now * 0.15) % 1, 0.75, 1)
 		end
 		view.glow.Enabled = true
-		view.glow.Color, view.glow.Brightness, view.glow.Range = color, brightness, glow.Range
+		local scale = if view.look then IceLooks.New.LightScale else 1 -- (the look's glow does the work; the light only tints)
+		view.glow.Color, view.glow.Brightness, view.glow.Range = color, brightness * scale, glow.Range * (if view.look then 0.7 else 1)
 		view.aura.Color = color
 		view.aura.Size = Vector3.one * height * 0.55
 		view.aura.Transparency = if view.look then 1 else math.clamp(0.88 - 0.05 * brightness / glow.Brightness, 0.7, 0.92)
@@ -565,6 +573,7 @@ function IceBlocks.Hit(plotIndex: number, strength: number?)
 		view.shake = math.min(1, view.shake + (strength or 0.35))
 		if view.plot:GetAttribute("Owner") == player.UserId then
 			lastOwnTapAt = os.clock()
+			IceBlockLook.Hit(view) -- (a tap: squash and recover)
 		end
 	end
 end
@@ -579,6 +588,7 @@ function IceBlocks.View(plotIndex: number)
 end
 
 function IceBlocks.Start()
+	task.spawn(IceBlockLook.Preload)
 	local plots = Workspace:WaitForChild("Plots")
 	local function add(plot)
 		if plot:IsA("Model") and not views[plot] then

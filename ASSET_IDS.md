@@ -104,11 +104,17 @@ Every uploaded asset of the game, created by the group 921449746 with `tools/upl
 | Image | Particle texture Rune2 | `assets/textures/particles/rune_2.png` | 80847461207119 | Approved |
 | Image | Particle texture Rune3 | `assets/textures/particles/rune_3.png` | 138045371002432 | Approved |
 | Image | Particle texture Rune4 | `assets/textures/particles/rune_4.png` | 80271496086902 | Approved |
-| Image | Ice block texture Atlas | `assets/textures/ice/IceBlueAtlas.png` | 104417678687508 | Approved |
+| Image | Ice block texture FreshSnow | `assets/textures/ice/IceFreshSnowAtlas.png` | 114602828856860 | Approved |
+| Image | Ice block texture BlueIce | `assets/textures/ice/IceBlueIceAtlas.png` | 118232142318427 | Approved |
+| Image | Ice block texture AncientIce | `assets/textures/ice/IceAncientIceAtlas.png` | 111223972877647 | Approved |
+| Image | Ice block texture CrystalIce | `assets/textures/ice/IceCrystalIceAtlas.png` | 126663887658563 | Approved |
+| Image | Ice block texture PrimordialIce | `assets/textures/ice/IcePrimordialIceAtlas.png` | 100770305195930 | Approved |
+| Image | Ice block texture FrozenCore | `assets/textures/ice/IceFrozenCoreAtlas.png` | 125764290350747 | Approved |
 | Image | Ice block texture Glow | `assets/textures/ice/IceGlow.png` | 138336382402637 | Approved |
 | Image | Ice block texture Shimmer | `assets/textures/ice/IceShimmer.png` | 119012227357167 | Approved |
-| Model | Ice block option A | `store-assets/ice-block/IceBlockA.fbx` | 93574148754606 | Approved |
-| Model | Ice block option B | `store-assets/ice-block/IceBlockB.fbx` | 109948280058251 | Approved |
-| Model | Ice block option C | `store-assets/ice-block/IceBlockC.fbx` | 86807805934381 | Approved |
+| Image | Ice block texture Halo | `assets/textures/ice/IceHalo.png` | 95835941638534 | Approved |
+| Image | Ice block texture Ray | `assets/textures/ice/IceRay.png` | 116885948215574 | Approved |
+| Image | Ice block texture Flame | `assets/textures/ice/IceFlame.png` | 71126004192467 | Approved |
+| Model | Ice block kit | `store-assets/ice-block/IceBlockKit.fbx` | 121512291794378 | Approved |
 
 Not approved yet: none.

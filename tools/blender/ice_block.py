@@ -1,24 +1,22 @@
-# ice_block.py - the ice block's look, in the buildings' smooth toy style. Part 1 of the redesign: three options
-# for one test case (the Blue Ice layer), so the developer can choose:
-#   IceBlockA  faceted iceberg: a chunky low-poly berg, flat-shaded facets in several blues (deep at the base, pale
-#              at the top), jagged crystal spikes on top, a snow cap with soft drips over the edges
-#   IceBlockB  carved block: a rounded, bevelled block, frosty white edges and glints, colour deepening from the top
-#              down, a thick snow cap with icicles, small crystals and snow chunks round the base
-#   IceBlockC  crystal geode: a block with clusters of glowing crystals bursting out of its corners, a clearer
-#              window in a frosty frame on the front (and back), a snow cap
-# Every option is built at the level-1 size (14 studs tall, 11.2 wide and deep; the game scales it with the level)
-# with its pivot on the ground at the middle, front -Y (Roblox -Z). Meshes, by the suffix the game styles them by:
-#   ...Shell     the ice: transparent through the atlas's alpha (frosty rims, a clear middle)
-#   ...Inner     trapped bubbles and frost streaks (transparent)
-#   ...Snow      the snow cap, lumps and drips (opaque)
-#   ...Crystals  spikes, icicles, crystals (opaque);  ...Glass  see-through crystal shells (C)
-#   ...Glow      the glowing crystal cores (C; Neon, coloured in game)
-#   ...Crack1-4  the crack lines of each crack stage, lying on the shell's surface (opaque, shown by stage)
-# Colours come from one texture, assets/textures/ice/IceBlueAtlas.png (tools/make_ice_textures.py: keep the regions
-# below in step with it). Under 5k triangles per block (the plaza can show 8).
-#   blender -b --factory-startup --python tools/blender/ice_block.py [-- render]
+# ice_block.py - the ice block's look (the carved block, option B of the redesign), in the buildings' smooth toy
+# style: a rounded, bevelled block with frosty edges and glints, colour deepening from the top down, a snow cap with
+# icicles, small crystals and snow round the base. One kit for every layer and block:
+#   IceShell, IceCrack1-4          the body (transparent through the atlas's alpha) and its crack lines per stage
+#   IceV<1-3>Snow/Crystals/Inner   three shape variants (snow cap and drips; icicles and base crystals; bubbles and
+#                                  frost streaks), picked at random per block
+#   IceDrifts                      Fresh Snow: snow banked round the base (instead of crystals)
+#   IceDenseBubbles                Ancient Ice: many trapped bubbles (instead of the variant's inner)
+#   IceCrystalClusters             Crystal Ice: faceted clusters on the corners
+#   IceVeins                       Primordial Ice and the Frozen Core: glowing veins (Neon, coloured in game)
+#   IceMythicGlass/Glow            the Mythic Block (bought with Robux): glowing crystal clusters out of the corners
+#   IcePiece01-11                  the pre-cut shatter pieces;  IceChunk1-3  chunks that break off at the crack stages
+# Built at the level-1 size (14 studs tall, 11.2 wide and deep; the game scales it with the level), pivot on the
+# ground at the middle, front -Y (Roblox -Z). Every mesh uses the same UVs on a per-layer atlas
+# (tools/make_ice_textures.py: keep the regions below in step with it), so a layer is a texture swap. A block shows
+# under 5k triangles (checked per combination below; the plaza can show 8).
+#   blender -b --factory-startup --python tools/blender/ice_block.py
 #   (or the Blender MCP: REPO = r"..."; exec(open(REPO + r"\tools\blender\ice_block.py", encoding="utf-8").read()))
-# Out: store-assets/ice-block/IceBlock<A|B|C>.fbx, ice_manifest.json (meshes, triangles, sizes)
+# Out: store-assets/ice-block/IceBlockKit.fbx, ice_manifest.json (meshes, triangles, per-block totals)
 import ast, json, math, os, random, sys
 import bpy, bmesh
 from mathutils import Vector, Matrix
@@ -29,10 +27,9 @@ if "REPO" not in globals():
 EXPORT_SCALE = 0.1  # arrives in Studio at 10x, like the plot parts (build_templates.luau scales it back)
 exec(open(os.path.join(REPO, "tools", "blender", "model_helpers.py"), encoding="utf-8").read())
 OUT = os.path.join(REPO, "store-assets", "ice-block")
-ATLAS_PATH = os.path.join(REPO, "assets", "textures", "ice", "IceBlueAtlas.png")
+ATLAS_PATH = os.path.join(REPO, "assets", "textures", "ice", "IceBlueIceAtlas.png")  # (Blender preview only)
 H, W = 14.0, 11.2  # the level-1 block (LayerConfig.Block.HeightAtFirstLevel, IceLooks.BlockWidthShare)
 MAX_BLOCK_TRIS = 5000
-ONLY = globals().get("ONLY")  # e.g. ["IceBlockB"]
 EXPORT = globals().get("EXPORT", True)
 
 # ---------- the atlas (tools/make_ice_textures.py) ----------
@@ -77,8 +74,8 @@ def preview_material():
     nodes, links = mat.node_tree.nodes, mat.node_tree.links
     bsdf = next(n for n in nodes if n.type == "BSDF_PRINCIPLED")
     tex = next((n for n in nodes if n.type == "TEX_IMAGE"), None) or nodes.new("ShaderNodeTexImage")
-    image = bpy.data.images.get("IceBlueAtlas") or bpy.data.images.load(ATLAS_PATH)
-    image.name = "IceBlueAtlas"
+    image = bpy.data.images.get("IceBlueIceAtlas") or bpy.data.images.load(ATLAS_PATH)
+    image.name = "IceBlueIceAtlas"
     image.reload()
     tex.image = image
     links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
@@ -241,24 +238,6 @@ def crystal_uv(face, co):
     return swatch_uv(facet_colour(k))
 
 
-def spike(base, direction, radius, length, rng, sides=5):
-    """A jagged crystal spike: an irregular pyramid (flat facets)."""
-    bm = new_bm()
-    pts = []
-    for k in range(sides):
-        a = 2 * math.pi * k / sides + rng.uniform(-0.25, 0.25)
-        r = radius * rng.uniform(0.75, 1.15)
-        pts.append(Vector((math.cos(a) * r, math.sin(a) * r, 0)))
-        pts.append(Vector((math.cos(a) * r * 0.9, math.sin(a) * r * 0.9, -0.9)))
-    apex = Vector((rng.uniform(-0.15, 0.15) * radius, rng.uniform(-0.15, 0.15) * radius, length))
-    shoulder = [Vector((p.x * 0.55, p.y * 0.55, length * rng.uniform(0.45, 0.6))) for p in pts[::2][:2]]
-    verts = [bm.verts.new(p) for p in pts + [apex] + shoulder]
-    result = bmesh.ops.convex_hull(bm, input=verts)
-    bmesh.ops.delete(bm, geom=[v for v in result["geom_interior"] if isinstance(v, bmesh.types.BMVert)], context="VERTS")
-    bm.transform(Matrix.Translation(Vector(base)) @ align_z(direction))
-    return bm
-
-
 def bubble(at, radius, subdivisions=1):
     bm = new_bm()
     bmesh.ops.create_icosphere(bm, subdivisions=subdivisions, radius=radius, matrix=Matrix.Translation(Vector(at)))
@@ -277,35 +256,6 @@ def streak(points, width, normal_hint):
         left.append(p + side * w)
         right.append(p - side * w)
     double_sided_strip(bm, left, right)
-    return bm
-
-
-def window_ring(centre, w, h, corner, depth, thickness, normal_y=-1, seg=4, prof=5):
-    """A raised frosty frame round a window on a face (normal -Y or +Y): a rounded-rect loop with a half-round
-    profile standing `depth` off the face, `thickness` wide."""
-    bm = new_bm()
-    outline = rounded_rect(w, h, corner, seg)  # (x, z) round the window
-    rings = []
-    n = len(outline)
-    cx, cy, cz = centre
-    for i, (x, z) in enumerate(outline):
-        x0, z0 = outline[i - 1]
-        x1, z1 = outline[(i + 1) % n]
-        tx, tz = x1 - x0, z1 - z0
-        length = math.hypot(tx, tz) or 1.0
-        ox, oz = tz / length, -tx / length  # outward in the face plane (the outline runs counter-clockwise)
-        ring = []
-        for k in range(prof + 1):
-            a = math.pi * k / prof  # 0 = outer edge, pi = inner edge
-            r = math.cos(a) * thickness / 2
-            d = math.sin(a) * depth
-            ring.append(bm.verts.new((cx + x + ox * r, cy + normal_y * d, cz + z + oz * r)))
-        rings.append(ring)
-    for i in range(n):
-        a, b = rings[i], rings[(i + 1) % n]
-        for k in range(prof):
-            face = (a[k], b[k], b[k + 1], a[k + 1]) if normal_y < 0 else (a[k], a[k + 1], b[k + 1], b[k])
-            bm.faces.new(face)
     return bm
 
 
@@ -466,66 +416,155 @@ def add_inner(inner, rng, inside, count=12, streaks=4):
             inner.add(streak(pts, rng.uniform(0.18, 0.32), normal), "StreakWhite", recalc=False)
 
 
-# ---------- the three options ----------
+# ---------- the kit: look B for every layer ----------
 
-def option_b(coll, material):
-    """Carved block."""
-    rng = random.Random(22)
-    name = "IceBlockB"
-    shell, inner, snow, crystals = IceMesh(name + "Shell"), IceMesh(name + "Inner"), IceMesh(name + "Snow"), IceMesh(name + "Crystals")
-    corner, edge = 1.4, 1.1
-    shell.add(rounded_body((W, W, H), corner, edge, H / 2), body_uv(W / 2 - corner, W / 2 - corner, edge, H - edge))
-    # the thick snow cap: a rounded slab overhanging the top, lumps on it, drips over the edges, icicles under it
+CORNER, EDGE = 1.4, 1.1  # the body's rounded corners and edges
+
+
+def inside_body(p, margin):
+    return max(abs(p.x), abs(p.y)) < W / 2 - margin and margin < p.z < H - margin
+
+
+def body_bm():
+    return rounded_body((W, W, H), CORNER, EDGE, H / 2)
+
+
+BODY_UV = body_uv(W / 2 - CORNER, W / 2 - CORNER, EDGE, H - EDGE)
+
+
+def snow_cap(snow, rng, kind):
+    """Three snow caps: 1 a thick slab with lumps, 2 a cap drifted to one side with long drips, 3 a two-tier pillow."""
     cap_z = H - 0.25
-    snow.add(rounded_body((W + 1.0, W + 1.0, 1.9), corner + 0.4, 0.85, cap_z + 0.7), snow_uv)
-    for k in range(7):
-        a = k / 7 * 2 * math.pi + rng.uniform(-0.2, 0.2)
-        r = rng.uniform(1.0, W * 0.3)
-        snow.add(lump((math.cos(a) * r, math.sin(a) * r, cap_z + 1.5), (rng.uniform(1.5, 2.4), rng.uniform(1.5, 2.4), rng.uniform(0.6, 0.9)), 2, rng.uniform(0, 3)), snow_uv)
-    snow.add(lump((0.3, -0.2, cap_z + 1.9), (2.8, 2.6, 1.0), 2), snow_uv)
-    for side, (normal, right, up) in FACES.items():
+    if kind == 1:
+        snow.add(rounded_body((W + 1.0, W + 1.0, 1.9), CORNER + 0.4, 0.85, cap_z + 0.7), snow_uv)
+        for k in range(7):
+            a = k / 7 * 2 * math.pi + rng.uniform(-0.2, 0.2)
+            r = rng.uniform(1.0, W * 0.3)
+            snow.add(lump((math.cos(a) * r, math.sin(a) * r, cap_z + 1.5), (rng.uniform(1.5, 2.4), rng.uniform(1.5, 2.4), rng.uniform(0.6, 0.9)), 2, rng.uniform(0, 3)), snow_uv)
+        snow.add(lump((0.3, -0.2, cap_z + 1.9), (2.8, 2.6, 1.0), 2), snow_uv)
+        drips, length = 3, (1.2, 2.2)
+    elif kind == 2:
+        snow.add(rounded_body((W + 0.8, W + 0.8, 1.5), CORNER + 0.3, 0.7, cap_z + 0.55), snow_uv)
+        snow.add(lump((-W * 0.22, W * 0.12, cap_z + 1.5), (3.6, 3.2, 1.5), 2, 0.4), snow_uv)  # the drift piled on one side
+        snow.add(lump((-W * 0.05, W * 0.2, cap_z + 2.2), (2.2, 2.0, 0.9), 2, 1.1), snow_uv)
         for k in range(3):
+            a = rng.uniform(-1.0, 1.0)
+            snow.add(lump((math.cos(a) * 2.8, math.sin(a) * 2.8 - 1.0, cap_z + 1.2), (1.6, 1.5, 0.6), 2, rng.uniform(0, 3)), snow_uv)
+        drips, length = 4, (1.4, 2.8)
+    else:
+        snow.add(rounded_body((W + 0.9, W + 0.9, 1.4), CORNER + 0.4, 0.65, cap_z + 0.5), snow_uv)
+        snow.add(rounded_body((W - 2.4, W - 2.6, 1.3), CORNER, 0.6, cap_z + 1.6), snow_uv)  # a second, smaller pillow on top
+        for k in range(4):
+            a = k / 4 * 2 * math.pi + rng.uniform(-0.3, 0.3)
+            snow.add(lump((math.cos(a) * 2.0, math.sin(a) * 2.0, cap_z + 2.3), (1.4, 1.3, 0.55), 2, rng.uniform(0, 3)), snow_uv)
+        drips, length = 2, (1.0, 1.8)
+    for side, (normal, right, up) in FACES.items():
+        for k in range(drips):
+            if kind == 2 and rng.random() < 0.35:
+                continue
             along = rng.uniform(-0.75, 0.75) * (W / 2 - 1)
             at = normal * (W / 2 + 0.45) + right * along + Vector((0, 0, cap_z - 0.05))
-            snow.add(drip(at, normal, rng.uniform(1.2, 2.2), rng.uniform(0.42, 0.6)), snow_uv)
+            snow.add(drip(at, normal, rng.uniform(*length), rng.uniform(0.42, 0.6)), snow_uv)
+
+
+def icicles(crystals, rng, kind):
+    """Icicles under the cap's edge: 1 even, 2 fewer and longer, 3 short and dense."""
+    cap_z = H - 0.25
+    spacing, lengths, chance = {1: ((1.1, 1.8), (0.8, 2.2), 0.75), 2: ((1.6, 2.4), (1.2, 2.8), 0.7), 3: ((0.8, 1.2), (0.5, 1.3), 0.85)}[kind]
+    for side, (normal, right, up) in FACES.items():
         x = -W / 2 + 1.6
         while x < W / 2 - 1.4:
-            if rng.random() < 0.75:
+            if rng.random() < chance:
                 base = normal * (W / 2 + 0.05) + right * (x + rng.uniform(-0.3, 0.3)) + Vector((0, 0, cap_z - 0.1))
-                crystals.add(cone_down(base, rng.uniform(0.2, 0.32), rng.uniform(0.8, 2.2)), rng.choice(("CrystalPale", "IceBlue", "CrystalPale")), flat=True)
-            x += rng.uniform(1.1, 1.8)
-    # small crystals and snow chunks round the base (not in front of the middle: that's where you tap)
-    for (cx, cy, count) in ((-1, 1, 3), (1, 1, 2), (1, -1, 3), (-1, -1, 2)):
+                crystals.add(cone_down(base, rng.uniform(0.2, 0.32), rng.uniform(*lengths)), rng.choice(("CrystalPale", "IceBlue", "CrystalPale")), flat=True)
+            x += rng.uniform(*spacing)
+
+
+def base_decor(crystals, snow, rng, kind):
+    """Small crystals and snow chunks round the base (never in front of the middle, where you tap)."""
+    corners = {1: ((-1, 1, 3), (1, 1, 2), (1, -1, 3), (-1, -1, 2)), 2: ((1, 1, 4), (-1, -1, 4)), 3: ((-1, 1, 2), (1, 1, 3), (1, -1, 2))}[kind]
+    for (cx, cy, count) in corners:
         base = Vector((cx * (W / 2 + 0.2), cy * (W / 2 + 0.2), 0.1))
         for k in range(count):
             off = Vector((rng.uniform(-0.8, 0.8), rng.uniform(-0.8, 0.8), 0))
             out = Vector((cx * rng.uniform(0.3, 0.8), cy * rng.uniform(0.3, 0.8), 1.0))
             crystals.add(crystal(base + off, out, rng.uniform(0.32, 0.55), rng.uniform(1.4, 2.8) * (1.25 if k == 0 else 1.0), twist=rng.uniform(0, 1)), crystal_uv, flat=True)
-    for (x, y, s) in ((-W / 2 - 0.6, -1.5, 1.1), (W / 2 + 0.5, 1.8, 1.0), (-1.8, W / 2 + 0.7, 1.2), (W / 2 + 0.2, -W / 2 - 0.4, 0.8), (-W / 2 - 0.2, W / 2 + 0.1, 0.9)):
+    lumps = {1: ((-W / 2 - 0.6, -1.5, 1.1), (W / 2 + 0.5, 1.8, 1.0), (-1.8, W / 2 + 0.7, 1.2), (W / 2 + 0.2, -W / 2 - 0.4, 0.8), (-W / 2 - 0.2, W / 2 + 0.1, 0.9)),
+             2: ((-W / 2 - 0.7, 0.5, 1.5), (-W / 2 - 0.3, 2.6, 1.0), (W / 2 + 0.4, -2.0, 0.9)),
+             3: ((W / 2 + 0.6, 0.0, 1.2), (1.5, W / 2 + 0.6, 1.0), (-W / 2 - 0.4, -2.8, 0.9), (-2.5, W / 2 + 0.4, 0.8))}[kind]
+    for (x, y, s) in lumps:
         snow.add(lump((x, y, 0.05), (s * 1.3, s * 1.1, s * 0.7), 2, rng.uniform(0, 3), floor=-0.4), snow_uv)
 
-    def inside(p, margin):
-        return max(abs(p.x), abs(p.y)) < W / 2 - margin and margin < p.z < H - margin
 
-    add_inner(inner, rng, inside)
-    return name, [shell, inner, snow, crystals], 202
+def drifts(snow, rng):
+    """Fresh Snow: soft drifts banked round the whole base instead of crystals."""
+    for side, (normal, right, up) in FACES.items():
+        for k in range(3):
+            along = (k - 1) * (W / 3) + rng.uniform(-0.6, 0.6)
+            at = normal * (W / 2 + 0.3) + right * along
+            snow.add(lump((at.x, at.y, 0.1), (rng.uniform(1.6, 2.2) if abs(normal.x) < 0.5 else 1.4, rng.uniform(1.6, 2.2) if abs(normal.y) < 0.5 else 1.4, rng.uniform(0.9, 1.4)), 2, rng.uniform(0, 3), floor=-0.4), snow_uv)
 
 
-def option_c(coll, material):
-    """Crystal geode."""
-    rng = random.Random(33)
-    name = "IceBlockC"
-    shell, inner, snow, glass, glow = IceMesh(name + "Shell"), IceMesh(name + "Inner"), IceMesh(name + "Snow"), IceMesh(name + "Glass"), IceMesh(name + "Glow")
-    corner, edge = 0.9, 0.7
-    shell.add(rounded_body((W, W, H), corner, edge, H / 2), body_uv(W / 2 - corner, W / 2 - corner, edge, H - edge, sides=6, front_back="S"))
-    for normal_y in (-1, 1):  # the window's frosty frame, front and back
-        shell.add(window_ring((0, normal_y * (W / 2 - 0.05), H * 0.47), W - 2.4, H * 0.76, 1.6, 0.42, 0.9, normal_y=normal_y), "RimFrost", recalc=False)
-    # crystal clusters bursting out of the corners
+def dense_bubbles(inner, rng):
+    """Ancient Ice: many trapped bubbles in rising strings, round the creature's column."""
+    add_inner(inner, rng, inside_body, count=24, streaks=2)
+
+
+def crystal_clusters(crystals, rng):
+    """Crystal Ice: faceted crystal clusters on the top corners and the back of the base (never over the front)."""
+    for (cx, cy, z, out, count, scale) in ((-1, -1, H - 0.4, (-0.8, -0.6, 0.9), 4, 1.0), (1, 1, H - 0.4, (0.8, 0.8, 0.9), 4, 1.0),
+                                           (-1, 1, H - 0.4, (-0.7, 0.8, 1.0), 3, 0.85), (1, -1, H - 0.6, (0.9, -0.4, 0.8), 3, 0.8),
+                                           (1, 1, 0.4, (0.8, 0.7, 0.35), 3, 0.8), (-1, 1, 0.4, (-0.8, 0.7, 0.35), 3, 0.75)):
+        base = Vector((cx * (W / 2 - 0.6), cy * (W / 2 - 0.6), z))
+        out = Vector(out).normalized()
+        for k in range(count):
+            spread = Vector((rng.uniform(-0.5, 0.5), rng.uniform(-0.5, 0.5), rng.uniform(-0.2, 0.4)))
+            direction = (out + spread * (0.4 if k == 0 else 1.0)).normalized()
+            crystals.add(crystal(base + Vector((rng.uniform(-0.5, 0.5), rng.uniform(-0.5, 0.5), 0)), direction,
+                                 rng.uniform(0.45, 0.75) * scale * (1.3 if k == 0 else 1.0), rng.uniform(1.4, 2.4) * scale * (1.4 if k == 0 else 1.0),
+                                 twist=rng.uniform(0, 1), sink=1.0), crystal_uv, flat=True)
+
+
+def veins(glow, rng):
+    """Primordial Ice and the Frozen Core: glowing veins inside, along the walls and corners (the front's middle stays
+    clear for the creature). Neon in game, coloured by the layer."""
+    for k in range(9):
+        side = ("left", "right", "back", "left", "right", "back", "front", "front", "back")[k]
+        normal, right, up = FACES[side]
+        u = rng.uniform(-0.85, 0.85) if side != "front" else rng.choice((-1, 1)) * rng.uniform(0.62, 0.86)
+        p = normal * (W / 2 - rng.uniform(0.7, 1.4)) + right * (u * W / 2) + Vector((0, 0, rng.uniform(0.1, 0.4) * H))
+        points = [p.copy()]
+        heading = rng.uniform(-0.6, 0.6)
+        for _ in range(rng.randint(7, 11)):
+            heading += rng.uniform(-0.5, 0.5)
+            step = right * math.sin(heading) * 0.9 + Vector((0, 0, math.cos(heading) * 0.9))
+            q = points[-1] + step
+            q.x = max(-W / 2 + 0.6, min(W / 2 - 0.6, q.x))
+            q.y = max(-W / 2 + 0.6, min(W / 2 - 0.6, q.y))
+            if q.z > H - 0.8:
+                break
+            points.append(q)
+        if len(points) >= 3:
+            bm = new_bm()
+            sweep(bm, points, rng.uniform(0.08, 0.13), segments=4, radius_end=0.03)
+            glow.add(bm, "White")
+            # a branch or two
+            for _ in range(rng.randint(0, 2)):
+                start = points[rng.randint(1, len(points) - 2)]
+                branch = [start, start + right * rng.uniform(-1, 1) + Vector((0, 0, rng.uniform(0.6, 1.2))),
+                          start + right * rng.uniform(-1.6, 1.6) + Vector((0, 0, rng.uniform(1.2, 2.2)))]
+                bm = new_bm()
+                sweep(bm, branch, 0.06, segments=4, radius_end=0.025)
+                glow.add(bm, "White")
+
+
+def mythic_clusters(glass, glow, rng):
+    """The Mythic Block (bought with Robux): option C's glowing crystal clusters bursting out of the corners."""
     clusters = []
     for cx in (-1, 1):
         for cy in (-1, 1):
-            clusters.append((Vector((cx * (W / 2 - 0.8), cy * (W / 2 - 0.8), H - 0.7)), Vector((cx * 0.9, cy * 0.9, 0.5)), 7, 0.9))
-            clusters.append((Vector((cx * (W / 2 - 0.5), cy * (W / 2 - 0.5), 0.6)), Vector((cx * 0.9, cy * 0.9, 0.3)), 4, 0.7))
+            clusters.append((Vector((cx * (W / 2 - 0.8), cy * (W / 2 - 0.8), H - 0.7)), Vector((cx * 0.9, cy * 0.9, 0.5)), 5, 0.95))
+            clusters.append((Vector((cx * (W / 2 - 0.5), cy * (W / 2 - 0.5), 0.6)), Vector((cx * 0.9, cy * 0.9, 0.3)), 3, 0.7))
     for base, out, count, scale in clusters:
         out = out.normalized()
         for k in range(count):
@@ -538,147 +577,127 @@ def option_c(coll, material):
             glass.add(crystal(at, direction, radius, length, twist=twist, sink=1.2), lambda f, co: swatch_uv("CrystalGlass" if f.normal.z > -0.2 else "CrystalGlassDeep"), flat=True)
             if k < 3:
                 glow.add(core(at, direction, radius * 0.5, length * 0.85, twist), "CrystalCyan", flat=True)
-    # the snow cap, between the corner crystals
-    cap_z = H - 0.2
-    snow.add(rounded_body((W - 2.2, W - 2.2, 1.2), 1.8, 0.55, cap_z + 0.4), snow_uv)
-    for k in range(5):
-        a = k / 5 * 2 * math.pi + rng.uniform(-0.2, 0.2)
-        r = rng.uniform(0.6, 2.4)
-        snow.add(lump((math.cos(a) * r, math.sin(a) * r, cap_z + 0.95), (rng.uniform(1.4, 2.0), rng.uniform(1.4, 2.0), rng.uniform(0.5, 0.75)), 2, rng.uniform(0, 3)), snow_uv)
-    for side, (normal, right, up) in FACES.items():
-        for k in range(2):
-            along = rng.uniform(-0.45, 0.45) * (W / 2 - 1)
-            at = normal * (W / 2 - 0.9) + right * along + Vector((0, 0, cap_z + 0.1))
-            snow.add(drip(at, normal, rng.uniform(0.9, 1.5), rng.uniform(0.35, 0.5)), snow_uv)
-
-    def inside(p, margin):
-        return max(abs(p.x), abs(p.y)) < W / 2 - margin and margin < p.z < H - margin
-
-    add_inner(inner, rng, inside, count=10, streaks=3)
-    return name, [shell, inner, snow, glass, glow], 303
 
 
-def option_a(coll, material):
-    """Faceted iceberg."""
-    rng = random.Random(11)
-    name = "IceBlockA"
-    shell, inner, snow, crystals = IceMesh(name + "Shell"), IceMesh(name + "Inner"), IceMesh(name + "Snow"), IceMesh(name + "Crystals")
-    # the berg: a convex hull of irregular rings, wide at the base, narrowing to a ridge
-    sides = 8
-    levels = [(0.0, 0.46), (0.14 * H, 0.5), (0.42 * H, 0.49), (0.68 * H, 0.45), (0.86 * H, 0.38), (0.95 * H, 0.28)]
-    points = []
-    for li, (z, share) in enumerate(levels):
-        offset = rng.uniform(0, 2 * math.pi / sides)
-        for k in range(sides if li < len(levels) - 1 else 4):
-            count = sides if li < len(levels) - 1 else 4
-            a = 2 * math.pi * k / count + offset + rng.uniform(-0.18, 0.18)
-            r = W * share * rng.uniform(0.8, 1.08)
-            # a squarish footprint, so it fills the plot's ice spot like the block did
-            sq = 1 / max(abs(math.cos(a)), abs(math.sin(a))) ** 0.25
-            zz = z + (rng.uniform(-0.07, 0.07) * H if 0 < li < len(levels) - 1 else 0)
-            lean = Vector((0.35, -0.2, 0)) * (zz / H)  # the top sits a little off-centre, like a real berg
-            points.append(Vector((math.cos(a) * r * sq, math.sin(a) * r * sq, zz)) + lean)
-    bm = new_bm()
-    verts = [bm.verts.new(p) for p in points]
-    result = bmesh.ops.convex_hull(bm, input=verts)
-    bmesh.ops.delete(bm, geom=[v for v in result["geom_interior"] if isinstance(v, bmesh.types.BMVert)], context="VERTS")
-    bmesh.ops.dissolve_limit(bm, angle_limit=math.radians(6), verts=bm.verts[:], edges=bm.edges[:])
-    hull_points = [v.co.copy() for v in bm.verts]
+def shatter_pieces(coll, material, rng, count=11):
+    """The block cut into its own pieces (Voronoi cells of random seeds, each cut out of the convex body): the outer
+    faces keep the shell's look, the broken faces are frosty. Each piece is its own mesh, flung apart on a rescue."""
+    seeds = []
+    while len(seeds) < count:
+        p = Vector((rng.uniform(-0.4, 0.4) * W, rng.uniform(-0.4, 0.4) * W, rng.uniform(0.08, 0.92) * H))
+        if all((p - q).length > 3.2 for q in seeds):
+            seeds.append(p)
+    source = body_bm()
+    bvh = BVHTree.FromBMesh(source)
+    objs = []
+    for i, s in enumerate(seeds):
+        bm = source.copy()
+        for j, t in enumerate(seeds):
+            if i == j:
+                continue
+            n = (t - s).normalized()
+            bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(s + t) / 2, plane_no=n, clear_outer=True)
+        points = [v.co.copy() for v in bm.verts]
+        bm.free()
+        if len(points) < 4:
+            continue
+        piece = new_bm()
+        for p in points:
+            piece.verts.new(p)
+        result = bmesh.ops.convex_hull(piece, input=piece.verts[:])
+        bmesh.ops.delete(piece, geom=[v for v in result["geom_interior"] if isinstance(v, bmesh.types.BMVert)], context="VERTS")
+        bmesh.ops.dissolve_limit(piece, angle_limit=math.radians(2), verts=piece.verts[:], edges=piece.edges[:])
 
-    def berg_uv(face, co):
-        c = face.calc_center_median()
-        n = face.normal
-        t = co.z / H
-        if n.z > 0.5 or c.z > 0.82 * H:
-            return column_uv(4 if (face.index % 3) else 0, t)  # the top and shoulders: frosty cyan
-        if c.z < 0.13 * H or n.z < -0.3:
-            return column_uv(0, t)  # the base: frosty, deep blue at the bottom
-        if n.y < -0.35:
-            return column_uv(2, t)  # the front: one clear blue (the creature reads through it whole)
-        if n.y < 0.35:
-            return column_uv((3, 5)[face.index % 2], t)  # the sides: equally clear, in cyan and violet-blue
-        return column_uv((1, 2, 3)[face.index % 3], t)  # the back: clear and semi
+        def piece_uv(face, co, bvh=bvh):
+            c = face.calc_center_median()
+            loc, normal, _, dist = bvh.find_nearest(c)
+            if loc is not None and dist < 0.05 and normal.dot(face.normal) > 0.8:
+                return BODY_UV(face, co)  # an outer face: the shell
+            return swatch_uv("Fracture" if face.normal.z > 0 else "FractureDeep")  # a broken face
 
-    bm.faces.index_update()
-    shell.add(bm, berg_uv, flat=True)
-    # the snow cap: a soft hull over the top, lumps, drips down the facets
-    top = [p for p in hull_points if p.z > 0.9 * H]
-    cap = new_bm()
-    cap_pts = [Vector((p.x * 1.1, p.y * 1.1, p.z - 0.5)) for p in top] + [Vector((p.x * 0.75, p.y * 0.75, p.z + 0.9)) for p in top]
-    cv = [cap.verts.new(p) for p in cap_pts]
-    res = bmesh.ops.convex_hull(cap, input=cv)
-    bmesh.ops.delete(cap, geom=[v for v in res["geom_interior"] if isinstance(v, bmesh.types.BMVert)], context="VERTS")
-    bmesh.ops.subdivide_edges(cap, edges=cap.edges[:], cuts=1, use_grid_fill=True, smooth=0.6)
-    snow.add(cap, snow_uv)
-    for k in range(4):
-        a = k / 4 * 2 * math.pi + rng.uniform(-0.3, 0.3)
-        r = rng.uniform(0.8, 2.0)
-        snow.add(lump((math.cos(a) * r, math.sin(a) * r, 0.95 * H + 0.5), (rng.uniform(1.1, 1.6), rng.uniform(1.1, 1.6), rng.uniform(0.45, 0.7)), 2, rng.uniform(0, 3)), snow_uv)
-    for p in top:
-        if rng.random() < 0.8:
-            n = Vector((p.x, p.y, 0)).normalized()
-            snow.add(drip(Vector((p.x * 1.08, p.y * 1.08, p.z - 0.6)), n, rng.uniform(1.2, 2.2), rng.uniform(0.4, 0.6)), snow_uv)
-    # jagged crystal spikes on top, leaning out
-    for k in range(6):
-        a = k / 6 * 2 * math.pi + rng.uniform(-0.35, 0.35)
-        r = rng.uniform(1.4, 2.6) if k else 0.4
-        base = Vector((math.cos(a) * r, math.sin(a) * r, 0.93 * H))
-        out = Vector((math.cos(a) * rng.uniform(0.25, 0.55), math.sin(a) * rng.uniform(0.25, 0.55), 1.0))
-        crystals.add(spike(base, out, rng.uniform(0.9, 1.3), rng.uniform(2.6, 3.6) * (1.25 if k == 0 else 1.0), rng), crystal_uv, flat=True)
-    # jagged spikes jutting from the shoulders
-    for a in (0.9, 2.4, 4.0, 5.5):
-        base = Vector((math.cos(a) * W * 0.36, math.sin(a) * W * 0.36, 0.78 * H))
-        crystals.add(spike(base, Vector((math.cos(a), math.sin(a), 0.8)), 0.75, rng.uniform(2.0, 2.8), rng), crystal_uv, flat=True)
+        m = IceMesh("IcePiece%02d" % (len(objs) + 1))
+        m.add(piece, piece_uv, flat=True)
+        obj = m.finish(coll, material)
+        if obj:
+            objs.append(obj)
+    source.free()
+    return objs
 
-    hull = new_bm()
-    for p in hull_points:
-        hull.verts.new(p)
-    bmesh.ops.convex_hull(hull, input=hull.verts[:])
-    bvh = BVHTree.FromBMesh(hull)
-    hull.free()
 
-    def inside(p, margin):
-        loc, normal, _, dist = bvh.find_nearest(p)
-        return loc is not None and (p - loc).dot(normal) < -margin
-
-    add_inner(inner, rng, inside, count=12, streaks=4)
-    return name, [shell, inner, snow, crystals], 101
+def chunks(coll, material, rng):
+    """Three small chunks at the top edges: one or two break off and fall at each crack stage."""
+    objs = []
+    for i, at in enumerate((Vector((-W / 2 + 1.6, -W / 2 + 0.4, H - 0.9)), Vector((W / 2 - 0.4, 1.4, H - 1.4)), Vector((1.2, -W / 2 + 0.4, H - 1.1)))):
+        bm = new_bm()
+        for _ in range(12):
+            d = Vector((rng.uniform(-1, 1), rng.uniform(-1, 1), rng.uniform(-1, 1)))
+            if d.length > 0:
+                bm.verts.new(at + d.normalized() * rng.uniform(0.55, 0.95))
+        result = bmesh.ops.convex_hull(bm, input=bm.verts[:])
+        bmesh.ops.delete(bm, geom=[v for v in result["geom_interior"] if isinstance(v, bmesh.types.BMVert)], context="VERTS")
+        m = IceMesh("IceChunk%d" % (i + 1))
+        m.add(bm, lambda f, co: swatch_uv("Fracture" if f.normal.z > 0.2 else ("RimFrost" if f.normal.z > -0.3 else "FractureDeep")), flat=True)
+        objs.append(m.finish(coll, material))
+    return objs
 
 
 # ---------- build, check, export ----------
 
 coll = begin("IceBlock")
 material = preview_material()
-manifest = {"exportScale": EXPORT_SCALE, "height": H, "width": W, "atlas": "assets/textures/ice/IceBlueAtlas.png", "models": {}}
-problems = []
-os.makedirs(OUT, exist_ok=True)
-for index, build in enumerate((option_a, option_b, option_c)):
-    name, parts, crack_seed = build(coll, material)
-    if ONLY and name not in ONLY:
-        continue
-    objs = [o for o in (p.finish(coll, material) for p in parts) if o]
-    shell_obj = next(o for o in objs if o.name.endswith("Shell"))
-    objs += add_cracks(name, shell_obj, crack_seed, coll, material)
-    for o in objs:
-        o.location.x = (index - 1) * 26.0
-    bpy.context.view_layer.update()
-    lo, hi = bounds(objs)
-    tris = {o.name: triangles(o) for o in objs}
-    total = sum(tris.values())
-    info = {"meshes": tris, "triangles": total, "size": [round(hi.x - lo.x, 2), round(hi.z - lo.z, 2), round(hi.y - lo.y, 2)], "top": round(hi.z, 2)}
+rng = random.Random(22)
+shell = IceMesh("IceShell")
+shell.add(body_bm(), BODY_UV)
+parts = [shell]
+for kind in (1, 2, 3):
+    snow, crystals, inner = IceMesh("IceV%dSnow" % kind), IceMesh("IceV%dCrystals" % kind), IceMesh("IceV%dInner" % kind)
+    vr = random.Random(100 + kind)
+    snow_cap(snow, vr, kind)
+    icicles(crystals, vr, kind)
+    base_decor(crystals, snow, vr, kind)
+    add_inner(inner, vr, inside_body, count=12, streaks=4)
+    parts += [snow, crystals, inner]
+extras = {"Drifts": IceMesh("IceDrifts"), "DenseBubbles": IceMesh("IceDenseBubbles"), "CrystalClusters": IceMesh("IceCrystalClusters"),
+          "Veins": IceMesh("IceVeins"), "MythicGlass": IceMesh("IceMythicGlass"), "MythicGlow": IceMesh("IceMythicGlow")}
+drifts(extras["Drifts"], random.Random(201))
+dense_bubbles(extras["DenseBubbles"], random.Random(202))
+crystal_clusters(extras["CrystalClusters"], random.Random(203))
+veins(extras["Veins"], random.Random(204))
+mythic_clusters(extras["MythicGlass"], extras["MythicGlow"], random.Random(33))
+parts += list(extras.values())
+objs = [o for o in (p.finish(coll, material) for p in parts) if o]
+shell_obj = next(o for o in objs if o.name == "IceShell")
+objs += add_cracks("Ice", shell_obj, 202, coll, material)
+objs += shatter_pieces(coll, material, random.Random(7))
+objs += chunks(coll, material, random.Random(8))
+bpy.context.view_layer.update()
+tris = {o.name: triangles(o) for o in objs}
+
+
+def block_total(names):
+    return sum(tris.get(n, 0) for n in names)
+
+
+body = ["IceShell", "IceCrack1", "IceCrack2", "IceCrack3", "IceCrack4"]
+totals = {}
+for kind in (1, 2, 3):
+    v = ["IceV%dSnow" % kind, "IceV%dCrystals" % kind, "IceV%dInner" % kind]
+    totals["V%d" % kind] = block_total(body + v)
+    totals["V%d+Veins" % kind] = block_total(body + v + ["IceVeins"])
+    totals["V%d+Clusters" % kind] = block_total(body + v + ["IceCrystalClusters"])
+    totals["V%d+Bubbles" % kind] = block_total(body + ["IceV%dSnow" % kind, "IceV%dCrystals" % kind, "IceDenseBubbles"])
+    totals["V%dMythic" % kind] = block_total(body + ["IceV%dSnow" % kind, "IceV%dInner" % kind, "IceMythicGlass", "IceMythicGlow"])
+problems = check(objs)
+for name, total in totals.items():
     if total > MAX_BLOCK_TRIS:
-        problems.append("%s has %d triangles (budget %d)" % (name, total, MAX_BLOCK_TRIS))
-    problems += check(objs)
-    manifest["models"][name] = info
-    print(name, json.dumps(info))
-    if EXPORT and not problems:
-        for o in objs:
-            o.location.x = 0
-        bpy.context.view_layer.update()
-        export_fbx(objs, os.path.join(OUT, name + ".fbx"))
-        for o in objs:
-            o.location.x = (index - 1) * 26.0
+        problems.append("a %s block has %d triangles (budget %d)" % (name, total, MAX_BLOCK_TRIS))
+lo, hi = bounds(objs)
+manifest = {"exportScale": EXPORT_SCALE, "height": H, "width": W, "meshes": tris, "blockTotals": totals,
+            "pieces": sum(1 for n in tris if n.startswith("IcePiece")), "top": round(hi.z, 2)}
+print(json.dumps({"blockTotals": totals, "pieces": manifest["pieces"]}))
 if EXPORT and not problems:
+    os.makedirs(OUT, exist_ok=True)
+    export_fbx(objs, os.path.join(OUT, "IceBlockKit.fbx"))
     with open(os.path.join(OUT, "ice_manifest.json"), "w", encoding="utf-8") as handle:
         json.dump(manifest, handle, indent=1, sort_keys=True)
 for p in problems:

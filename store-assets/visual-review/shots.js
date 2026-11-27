@@ -716,267 +716,411 @@ window.SHOTS = [
  },
  {
   "category": "ice",
+  "name": "aura_Epic_layer1",
+  "file": "ice/aura_Epic_layer1.jpg",
+  "before": "../visual-review-before/ice/aura_Epic_layer1.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "aura_Epic_layer3",
+  "file": "ice/aura_Epic_layer3.jpg",
+  "before": "../visual-review-before/ice/aura_Epic_layer3.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "aura_Epic_layer6",
+  "file": "ice/aura_Epic_layer6.jpg",
+  "before": "../visual-review-before/ice/aura_Epic_layer6.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "aura_Legendary_layer1",
+  "file": "ice/aura_Legendary_layer1.jpg",
+  "before": "../visual-review-before/ice/aura_Legendary_layer1.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "aura_Legendary_layer3",
+  "file": "ice/aura_Legendary_layer3.jpg",
+  "before": "../visual-review-before/ice/aura_Legendary_layer3.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "aura_Legendary_layer6",
+  "file": "ice/aura_Legendary_layer6.jpg",
+  "before": "../visual-review-before/ice/aura_Legendary_layer6.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "aura_Legendary_reduced",
+  "file": "ice/aura_Legendary_reduced.jpg",
+  "before": "../visual-review-before/ice/aura_Legendary_reduced.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "aura_Mythic_layer1",
+  "file": "ice/aura_Mythic_layer1.jpg",
+  "before": "../visual-review-before/ice/aura_Mythic_layer1.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "aura_Mythic_layer3",
+  "file": "ice/aura_Mythic_layer3.jpg",
+  "before": "../visual-review-before/ice/aura_Mythic_layer3.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "aura_Mythic_layer6",
+  "file": "ice/aura_Mythic_layer6.jpg",
+  "before": "../visual-review-before/ice/aura_Mythic_layer6.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "crack_chunks",
+  "file": "ice/crack_chunks.jpg",
+  "before": "../visual-review-before/ice/crack_chunks.jpg"
+ },
+ {
+  "category": "ice",
   "name": "crack_stage0",
   "file": "ice/crack_stage0.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/crack_stage0.jpg"
  },
  {
   "category": "ice",
   "name": "crack_stage1",
   "file": "ice/crack_stage1.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/crack_stage1.jpg"
  },
  {
   "category": "ice",
   "name": "crack_stage2",
   "file": "ice/crack_stage2.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/crack_stage2.jpg"
  },
  {
   "category": "ice",
   "name": "crack_stage3",
   "file": "ice/crack_stage3.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/crack_stage3.jpg"
  },
  {
   "category": "ice",
   "name": "crack_stage4",
   "file": "ice/crack_stage4.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/crack_stage4.jpg"
  },
  {
   "category": "ice",
   "name": "layer1_Common",
   "file": "ice/layer1_Common.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer1_Common.jpg"
  },
  {
   "category": "ice",
   "name": "layer1_Epic",
   "file": "ice/layer1_Epic.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer1_Epic.jpg"
  },
  {
   "category": "ice",
   "name": "layer1_Legendary",
   "file": "ice/layer1_Legendary.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer1_Legendary.jpg"
  },
  {
   "category": "ice",
   "name": "layer1_Mythic",
   "file": "ice/layer1_Mythic.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer1_Mythic.jpg"
  },
  {
   "category": "ice",
   "name": "layer1_Rare",
   "file": "ice/layer1_Rare.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer1_Rare.jpg"
  },
  {
   "category": "ice",
   "name": "layer1_Uncommon",
   "file": "ice/layer1_Uncommon.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer1_Uncommon.jpg"
  },
  {
   "category": "ice",
   "name": "layer2_Common",
   "file": "ice/layer2_Common.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer2_Common.jpg"
  },
  {
   "category": "ice",
   "name": "layer2_Epic",
   "file": "ice/layer2_Epic.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer2_Epic.jpg"
  },
  {
   "category": "ice",
   "name": "layer2_Legendary",
   "file": "ice/layer2_Legendary.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer2_Legendary.jpg"
  },
  {
   "category": "ice",
   "name": "layer2_Mythic",
   "file": "ice/layer2_Mythic.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer2_Mythic.jpg"
  },
  {
   "category": "ice",
   "name": "layer2_Rare",
   "file": "ice/layer2_Rare.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer2_Rare.jpg"
  },
  {
   "category": "ice",
   "name": "layer2_Uncommon",
   "file": "ice/layer2_Uncommon.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer2_Uncommon.jpg"
  },
  {
   "category": "ice",
   "name": "layer3_Common",
   "file": "ice/layer3_Common.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer3_Common.jpg"
  },
  {
   "category": "ice",
   "name": "layer3_Epic",
   "file": "ice/layer3_Epic.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer3_Epic.jpg"
  },
  {
   "category": "ice",
   "name": "layer3_Legendary",
   "file": "ice/layer3_Legendary.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer3_Legendary.jpg"
  },
  {
   "category": "ice",
   "name": "layer3_Mythic",
   "file": "ice/layer3_Mythic.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer3_Mythic.jpg"
  },
  {
   "category": "ice",
   "name": "layer3_Rare",
   "file": "ice/layer3_Rare.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer3_Rare.jpg"
  },
  {
   "category": "ice",
   "name": "layer3_Uncommon",
   "file": "ice/layer3_Uncommon.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer3_Uncommon.jpg"
  },
  {
   "category": "ice",
   "name": "layer4_Common",
   "file": "ice/layer4_Common.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer4_Common.jpg"
  },
  {
   "category": "ice",
   "name": "layer4_Epic",
   "file": "ice/layer4_Epic.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer4_Epic.jpg"
  },
  {
   "category": "ice",
   "name": "layer4_Legendary",
   "file": "ice/layer4_Legendary.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer4_Legendary.jpg"
  },
  {
   "category": "ice",
   "name": "layer4_Mythic",
   "file": "ice/layer4_Mythic.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer4_Mythic.jpg"
  },
  {
   "category": "ice",
   "name": "layer4_Rare",
   "file": "ice/layer4_Rare.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer4_Rare.jpg"
  },
  {
   "category": "ice",
   "name": "layer4_Uncommon",
   "file": "ice/layer4_Uncommon.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer4_Uncommon.jpg"
  },
  {
   "category": "ice",
   "name": "layer5_Common",
   "file": "ice/layer5_Common.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer5_Common.jpg"
  },
  {
   "category": "ice",
   "name": "layer5_Epic",
   "file": "ice/layer5_Epic.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer5_Epic.jpg"
  },
  {
   "category": "ice",
   "name": "layer5_Legendary",
   "file": "ice/layer5_Legendary.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer5_Legendary.jpg"
  },
  {
   "category": "ice",
   "name": "layer5_Mythic",
   "file": "ice/layer5_Mythic.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer5_Mythic.jpg"
  },
  {
   "category": "ice",
   "name": "layer5_Rare",
   "file": "ice/layer5_Rare.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer5_Rare.jpg"
  },
  {
   "category": "ice",
   "name": "layer5_Uncommon",
   "file": "ice/layer5_Uncommon.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer5_Uncommon.jpg"
  },
  {
   "category": "ice",
   "name": "layer6_Common",
   "file": "ice/layer6_Common.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer6_Common.jpg"
  },
  {
   "category": "ice",
   "name": "layer6_Epic",
   "file": "ice/layer6_Epic.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer6_Epic.jpg"
  },
  {
   "category": "ice",
   "name": "layer6_Legendary",
   "file": "ice/layer6_Legendary.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer6_Legendary.jpg"
  },
  {
   "category": "ice",
   "name": "layer6_Mythic",
   "file": "ice/layer6_Mythic.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer6_Mythic.jpg"
  },
  {
   "category": "ice",
   "name": "layer6_Rare",
   "file": "ice/layer6_Rare.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer6_Rare.jpg"
  },
  {
   "category": "ice",
   "name": "layer6_Uncommon",
   "file": "ice/layer6_Uncommon.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/layer6_Uncommon.jpg"
  },
  {
   "category": "ice",
   "name": "mythic_block",
   "file": "ice/mythic_block.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/mythic_block.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "plaza_legendary_layer1",
+  "file": "ice/plaza_legendary_layer1.jpg",
+  "before": "../visual-review-before/ice/plaza_legendary_layer1.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "plaza_legendary_layer2",
+  "file": "ice/plaza_legendary_layer2.jpg",
+  "before": "../visual-review-before/ice/plaza_legendary_layer2.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "plaza_mythic_layer5",
+  "file": "ice/plaza_mythic_layer5.jpg",
+  "before": "../visual-review-before/ice/plaza_mythic_layer5.jpg"
  },
  {
   "category": "ice",
   "name": "shatter",
   "file": "ice/shatter.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/shatter.jpg"
  },
  {
   "category": "ice",
   "name": "sled_arrival",
   "file": "ice/sled_arrival.jpg",
-  "before": null
+  "before": "../visual-review-before/ice/sled_arrival.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "tap_glint",
+  "file": "ice/tap_glint.jpg",
+  "before": "../visual-review-before/ice/tap_glint.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "tapping_layer1",
+  "file": "ice/tapping_layer1.jpg",
+  "before": "../visual-review-before/ice/tapping_layer1.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "tapping_layer2",
+  "file": "ice/tapping_layer2.jpg",
+  "before": "../visual-review-before/ice/tapping_layer2.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "tapping_layer3",
+  "file": "ice/tapping_layer3.jpg",
+  "before": "../visual-review-before/ice/tapping_layer3.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "tapping_layer4",
+  "file": "ice/tapping_layer4.jpg",
+  "before": "../visual-review-before/ice/tapping_layer4.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "tapping_layer5",
+  "file": "ice/tapping_layer5.jpg",
+  "before": "../visual-review-before/ice/tapping_layer5.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "tapping_layer6",
+  "file": "ice/tapping_layer6.jpg",
+  "before": "../visual-review-before/ice/tapping_layer6.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "tapping_phone",
+  "file": "ice/tapping_phone.jpg",
+  "before": "../visual-review-before/ice/tapping_phone.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "tapping_phone_667x375",
+  "file": "ice/tapping_phone_667x375.jpg",
+  "before": "../visual-review-before/ice/tapping_phone_667x375.jpg"
+ },
+ {
+  "category": "ice",
+  "name": "tapping_phone_844x390",
+  "file": "ice/tapping_phone_844x390.jpg",
+  "before": "../visual-review-before/ice/tapping_phone_844x390.jpg"
  },
  {
   "category": "ice-options",
