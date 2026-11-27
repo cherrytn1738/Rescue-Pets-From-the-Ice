@@ -11,7 +11,8 @@ asset:write) for the creator you upload as.
 
 An upload manifest (JSON, safe to commit: no secrets) maps each file to its asset id and a SHA-256
 of its content. Re-runs skip unchanged files and update an existing asset (a new version, same id)
-instead of creating a duplicate. Only .fbx Models can be updated: a changed picture or sound becomes a
+instead of creating a duplicate. .rbxm files are uploaded as Animations (KeyframeSequences:
+tools/make_swing_animations.py). Only .fbx Models can be updated: a changed picture, sound or animation becomes a
 new asset (a new id to swap into the game). An asset whose manifest entry doesn't name this game's group
 as its creator is never updated in place either: a changed file becomes a new group asset with a new
 id. A pending operation is saved before polling, so a run that is cut off resumes on the next run
@@ -46,7 +47,8 @@ GROUP_CREATOR = {"groupId": GROUP_ID}
 # extension -> (content type, assetType). Only .fbx Models can be updated in place.
 CONTENT_TYPES = {".fbx": ("model/fbx", "Model"), ".png": ("image/png", "Image"),
                  ".jpg": ("image/jpeg", "Image"), ".jpeg": ("image/jpeg", "Image"),
-                 ".ogg": ("audio/ogg", "Audio"), ".mp3": ("audio/mpeg", "Audio")}
+                 ".ogg": ("audio/ogg", "Audio"), ".mp3": ("audio/mpeg", "Audio"),
+                 ".rbxm": ("model/x-rbxm", "Animation")}  # (a KeyframeSequence: tools/make_swing_animations.py)
 
 
 class Refused(Exception):
@@ -272,7 +274,7 @@ def check(args, key, manifest, manifest_path):
 
 def main():
     parser = argparse.ArgumentParser(description="Upload models, pictures and audio with the Roblox Open Cloud Assets API.")
-    parser.add_argument("files", nargs="*", help=".fbx, .png, .jpg, .ogg or .mp3 files (wildcards work)")
+    parser.add_argument("files", nargs="*", help=".fbx, .png, .jpg, .ogg, .mp3 or .rbxm (Animation) files (wildcards work)")
     parser.add_argument("--manifest", help="upload manifest (default: upload_manifest.json beside the first file)")
     parser.add_argument("--description", default="Uploaded by upload_models.py")
     parser.add_argument("--timeout", type=float, default=300, help="seconds to wait for each operation")

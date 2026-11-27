@@ -1,9 +1,10 @@
 -- The Creature Book (docs/GAME_DESIGN.md, "The Creature Book"): a page per rarity plus the Golden page.
 -- Each entry shows the creature (a dark silhouette until rescued, with a hint where to look), its first
--- layer, how many were rescued and a "New!" badge until viewed; each page shows its permanent reward
--- and whether it's complete; the title shows the completion %. The first rescue of a creature opens the
--- book on its page and the silhouette fills in with colour. Viewing a page clears its New! badges
--- (PetRequest "MarkSeen"). The rewards themselves are worked out by the server (EconomyRules.BookBonus).
+-- layer, how many were rescued and a "New!" badge until its page is viewed (a new Golden version too); each page
+-- shows its permanent reward and whether it's complete; the header shows the completion %. A new entry's
+-- silhouette fills in with colour the first time its page is shown, and the book opens on the page with something
+-- new. Viewing a page clears its New! badges (PetRequest "MarkSeen"). The first rescue's moment itself (the card
+-- flying into the BOOK button, its %) is BookMoment.client. The rewards are the server's (EconomyRules.BookBonus).
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local CreatureConfig = require(ReplicatedStorage.CreatureConfig)
@@ -45,7 +46,7 @@ end
 local page = "Common"
 local tabs, header, rewardLine, grid, gridLayout
 local entries = {} -- [creature id] = tile, for the current page
-local reveal = nil -- a creature id whose silhouette fills in when shown
+local revealed = {} -- [book entry] = true: new entries already filled in with colour this session
 
 local window = ShowcaseKit.Window("BookWindow", "Creature Book", {
 	width = 980,
@@ -73,35 +74,8 @@ rewardLine.TextXAlignment = Enum.TextXAlignment.Center
 grid, gridLayout = UIKit.Scroll(content, "Grid", "Grid")
 gridLayout.CellSize = UDim2.fromOffset(TILE, TILE + 60)
 
-local function rewardText(reward): string
-	local parts = {}
-	if reward.CrystalBonus then
-		table.insert(parts, `+{math.floor(reward.CrystalBonus * 100 + 0.5)}% crystals`)
-	end
-	if reward.NameTagBorder then
-		table.insert(parts, `a {string.lower(reward.NameTagBorder)} name-tag border`)
-	end
-	if reward.Trail then
-		table.insert(parts, `an {string.lower(reward.Trail)} trail`)
-	end
-	if reward.Title then
-		table.insert(parts, `the title "{reward.Title}"`)
-	end
-	if reward.PickSkin then
-		table.insert(parts, `a {string.lower(reward.PickSkin)} ice pick skin`)
-	end
-	return table.concat(parts, " and ")
-end
-
--- The whole book's completion: every creature found, and every Golden version made.
-local function completion(data): number
-	local found, total = 0, 0
-	for _, bookPage in EconomyRules.BookPages(data) do
-		found += bookPage.Found
-		total += bookPage.Count
-	end
-	return if total > 0 then found / total else 0
-end
+local rewardText = CreatureConfig.BookRewardText
+local completion = EconomyRules.BookCompletion
 
 local function creaturesOn(pageId: string)
 	local list = {}
@@ -145,8 +119,10 @@ function render()
 		holder.ZIndex = 4
 		holder.Parent = card
 		local look = if not found then "Silhouette" elseif golden then "Golden" else "Normal"
-		local revealing = reveal == creature.Id and found and not golden
-		local view = PetViewport.new(holder, creature.Id, if revealing then "Silhouette" else look)
+		local entryId = if golden then "Golden:" .. creature.Id else creature.Id
+		local isNew = found and table.find(data.BookNew, entryId) ~= nil
+		local revealing = isNew and not revealed[entryId]
+		local view = PetViewport.new(holder, creature.Id, if revealing and not golden then "Silhouette" elseif revealing then "Normal" else look)
 		local name = UIKit.Label(card, "Name", if found then creature.Name else "???", 22, nil, true)
 		name.Position, name.Size = UDim2.new(0, 8, 1, -84), UDim2.new(1, -16, 0, 28)
 		name.TextScaled = true
@@ -166,22 +142,22 @@ function render()
 		line.TextScaled = true
 		line.TextXAlignment = Enum.TextXAlignment.Center
 		line.ZIndex = 6
-		if not golden and table.find(data.BookNew, creature.Id) then
-			ShowcaseKit.Sticker(card, "NEW!", "Locked")
-			table.insert(viewedNew, creature.Id)
+		if isNew then
+			ShowcaseKit.Sticker(card, "NEW!", if golden then "Gold" else "Locked")
+			table.insert(viewedNew, entryId)
 		end
 		entries[creature.Id] = { card = card, view = view }
 		if revealing then
-			-- the first-rescue moment: the silhouette fills in with colour
-			task.delay(0.9, function()
+			-- a new entry's first showing: the silhouette (or the plain creature, on the Golden page) fills in
+			revealed[entryId] = true
+			task.delay(0.6, function()
 				if view.frame.Parent then
-					view:SetLook("Normal")
+					view:SetLook(look)
 					UIKit.PlaySound("BookReveal")
 				end
 			end)
 		end
 	end
-	reveal = nil
 	if #viewedNew > 0 then
 		task.spawn(function()
 			pcall(function()
@@ -191,41 +167,29 @@ function render()
 	end
 end
 
--- The HUD button shows the completion.
-local bookButton = UIKit.MenuButton("Book")
-local function label()
-	local data = ClientState.Data()
-	local visual = bookButton:FindFirstChild("Visual")
-	local text = visual and visual:FindFirstChild("Label", true)
-	if data and text and text:IsA("TextLabel") then
-		text.Text = `BOOK {math.floor(completion(data) * 100)}%`
+-- Opening the book: on the page with something new, if there is one (the oldest new entry first).
+local function pageWithNew(data): string?
+	for _, entryId in data.BookNew do
+		if string.sub(entryId, 1, 7) == "Golden:" then
+			return "Golden"
+		end
+		local creature = CreatureConfig.Get(entryId)
+		if creature then
+			return creature.Rarity
+		end
 	end
+	return nil
 end
 
-ClientState.Changed(function()
-	label()
-end)
-bookButton.Activated:Connect(function()
-	window.Toggle()
-	render()
-end)
-
--- The first rescue of a creature: after the rescue banner, the book flies open on its page.
-ClientState.Event("Rescue", function(payload)
-	if not payload.First then
-		return
-	end
-	local creature = CreatureConfig.Get(payload.CreatureId)
-	if not creature then
-		return
-	end
-	task.wait(3.2)
-	page = creature.Rarity
-	tabs.Select(page)
-	reveal = creature.Id
+UIKit.MenuButton("Book").Activated:Connect(function()
 	if not window.IsOpen() then
-		UIKit.CloseAll()
-		window.Open()
+		local data = ClientState.Data()
+		local newPage = data and pageWithNew(data)
+		if newPage then
+			page = newPage
+			tabs.Select(page)
+		end
 	end
+	window.Toggle()
 	render()
 end)

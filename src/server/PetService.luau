@@ -143,8 +143,14 @@ function PetService.Give(player: Player, creatureId: string, golden: boolean): b
 	if not data or not CreatureConfig.Get(creatureId) or #data.Pets >= CreatureConfig.Pets.InventorySize then
 		return false
 	end
+	if (data.BookSeen[creatureId] or 0) == 0 and not table.find(data.BookNew, creatureId) then
+		table.insert(data.BookNew, creatureId)
+	end
 	data.BookSeen[creatureId] = math.max(1, data.BookSeen[creatureId] or 0)
 	if golden then
+		if not data.BookGolden[creatureId] and not table.find(data.BookNew, "Golden:" .. creatureId) then
+			table.insert(data.BookNew, "Golden:" .. creatureId)
+		end
 		data.BookGolden[creatureId] = true
 	end
 	table.insert(data.Pets, { Uid = HttpService:GenerateGUID(false), CreatureId = creatureId, Golden = golden })
@@ -299,6 +305,9 @@ function actions.CombineGolden(player, data, uid)
 	end
 	local first = not data.BookGolden[target.CreatureId]
 	data.BookGolden[target.CreatureId] = true
+	if first and not table.find(data.BookNew, "Golden:" .. target.CreatureId) then
+		table.insert(data.BookNew, "Golden:" .. target.CreatureId) -- (its New! badge on the Golden page)
+	end
 	return true, `Golden {CreatureConfig.Get(target.CreatureId).Name}!` .. (if first then " (new in the Golden page)" else ""), golden.Uid
 end
 

@@ -679,6 +679,42 @@ window.SHOTS = [
   "before": "../visual-review-before/picks/pick_tier6_walk.jpg"
  },
  {
+  "category": "picks",
+  "name": "swing_fromleft_strike",
+  "file": "picks/swing_fromleft_strike.jpg",
+  "before": "../visual-review-before/picks/swing_fromleft_strike.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "swing_fromleft_windup",
+  "file": "picks/swing_fromleft_windup.jpg",
+  "before": "../visual-review-before/picks/swing_fromleft_windup.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "swing_fromright_strike",
+  "file": "picks/swing_fromright_strike.jpg",
+  "before": "../visual-review-before/picks/swing_fromright_strike.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "swing_fromright_windup",
+  "file": "picks/swing_fromright_windup.jpg",
+  "before": "../visual-review-before/picks/swing_fromright_windup.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "swing_overhead_strike",
+  "file": "picks/swing_overhead_strike.jpg",
+  "before": "../visual-review-before/picks/swing_overhead_strike.jpg"
+ },
+ {
+  "category": "picks",
+  "name": "swing_overhead_windup",
+  "file": "picks/swing_overhead_windup.jpg",
+  "before": "../visual-review-before/picks/swing_overhead_windup.jpg"
+ },
+ {
   "category": "ice",
   "name": "crack_stage0",
   "file": "ice/crack_stage0.jpg",
@@ -2033,6 +2069,84 @@ window.SHOTS = [
   "name": "window_upgrades_tab2_owned_844x390",
   "file": "ui/window_upgrades_tab2_owned_844x390.jpg",
   "before": null
+ },
+ {
+  "category": "book",
+  "name": "button_after",
+  "file": "book/button_after.jpg",
+  "before": "../visual-review-before/book/button_after.jpg"
+ },
+ {
+  "category": "book",
+  "name": "card",
+  "file": "book/card.jpg",
+  "before": "../visual-review-before/book/card.jpg"
+ },
+ {
+  "category": "book",
+  "name": "card_667x375",
+  "file": "book/card_667x375.jpg",
+  "before": "../visual-review-before/book/card_667x375.jpg"
+ },
+ {
+  "category": "book",
+  "name": "card_844x390",
+  "file": "book/card_844x390.jpg",
+  "before": "../visual-review-before/book/card_844x390.jpg"
+ },
+ {
+  "category": "book",
+  "name": "fly_in",
+  "file": "book/fly_in.jpg",
+  "before": "../visual-review-before/book/fly_in.jpg"
+ },
+ {
+  "category": "book",
+  "name": "golden_card",
+  "file": "book/golden_card.jpg",
+  "before": "../visual-review-before/book/golden_card.jpg"
+ },
+ {
+  "category": "book",
+  "name": "page_complete",
+  "file": "book/page_complete.jpg",
+  "before": "../visual-review-before/book/page_complete.jpg"
+ },
+ {
+  "category": "book",
+  "name": "page_complete_667x375",
+  "file": "book/page_complete_667x375.jpg",
+  "before": "../visual-review-before/book/page_complete_667x375.jpg"
+ },
+ {
+  "category": "book",
+  "name": "page_complete_844x390",
+  "file": "book/page_complete_844x390.jpg",
+  "before": "../visual-review-before/book/page_complete_844x390.jpg"
+ },
+ {
+  "category": "book",
+  "name": "window_new",
+  "file": "book/window_new.jpg",
+  "before": "../visual-review-before/book/window_new.jpg"
+ },
+ {
+  "category": "book",
+  "name": "window_new_667x375",
+  "file": "book/window_new_667x375.jpg",
+  "before": "../visual-review-before/book/window_new_667x375.jpg"
+ },
+ {
+  "category": "book",
+  "name": "window_new_844x390",
+  "file": "book/window_new_844x390.jpg",
+  "before": "../visual-review-before/book/window_new_844x390.jpg"
+ },
+ {
+  "category": "effects",
+  "name": "chips_click_point",
+  "file": "effects/chips_click_point.jpg",
+  "before": "../visual-review-before/effects/chips_click_point.jpg"
  },
  {
   "category": "effects",

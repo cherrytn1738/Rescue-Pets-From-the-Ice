@@ -259,6 +259,22 @@ EffectsConfig.ClickBurst = {
 	MaxNumbers = 12,
 }
 
+-- Your tap's ice chips, crystal bits and pick sparks (TapFeedback): they burst out of the spot you clicked (where
+-- the ray from the click meets your block; a gamepad: the middle of the face towards the camera), along that
+-- face's normal and towards the camera. Per tap: Chips, Crystals and Sparks (halved with reduced effects), from a
+-- pool of at most MaxParts parts (the oldest is reused), moved by the client (no physics).
+EffectsConfig.TapChips = {
+	Chips = 4,
+	Crystals = 2,
+	Sparks = 3,
+	MaxParts = 48,
+	Gravity = 70, -- studs/s^2 (sparks fall at a quarter of it)
+	Speed = { 12, 22 }, -- studs/s off the surface
+	Spread = 0.55, -- how far each piece strays from the face's normal (0 = straight out)
+	TowardCamera = 0.45, -- how much each piece leans towards the camera
+	Life = { Chip = 0.7, Crystal = 0.8, Spark = 0.32 },
+}
+
 function EffectsConfig.Texture(key: string): string
 	return EffectsConfig.Textures[key] or EffectsConfig.Placeholder
 end

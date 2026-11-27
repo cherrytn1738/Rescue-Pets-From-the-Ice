@@ -72,6 +72,7 @@ return function(sources)
 
 	-- Creature Book pages and rewards
 	local data = { Pets = {}, Equipped = {}, BookSeen = {}, BookGolden = {}, Upgrades = {}, Buildings = {}, FrostCores = 0 }
+	check(R.BookCompletion(data) == 0, "an empty book is 0% complete")
 	local pages = R.BookPages(data)
 	check(#pages == 7 and pages[7].Page == "Golden" and pages[7].Count == 18, "seven pages: six rarities and Golden (all 18)")
 	for _, creature in CreatureConfig.Creatures do
@@ -80,10 +81,14 @@ return function(sources)
 		end
 	end
 	check(math.abs(R.BookBonus(data) - 0.10) < 1e-9, "a complete Rare page gives +10%")
+	check(math.abs(R.BookCompletion(data) - 3 / 36) < 1e-9, "the book's completion counts every entry on every page (3 of 36)")
+	check(CreatureConfig.BookRewardText(pages[3].Reward) == "+10% crystals", "a page's reward in words: +10% crystals")
+	check(CreatureConfig.BookRewardText(pages[4].Reward) == "+10% crystals and a frosty name-tag border", "...and a border as well")
 	for _, creature in CreatureConfig.Creatures do
 		data.BookGolden[creature.Id] = true
 	end
 	check(R.BookPages(data)[7].Complete, "every Golden version completes the Golden page")
+	check(math.abs(R.BookCompletion(data) - 21 / 36) < 1e-9, "...and the Golden entries count towards the book's %")
 	check(R.BookPages(data)[7].Reward.Title == "Ice Keeper", "...whose reward is the Ice Keeper title")
 
 	-- Ice looks: every layer and every glowing rarity has a look
@@ -165,6 +170,7 @@ return function(sources)
 	check(not ask("Explode", "p1").ok, "an unknown request is refused")
 	local reply = ask("CombineGolden", "p2")
 	check(reply.ok and #save.Pets == 2 and save.BookGolden.SnowBunny == true, "five Snow Bunnies become one Golden (the Golden page counts it)")
+	check(table.find(save.BookNew, "Golden:SnowBunny") ~= nil, "the first Golden version gets a New! badge on the Golden page")
 	local goldenUid = reply.uid
 	check(table.find(save.Equipped, goldenUid) ~= nil, "the Golden one takes the equipped bunny's slot")
 	check(ask("EquipBest").ok and save.Equipped[1] == goldenUid or save.Equipped[1] == "p6", "Equip Best")
@@ -176,7 +182,7 @@ return function(sources)
 	check(not ask("MarkSeen", { a = "MiniYeti" }).ok, "MarkSeen needs a plain list")
 		check(ask("Delete", { "p6" }).ok and #save.Pets == 1 and not table.find(save.Equipped, "p6"), "deleting an equipped pet unequips it")
 	check(not ask("Delete", { "p6" }).ok, "a deleted pet can't be deleted again")
-	check(ask("MarkSeen", { "MiniYeti" }).ok and #save.BookNew == 0, "viewing the book clears the New! badge")
+	check(ask("MarkSeen", { "MiniYeti", "Golden:SnowBunny" }).ok and #save.BookNew == 0, "viewing the book clears the New! badges (the Golden page's too)")
 	owned.PetSquad = false
 	PetService.Publish(fakePlayer, save)
 	check(#save.Equipped <= 1 and attributes.PetSlots == 1, "losing a slot pass unequips the extras")

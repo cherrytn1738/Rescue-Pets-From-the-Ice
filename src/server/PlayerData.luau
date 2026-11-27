@@ -311,7 +311,8 @@ local function validate(record)
 
 	-- More Creature Book state, all display or rewards that are worked out again from it, so nothing
 	-- here fails the load: BookGolden { [creature id] = true } (a Golden version was ever made: the
-	-- Golden page), BookNew (creature ids with a "New!" badge not yet viewed).
+	-- Golden page), BookNew (creature ids with a "New!" badge not yet viewed; "Golden:<id>" for a new Golden
+	-- page entry).
 	local golden = {}
 	if type(data.BookGolden) == "table" then
 		for id, value in data.BookGolden do
@@ -324,7 +325,9 @@ local function validate(record)
 	local fresh = {}
 	if type(data.BookNew) == "table" then
 		for _, id in data.BookNew do
-			if CreatureConfig.Get(id) and book[id] and not table.find(fresh, id) then
+			local goldenId = type(id) == "string" and string.match(id, "^Golden:(.+)$")
+			local known = if goldenId then golden[goldenId] == true else (CreatureConfig.Get(id) ~= nil and book[id] ~= nil)
+			if known and not table.find(fresh, id) then
 				table.insert(fresh, id)
 			end
 		end
@@ -620,7 +623,8 @@ local function gameFieldsValid(data): boolean
 		end
 	end
 	for _, id in data.BookNew do
-		if not CreatureConfig.Get(id) then
+		local goldenId = type(id) == "string" and string.match(id, "^Golden:(.+)$")
+		if not CreatureConfig.Get(goldenId or id) then -- (a creature id, or "Golden:<id>" for a new Golden version)
 			return false
 		end
 	end

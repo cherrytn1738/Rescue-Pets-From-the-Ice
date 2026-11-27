@@ -156,6 +156,24 @@ UITheme.Scale = { Baseline = Vector2.new(1050, 620), Min = 0.52, Max = 1.18, Men
 UITheme.Motion = { Hover = 1.05, Press = 0.94, HoverTime = 0.08, PressTime = 0.05, ReleaseTime = 0.12, OpenTime = 0.22, CloseTime = 0.12 }
 
 UITheme.Blur = { Menu = 8 } -- while a window is open
+-- The "Added to the Book" card (BookMoment.client): Size px (menu units), at most ScreenShare of the screen's height;
+-- it pops in (PopSeconds), the NEW! sticker stamps (StampSeconds), it holds (HoldSeconds; a tap skips), flies into the
+-- BOOK button (FlySeconds, shrinking to EndScale) and the % counts up (CountSeconds). Sparkles per stamp (none with
+-- reduced effects). A completed page's flourish shows FlourishSeconds. Below banners (30), above windows (20).
+UITheme.BookMoment = {
+	DisplayOrder = 29,
+	Size = Vector2.new(250, 330),
+	ScreenShare = 0.62,
+	AfterRescueSeconds = 0.35,
+	PopSeconds = 0.32,
+	StampSeconds = 0.16,
+	HoldSeconds = 1.1,
+	FlySeconds = 0.6,
+	EndScale = 0.12,
+	CountSeconds = 0.45,
+	Sparkles = 10,
+	FlourishSeconds = 2.2,
+}
 -- The tutorial's spotlight (Spotlight): the screen goes black at Darkness (0..1 opacity) round a cut-out with rounded
 -- Corner (px), Padding px round the target, and a Glow ring pulsing PulseSpeed (radians/s); the instruction is
 -- TextSize, at most TextWidth px wide. Above windows (20), below banners and notices (30+) and the debug windows.

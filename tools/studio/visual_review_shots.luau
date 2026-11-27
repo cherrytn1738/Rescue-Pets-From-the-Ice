@@ -26,6 +26,7 @@ local HttpService = game:GetService("HttpService")
 
 local BuildingConfig = require(ReplicatedStorage.BuildingConfig)
 local CreatureConfig = require(ReplicatedStorage.CreatureConfig)
+local SwingConfig = require(ReplicatedStorage.SwingConfig)
 local MapConfig = require(ReplicatedStorage.MapConfig)
 
 local me = Players.LocalPlayer
@@ -414,6 +415,13 @@ local PREPARE = {
 		end
 		home()
 	end,
+	book = function()
+		dbg("ResetSave") -- (an empty book: every creature given is new)
+		task.wait(3)
+		onlyBuildings({})
+		dbg("SetBlockLevel", { Level = 400 })
+		home()
+	end,
 	effects = function()
 		onlyBuildings({})
 		dbg("SetBlockLevel", { Level = 400 })
@@ -507,20 +515,23 @@ local function unfreeze()
 		animate.Enabled = true
 	end
 end
-local function holdSwing(seconds: number)
+local function holdSwing(at: number, variant: string?)
 	local animate = me.Character and me.Character:FindFirstChild("Animate")
-	local slash = animate and animate:FindFirstChild("toolslash")
-	local source = slash and slash:FindFirstChildWhichIsA("Animation")
 	local anim = animator()
-	if not (animate and source and anim) then
+	if not (animate and anim) then
 		return
 	end
 	animate.Enabled = false
-	local track = anim:LoadAnimation(source)
-	track.Priority = Enum.AnimationPriority.Action
-	track:Play(0)
-	task.wait(seconds)
-	track:AdjustSpeed(0)
+	for _, name in { variant or "Overhead", "Dip" } do
+		local animation = Instance.new("Animation")
+		animation.AnimationId = "rbxassetid://" .. SwingConfig.AnimationIds.R15[name]
+		local track = anim:LoadAnimation(animation)
+		track.Priority = Enum.AnimationPriority.Action
+		track:Play(0)
+		RunService.RenderStepped:Wait()
+		track.TimePosition = at
+		track:AdjustSpeed(0)
+	end
 end
 local function playCamera()
 	follow(Vector3.new(4, 4.5, 10.5), Vector3.new(0.5, 2.2, -2), 70)
@@ -531,7 +542,7 @@ local function swingShot()
 	-- the play camera turned to the character's right side (as a player turns it), so the swing's arc shows
 	follow(Vector3.new(9, 4, 4), Vector3.new(0, 2, -2.5), 70)
 	task.wait(0.8)
-	holdSwing(0.18) -- (the point at the bottom of the strike, in front of the character)
+	holdSwing(SwingConfig.ImpactAt) -- (the strike, in front of the character)
 	return { Wait = 0.6 }
 end
 local function walkShot()
@@ -578,7 +589,21 @@ shot("picks/pick_golden_skin", function()
 	follow(Vector3.new(4.6, 3.0, -6.8), Vector3.new(0.9, 2.4, -0.2), 42)
 	return { Wait = 1.5 }
 end)
-shot("picks/pick_golden_skin_swing", swingShot) -- (after the golden skin shot: the skin is already on)
+shot("picks/pick_golden_skin_swing", swingShot)
+-- The swing's variants (SwingConfig), held at the top of the wind-up and at the strike, from the play camera's side.
+for _, variant in SwingConfig.Variants do
+	for _, moment in { { "windup", SwingConfig.WindUpEnd }, { "strike", SwingConfig.ImpactAt } } do
+		shot(`picks/swing_{string.lower(variant)}_{moment[1]}`, function()
+			unfreeze()
+			dbg("SetPickTier", { Tier = 3 })
+			standAt(plotPoint(0, 26, 4), plotPoint(0, 0, 4))
+			follow(Vector3.new(8, 4, 5), Vector3.new(0, 2, -2.5), 70)
+			task.wait(0.8)
+			holdSwing(moment[2], variant)
+			return { Wait = 0.6 }
+		end)
+	end
+end -- (after the golden skin shot: the skin is already on)
 shot("picks/pick_golden_skin_walk", walkShot)
 
 -- Ice: every layer with every rarity, the crack stages, the shatter, the sled, the Mythic Block.
@@ -956,6 +981,123 @@ shot("ui/server_message", function()
 	return { Wait = 1.2 }
 end, PHONES)
 
+-- The "Added to the Book" moment (BookMoment.client): a creature not in the book yet is given, its card pops in
+-- with the NEW! sticker, flies into the BOOK button; a page's last creature brings the "Page complete!" flourish.
+local function unseen(golden: boolean): string?
+	local data = progress()
+	for _, creature in CreatureConfig.Creatures do
+		local seen = (data.BookSeen or {})[creature.Id]
+		if golden then
+			if seen and not (data.BookGolden or {})[creature.Id] then
+				return creature.Id
+			end
+		elseif not seen or seen == 0 then
+			return creature.Id
+		end
+	end
+	return nil
+end
+local function bookRoot(): Frame?
+	local gui = me.PlayerGui:FindFirstChild("BookMoment")
+	return gui and gui:FindFirstChild("Root")
+end
+local function bookCard(): GuiObject?
+	local root = bookRoot()
+	return root and root:FindFirstChild("BookCard")
+end
+local function bannerTitle(): string?
+	local banners = me.PlayerGui:FindFirstChild("Banners")
+	local big = banners and banners.Root:FindFirstChild("Big")
+	return if big and big.Visible then big.Title.Text else nil
+end
+-- Waits until no card or banner has shown for a moment (queued cards leave short gaps between them).
+local function bookQuiet(seconds: number)
+	local quietSince = os.clock()
+	local deadline = os.clock() + seconds
+	while os.clock() < deadline do
+		if bookCard() ~= nil or bannerTitle() ~= nil then
+			quietSince = os.clock()
+		elseif os.clock() - quietSince > 1.4 then
+			return
+		end
+		task.wait(0.1)
+	end
+end
+-- (waits for the moments still playing from the last shot, so each shot starts calm)
+local function bookCamera()
+	uiCamera()
+	bookQuiet(15)
+end
+-- The moment the shot is about, waited for in the game (a fixed wait missed it: the capture's delay varies).
+local function cardStamped(): boolean
+	local card = bookCard()
+	local sticker = card and card:FindFirstChild("Sticker", true)
+	return sticker ~= nil and sticker.Visible and math.abs(sticker.Rotation - 8) < 1
+end
+local function cardFlying(): boolean
+	local card = bookCard()
+	return card ~= nil and card.Rotation < -4 -- (the stamp jolts it to -3; the flight turns it to -12)
+end
+shot("book/card", function()
+	bookCamera()
+	dbg("GivePet", { Creature = unseen(false), Golden = "Off" })
+	waitFor(cardStamped, 8)
+	return { Wait = 0 }
+end, PHONES)
+shot("book/fly_in", function()
+	bookCamera()
+	dbg("GivePet", { Creature = unseen(false), Golden = "Off" })
+	waitFor(cardStamped, 8)
+	waitFor(cardFlying, 4) -- (the capture lands part way through the flight)
+	return { Wait = 0 }
+end)
+shot("book/button_after", function()
+	bookCamera()
+	dbg("GivePet", { Creature = unseen(false), Golden = "Off" })
+	waitFor(cardFlying, 8)
+	waitFor(function()
+		return bookCard() == nil
+	end, 4)
+	return { Wait = 0 }
+end)
+shot("book/page_complete", function()
+	bookCamera()
+	-- the first page with creatures still missing: all but one of them (their cards play first), then the last one:
+	-- its card, then the flourish (each run of the shot finishes another page)
+	local missing = {}
+	for _, rarity in RARITIES do
+		for _, creature in CreatureConfig.Creatures do
+			if creature.Rarity == rarity and not (progress().BookSeen or {})[creature.Id] then
+				table.insert(missing, creature.Id)
+			end
+		end
+		if #missing > 0 then
+			break
+		end
+	end
+	for index = 1, #missing - 1 do
+		dbg("GivePet", { Creature = missing[index], Golden = "Off" })
+	end
+	task.wait(0.5)
+	bookQuiet(4 * #missing)
+	dbg("GivePet", { Creature = missing[#missing] or "SnowBunny", Golden = "Off" })
+	waitFor(function()
+		return bannerTitle() == "Page complete!"
+	end, 10)
+	return { Wait = 0.2 }
+end, PHONES)
+shot("book/golden_card", function()
+	bookCamera()
+	dbg("GivePet", { Creature = unseen(true) or "SnowBunny", Golden = "On" })
+	waitFor(cardStamped, 8)
+	return { Wait = 0 }
+end)
+shot("book/window_new", function()
+	bookCamera()
+	task.wait(3)
+	return { Clicks = { menu("Book") }, Wait = 1.6, Close = { closeOf("Book") } }
+end, PHONES)
+
 -- Effects: tapping, crystals flying, the rushes, reduced effects on and off.
 shot("effects/tap_feedback", function()
 	freshBlock(400, "SnowBunny")
@@ -978,6 +1120,22 @@ shot("effects/click_burst", function()
 	local taps = {}
 	for _ = 1, 16 do -- (about 2.5 s of clicks; the capture happens part way through)
 		table.insert(taps, { math.floor(point.X + math.random(-40, 40)), math.floor(point.Y + math.random(-30, 30)) })
+	end
+	return { TapAt = taps, Wait = 1.2 }
+end)
+-- Ice chips and pick sparks bursting out of the spot clicked (real clicks on the block's left side, close up).
+shot("effects/chips_click_point", function()
+	dbg("SetPickTier", { Tier = 5 }) -- (bright sparks)
+	freshBlock(400, "SnowBunny")
+	home()
+	-- from the tapping spot, a narrow lens on the block's front (the chips are small)
+	hold(plotPoint(8, 34, 10), plotPoint(-2, 8, 6), 24)
+	task.wait(3.5) -- (a layer banner from the level change passes first)
+	local block = MapConfig.BlockBase(plotIndex())
+	local point = camera:WorldToScreenPoint(block.Position + Vector3.new(-2, 6, 0))
+	local taps = {}
+	for _ = 1, 16 do
+		table.insert(taps, { math.floor(point.X + math.random(-12, 12)), math.floor(point.Y + math.random(-12, 12)) })
 	end
 	return { TapAt = taps, Wait = 1.2 }
 end)

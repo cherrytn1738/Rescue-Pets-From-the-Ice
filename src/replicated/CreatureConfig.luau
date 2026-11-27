@@ -72,6 +72,27 @@ CreatureConfig.Book = {
 	{ Page = "Golden", Count = 18, Title = "Ice Keeper", PickSkin = "Golden" }, -- a Golden version of every creature
 }
 
+-- A Book page's reward in words ("+5% crystals", "+10% crystals and a frosty name-tag border").
+function CreatureConfig.BookRewardText(page): string
+	local parts = {}
+	if page.CrystalBonus then
+		table.insert(parts, `+{math.floor(page.CrystalBonus * 100 + 0.5)}% crystals`)
+	end
+	if page.NameTagBorder then
+		table.insert(parts, `a {string.lower(page.NameTagBorder)} name-tag border`)
+	end
+	if page.Trail then
+		table.insert(parts, `an {string.lower(page.Trail)} trail`)
+	end
+	if page.Title then
+		table.insert(parts, `the title "{page.Title}"`)
+	end
+	if page.PickSkin then
+		table.insert(parts, `a {string.lower(page.PickSkin)} ice pick skin`)
+	end
+	return table.concat(parts, " and ")
+end
+
 local byId, rarityById = {}, {}
 for _, creature in CreatureConfig.Creatures do
 	byId[creature.Id] = creature

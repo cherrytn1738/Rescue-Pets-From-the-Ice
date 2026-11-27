@@ -126,11 +126,9 @@ AudioConfig.Rules = {
 	CrystalTick = { MinGap = 2, Chance = 0.35, QuietAfterTap = 0.8 },
 	-- The hover tick (HoverClick.client): at most one every MinGap seconds.
 	Hover = { MinGap = 0.08 },
-	-- A rescue's jingle starts this long after the shatter; a new creature's book ding BookDelay after the
-	-- rescue, and a completed book page PageDelay after the change.
+	-- A rescue's jingle starts this long after the shatter. (A new creature's book ding and a completed page's
+	-- flourish play with the Book moment's card: BookMoment.client.)
 	JingleDelay = 0.15,
-	BookDelay = 1.1,
-	PageDelay = 1.8,
 }
 
 -- Music (MusicPlayer.client): Plaza outside your plot, Plot inside it, looping, crossfading over FadeSeconds.

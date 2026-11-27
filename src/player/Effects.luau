@@ -4,6 +4,7 @@ Effects (client): shared bits for world effects.
   Effects.Count(n)             n particles, halved with reduced effects
   Effects.Shake(strength, seconds)  a camera shake (skipped with reduced effects)
   Effects.Dip(depth, seconds)  the camera dips down and comes back up (a new layer; skipped with reduced effects)
+  Effects.Nudge(depth, seconds) a tiny jolt down and back (the pick's impact; skipped with reduced effects)
   Effects.Debris(props)        a short-lived loose part flying off (chips, shards, crystals)
   Effects.Sound(name)          a sound effect from AudioConfig (quiet until the game has sound ids)
 ]]
@@ -35,6 +36,14 @@ function Effects.Shake(strength: number, seconds: number)
 	end
 	shakeStrength = math.max(if os.clock() < shakeUntil then shakeStrength else 0, strength)
 	shakeUntil = math.max(shakeUntil, os.clock() + seconds)
+end
+
+local nudgeStart, nudgeSeconds, nudgeDepth = 0, 0, 0
+function Effects.Nudge(depth: number, seconds: number)
+	if Effects.Reduced() then
+		return
+	end
+	nudgeStart, nudgeSeconds, nudgeDepth = os.clock(), seconds, depth
 end
 
 local dipStart, dipSeconds, dipDepth = 0, 0, 0
@@ -85,6 +94,11 @@ RunService:BindToRenderStep("IceShake", Enum.RenderPriority.Camera.Value + 1, fu
 		local share = math.sin(math.pi * (now - dipStart) / dipSeconds) -- down and back up
 		local camera = Workspace.CurrentCamera
 		camera.CFrame = camera.CFrame * CFrame.new(0, -dipDepth * share, 0) * CFrame.Angles(math.rad(-6 * share), 0, 0)
+	end
+	if now - nudgeStart < nudgeSeconds then
+		local share = math.sin(math.pi * (now - nudgeStart) / nudgeSeconds)
+		local camera = Workspace.CurrentCamera
+		camera.CFrame = camera.CFrame * CFrame.new(0, -nudgeDepth * share, nudgeDepth * 0.5 * share)
 	end
 	if now < shakeUntil then
 		local fade = math.clamp((shakeUntil - now) / 0.4, 0, 1)

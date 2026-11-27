@@ -1,6 +1,8 @@
 --[[
 TapFeedback (client): what a tap on the ice shows at once (docs/GAME_DESIGN.md, "Every hit"):
- * in the world: the block shudders, ice chips, crystal bits and your pick's sparks fly off it;
+ * in the world: the block shudders, and ice chips, crystal bits and your pick's sparks burst out of the spot you
+   hit (where the click's ray meets the block, along the face's normal and towards the camera; EffectsConfig.TapChips,
+   from a small pool of parts this script moves itself);
  * the tap sound, capped (AudioConfig.Rules.Tap, SoundRules.TapLimiter) so an autoclicker can't stack dozens; a
    fast streak lifts its pitch a little;
  * at the cursor (EffectsConfig.ClickBurst): a small white flash with short streaks shooting out where you
@@ -75,48 +77,152 @@ local function colours(): (Color3, Color3)
 	return IceLooks.CrystalColour(EconomyRules.IceTiersTotal(data)), IceLooks.PickSparks[EconomyRules.PickTier(data)] or IceLooks.PickSparks[1]
 end
 
--- Ice chips off the block, a little crystal spray and your pick's sparks (the doc's "Every hit").
-local function chips(index: number)
-	local view = IceBlocks.View(index)
+-- Ice chips, crystal bits and pick sparks out of the spot you hit ---------------------------------------------
+
+local CHIPS = EffectsConfig.TapChips
+local pieces = {} -- the pool: { part, kind, position, velocity, spin, turn, born, life }
+local nextPiece = 1
+local PARKED = CFrame.new(0, -10000, 0)
+
+local function newPiece()
+	local part = Instance.new("Part")
+	part.Name = "TapChip"
+	part.Anchored, part.CanCollide, part.CanQuery, part.CanTouch = true, false, false, false
+	part.CastShadow = false
+	part.CFrame = PARKED
+	part.Parent = Effects.Folder()
+	return { part = part, born = nil }
+end
+
+local function emit(kind: string, at: Vector3, velocity: Vector3, size: Vector3, color: Color3, material: Enum.Material)
+	if #pieces < CHIPS.MaxParts then
+		table.insert(pieces, newPiece())
+	end
+	local piece = pieces[nextPiece] or pieces[1]
+	nextPiece = (nextPiece % CHIPS.MaxParts) + 1
+	local part = piece.part
+	if not part.Parent then
+		part.Parent = Effects.Folder()
+	end
+	part.Size, part.Color, part.Material, part.Transparency = size, color, material, 0
+	piece.kind, piece.position, piece.velocity = kind, at, velocity
+	piece.turn = CFrame.Angles(math.random() * 6, math.random() * 6, math.random() * 6)
+	piece.spin = Vector3.new(math.random() - 0.5, math.random() - 0.5, math.random() - 0.5) * 14
+	piece.born, piece.life = os.clock(), CHIPS.Life[kind] or 0.6
+end
+
+-- Moves every live piece (one BulkMoveTo a frame) and parks the finished ones.
+local movedParts, movedFrames = {}, {}
+RunService.RenderStepped:Connect(function(dt)
+	table.clear(movedParts)
+	table.clear(movedFrames)
+	local now = os.clock()
+	for _, piece in pieces do
+		if piece.born then
+			local age = now - piece.born
+			local part = piece.part
+			if age >= piece.life then
+				piece.born = nil
+				table.insert(movedParts, part)
+				table.insert(movedFrames, PARKED)
+			else
+				local gravity = if piece.kind == "Spark" then CHIPS.Gravity * 0.25 else CHIPS.Gravity
+				piece.velocity -= Vector3.new(0, gravity * dt, 0)
+				piece.position += piece.velocity * dt
+				local frame
+				if piece.kind == "Spark" then
+					local v = piece.velocity
+					frame = CFrame.lookAt(piece.position, piece.position + (if v.Magnitude > 0.01 then v else Vector3.yAxis))
+				else
+					piece.turn *= CFrame.Angles(piece.spin.X * dt, piece.spin.Y * dt, piece.spin.Z * dt)
+					frame = CFrame.new(piece.position) * piece.turn
+				end
+				local fadeFrom = piece.life * 0.6
+				part.Transparency = if age > fadeFrom then (age - fadeFrom) / (piece.life - fadeFrom) else 0
+				table.insert(movedParts, part)
+				table.insert(movedFrames, frame)
+			end
+		end
+	end
+	if #movedParts > 0 then
+		workspace:BulkMoveTo(movedParts, movedFrames, Enum.BulkMoveMode.FireCFrameChanged)
+	end
+end)
+
+-- Where a tap strikes the block, and that face's outward normal. A click or touch: where its ray meets the block;
+-- a miss (a counted tap anywhere in the plot): the nearest point on the face towards the camera. A gamepad (no
+-- point): the middle of that face.
+function TapFeedback.StrikePoint(block: BasePart, screenPosition: Vector2?): (Vector3, Vector3)
 	local camera = workspace.CurrentCamera
+	local cf, half = block.CFrame, block.Size / 2
+	local eye = cf:PointToObjectSpace(camera.CFrame.Position)
+	-- the face towards the camera: the axis the camera is furthest outside of (relative to the block's size)
+	local axes = { Vector3.xAxis, Vector3.yAxis, Vector3.zAxis }
+	local best, bestRatio = 1, -math.huge
+	for i, axis in axes do
+		local ratio = math.abs(eye:Dot(axis)) / math.max(half:Dot(axis), 0.01)
+		if ratio > bestRatio then
+			best, bestRatio = i, ratio
+		end
+	end
+	local localNormal = axes[best] * (if eye:Dot(axes[best]) >= 0 then 1 else -1)
+	local normal = cf:VectorToWorldSpace(localNormal)
+	local centre = cf:PointToWorldSpace(localNormal * half)
+	if not screenPosition then
+		return centre, normal
+	end
+	local ray = camera:ScreenPointToRay(screenPosition.X, screenPosition.Y)
+	local params = RaycastParams.new()
+	params.FilterType = Enum.RaycastFilterType.Include
+	params.FilterDescendantsInstances = { block }
+	local hit = workspace:Raycast(ray.Origin, ray.Direction * 1000, params)
+	if hit then
+		return hit.Position, hit.Normal
+	end
+	-- missed: where the ray crosses the face's plane, kept inside the face
+	local facing = ray.Direction:Dot(normal)
+	if facing >= -1e-3 then
+		return centre, normal
+	end
+	local t = (centre - ray.Origin):Dot(normal) / facing
+	local onPlane = cf:PointToObjectSpace(ray.Origin + ray.Direction * t)
+	local inside = Vector3.new(
+		if best == 1 then localNormal.X * half.X else math.clamp(onPlane.X, -half.X * 0.95, half.X * 0.95),
+		if best == 2 then localNormal.Y * half.Y else math.clamp(onPlane.Y, -half.Y * 0.95, half.Y * 0.95),
+		if best == 3 then localNormal.Z * half.Z else math.clamp(onPlane.Z, -half.Z * 0.95, half.Z * 0.95)
+	)
+	return cf:PointToWorldSpace(inside), normal
+end
+
+-- Ice chips off the spot you hit, a little crystal spray and your pick's sparks (the doc's "Every hit").
+local function chips(index: number, screenPosition: Vector2?)
+	local view = IceBlocks.View(index)
 	if not view or not view.present then
 		return
 	end
 	local block = view.block
-	local toward = (camera.CFrame.Position - block.Position) * Vector3.new(1, 0, 1)
-	toward = if toward.Magnitude > 0 then toward.Unit else Vector3.zAxis
-	local surface = block.Position + toward * (block.Size.X / 2) + Vector3.new(0, (math.random() - 0.3) * block.Size.Y * 0.5, 0)
-	for _ = 1, Effects.Count(4) do
-		Effects.Debris({
-			Size = Vector3.one * (0.3 + math.random() * 0.35),
-			CFrame = CFrame.new(surface + Vector3.new((math.random() - 0.5) * 3, 0, (math.random() - 0.5) * 3)),
-			Color = block.Color,
-			Material = Enum.Material.Ice,
-			Velocity = toward * (10 + math.random() * 10) + Vector3.new((math.random() - 0.5) * 10, 10 + math.random() * 8, (math.random() - 0.5) * 10),
-			Life = 0.7,
-		})
+	local point, normal = TapFeedback.StrikePoint(block, screenPosition)
+	local camera = workspace.CurrentCamera
+	local toCamera = camera.CFrame.Position - point
+	toCamera = if toCamera.Magnitude > 0 then toCamera.Unit else normal
+	local out = (normal + toCamera * CHIPS.TowardCamera).Unit
+	local at = point + normal * 0.15
+	local function direction(): Vector3
+		local stray = Vector3.new(math.random() - 0.5, math.random() - 0.5, math.random() - 0.5) * 2 * CHIPS.Spread
+		return (out + stray + Vector3.new(0, 0.35, 0)).Unit
+	end
+	local function speed(): number
+		return CHIPS.Speed[1] + math.random() * (CHIPS.Speed[2] - CHIPS.Speed[1])
+	end
+	for _ = 1, Effects.Count(CHIPS.Chips) do
+		emit("Chip", at, direction() * speed(), Vector3.one * (0.25 + math.random() * 0.3), block.Color, Enum.Material.Ice)
 	end
 	local crystal, spark = colours()
-	for _ = 1, Effects.Count(2) do
-		Effects.Debris({
-			Size = Vector3.one * 0.35,
-			CFrame = CFrame.new(surface) * CFrame.Angles(0, 0, math.rad(45)),
-			Color = crystal,
-			Material = Enum.Material.Neon,
-			Velocity = toward * 6 + Vector3.new((math.random() - 0.5) * 6, 16 + math.random() * 6, (math.random() - 0.5) * 6),
-			Life = 0.8,
-		})
+	for _ = 1, Effects.Count(CHIPS.Crystals) do
+		emit("Crystal", at, direction() * speed() * 0.8 + Vector3.new(0, 6, 0), Vector3.one * 0.32, crystal, Enum.Material.Neon)
 	end
-	for _ = 1, Effects.Count(3) do
-		Effects.Debris({
-			Size = Vector3.new(0.12, 0.12, 0.7),
-			CFrame = CFrame.lookAt(surface, surface + toward + Vector3.new((math.random() - 0.5) * 2, math.random(), (math.random() - 0.5) * 2)),
-			Color = spark,
-			Material = Enum.Material.Neon,
-			Velocity = toward * (16 + math.random() * 10) + Vector3.new((math.random() - 0.5) * 14, 6 + math.random() * 10, (math.random() - 0.5) * 14),
-			Spin = Vector3.zero,
-			Life = 0.35,
-		})
+	for _ = 1, Effects.Count(CHIPS.Sparks) do
+		emit("Spark", at, direction() * speed() * 1.4, Vector3.new(0.1, 0.1, 0.65), spark, Enum.Material.Neon)
 	end
 end
 
@@ -309,7 +415,7 @@ function TapFeedback.Tap(screenPosition: Vector2?)
 	local view = type(index) == "number" and IceBlocks.View(index) or nil
 	if type(index) == "number" then
 		IceBlocks.Hit(index, 0.3)
-		chips(index)
+		chips(index, screenPosition)
 	end
 	-- the tap sound (capped), a little higher during a fast streak
 	local now = os.clock()

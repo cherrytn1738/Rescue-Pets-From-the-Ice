@@ -100,7 +100,7 @@ This is a starting value. The economy simulation tunes it so a rescue comes ever
 
 [Concept image in the Claude doc: Crack stages: an Epic Mini Yeti gets clearer at 20, 40, 60 and 80 percent, then breaks free at 100 percent\]
 
-**Every hit.** Ice chips fly, crystals spray out, and a crunch plays. Its pitch rises slightly during fast tapping streaks. Where the player clicked or touched, a small white flash with a few short white streaks bursts out (about 0.25 s), and "+N" pops up 30-70 px away at a random angle: the crystals that tap earned (the server's figure, so it matches the counter), in the chunky UI font, white with a dark outline and short numbers (+6, +1.2K), popping in with a little jiggle, then floating up and fading in about 0.7 s. With a gamepad it shows at the ice block. Auto Pick's taps don't show it, and reduced effects keeps the number but drops the streaks.
+**Every hit.** Ice chips, crystal bits and the pick's sparks burst out of the exact spot the player clicked or touched (where that ray meets the block, out along the face and towards the camera; a tap that misses the block uses the nearest point of the face towards the camera, a gamepad the middle of that face), and a crunch plays. Its pitch rises slightly during fast tapping streaks. Where the player clicked or touched, a small white flash with a few short white streaks bursts out (about 0.25 s), and "+N" pops up 30-70 px away at a random angle: the crystals that tap earned (the server's figure, so it matches the counter), in the chunky UI font, white with a dark outline and short numbers (+6, +1.2K), popping in with a little jiggle, then floating up and fading in about 0.7 s. With a gamepad it shows at the ice block. Auto Pick's taps don't show it, and reduced effects keeps the number but drops the streaks.
 
 **The rescue moment.** The ice explodes into shards with a crystal fountain worth about 30 seconds of the player's income. The creature shakes off the frost, a banner shows its rarity, and it runs to the player. A new, slightly bigger block then slides into the plot on a sled from the glacier.
 
@@ -374,8 +374,8 @@ The Creature Book is the long-term goal: every creature in the game, shown as a 
 
 [Concept image in the Claude doc: Creature Book: a completed Common page and an Uncommon page with two creatures found, one marked New, and two silhouettes\]
 
-- **Pages:** one page per rarity, plus a Golden page. Each entry shows the creature, its first layer, how many have been rescued, and a "New!" badge until viewed.
-- **First rescue moment:** the first time a creature is freed, the book flies open on screen, the page flips and the silhouette fills in with colour.
+- **Pages:** one page per rarity, plus a Golden page. Each entry shows the creature, its first layer, how many have been rescued, and a "New!" badge until its page is opened (a new Golden version gets one on the Golden page). The book opens on the page with something new, and a new entry's silhouette fills in with colour the first time it's shown.
+- **"Added to the Book" moment:** the first time a creature is freed (and the first time its Golden version is made, in gold), after the rescue banner a card with its picture and name, framed in its rarity colour, pops into the middle of the screen; a NEW! sticker stamps onto it with the new-creature ding, and after about a second it shrinks and flies along a curve into the BOOK button, which bounces, flashes and counts its % up. A rescue that completes a page follows it with a short "Page complete!" flourish (the page's reward) and the book-page sound. It never blocks play: tapping and walking carry on, a tap on the card skips to the fly-in, several new creatures queue up, and the rescue banner, the card and the server's announcement toast take turns so each is readable. Reduced effects keeps the card and the fly-in and drops the sparkles.
 - **Hints:** a silhouette entry tells the player where to look ("Found in Ancient Ice or deeper").
 
 | Page completed | Permanent reward |
@@ -541,7 +541,7 @@ Launch with 6 passes and 4 kinds of products. Prices were checked against 12 pop
 
 ## UI and controls
 
-Inside your plot, a tap anywhere on the screen swings your ice pick at the block, so phone players never have to aim. Outside your plot, taps only count on a golden block.
+Inside your plot, a tap anywhere on the screen swings your ice pick at the block, so phone players never have to aim. The swing is animated (other players see it): a quick wind-up with the pick back over the shoulder, the torso twisting and the knees bending, a fast strike, a small recoil bounce, then a follow-through and recovery, with a tiny camera nudge on the strike (not with reduced effects). Three variants take turns (overhead, a diagonal from the left, a diagonal from the right). The tap's effects and sound fire on the click itself; tapping faster than a full swing plays the swing faster and cuts into the next one, never queueing swings. Outside your plot, taps only count on a golden block.
 
 | Device | Hit the ice |
 | --- | --- |
@@ -606,8 +606,8 @@ Sound and effects carry most of the "every tap feels good" pillar. Every sound c
 | 80% damage | A slow heartbeat | Creature wiggles, glow brightens |
 | Shatter | Glass-burst crash | Ice shards fly out, crystal fountain, frost puff |
 | Rescue reveal | A jingle per rarity, grander from Common to Mythic | Rarity banner, confetti in the rarity colour |
-| New creature in the book | A bright "ding-ding" | NEW! on the banner |
-| Book page complete | A chord flourish | – |
+| New creature in the book | A bright "ding-ding" as the NEW! sticker stamps on | The "Added to the Book" card flying into the BOOK button |
+| Book page complete | A chord flourish | "Page complete!" with the page's reward |
 | Golden pet | An extra golden sparkle | – |
 | Income | A very soft crystal tick, at most every few seconds, not while tapping | – |
 | New layer | Deep rumble | Ground shake, camera dip, layer banner |

@@ -193,6 +193,17 @@ function EconomyRules.BookPages(data)
 	return pages
 end
 
+-- The whole Creature Book's completion (0..1): every creature found, and every Golden version made (the HUD's
+-- BOOK %, the Book window's header).
+function EconomyRules.BookCompletion(data): number
+	local found, total = 0, 0
+	for _, page in EconomyRules.BookPages(data) do
+		found += page.Found
+		total += page.Count
+	end
+	return if total > 0 then found / total else 0
+end
+
 -- The Creature Book's permanent crystal bonus (0.05 = +5%).
 function EconomyRules.BookBonus(data): number
 	local bonus = 0

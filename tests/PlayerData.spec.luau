@@ -287,6 +287,7 @@ return function(sources)
 	live.FrostCores, live.Rebirths, live.MaxLayerOpened, live.CreaturesRescued, live.TutorialStep = 7, 3, 6, 9, 5
 	live.BookGolden.AuroraFox = true
 	table.insert(live.BookNew, "SnowBunny")
+	table.insert(live.BookNew, "Golden:AuroraFox") -- (a new Golden version's badge: the save must accept it)
 	live.DailyClaimDay, live.Settings.ReducedEffects, live.Settings.Music = 20415, true, 0.25
 	leave(starter)
 	local saved = record(30)
@@ -302,6 +303,7 @@ return function(sources)
 	check(data.Equipped[1] == "pet-2" and data.BookSeen.SnowBunny == 6 and data.FrostCores == 7 and data.Rebirths == 3
 		and data.MaxLayerOpened == 6 and data.CreaturesRescued == 9 and data.TutorialStep == 5, "...and the rest")
 	check(starter:GetAttribute("Crystals") == 1234.5 and starter:GetAttribute("Rebirths") == 3, "the attributes show the loaded values")
+	check(data.BookNew[2] == "Golden:AuroraFox", "a Golden page New! badge is saved and loaded (it used to fail the save)")
 	check(data.BookGolden.AuroraFox == true and data.BookNew[1] == "SnowBunny" and data.DailyClaimDay == 20415
 		and data.Settings.ReducedEffects == true and data.Settings.Music == 0.25, "the Golden page, New! badges, daily chest and settings are saved")
 	leave(starter)
@@ -323,7 +325,7 @@ return function(sources)
 		Equipped = { "c", "c", "b", "nope", 7, "a" },
 		BookSeen = { SealPup = 3, MiniYeti = "lots", Dinosaur = 2 },
 		BookGolden = { SealPup = true, Dinosaur = true, MiniYeti = "yes" },
-		BookNew = { "SealPup", "SealPup", "Dinosaur", "SnowBunny" },
+		BookNew = { "SealPup", "SealPup", "Dinosaur", "SnowBunny", "Golden:SealPup", "Golden:MiniYeti", "Golden:Nope", 5 },
 		DailyClaimDay = -4,
 		Settings = { Music = 7, Sounds = "loud" },
 		TutorialStep = 99,
@@ -339,7 +341,8 @@ return function(sources)
 	check(data.BookSeen.SealPup == 3 and data.BookSeen.MiniYeti == 1 and data.BookSeen.Dinosaur == nil, "the book keeps seen creatures (an unreadable count is 1) and drops unknown ones")
 	check(data.TutorialStep == 5, "a tutorial step that can't be read counts as done")
 	check(data.BookGolden.SealPup == true and data.BookGolden.Dinosaur == nil and data.BookGolden.MiniYeti == nil, "the Golden page keeps known creatures marked true")
-	check(#data.BookNew == 1 and data.BookNew[1] == "SealPup", "New! badges: only seen, known creatures, each once")
+	check(#data.BookNew == 2 and data.BookNew[1] == "SealPup" and data.BookNew[2] == "Golden:SealPup",
+		"New! badges: only seen, known creatures, each once; a Golden page badge only for a Golden version made")
 	check(data.DailyClaimDay == 0 and data.Settings.Music == 1 and data.Settings.Sounds == 1, "an unreadable daily day and settings fall back to defaults")
 	check(data.Settings.AutoEquip == true, "auto-equip is on unless turned off")
 	leave(messyGame)

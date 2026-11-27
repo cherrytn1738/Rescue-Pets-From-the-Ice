@@ -138,6 +138,12 @@ return function(sources)
 	check(NumberFormat.Money(2500000) == "$2.5M", "money")
 	check(NumberFormat.MoneyPrecise(186910) == "$186.91K", "precise money never rounds up")
 
+	-- The "Added to the Book" card (BookMoment.client): above windows, below banners, a quick moment
+	local moment = UITheme.BookMoment
+	check(moment ~= nil and moment.DisplayOrder > 20 and moment.DisplayOrder < 30, "the Book card sits above windows (20) and below banners (30)")
+	check(moment ~= nil and moment.HoldSeconds >= 0.6 and moment.HoldSeconds <= 1.6, "the card holds for about a second before it flies")
+	check(moment ~= nil and moment.PopSeconds + moment.StampSeconds + moment.HoldSeconds + moment.FlySeconds <= 3, "the whole moment is short (3 s at most)")
+	check(moment ~= nil and moment.ScreenShare > 0 and moment.ScreenShare < 0.8 and typeof(moment.Size) == "Vector2", "it fits a phone's height")
 	-- The tutorial's spotlight (Spotlight): black at about 60%, a 0.2 s fade, above windows and below the debug windows
 	local spot = UITheme.Spotlight
 	check(spot ~= nil and spot.Darkness >= 0.55 and spot.Darkness <= 0.65, "the spotlight darkens to about 60% black")

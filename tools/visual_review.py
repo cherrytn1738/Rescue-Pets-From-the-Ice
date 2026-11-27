@@ -30,7 +30,7 @@ from run_specs import StudioMcp  # noqa: E402
 SHOTS_LUAU = os.path.join(HERE, "studio", "visual_review_shots.luau")
 OUT = os.path.join(REPO, "store-assets", "visual-review")
 BEFORE = os.path.join(REPO, "store-assets", "visual-review-before")
-CATEGORY_ORDER = ["buildings", "picks", "ice", "pets", "rescue", "world", "ui", "effects"]
+CATEGORY_ORDER = ["buildings", "picks", "ice", "pets", "rescue", "world", "ui", "book", "effects"]
 
 
 class Studio:

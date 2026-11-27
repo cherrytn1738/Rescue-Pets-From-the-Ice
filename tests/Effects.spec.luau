@@ -101,6 +101,12 @@ return function(sources)
 		check(Effects.TextureFiles[key] ~= nil, "the shared texture " .. key)
 	end
 
+	-- Tap chips from the click point (TapFeedback): a few pieces per tap from a small pool
+	local tapChips = Effects.TapChips
+	check(tapChips ~= nil and tapChips.Chips + tapChips.Crystals + tapChips.Sparks <= 12, "a few pieces per tap")
+	check(tapChips ~= nil and tapChips.MaxParts >= tapChips.Chips + tapChips.Crystals + tapChips.Sparks and tapChips.MaxParts <= 64,
+		"a small pool of parts, enough for one tap")
+	check(tapChips ~= nil and tapChips.Speed[1] < tapChips.Speed[2] and tapChips.Life.Spark < tapChips.Life.Chip, "pieces fly at a range of speeds; sparks die first")
 	-- The click burst and "+N" at the cursor (TapFeedback)
 	local burst = Effects.ClickBurst
 	check(burst ~= nil, "EffectsConfig.ClickBurst exists")
