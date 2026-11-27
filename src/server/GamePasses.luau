@@ -15,18 +15,25 @@ Roblox's ownership record is the truth:
 Studio: a test purchase of a pass never becomes real ownership, and a pass without an id can't be
 prompted at all, so the debug menu (and the shop, for a pass with no id yet) sets a Studio-only
 override for this session: SetStudioOverride. Never saved, ignored outside Studio.
+
+Studio switch StudioIgnoreOwnedPasses (Workspace attribute, true; read only in Studio): what Roblox
+says at join is ignored, so the developer's account (which owns every pass) plays as a normal player.
+A pass bought in this session (a Studio test purchase), a gifted pass and a debug override still count.
+It applies at once: turning it on or off refreshes every player's passes.
 ]]
 local MarketplaceService = game:GetService("MarketplaceService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
 
 local MonetizationConfig = require(ReplicatedStorage.MonetizationConfig)
 local PlayerData = require(script.Parent.PlayerData)
 
 local GamePasses = {}
 
-local owned = {} -- [player] = { [passKey] = true }: what Roblox says (this session only)
+local owned = {} -- [player] = { [passKey] = true }: what Roblox says at join (this session only)
+local boughtHere = {} -- [player] = { [passKey] = true }: bought in this session (counts even when ignoring owned passes)
 local studioOverrides = {} -- [player] = { [passKey] = true / false } (Studio only)
 local changedListeners = {}
 local lookedUp = {} -- [player] = true once their join lookup has finished
@@ -37,6 +44,10 @@ local function fireChanged(player: Player, passKey: string)
 	for _, callback in changedListeners do
 		task.spawn(callback, player, passKey, owns)
 	end
+end
+
+local function ignoringOwned(): boolean
+	return RunService:IsStudio() and Workspace:GetAttribute("StudioIgnoreOwnedPasses") == true
 end
 
 -- The one ownership check every perk uses. Anything that isn't a real Player owns nothing.
@@ -50,7 +61,10 @@ function GamePasses.Owns(player, passKey: string): boolean
 			return override
 		end
 	end
-	if owned[player] ~= nil and owned[player][passKey] == true then
+	if boughtHere[player] ~= nil and boughtHere[player][passKey] == true then
+		return true
+	end
+	if not ignoringOwned() and owned[player] ~= nil and owned[player][passKey] == true then
 		return true
 	end
 	local data = PlayerData.Get(player)
@@ -132,17 +146,33 @@ function GamePasses.Start()
 	end
 	Players.PlayerRemoving:Connect(function(player)
 		owned[player] = nil
+		boughtHere[player] = nil
 		studioOverrides[player] = nil
 		lookedUp[player] = nil
 	end)
+	if RunService:IsStudio() then
+		Workspace:GetAttributeChangedSignal("StudioIgnoreOwnedPasses"):Connect(function()
+			if ignoringOwned() then
+				warn("[Studio] StudioIgnoreOwnedPasses is on: passes your account owns are ignored (remove the attribute before saving the place)")
+			end
+			for _, player in Players:GetPlayers() do
+				for _, pass in MonetizationConfig.Passes do
+					task.spawn(fireChanged, player, pass.Key)
+				end
+			end
+		end)
+		if ignoringOwned() then
+			warn("[Studio] StudioIgnoreOwnedPasses is on: passes your account owns are ignored (remove the attribute before saving the place)")
+		end
+	end
 	-- A pass bought through an in-game prompt counts straight away (no rejoin).
 	MarketplaceService.PromptGamePassPurchaseFinished:Connect(function(player, gamePassId, purchased)
 		local pass = purchased and MonetizationConfig.GetPassById(gamePassId)
 		if not pass or player.Parent ~= Players then
 			return
 		end
-		owned[player] = owned[player] or {}
-		owned[player][pass.Key] = true
+		boughtHere[player] = boughtHere[player] or {}
+		boughtHere[player][pass.Key] = true
 		print(`[Purchase] {player.Name} bought the {pass.Name} pass`)
 		fireChanged(player, pass.Key)
 		local notice = ReplicatedStorage:FindFirstChild("PurchaseNotice")

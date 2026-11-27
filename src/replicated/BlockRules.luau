@@ -5,9 +5,14 @@ shared by the server (IceBlockService), the client's ice look and the specs.
   RollRarity(layer, roll, lucky)   the rarity for a roll in [0, 100): walks the layer's odds table.
                                    lucky (the Lucky Ice pass) doubles Legendary and Mythic, taken
                                    from Common.
-  RollCreature(layerNumber, rarityRoll, pickRoll, lucky)  the creature: the rarity, then one of the
+  RollCreature(layerNumber, rarityRoll, pickRoll, lucky, atLeast)  the creature: the rarity (raised to
+                                   atLeast when given and the roll is lower), then one of the
                                    pool's creatures of that rarity (pickRoll in [0, 1)). A rarity
                                    with nobody in the pool falls back to the next rarity down.
+  NeedsFirstRunGuarantee(rebirths, rescued, bookSeen, guarantee)  the rarity the next block must
+                                   be at least (CreatureConfig.FirstRunGuarantee), or nil: only
+                                   with 0 rebirths, from rescue number ByRescue on, while no
+                                   creature of that rarity or better is in the book.
   RollMythicBlock(odds, roll, pickRoll)  the Mythic Block product's creature: the rarity from its own
                                    odds ({ { Name, Chance } }, adding up to 1; roll in [0, 1)), then one
                                    of that rarity from the whole roster, so its odds hold on any layer.
@@ -88,9 +93,26 @@ function BlockRules.RollMythicBlock(odds, roll: number, pickRoll: number)
 	return matching[math.clamp(math.floor(pickRoll * #matching) + 1, 1, #matching)]
 end
 
-function BlockRules.RollCreature(layerNumber: number, rarityRoll: number, pickRoll: number, lucky: boolean?)
+function BlockRules.NeedsFirstRunGuarantee(rebirths: number, rescued: number, bookSeen, guarantee): string?
+	if rebirths ~= 0 or rescued + 1 < guarantee.ByRescue then
+		return nil
+	end
+	local wanted = RARITY_ORDER[guarantee.Rarity]
+	for creatureId, count in bookSeen do
+		local creature = CreatureConfig.Get(creatureId)
+		if creature and count > 0 and RARITY_ORDER[creature.Rarity] >= wanted then
+			return nil
+		end
+	end
+	return guarantee.Rarity
+end
+
+function BlockRules.RollCreature(layerNumber: number, rarityRoll: number, pickRoll: number, lucky: boolean?, atLeast: string?)
 	local layer = LayerConfig.Get(layerNumber)
 	local rarity = BlockRules.RollRarity(layer, rarityRoll, lucky)
+	if atLeast and RARITY_ORDER[atLeast] and RARITY_ORDER[rarity] < RARITY_ORDER[atLeast] then
+		rarity = atLeast
+	end
 	local pool = CreatureConfig.PoolForLayer(layerNumber)
 	for index = RARITY_ORDER[rarity], 1, -1 do
 		local wanted = CreatureConfig.Rarities[index].Id

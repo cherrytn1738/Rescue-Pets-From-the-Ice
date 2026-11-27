@@ -808,6 +808,14 @@ def icon_CrystalChest():
     render_layers('CrystalChest', [('main', objs)])
 
 
+def icon_GiantCrystalChest():
+    objs = gem_pile((0, 0, 0), 1.45, 1.15, 0.30, seed=25, density=1.15)
+    objs += [gem((0.0, -0.2, 1.5), 0.78, (math.radians(10), math.radians(-14), 0.3))]
+    objs += gem_burst((0, -0.2, 1.15), 0.95, 11, 0.24, seed=26)
+    camera(objs, yaw=-18, pitch=32, lens=55, fill=0.92, points=_pile_frame())
+    render_layers('GiantCrystalChest', [('main', objs)])
+
+
 def icon_ShatterNow():
     block = ice_block((0, 0, 0), (1.3, 1.3, 0.6), cracks=1.0, seed=9)
     mat = ice_material('ShardIce', cracks=0, alpha=0.5, tint=(120, 200, 245))
@@ -840,6 +848,18 @@ def icon_MythicBlock():
                       pet='SpiritWhale', pet_size=0.74, pet_yaw=-35, orb='rainbow', orb_strength=8.0, view=(-28, 20))
     camera(block, yaw=-28, pitch=20, lens=55, fill=0.86)
     render_layers('MythicBlock', [('main', block)])
+
+
+def icon_MythicBlock3():
+    # three Mythic Blocks: two behind, one in front, each with a dark silhouette inside
+    left = ice_block((-0.95, 0.45, 0), (0.78, 0.78, 0.95), glow='rainbow', glow_strength=0.65, cracks=0.35, seed=31, inner=(80, 45, 200),
+                     pet='AuroraFox', pet_size=0.6, pet_yaw=-20, orb='rainbow', orb_strength=7.0, view=(-28, 20))
+    right = ice_block((0.95, 0.45, 0), (0.78, 0.78, 0.95), glow='rainbow', glow_strength=0.65, cracks=0.35, seed=32, inner=(80, 45, 200),
+                      pet='SnowPhoenix', pet_size=0.6, pet_yaw=-40, orb='rainbow', orb_strength=7.0, view=(-28, 20))
+    front = ice_block((0, -0.55, 0), (0.9, 0.9, 1.08), glow='rainbow', glow_strength=0.65, cracks=0.4, seed=12, inner=(80, 45, 200),
+                      pet='SpiritWhale', pet_size=0.68, pet_yaw=-35, orb='rainbow', orb_strength=8.0, view=(-28, 20))
+    camera(left + right + front, yaw=-12, pitch=18, lens=55, fill=0.88)
+    render_layers('MythicBlock3', [('back', left + right), ('front', front)])
 
 
 def icon_concept_1():

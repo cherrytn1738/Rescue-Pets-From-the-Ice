@@ -117,6 +117,25 @@ return function(sources)
 	end
 	check(counts.Common == 750 and counts.Uncommon == 250, "1000 even rolls in Fresh Snow: 750 Common, 250 Uncommon")
 	check(B.RollCreature(2, 95, 0).Rarity == "Rare", "Blue Ice can hold a Rare")
+	-- The first run's guaranteed Rare (CreatureConfig.FirstRunGuarantee)
+	local guarantee = modules.CreatureConfig.FirstRunGuarantee
+	check(guarantee.Rarity == "Rare" and guarantee.ByRescue == 12, "first run: a Rare by the 12th rescue")
+	local commonsOnly = { SnowBunny = 6, SealPup = 4 }
+	check(B.NeedsFirstRunGuarantee(0, 10, commonsOnly, guarantee) == nil, "rescue 11: no guarantee yet")
+	check(B.NeedsFirstRunGuarantee(0, 11, commonsOnly, guarantee) == "Rare", "rescue 12 with no Rare yet: the block must be at least Rare")
+	check(B.NeedsFirstRunGuarantee(0, 20, commonsOnly, guarantee) == "Rare", "...and every block after it until one is rescued")
+	check(B.NeedsFirstRunGuarantee(0, 11, { SnowBunny = 6, GlacierOtter = 1 }, guarantee) == nil
+		and B.NeedsFirstRunGuarantee(0, 11, { MiniYeti = 1 }, guarantee) == nil, "not once a Rare or better is in the book")
+	check(B.NeedsFirstRunGuarantee(0, 11, { GlacierOtter = 0, Nonsense = 3 }, guarantee) == "Rare", "a 0 count or an unknown id doesn't count")
+	check(B.NeedsFirstRunGuarantee(1, 11, commonsOnly, guarantee) == nil, "never after a rebirth")
+	local raisedOk = true
+	for i = 0, 99 do
+		local creature = B.RollCreature(2, i, (i % 5) / 5, false, "Rare")
+		raisedOk = raisedOk and creature.Rarity == "Rare" and creature.FirstLayer <= 2
+	end
+	check(raisedOk, "in Blue Ice, every roll raised to Rare is a Blue Ice Rare")
+	check(B.RollCreature(3, 99.9, 0, false, "Rare").Rarity == "Epic", "a roll already better than Rare stays better")
+	check(B.RollCreature(1, 0, 0, false, "Rare").Rarity == "Uncommon", "in Fresh Snow (no Rares) it falls back, and the guarantee waits for the next block")
 	check(B.Height(1) == 14 and B.Height(50) == 20 and B.Height(80) == 20, "the block is 14 studs at level 1, 20 by level 50")
 	check(B.CrackStage(100, 100) == 0 and B.CrackStage(80, 100) == 1 and B.CrackStage(19, 100) == 4, "crack stages at 20/40/60/80%")
 

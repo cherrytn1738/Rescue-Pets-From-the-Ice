@@ -6,7 +6,8 @@ Server only.
    "New!" badge in BookNew), CreaturesRescued goes up, and a pet joins the inventory (at most
    CreatureConfig.Pets.InventorySize; a full inventory still fills the book). Returns the pet or nil.
  - Auto-equip (Settings.AutoEquip, on by default; off in Settings): after a rescue, the best pets are
-   equipped (PetRules.Best), once the tutorial is done (its "Equip your new pet" step still teaches it).
+   equipped (PetRules.Best), once the tutorial is done (its "Equip your new pet" step still teaches it),
+   or from the player's CreatureConfig.Pets.AutoEquipAfterRescues-th rescue on, so nobody plays with no pet.
  - PetRequest (RemoteFunction): the client asks, the server checks ownership, slots and counts:
      ("Equip", uid) ("Unequip", uid) ("EquipBest") ("Delete", { uids }) ("CombineGolden", uid)
      ("Lock", uid) (locks or unlocks it: a locked pet can't be deleted or combined away)
@@ -118,10 +119,13 @@ function PetService.Rescue(player: Player, data, creatureId: string)
 	return pet
 end
 
--- Equips the best pets if the player has auto-equip on (and the tutorial is done). Returns whether the
--- equipped set changed.
+-- Equips the best pets if the player has auto-equip on (and the tutorial is done, or they have rescued
+-- enough creatures). Returns whether the equipped set changed.
 function PetService.AutoEquip(player: Player, data): boolean
-	if data.Settings.AutoEquip == false or data.TutorialStep < TUTORIAL_DONE then
+	if data.Settings.AutoEquip == false then
+		return false
+	end
+	if data.TutorialStep < TUTORIAL_DONE and data.CreaturesRescued < CreatureConfig.Pets.AutoEquipAfterRescues then
 		return false
 	end
 	local best = PetRules.Best(data.Pets, PetService.Slots(player, data))

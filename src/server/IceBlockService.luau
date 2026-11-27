@@ -6,7 +6,8 @@ IceBlockService: each player's ice block (docs/GAME_DESIGN.md, "The ice block", 
    rolled when the block arrives (BlockRules, from the layer's odds; Lucky Ice doubles Legendary and
    Mythic; a Mythic Block bought and waiting (data.MythicBlocks) rolls from that product's own odds
    instead) and saved as CurrentBlock, so a rejoin finds the same block with the same HP left. The roll
-   is final.
+   is final. On the first run (0 rebirths), the block for rescue CreatureConfig.FirstRunGuarantee.ByRescue
+   holds at least a Rare if none has been rescued yet.
  - Damage(player, data, amount): taps and buildings hit the block; every point of damage pays one
    crystal times the multiplier (Economy). Nothing is hit while the next block is still on its sled.
  - At 0 HP the creature is rescued (PetService.Rescue), a crystal fountain worth BurstSeconds of
@@ -110,7 +111,8 @@ local function rollBlock(player: Player, data)
 		PlayerData.Publish(player)
 		gameEvent:FireClient(player, "Notice", { Text = `Your Mythic Block arrived: a {creature.Rarity} creature is inside!` })
 	else
-		creature = BlockRules.RollCreature(layer.Number, random:NextNumber(0, 100), random:NextNumber(), isLucky(player))
+		local atLeast = BlockRules.NeedsFirstRunGuarantee(data.Rebirths, data.CreaturesRescued, data.BookSeen, CreatureConfig.FirstRunGuarantee)
+		creature = BlockRules.RollCreature(layer.Number, random:NextNumber(0, 100), random:NextNumber(), isLucky(player), atLeast)
 	end
 	data.CurrentBlock = { CreatureId = creature.Id, HpLeft = LayerConfig.BlockHp(data.BlockLevel) }
 	local rarity = CreatureConfig.GetRarity(creature.Rarity)

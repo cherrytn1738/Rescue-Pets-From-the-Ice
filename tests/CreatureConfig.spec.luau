@@ -79,6 +79,11 @@ return function(sources)
 	check(tonumber(string.match(text, "for a maximum of (%d+)")) == pets.MaxEquipSlots, "at most 7 slots")
 	check(tonumber(string.match(text, "combine (%d+) of the same pet into a Golden version with double the bonus")) == pets.GoldenCombineCount
 		and pets.GoldenBonusMultiplier == 2, "5 make a Golden pet with double the bonus")
+	check(tonumber(string.match(text, "or from the player's (%d+)%a%a rescue, even with the tutorial unfinished")) == pets.AutoEquipAfterRescues,
+		"auto-equip also starts at the doc's rescue count")
+	local guarantee = CreatureConfig.FirstRunGuarantee
+	local rarity, byRescue = string.match(text, "who hasn't rescued a (%a+) or better gets one by their (%d+)%a%a rescue")
+	check(guarantee and rarity == guarantee.Rarity and tonumber(byRescue) == guarantee.ByRescue, "the first run's guaranteed Rare is the doc's")
 
 	-- Creature Book pages.
 	local pages = doc:Table({ "Page completed", "Permanent reward" })

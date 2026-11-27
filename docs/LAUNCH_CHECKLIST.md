@@ -7,18 +7,18 @@ Every step you do by hand to launch Rescue Pets From the Ice, in order. Tick eac
 - [x] Merge the `overnight-launch-prep` branch into `main` (done in the launch fix pass). Pull, and make sure `rojo serve` is running and the Studio plugin is connected.
 - [ ] Save the place in Studio and keep a backup copy of the `.rbxl` (File > Save to File As...). The building, pick, plot and plaza templates, the world and the streaming settings live only in the place file.
 - [ ] Run every spec: `python tools/run_specs.py` (Studio open in Edit mode). All 21 must pass.
-- [ ] Merge the `overnight-final` branch into `main` once you've read `OVERNIGHT_FINAL_REPORT.md` (soft shutdown, announcements, analytics, the visual review tools).
-- [ ] Workspace attributes: none of the Studio test switches may be set (`StudioFreshSave`, `StudioUseLiveSaves`, `StudioTimeAway`, `StudioPaidRandomRestricted`); on the client switches `StudioScreenSize`, `StudioGamepad` are never saved. Check Workspace > Attributes is empty of them.
+- [x] Merge the `overnight-final` branch into `main` (merged 2026-11-26: soft shutdown, announcements, analytics, the visual review tools).
+- [ ] Workspace attributes: none of the Studio test switches may be set (`StudioFreshSave`, `StudioUseLiveSaves`, `StudioTimeAway`, `StudioPaidRandomRestricted`, `StudioIgnoreOwnedPasses`); on the client switches `StudioScreenSize`, `StudioGamepad` are never saved. Check Workspace > Attributes is empty of them.
 - [ ] `ProximityPromptService.Enabled` is ticked (it is saved with the place; the UI kit turns it off while a window is open in Edit mode).
 
-## 2. Robux items (all 24 created)
+## 2. Robux items (all 28 created)
 
-- [x] All 24 items (6 passes, 6 products, 12 "Gift: <name>" products) were created on sale through Open Cloud by `python tools/create_products.py` on 2026-11-26, with the icons from `store-assets/icons/`. Their ids are in `src/replicated/MonetizationConfig.luau`, `docs/ROBUX_PRODUCTS.md` and `store-assets/icons/products_manifest.json`.
-- [x] Studio Play: `[PriceCheck] 24 items checked, 0 problems, 0 hidden`.
+- [x] All 28 items (6 passes, 8 products, 14 "Gift: <name>" products) were created on sale through Open Cloud by `python tools/create_products.py` on 2026-11-26 (the Giant Crystal Chest and the Mythic Block x3 later the same day), with the icons from `store-assets/icons/`. Their ids are in `src/replicated/MonetizationConfig.luau`, `docs/ROBUX_PRODUCTS.md` and `store-assets/icons/products_manifest.json`.
+- [x] Studio Play: `[PriceCheck] 28 items checked, 0 problems, 0 hidden`.
 - [ ] Look at each item on the Creator Hub (Monetization > Passes / Developer Products): name, description, price, icon and On Sale as you want them. The script is safe to re-run; it never makes duplicates.
 - [ ] The VIP lounge is built only once the VIP pass has a real id (it now has): check it once in Play.
-- [ ] Prices: the genre comparison and proposals are in `OVERNIGHT_FINAL_REPORT.md` (Phase 4). Nothing was changed. To change a price, change it on the Creator Hub, then `ExpectedPrice` in `MonetizationConfig.luau` and the doc's table, then Play and check PriceCheck shows 0 problems.
-- [ ] Studio note: your account owns every pass now, so a solo Play is not a normal player. Test balance and the shop as a test player (Test > Clients and Servers).
+- [x] Prices set from the research in `OVERNIGHT_FINAL_REPORT.md` (Phase 4), on Roblox through `tools/create_products.py` (2x Crystals 349, Auto Pick 199, Extra Pet Slot 399, Pet Squad 699, Crystal Sack 99, Shatter Now 29, gift twins the same). To change a price later: edit the table in `docs/ROBUX_PRODUCTS.md` and `ExpectedPrice` in `MonetizationConfig.luau`, run `python tools/create_products.py --dry-run`, then without `--dry-run`, then Play and check PriceCheck shows 0 problems.
+- [ ] Studio note: your account owns every pass, so a solo Play is not a normal player. Turn on F2 > Testing switches > "Ignore owned passes" (`StudioIgnoreOwnedPasses`) to play without them, or use a test player (Test > Clients and Servers). Remove the attribute before saving the place.
 
 ## 3. Who can use the developer tools
 

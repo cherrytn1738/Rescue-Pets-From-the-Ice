@@ -59,8 +59,8 @@ return function(sources)
 	local DesignDoc = assert(loadstring(sources.DesignDoc))()
 	local doc = DesignDoc.new(sources["GAME_DESIGN.md"])
 	local docRows = doc:Table({ "Item", "Type" })
-	check(#docRows == 10, "the doc's Monetization table has its 10 rows")
-	local BUNDLES = { { "CrystalPouch", 600 }, { "CrystalSack", 3600 }, { "CrystalChest", 21600 } }
+	check(#docRows == 11, "the doc's Monetization table has its 11 rows")
+	local BUNDLES = { { "CrystalPouch", 600 }, { "CrystalSack", 3600 }, { "CrystalChest", 21600 }, { "GiantCrystalChest", 86400 } }
 	for _, row in docRows do
 		if row.Item == "Crystal bundles" then
 			local index = 0
@@ -70,7 +70,7 @@ return function(sources)
 				check(bundle and bundle.ExpectedPrice == tonumber(price) and bundle.Reward.Kind == "CrystalBundle"
 					and bundle.Reward.Seconds == BUNDLES[index][2], `crystal bundle {index} costs {price} and pays {BUNDLES[index][2]} s of income`)
 			end
-			check(index == 3, "three crystal bundles")
+			check(index == 4, "four crystal bundles")
 		else
 			local list = if row.Type == "Pass" then Config.Passes else Config.Products
 			local item
@@ -83,7 +83,7 @@ return function(sources)
 			check(item.ExpectedPrice == DesignDoc.Number(row["Price (Robux)"]), `{row.Item} costs the doc's {row["Price (Robux)"]} Robux`)
 		end
 	end
-	check(#Config.Passes == 6 and #Config.Products == 6, "6 passes and 6 products, nothing else")
+	check(#Config.Passes == 6 and #Config.Products == 8, "6 passes and 8 products, nothing else")
 	-- Every item exists on Roblox (tools/create_products.py): its Id and GiftId are the ones in
 	-- docs/ROBUX_PRODUCTS.md's Items tables, and no two items share an id.
 	local products = DesignDoc.new(sources["ROBUX_PRODUCTS.md"])
@@ -112,13 +112,16 @@ return function(sources)
 	check(rush.Kind == "ServerFrostRush" and rush.Multiplier == 2 and rush.Seconds == 900, "Server Frost Rush: x2 for 15 minutes")
 	local mythic = Config.GetProduct("MythicBlock")
 	check(Config.IsPaidRandom(mythic) and mythic.Reward.Kind == "MythicBlock", "the Mythic Block is a paid random item")
+	local pack = Config.GetProduct("MythicBlock3")
+	check(Config.IsPaidRandom(pack) and pack.Reward.Kind == "MythicBlock" and pack.Reward.Count == 3 and pack.Odds == mythic.Odds,
+		"the Mythic Block x3 is a paid random item too: three blocks, each with the single block's shown odds")
 	for _, odd in mythic.Odds do
 		check(odd.Name == "Rare" or odd.Name == "Epic" or odd.Name == "Legendary" or odd.Name == "Mythic", `Mythic Block odds name a rarity ({odd.Name})`)
 	end
 	check(Config.GetGiftable("VIP") == Config.GetPass("VIP") and Config.GetGiftable("ShatterNow") == Config.GetProduct("ShatterNow"), "passes and products can both be gifted")
 	check(Config.GetProduct("Anything") == nil and Config.GetPass("Anything") == nil and Config.FindByProductId(1) == nil, "an unknown key or id finds nothing")
 	local priced, hidden = Config.AllPriced()
-	check(#priced == 24 and hidden == 0, "PriceCheck checks all 24 (12 items and their 12 gift products), none hidden")
+	check(#priced == 28 and hidden == 0, "PriceCheck checks all 28 (14 items and their 14 gift products), none hidden")
 	local kindA, itemA = Config.FindByProductId(Config.GetProduct("ShatterNow").Id)
 	local kindB, itemB = Config.FindByProductId(Config.GetPass("VIP").GiftId)
 	check(kindA == "Product" and itemA == Config.GetProduct("ShatterNow") and kindB == "Gift" and itemB == Config.GetPass("VIP"),
@@ -301,7 +304,23 @@ return function(sources)
 			end,
 		}, { __index = modules })
 		local workspaceAttributes = {}
+		server.workspaceAttributes = workspaceAttributes
+		local fakeWorkspace = {
+			GetAttribute = function(_, name)
+				return workspaceAttributes[name]
+			end,
+			SetAttribute = function(_, name, value)
+				workspaceAttributes[name] = value
+			end,
+			GetAttributeChangedSignal = function()
+				return { Connect = function() end }
+			end,
+			GetServerTimeNow = function()
+				return now
+			end,
+		}
 		local services = {
+			Workspace = fakeWorkspace,
 			Players = players,
 			DataStoreService = store.service,
 			MarketplaceService = marketplace,
@@ -339,17 +358,7 @@ return function(sources)
 				end,
 				PlaceId = 0,
 			},
-			workspace = {
-				GetAttribute = function(_, name)
-					return workspaceAttributes[name]
-				end,
-				SetAttribute = function(_, name, value)
-					workspaceAttributes[name] = value
-				end,
-				GetServerTimeNow = function()
-					return now
-				end,
-			},
+			workspace = fakeWorkspace,
 			task = fakeTask,
 			os = {
 				clock = function()
@@ -500,7 +509,17 @@ return function(sources)
 	check(not A.GamePasses.Owns(buyer, "PassA"), "...or take one away, even one Roblox says is owned")
 	A.GamePasses.SetStudioOverride(buyer, "PassA", nil)
 	check(A.GamePasses.Owns(buyer, "PassA"), "...and nil goes back to what Roblox says")
+	-- StudioIgnoreOwnedPasses: what Roblox says at join is ignored (the developer owns every pass); a pass
+	-- bought in this session and a debug override still count
+	A.workspaceAttributes.StudioIgnoreOwnedPasses = true
+	check(not A.GamePasses.Owns(buyer, "PassA") and A.GamePasses.Owns(buyer, "PassB"),
+		"StudioIgnoreOwnedPasses: a pass owned on Roblox doesn't count, one bought this session does")
+	A.GamePasses.SetStudioOverride(buyer, "PassA", true)
+	check(A.GamePasses.Owns(buyer, "PassA"), "...and the debug menu can still give one")
+	A.GamePasses.SetStudioOverride(buyer, "PassA", nil)
 	A.inStudio = false
+	check(A.GamePasses.Owns(buyer, "PassA"), "the switch is ignored outside Studio")
+	A.workspaceAttributes.StudioIgnoreOwnedPasses = nil
 	check(record(1).Owns_PassA == nil and record(1).Passes == nil, "pass ownership is never saved")
 
 	-- Products ----------------------------------------------------------------------------------------

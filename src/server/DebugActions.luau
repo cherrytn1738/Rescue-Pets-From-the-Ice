@@ -624,6 +624,15 @@ local ACTIONS = {
 			return studioSwitch("StudioPaidRandomRestricted", "Paid random items restricted", args.State)
 		end,
 	},
+	{
+		-- The passes Roblox says this account owns are ignored (the developer owns every pass), at once.
+		Id = "IgnoreOwnedPasses", Group = "Testing switches", Label = "Ignore owned passes: play as a player without passes",
+		NoTarget = true,
+		Params = { stateParam() },
+		Run = function(_, args)
+			return studioSwitch("StudioIgnoreOwnedPasses", "Owned passes ignored", args.State)
+		end,
+	},
 
 	-- Player
 	{

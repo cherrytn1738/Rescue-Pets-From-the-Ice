@@ -63,6 +63,7 @@ The player never leaves their plot. When a new layer starts, the ground shakes, 
 - **Layer 5 is the floor** until rebirths open deeper layers. Blocks past level 50 stay Primordial Ice, with HP still rising.
 - **Each layer adds its own creatures** to the pool (see Creature roster), so a full Creature Book means going deep.
 - **Lucky Ice** and the Mythic Block product raise these odds; the server always rolls from the current layer's table.
+- **First run's guaranteed Rare:** before the first rebirth, a player who hasn't rescued a Rare or better gets one by their 12th rescue (Rares first appear at level 11, so it lands on rescue 11 or 12). It keeps a bad streak from stretching the first run.
 - Odds are starting values for the economy simulation; the shop's info button shows the live table.
 
 ## The ice block
@@ -333,7 +334,7 @@ The chance of each rarity depends on the layer (see Glacier depth).
 - **Pool:** 18 creatures at launch in one pool (4 Common, 4 Uncommon, 3 Rare, 3 Epic, 2 Legendary, 2 Mythic). New creatures arrive in updates.
 - **Equip slots:** 1 at the start, so only one pet follows the player and picking it is a real choice. Rebirth ranks add more (a 2nd slot at rebirth 3, a 3rd at rebirth 6, a 4th at rebirth 10), and two Robux passes add up to 3 more, for a maximum of 7. Equipped bonuses add together.
 - **Inventory:** 50 pets, with an Equip Best button, a lock (a locked pet can't be deleted or combined away) and a delete button. With no pet picked, the delete button offers "Delete all below <rarity>": every pet of a lower rarity that isn't locked, equipped or Golden, after a confirmation.
-- **Auto-equip:** after a rescue the best pets are equipped automatically (on by default, off in Settings), once the tutorial is done (its "Equip your new pet" step still teaches equipping by hand). A toast says when the new pet is the one equipped.
+- **Auto-equip:** after a rescue the best pets are equipped automatically (on by default, off in Settings), once the tutorial is done (its "Equip your new pet" step still teaches equipping by hand) or from the player's 3rd rescue, even with the tutorial unfinished, so nobody plays with no pet. A toast says when the new pet is the one equipped.
 - **Golden pets:** combine 5 of the same pet into a Golden version with double the bonus.
 - **Kept forever:** pets stay through rebirths.
 - **Announcements:** a server-wide message when a Legendary or Mythic block arrives, so other players can come and watch the rescue.
@@ -505,33 +506,34 @@ Players share one world. Everyone can see each other's ice and what's glowing in
 
 ## Monetization
 
-Launch with 6 passes and 4 kinds of products. Every price below is a starting point to check against the top clicker simulators before launch.
+Launch with 6 passes and 4 kinds of products. Prices were checked against 12 popular simulators on 2026-11-26 and set from that research (`OVERNIGHT_FINAL_REPORT.md`, Phase 4).
 
 | Item | Type | Price (Robux) | What it does |
 | --- | --- | --- | --- |
-| 2x Crystals | Pass | 249 | Doubles all crystals, forever |
-| Auto Pick | Pass | 149 | The server taps 5 times a second for you while you're in your plot |
+| 2x Crystals | Pass | 349 | Doubles all crystals, forever |
+| Auto Pick | Pass | 199 | The server taps 5 times a second for you while you're in your plot |
 | VIP | Pass | 299 | +20% crystals, a gold name tag, a VIP lounge in the plaza |
-| Extra Pet Slot | Pass | 449 | One more pet follows you |
-| Pet Squad | Pass | 899 | Two more pets follow you (with Extra Pet Slot, +3 in all) |
+| Extra Pet Slot | Pass | 399 | One more pet follows you |
+| Pet Squad | Pass | 699 | Two more pets follow you (with Extra Pet Slot, +3 in all) |
 | Lucky Ice | Pass | 349 | Doubles the chance of Legendary and Mythic blocks |
-| Crystal bundles | Product | 29 / 149 / 499 | 10 minutes, 1 hour or 6 hours of your income |
-| Shatter Now | Product | 25 | Breaks the current block instantly |
+| Crystal bundles | Product | 29 / 99 / 499 / 999 | 10 minutes, 1 hour, 6 hours or 24 hours of your income (Crystal Pouch, Sack, Chest, Giant Crystal Chest) |
+| Shatter Now | Product | 29 | Breaks the current block instantly |
 | Server Frost Rush | Product | 99 | ×2 crystals for everyone in the server for 15 minutes, with your name announced |
 | Mythic Block | Product | 199 | Your next block rolls from a pool with better odds |
+| Mythic Block x3 | Product | 499 | Your next three blocks each roll like a Mythic Block |
 
-- **Gifts:** every pass can be bought as a gift for another player.
-- **Mythic Block is a paid random item:** show its odds behind an info button and check PolicyService on the server, as in Steal Safari Pets.
+- **Gifts:** every pass and product can be bought as a gift for another player, at the same price.
+- **Mythic Block (and its 3-pack) is a paid random item:** show its odds behind an info button and check PolicyService on the server, as in Steal Safari Pets.
 - **Shatter Now sells best on a glowing block:** show its button bigger when a Rare or better creature is inside.
 - **Crystal bundles scale with income,** so they stay worth buying at every stage.
 
 **Details settled when the items were built** (numbers in `MonetizationConfig`; placeholders to check before launch):
 
 - **Stacking:** every crystal bonus multiplies: pets × Creature Book × Crystal Yield × Frost Cores × 2x Crystals × VIP × group × Golden Glacier Frost Rush × Server Frost Rush.
-- **Crystal bundles** pay 10 minutes, 1 hour or 6 hours of "your income": the crystals per second the HUD shows, with the permanent bonuses (pets, Creature Book, Crystal Yield, Frost Cores, passes, group) but without rushes (Golden Glacier Frost Rush, Server Frost Rush). Taps count at your recent rate, but at least 4 a second, so opening the shop (which stops your tapping) or having no buildings still pays something. Bought crystals count toward the next rebirth's Frost Cores like any others.
+- **Crystal bundles** pay 10 minutes, 1 hour, 6 hours or 24 hours of "your income": the crystals per second the HUD shows, with the permanent bonuses (pets, Creature Book, Crystal Yield, Frost Cores, passes, group) but without rushes (Golden Glacier Frost Rush, Server Frost Rush). Taps count at your recent rate, but at least 4 a second, so opening the shop (which stops your tapping) or having no buildings still pays something. Bought crystals count toward the next rebirth's Frost Cores like any others.
 - **Daily chest:** 5 minutes of the same income (at least 100 crystals), so claiming it during a rush pays no more.
 - **Server Frost Rush:** buying another while one runs adds 15 minutes (it doesn't stack to ×4). It isn't saved, so it ends with the server.
-- **Mythic Block** odds: 50% Rare, 30% Epic, 15% Legendary, 5% Mythic, from the whole roster (so they hold on every layer). It waits in the save until the next block arrives.
+- **Mythic Block** odds: 50% Rare, 30% Epic, 15% Legendary, 5% Mythic, from the whole roster (so they hold on every layer). It waits in the save until the next block arrives. The 3-pack adds three waiting blocks, each rolled the same way.
 - **Gifts** of a pass are saved in the recipient's data (Roblox only records passes bought by the player themselves); a pass the recipient already owns can't be gifted.
 - **VIP lounge:** a door between the sign posts lets VIP owners in; everyone else is told where to get VIP.
 
@@ -629,7 +631,7 @@ The server owns every number. The client sends tap counts and requests, and only
 - **Replication:** crystals, crystals per second, block HP and the block's rarity are attributes updated about 4 times a second. The client counts smoothly between updates.
 - **Saving:** PlayerData from Steal Safari Pets (session lock, schema version, separate Studio stores). It saves crystals, crystals earned this run and all time, buildings owned, upgrades, block level, the current block's creature, pets and equipped slots, Frost Cores, rebirths, creatures rescued and passes.
 - **Big numbers:** Luau numbers reach about 1e308, which is enough. Display uses suffixes (K, M, B, T, Qa, Qi, Sx, Sp, Oc, No, Dc, then Ud, Dd, Td, Qad, Qid, Sxd, Spd, Ocd, Nod, Vg, Uvg, Dvg, Tvg, Qavg, Qivg, Sxvg, Spvg, Ocvg, Novg, Tg); past Tg (1e93) a short exponent such as "1.82e96". Ice block HP passes Dc around level 200. Leaderboards store `math.floor(math.log10(total) * 1000)`, because OrderedDataStore only holds whole numbers up to about 9e18.
-- **Offline earnings:** building income only, at 50%, capped at 2 hours, shown in a welcome-back popup.
+- **Offline earnings:** building income only, at 50%, capped at 2 hours away, shown in a welcome-back popup ("You earn half your building income for up to 2 hours away." once the cap is reached).
 - **Anti-cheat:** every RemoteEvent is rate-limited. The server computes all prices and checks every buy and equip. Auto Pick runs on the server, so autoclickers can never beat the 20-taps-a-second cap.
 - **Phones:** building animations, ice chips and crystal particles run on the client only. Each plot shows one model per building type with a count badge. Every building, pick and plot mesh uses RenderFidelity Automatic (Roblox's level of detail), not Precise.
 - **Streaming:** Workspace.StreamingEnabled is on, so distant plots stream out (target radius 240 studs, minimum 96, opportunistic stream-out). The plaza is a Persistent model (always loaded with its boards and chests); each station and the plot's own models are PersistentPerPlayer, always loaded for the plot's owner and streamed whole for everyone else. Plot models and their Block folders (the block's state) always reach every client, so ice blocks, beams, name tags and the Golden Glacier (drawn by the client) work at any distance.

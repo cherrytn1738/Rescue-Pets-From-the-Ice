@@ -23,6 +23,10 @@
   "GiftId": 3736501769,
   "Id": 2099292504
  },
+ "GiantCrystalChest": {
+  "GiftId": 3736773801,
+  "Id": 3736773791
+ },
  "LuckyIce": {
   "GiftId": 3736501801,
   "Id": 2100576395
@@ -30,6 +34,10 @@
  "MythicBlock": {
   "GiftId": 3736501923,
   "Id": 3736501911
+ },
+ "MythicBlock3": {
+  "GiftId": 3736773819,
+  "Id": 3736773813
  },
  "PetSquad": {
   "GiftId": 3736501785,

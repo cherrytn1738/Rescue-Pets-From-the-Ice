@@ -52,15 +52,15 @@ local MonetizationConfig = {}
 -- Created on Roblox by tools/create_products.py (ids also in docs/ROBUX_PRODUCTS.md and
 -- store-assets/icons/products_manifest.json).
 MonetizationConfig.Passes = {
-	{ Key = "DoubleCrystals", Name = "2x Crystals", Id = 2102063611, GiftId = 3736501716, ExpectedPrice = 249, CrystalMultiplier = 2,
+	{ Key = "DoubleCrystals", Name = "2x Crystals", Id = 2102063611, GiftId = 3736501716, ExpectedPrice = 349, CrystalMultiplier = 2,
 		Description = "Doubles all your crystals, forever." },
-	{ Key = "AutoPick", Name = "Auto Pick", Id = 2100372547, GiftId = 3736501737, ExpectedPrice = 149, AutoTapsPerSecond = 5,
+	{ Key = "AutoPick", Name = "Auto Pick", Id = 2100372547, GiftId = 3736501737, ExpectedPrice = 199, AutoTapsPerSecond = 5,
 		Description = "Taps the ice 5 times a second for you while you're in your plot." },
 	{ Key = "VIP", Name = "VIP", Id = 2098692454, GiftId = 3736501753, ExpectedPrice = 299, CrystalMultiplier = 1.2, GoldNameTag = true, Lounge = true,
 		Description = "+20% crystals, a gold name tag and the VIP lounge in the plaza." },
-	{ Key = "ExtraPetSlot", Name = "Extra Pet Slot", Id = 2099292504, GiftId = 3736501769, ExpectedPrice = 449, PetSlots = 1,
+	{ Key = "ExtraPetSlot", Name = "Extra Pet Slot", Id = 2099292504, GiftId = 3736501769, ExpectedPrice = 399, PetSlots = 1,
 		Description = "One more pet follows you." },
-	{ Key = "PetSquad", Name = "Pet Squad", Id = 2101811657, GiftId = 3736501785, ExpectedPrice = 899, PetSlots = 2,
+	{ Key = "PetSquad", Name = "Pet Squad", Id = 2101811657, GiftId = 3736501785, ExpectedPrice = 699, PetSlots = 2,
 		Description = "Two more pets follow you (with Extra Pet Slot, +3 in all)." },
 	{ Key = "LuckyIce", Name = "Lucky Ice", Id = 2100576395, GiftId = 3736501801, ExpectedPrice = 349, Lucky = true,
 		Description = "Doubles your chance of Legendary and Mythic blocks." },
@@ -74,15 +74,24 @@ end
 -- Reward kinds (RobuxPerks): CrystalBundle (Seconds of your current income: see BundleTapsPerSecond),
 -- ShatterNow (breaks the block on your mound now), ServerFrostRush (Multiplier for everyone in the server
 -- for Seconds, your name announced; another one adds Seconds), MythicBlock (your next block rolls from
--- Odds: a paid random item).
+-- Odds: a paid random item; Count of them, 1 when left out).
+local MYTHIC_BLOCK_ODDS = {
+	{ Name = "Rare", Chance = 0.50 },
+	{ Name = "Epic", Chance = 0.30 },
+	{ Name = "Legendary", Chance = 0.15 },
+	{ Name = "Mythic", Chance = 0.05 },
+}
+
 MonetizationConfig.Products = {
 	{ Key = "CrystalPouch", Name = "Crystal Pouch", Tab = "Products", Id = 3736501812, GiftId = 3736501820, ExpectedPrice = 29,
 		Description = "10 minutes of your crystal income, right now.", Reward = { Kind = "CrystalBundle", Seconds = 600 } },
-	{ Key = "CrystalSack", Name = "Crystal Sack", Tab = "Products", Id = 3736501831, GiftId = 3736501841, ExpectedPrice = 149,
+	{ Key = "CrystalSack", Name = "Crystal Sack", Tab = "Products", Id = 3736501831, GiftId = 3736501841, ExpectedPrice = 99,
 		Description = "1 hour of your crystal income, right now.", Reward = { Kind = "CrystalBundle", Seconds = 3600 } },
 	{ Key = "CrystalChest", Name = "Crystal Chest", Tab = "Products", Id = 3736501853, GiftId = 3736501858, ExpectedPrice = 499,
 		Description = "6 hours of your crystal income, right now.", Reward = { Kind = "CrystalBundle", Seconds = 21600 } },
-	{ Key = "ShatterNow", Name = "Shatter Now", Tab = "Products", Id = 3736501870, GiftId = 3736501879, ExpectedPrice = 25,
+	{ Key = "GiantCrystalChest", Name = "Giant Crystal Chest", Tab = "Products", Id = 3736773791, GiftId = 3736773801, ExpectedPrice = 999,
+		Description = "24 hours of your crystal income, right now.", Reward = { Kind = "CrystalBundle", Seconds = 86400 } },
+	{ Key = "ShatterNow", Name = "Shatter Now", Tab = "Products", Id = 3736501870, GiftId = 3736501879, ExpectedPrice = 29,
 		Description = "Breaks your current ice block instantly and frees the creature.", Reward = { Kind = "ShatterNow" } },
 	{ Key = "ServerFrostRush", Name = "Server Frost Rush", Tab = "Products", Id = 3736501890, GiftId = 3736501900, ExpectedPrice = 99,
 		Description = "x2 crystals for everyone in the server for 15 minutes, with your name announced.",
@@ -92,12 +101,11 @@ MonetizationConfig.Products = {
 		Reward = { Kind = "MythicBlock" }, PaidRandom = true,
 		-- Shown in the shop before purchase; the roll uses exactly these (BlockRules.RollMythicBlock). The
 		-- creature is any one of that rarity from the whole roster, so the odds hold on every layer.
-		Odds = {
-			{ Name = "Rare", Chance = 0.50 },
-			{ Name = "Epic", Chance = 0.30 },
-			{ Name = "Legendary", Chance = 0.15 },
-			{ Name = "Mythic", Chance = 0.05 },
-		} },
+		Odds = MYTHIC_BLOCK_ODDS },
+	{ Key = "MythicBlock3", Name = "Mythic Block x3", Tab = "Products", Id = 3736773813, GiftId = 3736773819, ExpectedPrice = 499,
+		Description = "Your next three ice blocks roll with much better odds. Tap INFO for the odds.",
+		Reward = { Kind = "MythicBlock", Count = 3 }, PaidRandom = true,
+		Odds = MYTHIC_BLOCK_ODDS }, -- (each of the three rolls like a single Mythic Block)
 }
 
 -- A crystal bundle (and the daily chest) pays Seconds of "your income": the HUD's crystals per second with

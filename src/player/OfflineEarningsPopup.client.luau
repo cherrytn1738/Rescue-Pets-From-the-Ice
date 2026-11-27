@@ -41,6 +41,7 @@ amountLabel = UIKit.Label(content, "Amount", "", 80, Colors.Gold)
 amountLabel.TextXAlignment = Enum.TextXAlignment.Center
 capLine = UIKit.Label(content, "Cap", "", 20, Colors.Muted)
 capLine.TextXAlignment = Enum.TextXAlignment.Center
+UIKit.FitOneLine(capLine, 20) -- (the rule's sentence is long: it shrinks rather than cut off on a phone)
 okButton = UIKit.Button(content, "CollectButton", "COLLECT", "Go", 34)
 okButton.AnchorPoint = Vector2.new(0.5, 0)
 okButton.Activated:Connect(window.Close)
@@ -84,7 +85,7 @@ local function show()
 	local label = if type(info.Label) == "string" then info.Label else ""
 	awayLine.Text = `You were away for {OfflineEarningsRules.Describe(seconds)}. You earned:`
 	capLine.Text = if info.Capped
-		then `You earn for up to {OfflineEarningsRules.Describe(OfflineEarningsRules.Settings.CapSeconds)} while you're away.`
+		then OfflineEarningsRules.RuleText(OfflineEarningsRules.Settings)
 		else ""
 	amountLabel.Text = "+0"
 	task.wait(1) -- let the join settle (the HUD appears first)

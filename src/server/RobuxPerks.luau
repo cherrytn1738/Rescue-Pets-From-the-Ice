@@ -9,8 +9,8 @@ never yields and never saves, the caller records the receipt and saves):
  * ShatterNow: breaks the block on their mound now (refused while the next block is still on its sled).
  * ServerFrostRush: x Multiplier crystals for everyone in this server for Seconds, the buyer's name announced;
    another one while it runs adds Seconds (MonetizationRules.RushEndsAt). Not saved: it ends with the server.
- * MythicBlock: one more Mythic Block waiting (data.MythicBlocks); IceBlockService rolls the next block from
-   its odds.
+ * MythicBlock: Count (1 when left out) more Mythic Blocks waiting (data.MythicBlocks); IceBlockService rolls
+   each next block from their odds.
 Pass perks (GamePasses.Owns, so a bought, gifted or Studio-given pass all count):
  * CrystalMultiplier (2x Crystals, VIP) through Economy.AddExtra; Lucky (Lucky Ice) through
    IceBlockService.AddLuck; AutoTapsPerSecond (Auto Pick): every tick, the server taps for the player while
@@ -165,10 +165,16 @@ Kinds.ServerFrostRush = {
 }
 
 Kinds.MythicBlock = {
-	Give = function(player)
+	CanGive = function(_, reward)
+		local count = reward.Count or 1
+		return type(count) == "number" and count >= 1 and count <= 10 and count % 1 == 0, PurchaseRewards.UNKNOWN_KIND
+	end,
+	Give = function(player, reward)
 		local data = PlayerData.Edit(player)
-		data.MythicBlocks += 1
-		return if data.MythicBlocks > 1 then `a Mythic Block ({data.MythicBlocks} waiting)` else "a Mythic Block (your next block)"
+		local count = reward.Count or 1
+		data.MythicBlocks += count
+		local what = if count == 1 then "a Mythic Block" else `{count} Mythic Blocks`
+		return if data.MythicBlocks > 1 then `{what} ({data.MythicBlocks} waiting)` else `{what} (your next block)`
 	end,
 }
 

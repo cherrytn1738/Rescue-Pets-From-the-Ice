@@ -208,8 +208,28 @@ return function(sources)
 	check(whale and not table.find(save.Equipped, whale.Uid), "auto-equip off: a new Mythic isn't equipped")
 	save.Settings.AutoEquip = true
 	save.TutorialStep = 4
+	local rescuedSoFar = save.CreaturesRescued
+	save.CreaturesRescued = 0 -- (as if this were the player's first rescue)
 	local fox = PetService.Rescue(fakePlayer, save, "AuroraFox")
 	check(fox and not table.find(save.Equipped, fox.Uid), "auto-equip waits for the tutorial (its Equip step teaches it)")
+	save.CreaturesRescued = 1
+	table.remove(save.Pets) -- (the next rescue adds it again)
+	local fox2 = PetService.Rescue(fakePlayer, save, "AuroraFox")
+	check(fox2 and save.CreaturesRescued == 2 and not table.find(save.Equipped, fox2.Uid), "...on the 2nd rescue too")
+	table.remove(save.Pets)
+	local fox3 = PetService.Rescue(fakePlayer, save, "AuroraFox")
+	check(fox3 and save.CreaturesRescued == CreatureConfig.Pets.AutoEquipAfterRescues and #save.Equipped == 1
+		and (save.Equipped[1] == fox3.Uid or save.Equipped[1] == whale.Uid),
+		"from the 3rd rescue, auto-equip works even with the tutorial unfinished (nobody plays with no pet): a Mythic is equipped")
+	fox = fox3
+	save.Settings.AutoEquip = false
+	table.remove(save.Pets)
+	check(PetService.Rescue(fakePlayer, save, "AuroraFox") and not PetService.AutoEquip(fakePlayer, save), "...unless auto-equip is off in Settings")
+	save.Settings.AutoEquip = true
+	table.remove(save.Pets)
+	table.insert(save.Pets, fox3)
+	save.Equipped = { whale.Uid }
+	save.CreaturesRescued = rescuedSoFar
 	save.TutorialStep = 5
 	table.clear(notices)
 	local bunny = PetService.Rescue(fakePlayer, save, "SnowBunny")

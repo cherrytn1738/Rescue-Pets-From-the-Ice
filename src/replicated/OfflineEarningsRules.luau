@@ -70,6 +70,18 @@ function OfflineEarningsRules.IsCapped(secondsAway: number, settings): boolean
 	return secondsAway * settings.Rate > settings.CapSeconds
 end
 
+-- The rule in words, for the welcome-back popup: "You earn half your building income for up to 2 hours
+-- away." (from the settings: the share, and how long away until the cap is reached).
+function OfflineEarningsRules.RuleText(settings): string
+	local share = if settings.Rate == 0.5 then "half" elseif settings.Rate == 1 then "all"
+		else `{math.floor(settings.Rate * 100 + 0.5)}% of`
+	local awaySeconds = settings.CapSeconds / settings.Rate
+	local hours = awaySeconds / 3600
+	local away = if hours == 1 then "1 hour" elseif hours % 1 == 0 then `{hours} hours`
+		else OfflineEarningsRules.Describe(awaySeconds)
+	return `You earn {share} your building income for up to {away} away.`
+end
+
 -- "45s", "6m 46s", "3h 12m", "2d 5h".
 function OfflineEarningsRules.Describe(seconds: number): string
 	seconds = math.max(0, math.floor(seconds))

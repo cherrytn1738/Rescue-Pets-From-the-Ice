@@ -67,6 +67,9 @@ return function(sources)
 	check(R.Describe(406) == "6m 46s" and R.Describe(120) == "2m", "minutes")
 	check(R.Describe(3 * 3600 + 12 * 60 + 9) == "3h 12m" and R.Describe(7200) == "2h", "hours")
 	check(R.Describe(2 * 86400 + 5 * 3600) == "2d 5h" and R.Describe(86400) == "1d", "days")
+	check(R.RuleText(R.Settings) == "You earn half your building income for up to 2 hours away.", "the popup's rule text matches the rule")
+	check(R.RuleText({ Rate = 1, CapSeconds = 3600 }) == "You earn all your building income for up to 1 hour away."
+		and R.RuleText({ Rate = 0.25, CapSeconds = 900 }) == "You earn 25% of your building income for up to 1 hour away.", "...for other settings too")
 
 	-- The real OfflineEarnings, against fakes ------------------------------------------------------------------
 	local realHttp = game:GetService("HttpService")

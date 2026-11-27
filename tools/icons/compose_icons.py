@@ -14,7 +14,7 @@ snowflakes) and a chunky outlined text badge. Composited at 1024 and downscaled 
     python tools/icons/compose_icons.py --ui --render         # the UI icons instead (store-assets/ui-icons/)
     python tools/icons/compose_icons.py --ui --render Pets Home
 
-Writes store-assets/icons/<Name>.png (the 12 Robux items), store-assets/launch/icon_concept_<n>.png (the
+Writes store-assets/icons/<Name>.png (the 14 Robux items), store-assets/launch/icon_concept_<n>.png (the
 three game icon concepts, no text) and store-assets/icons/contact_sheet.png; with --ui, the in-game button and
 window icons (256x256, transparent, no text but the pick tiers' numeral badge) to store-assets/ui-icons/<Key>.png and their contact_sheet.png
 (each icon on its card colour at 96 and 48 px). Nothing is uploaded.
@@ -73,6 +73,9 @@ SPECS = {
     'CrystalChest': dict(title='Crystal Chest', kind='product', bg=((255, 215, 110), (215, 90, 20)), rays=(255, 245, 200),
                          box=(140, 70, 884, 760), fixed=(1.0, 0, -40), glints=4, glow=(160, 250, 255),
                          badges=[('6 HOURS', 512, 830, 125, WHITE_TXT, -4)], sparkles=8),
+    'GiantCrystalChest': dict(title='Giant Crystal Chest', kind='product', bg=((255, 120, 150), (150, 20, 90)), rays=(255, 230, 240),
+                              box=(120, 60, 904, 760), fixed=(0.95, 0, -30), glints=5, glow=(160, 250, 255),
+                              badges=[('24 HOURS', 512, 830, 120, GOLD_TXT, -4)], sparkles=10, sparkle_colour=(255, 240, 160)),
     'ShatterNow': dict(title='Shatter Now', kind='product', bg=((255, 180, 70), (205, 30, 30)), rays=(255, 240, 160),
                        box=(70, 60, 954, 780), glow=(255, 250, 210),
                        badges=[('SHATTER!', 512, 845, 125, ((255, 255, 255), (255, 225, 90)), -5)], sparkles=4),
@@ -83,6 +86,9 @@ SPECS = {
     'MythicBlock': dict(title='Mythic Block', kind='product', bg=((150, 70, 230), (35, 8, 80)), rays=(255, 200, 255),
                         box=(200, 70, 830, 780), glow='rainbow', glow_radius=80,
                         badges=[('?', 790, 690, 230, ((255, 255, 255), (255, 170, 255)), 10)], sparkles=8),
+    'MythicBlock3': dict(title='Mythic Block x3', kind='product', bg=((150, 70, 230), (35, 8, 80)), rays=(255, 200, 255),
+                         box=(90, 90, 934, 760), glow='rainbow', glow_radius=70,
+                         badges=[('x3', 512, 835, 200, ((255, 255, 255), (255, 170, 255)), -6)], sparkles=9),
     'icon_concept_1': dict(title='Game icon concept 1', kind='launch', bg=((255, 225, 110), (240, 90, 60)), rays=(255, 250, 210),
                            box=(40, 40, 984, 1024), anchor='bottom', glow=(255, 255, 230), sparkles=7),
     'icon_concept_2': dict(title='Game icon concept 2', kind='launch', bg=((255, 150, 230), (70, 30, 170)), rays=(255, 230, 255),

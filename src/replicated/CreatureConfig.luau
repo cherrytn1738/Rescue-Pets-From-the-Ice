@@ -9,6 +9,7 @@ economy simulation.
    appears in; it keeps appearing in every deeper layer), Look (the doc's description), ModelId (the
    voxel pet model, nil until it is built and uploaded as group 921449746).
  * Book: the Creature Book's page rewards. Pages are kept through rebirths.
+ * FirstRunGuarantee: the first run's guaranteed Rare (or better).
  * Checked against the design doc by tests/CreatureConfig.spec.luau.
 ]]
 local CreatureConfig = {}
@@ -49,6 +50,15 @@ CreatureConfig.Pets = {
 	MaxEquipSlots = 7,
 	GoldenCombineCount = 5, -- 5 of the same pet combine into a Golden one
 	GoldenBonusMultiplier = 2, -- a Golden pet has double the bonus
+	AutoEquipAfterRescues = 3, -- auto-equip also starts at this many rescues, even with the tutorial unfinished
+}
+
+-- The first run's guaranteed Rare: while Rebirths = 0 and no creature of Rarity or better has been
+-- rescued yet, the block for rescue number ByRescue (and any after it, until one is rescued) holds at
+-- least that rarity. Rares first appear in Blue Ice (level 11), so it lands on rescue 11 or 12.
+CreatureConfig.FirstRunGuarantee = {
+	Rarity = "Rare",
+	ByRescue = 12,
 }
 
 -- Creature Book page rewards (permanent). CrystalBonus 0.05 = +5% crystals.
