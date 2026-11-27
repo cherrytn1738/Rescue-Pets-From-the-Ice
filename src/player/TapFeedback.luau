@@ -1,6 +1,6 @@
 --[[
 TapFeedback (client): what a tap on the ice shows at once (docs/GAME_DESIGN.md, "Every hit"):
- * in the world: the block shudders, and ice chips, crystal bits and your pick's sparks burst out of the spot you
+ * in the world: the block shudders, and ice chips, crystal bits and your tool's sparks burst out of the spot you
    hit (where the click's ray meets the block, along the face's normal and towards the camera; EffectsConfig.TapChips,
    from a small pool of parts this script moves itself);
  * the tap sound, capped (AudioConfig.Rules.Tap, SoundRules.TapLimiter) so an autoclicker can't stack dozens; a
@@ -25,8 +25,10 @@ local EffectsConfig = require(ReplicatedStorage.EffectsConfig)
 local IceLooks = require(ReplicatedStorage.IceLooks)
 local NumberFormat = require(ReplicatedStorage.NumberFormat)
 local SoundRules = require(ReplicatedStorage.SoundRules)
+local SwingConfig = require(ReplicatedStorage.SwingConfig)
 local UIKit = require(ReplicatedStorage.UIKit)
 local UITheme = require(ReplicatedStorage.UITheme)
+local UpgradeConfig = require(ReplicatedStorage.UpgradeConfig)
 local ClientState = require(script.Parent.ClientState)
 local Effects = require(script.Parent.Effects)
 local IceBlocks = require(script.Parent.IceBlocks)
@@ -68,13 +70,17 @@ function TapFeedback.TapValue(): number
 	return if ok then estimate else 1
 end
 
--- Your crystal and spark colours (ice upgrades, ice pick tier).
-local function colours(): (Color3, Color3)
+-- Your crystal and spark colours (ice upgrades, tool tier) and your tool family's impact (SwingConfig: a hammer's
+-- chunkier burst, a sword's extra sparks).
+local function colours(): (Color3, Color3, { Chips: number, ChipSize: number, Sparks: number })
 	local data = ClientState.Data()
 	if not data then
-		return IceLooks.CrystalColour(0), IceLooks.PickSparks[1]
+		return IceLooks.CrystalColour(0), IceLooks.ToolSparks[1], SwingConfig.Family("Pick").Impact
 	end
-	return IceLooks.CrystalColour(EconomyRules.IceTiersTotal(data)), IceLooks.PickSparks[EconomyRules.PickTier(data)] or IceLooks.PickSparks[1]
+	local tier = EconomyRules.ToolTier(data)
+	local tool = UpgradeConfig.Tools[tier]
+	return IceLooks.CrystalColour(EconomyRules.IceTiersTotal(data)), IceLooks.ToolSparks[tier] or IceLooks.ToolSparks[1],
+		SwingConfig.Family(tool and tool.Family).Impact
 end
 
 -- Ice chips, crystal bits and pick sparks out of the spot you hit ---------------------------------------------
@@ -239,14 +245,14 @@ local function chips(index: number, screenPosition: Vector2?)
 	local function speed(): number
 		return CHIPS.Speed[1] + math.random() * (CHIPS.Speed[2] - CHIPS.Speed[1])
 	end
-	for _ = 1, Effects.Count(CHIPS.Chips) do
-		emit("Chip", at, direction() * speed(), Vector3.one * (0.25 + math.random() * 0.3), block.Color, Enum.Material.Ice)
+	local crystal, spark, impact = colours()
+	for _ = 1, Effects.Count(math.round(CHIPS.Chips * impact.Chips)) do
+		emit("Chip", at, direction() * speed(), Vector3.one * (0.25 + math.random() * 0.3) * impact.ChipSize, block.Color, Enum.Material.Ice)
 	end
-	local crystal, spark = colours()
 	for _ = 1, Effects.Count(CHIPS.Crystals) do
 		emit("Crystal", at, direction() * speed() * 0.8 + Vector3.new(0, 6, 0), Vector3.one * 0.32, crystal, Enum.Material.Neon)
 	end
-	for _ = 1, Effects.Count(CHIPS.Sparks) do
+	for _ = 1, Effects.Count(math.round(CHIPS.Sparks * impact.Sparks)) do
 		emit("Spark", at, direction() * speed() * 1.4, Vector3.new(0.1, 0.1, 0.65), spark, Enum.Material.Neon)
 	end
 end

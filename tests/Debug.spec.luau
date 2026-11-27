@@ -320,9 +320,9 @@ return function(sources)
 	check(not ok and string.find(message, "no products yet", 1, true), "with no products configured, simulating a receipt says so")
 	check(#calls == 0, "...and neither touched the monetization systems")
 
-	ok, message = run("SetPickTier", { Tier = 4 })
-	check(ok and calls[#calls].name == "SetTier" and calls[#calls].args[2] == 4 and message == "Tester holds pick tier 4", "the pick tier goes through PickService.SetTier")
-	check(ids.SetPickTier.Params[1].Min == 1 and ids.SetPickTier.Params[1].Max == 6, "pick tiers 1 to 6")
+	ok, message = run("SetToolTier", { Tier = 4 })
+	check(ok and calls[#calls].name == "SetTier" and calls[#calls].args[2] == 4 and message == "Tester holds tool tier 4", "the tool tier goes through PickService.SetTier")
+	check(ids.SetToolTier.Params[1].Min == 1 and ids.SetToolTier.Params[1].Max == 18, "tool tiers 1 to 18")
 	check(ids.SetTutorialStep ~= nil and ids.SetTutorialStep.Params[1].Min == 1 and ids.SetTutorialStep.Params[1].Max == 5,
 		"the debug menu sets the tutorial step, 1 to 5 (the spotlight's steps)")
 
@@ -347,12 +347,12 @@ return function(sources)
 	check(ok and calls[#calls].name == "Pay" and calls[#calls].args[2] == 600, "offline earnings pay through OfflineEarnings.Pay(player, seconds)")
 	ok, message = run("AnalyticsProgress")
 	check(ok and string.find(message, "onboarding 3 of 0 (waiting: 5)", 1, true), "the funnel state reads the save's Funnels")
-	liveData.Buildings, liveData.Upgrades = { HeatLamp = 3 }, { "HeatLampUpgrade1", "IcePick2", "HeatLampUpgrade4" }
+	liveData.Buildings, liveData.Upgrades = { HeatLamp = 3 }, { "HeatLampUpgrade1", "Tool2", "HeatLampUpgrade4" }
 	ok = run("SetBuilding", { Building = "HeatLamp", Count = 100, Upgrades = 2 })
-	check(ok and liveData.Buildings.HeatLamp == 100 and table.concat(liveData.Upgrades, ",") == "IcePick2,HeatLampUpgrade1,HeatLampUpgrade2"
+	check(ok and liveData.Buildings.HeatLamp == 100 and table.concat(liveData.Upgrades, ",") == "Tool2,HeatLampUpgrade1,HeatLampUpgrade2"
 		and (calls[#calls].name == "RefreshBuildings" or calls[#calls - 1].name == "RefreshBuildings" or calls[#calls - 2].name == "RefreshBuildings"), "SetBuilding sets the count and exactly the first N of that building's upgrades, and redraws the plot")
 	ok = run("SetBuilding", { Building = "HeatLamp", Count = 0, Upgrades = 0 })
-	check(ok and liveData.Buildings.HeatLamp == nil and table.concat(liveData.Upgrades, ",") == "IcePick2", "...0 removes it")
+	check(ok and liveData.Buildings.HeatLamp == nil and table.concat(liveData.Upgrades, ",") == "Tool2", "...0 removes it")
 	liveData.BlockLevel, liveData.CurrentBlock = 4, { CreatureId = "SnowBunny", HpLeft = 400 }
 	ok = run("SetBlockHp", { Percent = 25 })
 	check(ok and liveData.CurrentBlock.HpLeft == 100, "SetBlockHp sets the block's HP to a share of its level's full HP")

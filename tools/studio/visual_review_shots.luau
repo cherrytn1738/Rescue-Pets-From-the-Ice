@@ -27,6 +27,7 @@ local HttpService = game:GetService("HttpService")
 local BuildingConfig = require(ReplicatedStorage.BuildingConfig)
 local CreatureConfig = require(ReplicatedStorage.CreatureConfig)
 local SwingConfig = require(ReplicatedStorage.SwingConfig)
+local UpgradeConfig = require(ReplicatedStorage.UpgradeConfig)
 local MapConfig = require(ReplicatedStorage.MapConfig)
 
 local me = Players.LocalPlayer
@@ -497,14 +498,15 @@ shot("buildings/moment_evolved", function()
 	return { Wait = 0.35 }
 end)
 
--- Picks: each tier in the hand (close up, standing), then from the normal play camera mid-swing (frozen as
--- the point comes down at the ice) and walking; the golden skin last.
+-- Tools (the "picks" category until part 2 renames it): each made tool in the hand (close up, standing), then from
+-- the normal play camera mid-swing (frozen at its family's strike) and walking; the golden skin last; then each
+-- family's variants at the wind-up and the strike.
 local function animator(): Animator?
 	local humanoid = me.Character and me.Character:FindFirstChildOfClass("Humanoid")
 	return humanoid and humanoid:FindFirstChildOfClass("Animator")
 end
--- (the mid-swing shots pause the character's Animate script and hold its own slash animation still: Animate
--- would swap a frozen slash back to the plain hold after 0.3 s)
+-- (the mid-swing shots pause the character's Animate script and hold its own swing animation still: Animate
+-- would swap a frozen swing back to the plain hold after 0.3 s)
 local function unfreeze()
 	local anim = animator()
 	for _, track in (if anim then anim:GetPlayingAnimationTracks() else {}) do
@@ -517,21 +519,26 @@ local function unfreeze()
 		animate.Enabled = true
 	end
 end
-local function holdSwing(at: number, variant: string?)
+local function heldFamily()
+	local tool = me.Character and me.Character:FindFirstChild("IceTool")
+	return SwingConfig.Family(tool and tool:GetAttribute("Family"))
+end
+local function holdSwing(at: number?, variant: string?)
 	local animate = me.Character and me.Character:FindFirstChild("Animate")
 	local anim = animator()
 	if not (animate and anim) then
 		return
 	end
+	local family = heldFamily()
 	animate.Enabled = false
-	for _, name in { variant or "Overhead", "Dip" } do
+	for _, name in { variant or family.Variants[1], family.Dip } do
 		local animation = Instance.new("Animation")
 		animation.AnimationId = "rbxassetid://" .. SwingConfig.AnimationIds.R15[name]
 		local track = anim:LoadAnimation(animation)
 		track.Priority = Enum.AnimationPriority.Action
 		track:Play(0)
 		RunService.RenderStepped:Wait()
-		track.TimePosition = at
+		track.TimePosition = at or family.ImpactAt
 		track:AdjustSpeed(0)
 	end
 end
@@ -544,7 +551,7 @@ local function swingShot()
 	-- the play camera turned to the character's right side (as a player turns it), so the swing's arc shows
 	follow(Vector3.new(9, 4, 4), Vector3.new(0, 2, -2.5), 70)
 	task.wait(0.8)
-	holdSwing(SwingConfig.ImpactAt) -- (the strike, in front of the character)
+	holdSwing() -- (the strike, in front of the character)
 	return { Wait = 0.6 }
 end
 local function walkShot()
@@ -558,55 +565,71 @@ local function walkShot()
 	end
 	return { Wait = 1.1 }
 end
-local PICK_LOOKS = { 1, 2, 3, 4, 5, 6 }
-for _, tier in PICK_LOOKS do
-	shot(`picks/pick_tier{tier}`, function()
+local TOOL_LOOKS = {} -- the tiers with a model (the others hold their family's nearest)
+for _, info in UpgradeConfig.Tools do
+	if info.ModelId then
+		table.insert(TOOL_LOOKS, info.Tier)
+	end
+end
+for _, tier in TOOL_LOOKS do
+	shot(`picks/tool_tier{tier}`, function()
 		unfreeze()
-		dbg("SetPickTier", { Tier = tier })
+		dbg("SetToolTier", { Tier = tier })
 		task.wait(1)
 		standAt(plotPoint(0, 26, 4), plotPoint(0, 0, 4))
 		follow(Vector3.new(4.6, 3.0, -6.8), Vector3.new(0.9, 2.4, -0.2), 42)
 		return { Wait = 1.5 }
 	end)
-	shot(`picks/pick_tier{tier}_swing`, function()
-		dbg("SetPickTier", { Tier = tier })
+	shot(`picks/tool_tier{tier}_swing`, function()
+		dbg("SetToolTier", { Tier = tier })
 		task.wait(1)
 		return swingShot()
 	end)
-	shot(`picks/pick_tier{tier}_walk`, function()
-		dbg("SetPickTier", { Tier = tier })
+	shot(`picks/tool_tier{tier}_walk`, function()
+		dbg("SetToolTier", { Tier = tier })
 		task.wait(1)
 		return walkShot()
 	end)
 end
-shot("picks/pick_golden_skin", function()
+local TOP_LOOK = TOOL_LOOKS[#TOOL_LOOKS] or 1
+shot("picks/tool_golden_skin", function()
 	-- the Creature Book's Golden page: every creature Golden
 	for _, creature in CreatureConfig.Creatures do
 		petOf(creature.Id, true)
 	end
-	dbg("SetPickTier", { Tier = 6 })
+	dbg("SetToolTier", { Tier = TOP_LOOK })
 	dbg("Respawn")
 	task.wait(4)
 	standAt(plotPoint(0, 26, 4), plotPoint(0, 0, 4))
 	follow(Vector3.new(4.6, 3.0, -6.8), Vector3.new(0.9, 2.4, -0.2), 42)
 	return { Wait = 1.5 }
 end)
-shot("picks/pick_golden_skin_swing", swingShot)
--- The swing's variants (SwingConfig), held at the top of the wind-up and at the strike, from the play camera's side.
-for _, variant in SwingConfig.Variants do
-	for _, moment in { { "windup", SwingConfig.WindUpEnd }, { "strike", SwingConfig.ImpactAt } } do
-		shot(`picks/swing_{string.lower(variant)}_{moment[1]}`, function()
-			unfreeze()
-			dbg("SetPickTier", { Tier = 3 })
-			standAt(plotPoint(0, 26, 4), plotPoint(0, 0, 4))
-			follow(Vector3.new(8, 4, 5), Vector3.new(0, 2, -2.5), 70)
-			task.wait(0.8)
-			holdSwing(moment[2], variant)
-			return { Wait = 0.6 }
-		end)
+shot("picks/tool_golden_skin_swing", swingShot)
+-- Each family's variants (SwingConfig), held at the top of the wind-up and at the strike, from the play camera's side.
+for _, familyName in SwingConfig.FamilyOrder do
+	local family = SwingConfig.Families[familyName]
+	local tier = nil
+	for _, candidate in TOOL_LOOKS do
+		if UpgradeConfig.Tools[candidate].Family == familyName then
+			tier = candidate
+			break
+		end
+	end
+	for _, variant in (if tier then family.Variants else {}) do
+		for _, moment in { { "windup", family.WindUpEnd }, { "strike", family.ImpactAt } } do
+			shot(`picks/swing_{string.lower(familyName)}_{string.lower(variant)}_{moment[1]}`, function()
+				unfreeze()
+				dbg("SetToolTier", { Tier = tier })
+				standAt(plotPoint(0, 26, 4), plotPoint(0, 0, 4))
+				follow(Vector3.new(8, 4, 5), Vector3.new(0, 2, -2.5), 70)
+				task.wait(0.8)
+				holdSwing(moment[2], variant)
+				return { Wait = 0.6 }
+			end)
+		end
 	end
 end -- (after the golden skin shot: the skin is already on)
-shot("picks/pick_golden_skin_walk", walkShot)
+shot("picks/tool_golden_skin_walk", walkShot)
 
 -- Ice: every layer with every rarity, the crack stages, the shatter, the sled, the Mythic Block.
 for layer, level in LAYER_LEVELS do
@@ -1198,7 +1221,7 @@ shot("effects/tap_feedback", function()
 end)
 -- Your click on the ice: the white burst and the "+N" popping up near it (real mouse clicks on the block).
 shot("effects/click_burst", function()
-	dbg("SetPickTier", { Tier = 6 }) -- (a bigger "+N")
+	dbg("SetToolTier", { Tier = 10 }) -- (a bigger "+N")
 	freshBlock(400, "SnowBunny")
 	home()
 	blockShot(true)
@@ -1213,7 +1236,7 @@ shot("effects/click_burst", function()
 end)
 -- Ice chips and pick sparks bursting out of the spot clicked (real clicks on the block's left side, close up).
 shot("effects/chips_click_point", function()
-	dbg("SetPickTier", { Tier = 5 }) -- (bright sparks)
+	dbg("SetToolTier", { Tier = 7 }) -- (bright gold sparks, the hammer's chunky chips)
 	freshBlock(400, "SnowBunny")
 	home()
 	-- from the tapping spot, a narrow lens on the block's front (the chips are small)

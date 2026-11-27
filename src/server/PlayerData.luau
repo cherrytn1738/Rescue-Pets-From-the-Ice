@@ -259,14 +259,25 @@ local function validate(record)
 	end
 	data.Buildings = buildings
 
-	-- Upgrades: a list of ids. Not a list fails closed; unknown and repeated ids are dropped.
+	-- Upgrades: a list of ids. Not a list fails closed; unknown and repeated ids are dropped. An old ice pick
+	-- (IcePick<n>, before the 18 tools) turns into every tool up to the matching one (UpgradeConfig.OldPickTiers).
 	if data.Upgrades ~= nil and type(data.Upgrades) ~= "table" then
 		return nil, "invalid Upgrades"
 	end
 	local upgrades = {}
-	for _, id in data.Upgrades or {} do
+	local function keep(id)
 		if UpgradeConfig.Get(id) and not table.find(upgrades, id) then
 			table.insert(upgrades, id)
+		end
+	end
+	for _, id in data.Upgrades or {} do
+		local oldPick = type(id) == "string" and UpgradeConfig.OldPickTiers[id]
+		if oldPick then
+			for tier = 2, oldPick do
+				keep("Tool" .. tier)
+			end
+		else
+			keep(id)
 		end
 	end
 	data.Upgrades = upgrades

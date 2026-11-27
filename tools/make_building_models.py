@@ -1,6 +1,6 @@
 """Writes src/replicated/BuildingModels.luau from the building pipeline's manifests
 (store-assets/buildings/<Id>/<Id>_manifest.json, written by tools/blender/buildings/run.py) and the ice
-picks' (store-assets/tools/IcePicks_manifest.json): each station's size and its named attachment points
+tools' (store-assets/tools/Tools_manifest.json, tools/blender/tools_tiers.py): each station's size and its named attachment points
 on Roblox's axes, relative to the model's pivot (the pad centre on the ground). The effects system places
 emitters on these points (on the real models once uploaded, on the greybox stand-ins until then), and
 tests/Effects.spec.luau checks that every attachment EffectsConfig names exists here.
@@ -24,7 +24,8 @@ def main():
              "-- Grow (how much the structure above the base was scaled to reach its tier height: effects scale by it),",
              "-- Short (no room for the full height), FitsPad (the base on its pad, the rest in its room) and Attachments",
              "-- { [name] = { Position, Out, Up } } relative to the station's pivot (the pad centre on the ground,",
-             "-- front = -Z facing the ice). Tools: the ice picks' attachments (Grip, Tip, Trail).",
+             "-- front = -Z facing the ice). Tools: each tool's attachments by tier (Grip, Tip, TrailA, TrailB, Bit) in its own",
+             "-- space (the handle along +Y from its butt, the striking side toward -X).",
              "return {", "\tBuildings = {"]
     found = 0
     for path in sorted(glob.glob(os.path.join(ROOT, "store-assets", "buildings", "*", "*_manifest.json"))):
@@ -42,11 +43,11 @@ def main():
             lines.append("\t\t\t} },")
         lines.append("\t\t},")
     lines.append("\t},")
-    picks = os.path.join(ROOT, "store-assets", "tools", "IcePicks_manifest.json")
-    lines.append("\tPicks = {")
-    if os.path.exists(picks):
-        for p in json.load(open(picks, encoding="utf-8"))["picks"]:
-            lines.append("\t\t[%d] = { Name = %s, Attachments = {" % (p["tier"], json.dumps(p["name"])))
+    tools = os.path.join(ROOT, "store-assets", "tools", "Tools_manifest.json")
+    lines.append("\tTools = {")
+    if os.path.exists(tools):
+        for p in json.load(open(tools, encoding="utf-8"))["tools"]:
+            lines.append("\t\t[%d] = { Name = %s, Family = %s, Attachments = {" % (p["tier"], json.dumps(p["name"]), json.dumps(p["family"])))
             for name, a in sorted(p["attachments"].items()):
                 lines.append("\t\t\t%s = { Position = %s, Out = %s, Up = %s }," % (name, v3(a["position"]), v3(a["out"]), v3(a["up"])))
             lines.append("\t\t} },")

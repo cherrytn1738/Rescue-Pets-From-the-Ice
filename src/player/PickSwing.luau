@@ -1,26 +1,34 @@
 --[[
-PickSwing (client): the ice pick's swing on every tap (SwingConfig). The variants take turns (Overhead, FromLeft,
-FromRight). Played with the local character's Animator, so every player sees it (a character's animations
-replicate from its owner).
+PickSwing (client): the swing of the tool you hold, on every tap (SwingConfig: its family's variants take turns,
+Pick, Hammer, Axe, Sword or Spear). Played with the local character's Animator, so every player sees it (a
+character's animations replicate from its owner).
  * The tap's own effects and sound fire on the click (TapFeedback); the swing is the show.
  * Taps faster than a full swing never queue: the next swing cuts in (blending over SwingConfig.FadeIn, starting
-   part way into its wind-up so its strike comes sooner) and plays faster (SwingConfig.SpeedFor, up to MaxSpeed).
- * The knees dip (the Dip animation) only while the character is (nearly) standing still, so walking legs stay
-   free.
- * A tiny camera nudge on the strike (Effects.Nudge: none with reduced effects).
+   part way into its wind-up so its strike comes sooner) and plays faster (SwingConfig.SpeedFor, up to the family's
+   MaxSpeed).
+ * The knees (the family's Dip: a dip, the hammer's deeper one, the spear's lunge) only while the character is
+   (nearly) standing still, so walking legs stay free.
+ * At the strike: the family's camera nudge (Effects.Nudge: none with reduced effects) and a drill's bit spinning
+   (the tool's BitJoint Weld, turned on this client).
+ * Swords draw a trail during the slash (the tool's SwingTrail, in the tier's spark colour; not with reduced effects).
  * An R6 avatar, or a variant with no uploaded animation, gets the default tool slash instead.
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
+local IceLooks = require(ReplicatedStorage.IceLooks)
 local SwingConfig = require(ReplicatedStorage.SwingConfig)
 local Effects = require(script.Parent.Effects)
 
 local PickSwing = {}
 
+PickSwing.ToolName = "IceTool" -- (PickService's name for the held tool)
+
 local player = Players.LocalPlayer
 local loaded = nil -- { character, tracks = { [name] = AnimationTrack } }
 local lastVariant: string? = nil
+local lastFamily: string? = nil
 local lastStart: number? = nil
 
 local function tracksFor(character: Model)
@@ -59,41 +67,99 @@ local function defaultSlash(tool: Tool)
 	end
 end
 
+-- A drill's bit spinning after the hit, slowing to a stop: the tool's BitJoint (a Weld whose C0 sits on the bit's
+-- axis) turned about Y on this client only.
+local spinning = {}
+local function spinBit(tool: Tool)
+	local joint = tool:FindFirstChild("BitJoint", true)
+	if not joint or not joint:IsA("Weld") then
+		return
+	end
+	local spin = spinning[joint]
+	if spin then
+		spin.left = SwingConfig.BitSpin.Seconds
+		return
+	end
+	spin = { left = SwingConfig.BitSpin.Seconds, angle = 0, base = joint.C0 }
+	spinning[joint] = spin
+	local connection
+	connection = RunService.RenderStepped:Connect(function(dt)
+		spin.left -= dt
+		if not joint.Parent or spin.left <= 0 then
+			joint.C0 = spin.base
+			connection:Disconnect()
+			spinning[joint] = nil
+			return
+		end
+		spin.angle += SwingConfig.BitSpin.Speed * (spin.left / SwingConfig.BitSpin.Seconds) * dt
+		joint.C0 = spin.base * CFrame.Angles(0, spin.angle, 0)
+	end)
+end
+
+-- The trail during the slash: on from the top of the wind-up to just after the strike.
+local function trail(tool: Tool, family, startAt: number, speed: number, started: number)
+	local swingTrail = tool:FindFirstChild("SwingTrail", true)
+	if not swingTrail or not swingTrail:IsA("Trail") or Effects.Reduced() then
+		return
+	end
+	local colour = IceLooks.ToolSparks[tool:GetAttribute("Tier")] or Color3.new(1, 1, 1)
+	swingTrail.Color = ColorSequence.new(colour:Lerp(Color3.new(1, 1, 1), 0.4), colour)
+	local on = math.max(0, family.WindUpEnd - startAt) / speed
+	local off = (family.ImpactAt + SwingConfig.Trail.AfterImpact - startAt) / speed
+	task.delay(on, function()
+		if lastStart == started and swingTrail.Parent then
+			swingTrail.Enabled = true
+		end
+	end)
+	task.delay(off, function()
+		if lastStart == started and swingTrail.Parent then
+			swingTrail.Enabled = false
+		end
+	end)
+end
+
 function PickSwing.Swing()
 	local character = player.Character
-	local tool = character and character:FindFirstChild("IcePick")
+	local tool = character and character:FindFirstChild(PickSwing.ToolName)
 	if not tool or not tool:IsA("Tool") then
 		return
 	end
+	local familyName = tool:GetAttribute("Family") or "Pick"
+	local family = SwingConfig.Family(familyName)
 	local tracks = tracksFor(character)
 	local now = os.clock()
-	local variant = SwingConfig.NextVariant(lastVariant)
+	local sameFamily = lastFamily == familyName
+	local variant = SwingConfig.NextVariant(family, if sameFamily then lastVariant else nil)
 	local track = tracks and tracks[variant]
 	if not track then
 		defaultSlash(tool)
 		return
 	end
-	local since = if lastStart then now - lastStart else nil
-	local speed = SwingConfig.SpeedFor(since)
+	local since = if lastStart and sameFamily then now - lastStart else nil
+	local speed = SwingConfig.SpeedFor(family, since)
 	-- cutting into a swing still going: start at the middle of the wind-up, so the strike comes sooner
-	local startAt = if since and since < SwingConfig.Length then SwingConfig.WindUpEnd * 0.5 else 0
+	local startAt = if since and since < family.Length then family.WindUpEnd * 0.5 else 0
 	for name, other in tracks do
-		if name ~= variant and name ~= "Dip" and other.IsPlaying then
+		if name ~= variant and other.IsPlaying then
 			other:Stop(SwingConfig.FadeIn)
 		end
 	end
 	track:Play(SwingConfig.FadeIn, 1, speed)
 	track.TimePosition = startAt
 	local root = character:FindFirstChild("HumanoidRootPart")
-	local dip = tracks.Dip
+	local dip = tracks[family.Dip]
 	if dip and root and (root.AssemblyLinearVelocity * Vector3.new(1, 0, 1)).Magnitude < SwingConfig.DipWhenSlowerThan then
 		dip:Play(SwingConfig.FadeIn, 1, speed)
 		dip.TimePosition = startAt
 	end
-	lastVariant, lastStart = variant, now
-	task.delay(math.max(0, SwingConfig.ImpactAt - startAt) / speed, function()
+	lastVariant, lastFamily, lastStart = variant, familyName, now
+	if family.Trail then
+		trail(tool, family, startAt, speed, now)
+	end
+	task.delay(math.max(0, family.ImpactAt - startAt) / speed, function()
 		if lastStart == now then -- (not when the next swing already cut in)
-			Effects.Nudge(SwingConfig.Nudge.Strength, SwingConfig.Nudge.Seconds)
+			Effects.Nudge(family.Nudge.Strength, family.Nudge.Seconds)
+			spinBit(tool)
 		end
 	end)
 end

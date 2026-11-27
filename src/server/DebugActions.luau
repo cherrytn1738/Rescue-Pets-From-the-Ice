@@ -243,14 +243,14 @@ local ACTIONS = {
 		end,
 	},
 	{
-		Id = "SetPickTier", Group = "Save", Label = "Set ice pick tier (owns exactly the picks up to it)",
-		Params = { amountParam("Tier", "Pick tier", 1, 6, 6) },
+		Id = "SetToolTier", Group = "Save", Label = "Set tool tier (owns exactly the tools up to it: 4 Iron Pick, 7 Gold Hammer, 8 Crystal Axe, 9 Ice Drill, 10 Diamond Sword)",
+		Params = { amountParam("Tier", "Tool tier", 1, 18, 18) },
 		Run = function(target, args)
 			dataOf(target)
 			if not PickService.SetTier(target, args.Tier) then
-				fail(`Couldn't set {target.Name}'s pick tier`)
+				fail(`Couldn't set {target.Name}'s tool tier`)
 			end
-			return `{target.Name} holds pick tier {args.Tier}`
+			return `{target.Name} holds tool tier {args.Tier}`
 		end,
 	},
 	{

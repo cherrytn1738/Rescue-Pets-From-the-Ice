@@ -715,6 +715,120 @@ window.SHOTS = [
   "before": "../visual-review-before/picks/swing_overhead_windup.jpg"
  },
  {
+  "category": "tools-samples",
+  "name": "T04_iron_pick_avatar_sizes",
+  "file": "tools-samples/T04_iron_pick_avatar_sizes.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "T04_iron_pick_swings",
+  "file": "tools-samples/T04_iron_pick_swings.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "T04_iron_pick_vs_old_iron_pick",
+  "file": "tools-samples/T04_iron_pick_vs_old_iron_pick.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "T07_gold_hammer_avatar_sizes",
+  "file": "tools-samples/T07_gold_hammer_avatar_sizes.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "T07_gold_hammer_impact_vs_pick",
+  "file": "tools-samples/T07_gold_hammer_impact_vs_pick.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "T07_gold_hammer_swings",
+  "file": "tools-samples/T07_gold_hammer_swings.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "T07_gold_hammer_vs_old_iron_pick",
+  "file": "tools-samples/T07_gold_hammer_vs_old_iron_pick.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "T08_crystal_axe_avatar_sizes",
+  "file": "tools-samples/T08_crystal_axe_avatar_sizes.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "T08_crystal_axe_swings",
+  "file": "tools-samples/T08_crystal_axe_swings.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "T08_crystal_axe_vs_old_iron_pick",
+  "file": "tools-samples/T08_crystal_axe_vs_old_iron_pick.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "T09_ice_drill_avatar_sizes",
+  "file": "tools-samples/T09_ice_drill_avatar_sizes.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "T09_ice_drill_swings",
+  "file": "tools-samples/T09_ice_drill_swings.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "T09_ice_drill_vs_old_iron_pick",
+  "file": "tools-samples/T09_ice_drill_vs_old_iron_pick.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "T10_diamond_sword_avatar_sizes",
+  "file": "tools-samples/T10_diamond_sword_avatar_sizes.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "T10_diamond_sword_swings",
+  "file": "tools-samples/T10_diamond_sword_swings.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "T10_diamond_sword_trail",
+  "file": "tools-samples/T10_diamond_sword_trail.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "T10_diamond_sword_vs_old_iron_pick",
+  "file": "tools-samples/T10_diamond_sword_vs_old_iron_pick.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "all_five_samples_blender",
+  "file": "tools-samples/all_five_samples_blender.jpg",
+  "before": null
+ },
+ {
+  "category": "tools-samples",
+  "name": "all_strike_play_camera",
+  "file": "tools-samples/all_strike_play_camera.jpg",
+  "before": null
+ },
+ {
   "category": "ice",
   "name": "aura_Epic_layer1",
   "file": "ice/aura_Epic_layer1.jpg",

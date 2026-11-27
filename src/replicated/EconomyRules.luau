@@ -13,7 +13,7 @@ Multiplier(data, extra) = pet bonus x Creature Book bonus x Crystal Yield x Fros
   extra          what only the server knows: passes, Frost Rush, the group bonus (1 when omitted)
 
 Damage:
-  TapDamage(data)        the ice pick tier's damage, plus the Frost Touch share of building damage/s
+  TapDamage(data)        the tool tier's damage, plus the Frost Touch share of building damage/s
   BuildingDps(data, id)  copies x base damage/s x 2^(its upgrades bought) x Masterwork (+10%)
 ]]
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -21,6 +21,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local BuildingConfig = require(ReplicatedStorage.BuildingConfig)
 local CreatureConfig = require(ReplicatedStorage.CreatureConfig)
 local LayerConfig = require(ReplicatedStorage.LayerConfig)
+local NumberFormat = require(ReplicatedStorage.NumberFormat)
 local RebirthConfig = require(ReplicatedStorage.RebirthConfig)
 local UpgradeConfig = require(ReplicatedStorage.UpgradeConfig)
 
@@ -33,12 +34,12 @@ EconomyRules.Owns = owns
 
 -- Upgrades --------------------------------------------------------------------------------------
 
--- The highest ice pick tier owned (1 = the wooden pick everyone starts with).
-function EconomyRules.PickTier(data): number
+-- The highest tool tier owned (1 = the Wooden Pick everyone starts with).
+function EconomyRules.ToolTier(data): number
 	local tier = 1
-	for _, pick in UpgradeConfig.IcePick do
-		if pick.Tier > 1 and owns(data, "IcePick" .. pick.Tier) then
-			tier = math.max(tier, pick.Tier)
+	for _, tool in UpgradeConfig.Tools do
+		if tool.Tier > 1 and owns(data, "Tool" .. tool.Tier) then
+			tier = math.max(tier, tool.Tier)
 		end
 	end
 	return tier
@@ -141,8 +142,8 @@ end
 
 -- The damage of one tap.
 function EconomyRules.TapDamage(data): number
-	local pick = UpgradeConfig.IcePick[EconomyRules.PickTier(data)]
-	return pick.TapDamage + EconomyRules.FrostTouchShare(data) * EconomyRules.TotalBuildingDps(data)
+	local tool = UpgradeConfig.Tools[EconomyRules.ToolTier(data)]
+	return tool.TapDamage + EconomyRules.FrostTouchShare(data) * EconomyRules.TotalBuildingDps(data)
 end
 
 -- Bonuses ----------------------------------------------------------------------------------------
@@ -265,9 +266,12 @@ function EconomyRules.UpgradeUnlocked(data, upgradeId: string): (boolean, string
 	if owns(data, upgradeId) then
 		return false, "Already owned"
 	end
-	if upgrade.Kind == "IcePick" then
-		if upgrade.Tier > 2 and not owns(data, "IcePick" .. (upgrade.Tier - 1)) then
-			return false, "Buy the " .. UpgradeConfig.IcePick[upgrade.Tier - 1].Name .. " first"
+	if upgrade.Kind == "Tool" then
+		if upgrade.Tier > 2 and not owns(data, "Tool" .. (upgrade.Tier - 1)) then
+			return false, "Buy the " .. UpgradeConfig.Tools[upgrade.Tier - 1].Name .. " first"
+		end
+		if upgrade.UnlockLevel and (data.BlockLevel or 1) < upgrade.UnlockLevel then
+			return false, `Reach level {upgrade.UnlockLevel}`
 		end
 	elseif upgrade.Kind == "FrostTouch" then
 		if (data.Buildings[upgrade.UnlockOwns] or 0) < 1 then
@@ -295,9 +299,11 @@ function EconomyRules.UpgradeList(data)
 	for _, upgrade in UpgradeConfig.Upgrades do
 		if not owns(data, upgrade.Id) then
 			local ok, reason = EconomyRules.UpgradeUnlocked(data, upgrade.Id)
-			-- shown: what can be bought now, and the next upgrade of a building already owned
+			-- shown: what can be bought now, the next upgrade of a building already owned, and the next tool when it
+			-- waits for a block level
 			local isNext = ok or (upgrade.Kind == "Building" and (data.Buildings[upgrade.Building] or 0) > 0
 				and not string.find(reason or "", "first", 1, true))
+				or (upgrade.Kind == "Tool" and string.find(reason or "", "Reach level", 1, true) ~= nil)
 			if isNext then
 				table.insert(list, { Upgrade = upgrade, Unlocked = ok, Reason = reason })
 			end
@@ -314,8 +320,8 @@ end
 
 -- One line saying what an upgrade does, for the Upgrades panel.
 function EconomyRules.Describe(upgrade): string
-	if upgrade.Kind == "IcePick" then
-		return `Tap damage {UpgradeConfig.IcePick[upgrade.Tier].TapDamage}`
+	if upgrade.Kind == "Tool" then
+		return `{NumberFormat.Short(UpgradeConfig.Tools[upgrade.Tier].TapDamage)} damage per tap`
 	elseif upgrade.Kind == "FrostTouch" then
 		for _, touch in UpgradeConfig.FrostTouch do
 			if touch.Id == upgrade.Id then

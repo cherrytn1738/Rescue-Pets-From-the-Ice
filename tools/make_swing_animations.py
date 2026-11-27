@@ -1,9 +1,9 @@
-"""make_swing_animations.py - the ice pick swing's Animation files, from SwingConfig's poses.
+"""make_swing_animations.py - the tools' swing Animation files (every family's variants and dips), from SwingConfig's poses.
 
     python tools/make_swing_animations.py
 
 Studio open on the place in Edit mode (Rojo synced, "Enable Studio as MCP server" on). Runs
-tools/studio/build_swing_animations.luau, which builds a KeyframeSequence per variant (and the knees' Dip) and
+tools/studio/build_swing_animations.luau, which builds a KeyframeSequence per variant (and each family's dip) and
 serializes it, and writes store-assets/animations/PickSwing<Name>.rbxm. Then upload them as the group:
 
     python tools/upload_models.py store-assets/animations/*.rbxm

@@ -87,12 +87,17 @@ Every uploaded asset of the game, created by the group 921449746 with `tools/upl
 | Model | SunMirrorTower tier 4 upgrades | `store-assets/buildings/SunMirrorTower/fbx/SunMirrorTower_T4_Upgrades.fbx` | 81176694067545 | Approved |
 | Model | SunMirrorTower tier 5 station | `store-assets/buildings/SunMirrorTower/fbx/SunMirrorTower_T5.fbx` | 127928225520843 | Approved |
 | Model | SunMirrorTower tier 5 upgrades | `store-assets/buildings/SunMirrorTower/fbx/SunMirrorTower_T5_Upgrades.fbx` | 88381654547929 | Approved |
-| Model | Ice pick tier 1 (Wooden) | `store-assets/tools/fbx/IcePick_T1.fbx` | 87084297887291 | Approved |
-| Model | Ice pick tier 2 (Stone) | `store-assets/tools/fbx/IcePick_T2.fbx` | 90204611101082 | Approved |
-| Model | Ice pick tier 3 (Iron) | `store-assets/tools/fbx/IcePick_T3.fbx` | 114047905090497 | Approved |
-| Model | Ice pick tier 4 (Gold) | `store-assets/tools/fbx/IcePick_T4.fbx` | 112470666170458 | Approved |
-| Model | Ice pick tier 5 (Diamond) | `store-assets/tools/fbx/IcePick_T5.fbx` | 96755604294244 | Approved |
-| Model | Ice pick tier 6 (Cosmic) | `store-assets/tools/fbx/IcePick_T6.fbx` | 94519841510459 | Approved |
+| Model | Tool tier 4 (Iron Pick) | `store-assets/tools/fbx/Tool_T4.fbx` | 121823405442127 | Approved |
+| Model | Tool tier 7 (Gold Hammer) | `store-assets/tools/fbx/Tool_T7.fbx` | 91107081366944 | Approved |
+| Model | Tool tier 8 (Crystal Axe) | `store-assets/tools/fbx/Tool_T8.fbx` | 91759224577271 | Approved |
+| Model | Tool tier 9 (Ice Drill) | `store-assets/tools/fbx/Tool_T9.fbx` | 101169888558067 | Approved |
+| Model | Tool tier 10 (Diamond Sword) | `store-assets/tools/fbx/Tool_T10.fbx` | 94165974376326 | Approved |
+| Model | Retired ice pick 1 (Wooden) | `store-assets/tools/fbx/IcePick_T1.fbx` | 87084297887291 | Approved |
+| Model | Retired ice pick 2 (Stone) | `store-assets/tools/fbx/IcePick_T2.fbx` | 90204611101082 | Approved |
+| Model | Retired ice pick 3 (Iron) | `store-assets/tools/fbx/IcePick_T3.fbx` | 114047905090497 | Approved |
+| Model | Retired ice pick 4 (Gold) | `store-assets/tools/fbx/IcePick_T4.fbx` | 112470666170458 | Approved |
+| Model | Retired ice pick 5 (Diamond) | `store-assets/tools/fbx/IcePick_T5.fbx` | 96755604294244 | Approved |
+| Model | Retired ice pick 6 (Cosmic) | `store-assets/tools/fbx/IcePick_T6.fbx` | 94519841510459 | Approved |
 | Image | Particle texture SoftGlow | `assets/textures/particles/soft_glow.png` | 91645015616512 | Approved |
 | Image | Particle texture Sparkle | `assets/textures/particles/sparkle.png` | 134174453753532 | Approved |
 | Image | Particle texture Snowflake | `assets/textures/particles/snowflake.png` | 110080508554644 | Approved |

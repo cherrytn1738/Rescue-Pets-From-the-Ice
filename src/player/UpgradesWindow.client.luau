@@ -1,7 +1,7 @@
 -- The Upgrades panel (docs/GAME_DESIGN.md, "Screens" and "Upgrades in detail"): a grid of square
 -- upgrade tiles sorted by price, dimmed until affordable, with an Owned tab. The list is the next tier
 -- of each upgrade line (EconomyRules.UpgradeList); the server checks every unlock rule and price
--- (BuyUpgrade). Each tile shows its icon (UITheme.Icons, rendered from the game's models: the pick tier,
+-- (BuyUpgrade). Each tile shows its icon (UITheme.Icons, rendered from the game's models: the tool,
 -- the building with an up-arrow badge, Frost Touch, the ice upgrades); without the picture, its kind's
 -- emoji. The bottom line shows your crystals, or for a few seconds the answer to a purchase.
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -18,7 +18,7 @@ local Colors = UIKit.Colors
 
 local TILE = 196
 local KIND_LOOK = {
-	IcePick = { Emoji = "⛏️", Palette = "Teal" },
+	Tool = { Emoji = "⛏️", Palette = "Teal" },
 	FrostTouch = { Emoji = "❄️", Palette = "Aurora" },
 	Building = { Emoji = "🏗️", Palette = "Orange" },
 	Ice = { Emoji = "💎", Palette = "Purple" },
@@ -29,8 +29,8 @@ local messageUntil = 0
 
 -- The icon key (UITheme.Icons) for an upgrade, and whether the up-arrow badge goes on it.
 local function iconFor(upgrade): (string, boolean)
-	if upgrade.Kind == "IcePick" then
-		return "Pick" .. tostring(upgrade.Tier), false
+	if upgrade.Kind == "Tool" then
+		return "Tool" .. tostring(upgrade.Tier), false
 	elseif upgrade.Kind == "FrostTouch" then
 		return "FrostTouch", false
 	elseif upgrade.Kind == "Building" then

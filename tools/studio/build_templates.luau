@@ -1,11 +1,11 @@
 --[[
-build_templates.luau: builds the station and ice pick templates from the uploaded models (Edit mode only:
+build_templates.luau: builds the station, tool and plot templates from the uploaded models (Edit mode only:
 the command bar, or MCP execute_luau). Re-running replaces the old templates. Save the place afterwards:
 the templates live in the place file (ServerStorage), not in Git.
 
-  ONLY = nil              every building and the picks
+  ONLY = nil              every building and the tools
   ONLY = "IcePickPost"    one building (all five tiers and their upgrade sets)
-  ONLY = "Picks"          the six ice picks
+  ONLY = "Tools"          the tools (every tier with an uploaded model)
   ONLY = "Plot"           the plot's own parts (MapConfig.PlotModels: the arch, the ice stage, the walls)
   ONLY = "Plaza"          the plaza's parts (MapConfig.PlazaModels: the leaderboard board)
   ONLY = "Ice"            the ice block's kit (IceLooks.KitModelId: tools/blender/ice_block.py)
@@ -14,8 +14,9 @@ Out:
   ServerStorage.BuildingTemplates.<Id>.T<tier>   a Model: "Root" (its PrimaryPart: an invisible part at
       the pad centre on the ground, front -Z, carrying the named Attachments from BuildingModels), the
       station's MeshParts, and Upgrades.U1..U5 (the tier's upgrade part sets, in the station's space).
-  ServerStorage.PickTemplates.Pick<tier>         a Tool: an invisible Handle at the pick's Grip, the pick's
-      MeshParts welded to it, and Attachments Tip and Trail.
+  ServerStorage.ToolTemplates.Tool<tier>         a Tool: an invisible Handle at the tool's Grip, its MeshParts
+      welded to it (a drill's bit on a Weld BitJoint), Attachments Tip, TrailA, TrailB and Bit, a SwingTrail
+      (off), the attributes Tier and Family, and its family's grip (SwingConfig).
   ServerStorage.PlotTemplates.<PlotArch|PlotStage|PlotWallLong|PlotWallShort>   a Model of MeshParts in plot
       space, its pivot at the origin on the ground; nothing collides (the plot's own Parts do). "...Trim" meshes
       are untextured with the attribute RankColour: RankService gives them the owner's rebirth colour.
@@ -41,7 +42,7 @@ local ServerStorage = game:GetService("ServerStorage")
 -- Rojo has updated since (new ids, new attachment points) would be missed. Clones are new modules.
 local fresh = Instance.new("Folder")
 fresh.Name = "BuildTemplatesConfigs"
-for _, name in { "BuildingConfig", "BuildingModels", "UpgradeConfig", "MapConfig", "IceLooks" } do
+for _, name in { "BuildingConfig", "BuildingModels", "UpgradeConfig", "MapConfig", "IceLooks", "SwingConfig" } do
 	ReplicatedStorage[name]:Clone().Parent = fresh
 end
 fresh.Parent = ServerStorage
@@ -50,6 +51,7 @@ local BuildingModels = require(fresh.BuildingModels)
 local UpgradeConfig = require(fresh.UpgradeConfig)
 local MapConfig = require(fresh.MapConfig)
 local IceLooks = require(fresh.IceLooks)
+local SwingConfig = require(fresh.SwingConfig)
 fresh:Destroy()
 
 local PALETTE = BuildingConfig.PaletteTextureId
@@ -234,55 +236,88 @@ local function buildBuilding(building)
 	end
 end
 
-local function buildPick(pick)
-	local info = BuildingModels.Picks[pick.Tier]
-	if not pick.ModelId then
-		say(`SKIPPED pick {pick.Tier}: no asset id`)
+-- A tool template: an invisible Handle at the tool's Grip, its MeshParts welded to it (a drill's "...Bit" on a Weld
+-- BitJoint whose C0 sits on its axis, so the client can spin it), the Tip, TrailA, TrailB and Bit attachments, and a
+-- SwingTrail between TrailA and TrailB (off: PickSwing turns it on during a slash).
+local function buildTool(info)
+	local model = BuildingModels.Tools[info.Tier]
+	if not info.ModelId or not model then
+		say(`SKIPPED tool {info.Tier} {info.Name}: no asset id or attachments yet`)
 		return
 	end
-	local out = folder(ServerStorage, "PickTemplates")
-	local old = out:FindFirstChild("Pick" .. pick.Tier)
+	local out = folder(ServerStorage, "ToolTemplates")
+	local old = out:FindFirstChild("Tool" .. info.Tier)
 	if old then
 		old:Destroy()
 	end
 	local tool = Instance.new("Tool")
-	tool.Name = "Pick" .. pick.Tier
+	tool.Name = "Tool" .. info.Tier
 	tool.CanBeDropped = false
 	tool.RequiresHandle = true
 	tool.ManualActivationOnly = true
-	tool.ToolTip = pick.Name
-	tool:SetAttribute("Tier", pick.Tier)
-	local grip = attachmentCFrame(info.Attachments.Grip)
+	tool.ToolTip = info.Name
+	tool:SetAttribute("Tier", info.Tier)
+	tool:SetAttribute("Family", info.Family)
+	local grip = attachmentCFrame(model.Attachments.Grip)
 	local handle = Instance.new("Part")
 	handle.Name = "Handle"
 	handle.Size = Vector3.new(0.3, 0.3, 0.3)
 	handle.Transparency = 1
 	handle.CanCollide, handle.CanQuery, handle.CanTouch = false, false, false
 	handle.Massless = true
-	handle.CFrame = CFrame.new(grip.Position) -- (the pick's own axes: handle along +Y, head on top)
+	handle.CFrame = CFrame.new(grip.Position) -- (the tool's own axes: handle along +Y, the striking side toward -X)
 	handle.Parent = tool
-	local parts, factor = load(pick.ModelId, 3.5)
+	local parts, factor = load(info.ModelId, 4.2)
+	local bit
 	for _, p in parts do
 		style(p, false, Enum.CollisionFidelity.Box)
+		p.CanQuery = false
 		p.Anchored = false
 		p.Massless = true
 		p.Parent = tool
-		local weld = Instance.new("WeldConstraint")
-		weld.Part0, weld.Part1 = handle, p
-		weld.Parent = p
+		if string.sub(p.Name, -3) == "Bit" then
+			bit = p
+		else
+			local weld = Instance.new("WeldConstraint")
+			weld.Part0, weld.Part1 = handle, p
+			weld.Parent = p
+		end
 	end
-	for _, name in { "Tip", "Trail" } do
-		local a = info.Attachments[name]
+	local attachments = {}
+	for _, name in { "Tip", "TrailA", "TrailB", "Bit" } do
+		local a = model.Attachments[name]
 		if a then
 			local att = Instance.new("Attachment")
 			att.Name = name
 			att.CFrame = CFrame.new(-grip.Position) * attachmentCFrame(a)
 			att.Parent = handle
+			attachments[name] = att
 		end
 	end
-	tool.Grip = UpgradeConfig.PickGrip
+	if bit and attachments.Bit then
+		local joint = Instance.new("Weld") -- (a Weld: the character's Animator resets every Motor6D in the rig each frame)
+		joint.Name = "BitJoint"
+		joint.Part0, joint.Part1 = handle, bit
+		joint.C0 = attachments.Bit.CFrame -- (its +Y is the bit's axis: the client turns C0 about Y)
+		joint.C1 = bit.CFrame:ToObjectSpace(handle.CFrame * attachments.Bit.CFrame)
+		joint.Parent = handle
+	end
+	if attachments.TrailA and attachments.TrailB then
+		local settings = SwingConfig.Trail
+		local trail = Instance.new("Trail")
+		trail.Name = "SwingTrail"
+		trail.Attachment0, trail.Attachment1 = attachments.TrailA, attachments.TrailB
+		trail.Enabled = false
+		trail.Lifetime = settings.Lifetime
+		trail.MinLength = 0.05
+		trail.Transparency = NumberSequence.new(settings.Transparency[1], settings.Transparency[2])
+		trail.WidthScale = NumberSequence.new(settings.WidthScale[1], settings.WidthScale[2])
+		trail.LightEmission = settings.LightEmission
+		trail.Parent = handle
+	end
+	tool.Grip = SwingConfig.Family(info.Family).Grip
 	tool.Parent = out
-	say(string.format("Pick%d %s: %d meshes (import x%d)", pick.Tier, pick.Name, #parts, factor))
+	say(string.format("Tool%d %s (%s): %d meshes (import x%d)%s", info.Tier, info.Name, info.Family, #parts, factor, if bit then ", a spinning bit" else ""))
 end
 
 local TRIM_COLOUR = Color3.fromRGB(205, 222, 240) -- RankService's colour for a plot without a rank
@@ -377,9 +412,9 @@ for _, building in BuildingConfig.Buildings do
 		buildBuilding(building)
 	end
 end
-if ONLY == nil or ONLY == "Picks" then
-	for _, pick in UpgradeConfig.IcePick do
-		buildPick(pick)
+if ONLY == nil or ONLY == "Tools" then
+	for _, info in UpgradeConfig.Tools do
+		buildTool(info)
 		task.wait()
 	end
 end

@@ -1,5 +1,5 @@
 --[[
-build_swing_animations.luau: turns SwingConfig's poses into KeyframeSequences and returns each one serialized as an
+build_swing_animations.luau: turns SwingConfig's poses (every family's variants and dips) into KeyframeSequences and returns each one serialized as an
 .rbxm file (hex), for tools/make_swing_animations.py (which writes store-assets/animations/PickSwing<Name>.rbxm for
 tools/upload_models.py to upload as group Animations). Run in Edit mode with Rojo synced. Nothing is left in the
 place.
@@ -8,7 +8,10 @@ local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SerializationService = game:GetService("SerializationService")
 
-local SwingConfig = require(ReplicatedStorage.SwingConfig)
+-- (a fresh copy: Studio's require keeps the first copy it loaded in a session, which may be older than Rojo's)
+local fresh = ReplicatedStorage.SwingConfig:Clone()
+local SwingConfig = require(fresh)
+fresh:Destroy()
 
 local function build(name: string, frames, parents): KeyframeSequence
 	local sequence = Instance.new("KeyframeSequence")

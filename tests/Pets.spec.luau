@@ -22,7 +22,7 @@ return function(sources)
 		modules[name] = chunk()
 		return modules[name]
 	end
-	for _, name in { "BuildingConfig", "CreatureConfig", "LayerConfig", "RebirthConfig", "UpgradeConfig", "MonetizationConfig", "EconomyRules", "PetRules", "IceLooks" } do
+	for _, name in { "BuildingConfig", "CreatureConfig", "LayerConfig", "RebirthConfig", "UpgradeConfig", "MonetizationConfig", "NumberFormat", "EconomyRules", "PetRules", "IceLooks" } do
 		loadPure(name)
 	end
 	local PetRules, R, CreatureConfig, IceLooks = modules.PetRules, modules.EconomyRules, modules.CreatureConfig, modules.IceLooks

@@ -42,10 +42,12 @@ return function(sources)
 		return data
 	end
 
-	-- Taps and the ice pick ---------------------------------------------------------------------------
-	check(R.TapDamage(save()) == 1, "a new player taps for 1 (the wooden pick)")
-	check(R.TapDamage(save({ Upgrades = { "IcePick2", "IcePick3" } })) == 4, "the iron pick taps for 4")
-	check(R.PickTier(save({ Upgrades = { "IcePick2" } })) == 2, "the pick tier is the best one owned")
+	-- Taps and the tools ------------------------------------------------------------------------------
+	check(R.TapDamage(save()) == 1, "a new player taps for 1 (the Wooden Pick)")
+	check(R.TapDamage(save({ Upgrades = { "Tool2", "Tool3", "Tool4" } })) == UpgradeConfig.Tools[4].TapDamage, "the Iron Pick taps for its damage")
+	check(R.ToolTier(save({ Upgrades = { "Tool2" } })) == 2, "the tool tier is the best one owned")
+	check(R.ToolTier(save({ Upgrades = { "IcePick3" } })) == 1, "an old ice pick id counts for nothing here (PlayerData turns it into tools on load)")
+	check(string.find(R.Describe(UpgradeConfig.Get("Tool10")), "damage per tap", 1, true) ~= nil, "a tool's line says its damage per tap")
 
 	-- Buildings ----------------------------------------------------------------------------------------
 	local posts = save({ Buildings = { IcePickPost = 10 } })
@@ -74,15 +76,24 @@ return function(sources)
 	check(count == 1, "Max shows at least one copy's price")
 
 	-- Upgrade unlock rules
-	check(not R.UpgradeUnlocked(save(), "IcePick3"), "pick tiers go in order")
-	check(R.UpgradeUnlocked(save(), "IcePick2"), "the stone pick is open from the start")
+	check(not R.UpgradeUnlocked(save(), "Tool3"), "tool tiers go in order")
+	check(R.UpgradeUnlocked(save(), "Tool2"), "the Stone Hammer is open from the start")
+	local deepTools = {}
+	for tier = 2, 13 do
+		table.insert(deepTools, "Tool" .. tier)
+	end
+	local gate = UpgradeConfig.Get("Tool14").UnlockLevel
+	check(type(gate) == "number" and not R.UpgradeUnlocked(save({ Upgrades = deepTools, BlockLevel = gate - 1 }), "Tool14"), "the deep tools wait for their block level")
+	local ok, reason = R.UpgradeUnlocked(save({ Upgrades = deepTools, BlockLevel = gate - 1 }), "Tool14")
+	check(not ok and reason == `Reach level {gate}`, "...and say which level")
+	check(R.UpgradeUnlocked(save({ Upgrades = deepTools, BlockLevel = gate }), "Tool14"), "...and open there")
 	check(not R.UpgradeUnlocked(save(), "IcePickPostUpgrade1"), "a building upgrade needs a copy")
 	check(R.UpgradeUnlocked(save({ Buildings = { IcePickPost = 1 } }), "IcePickPostUpgrade1"), "...one copy opens the 1st")
 	check(not R.UpgradeUnlocked(save({ Buildings = { IcePickPost = 10 } }), "IcePickPostUpgrade2"), "the 2nd needs the 1st first")
 	check(R.UpgradeUnlocked(save({ Buildings = { IcePickPost = 10 }, Upgrades = { "IcePickPostUpgrade1" } }), "IcePickPostUpgrade2"), "...and 10 copies")
 	check(not R.UpgradeUnlocked(save(), "FrostTouch1") and R.UpgradeUnlocked(save({ Buildings = { WreckingCrane = 1 } }), "FrostTouch1"), "Frost Touch I needs a Wrecking Crane")
 	check(not R.UpgradeUnlocked(save(), "CrystalYield2"), "ice upgrade tiers go in order")
-	check(not R.UpgradeUnlocked(save({ Upgrades = { "IcePick2" } }), "IcePick2"), "an owned upgrade can't be bought again")
+	check(not R.UpgradeUnlocked(save({ Upgrades = { "Tool2" } }), "Tool2"), "an owned upgrade can't be bought again")
 	local list = R.UpgradeList(save({ Buildings = { IcePickPost = 1 } }))
 	for i = 2, #list do
 		check(list[i - 1].Upgrade.Cost <= list[i].Upgrade.Cost, "the upgrade list is sorted by price")

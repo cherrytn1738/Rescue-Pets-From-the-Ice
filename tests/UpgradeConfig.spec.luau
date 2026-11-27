@@ -20,19 +20,39 @@ return function(sources)
 	}, { __index = getfenv(1) }))
 	local UpgradeConfig = chunk()
 
-	-- Ice pick tiers.
-	local picks = doc:Table({ "Tier", "Pick", "Tap damage", "Cost (crystals)" })
-	check(#picks == #UpgradeConfig.IcePick, "six ice pick tiers")
-	for index, row in picks do
-		local tier = UpgradeConfig.IcePick[index]
-		check(tier.Tier == DesignDoc.Number(row.Tier) and tier.Name == row.Pick, "tier " .. index .. " is the " .. row.Pick)
-		check(tier.TapDamage == DesignDoc.Number(row["Tap damage"]), row.Pick .. " deals " .. row["Tap damage"])
-		check(tier.Cost == (DesignDoc.Number(row["Cost (crystals)"]) or 0), row.Pick .. " costs " .. row["Cost (crystals)"])
+	-- Tools: 18 tiers in five families that take turns (docs/GAME_DESIGN.md, "Tools").
+	local tools = doc:Table({ "Tier", "Tool", "Family", "Tap damage", "Cost (crystals)", "Unlocks" })
+	check(#tools == 18 and #UpgradeConfig.Tools == 18, "18 tools")
+	local families = { Pick = 0, Hammer = 0, Axe = 0, Sword = 0, Spear = 0 }
+	for index, row in tools do
+		local tool = UpgradeConfig.Tools[index]
+		check(tool.Tier == index and tool.Tier == DesignDoc.Number(row.Tier) and tool.Name == row.Tool, "tier " .. index .. " is the " .. row.Tool)
+		check(tool.Family == row.Family and families[tool.Family] ~= nil, row.Tool .. " is a " .. row.Family)
+		families[tool.Family] += 1
+		check(tool.TapDamage == DesignDoc.Number(row["Tap damage"]), row.Tool .. " deals " .. row["Tap damage"])
+		check(tool.Cost == (DesignDoc.Number(row["Cost (crystals)"]) or 0), row.Tool .. " costs " .. row["Cost (crystals)"])
+		local level = tonumber(string.match(row.Unlocks, "[Ll]evel (%d+)"))
+		check(tool.UnlockLevel == level, row.Tool .. " unlocks: " .. row.Unlocks)
 		if index > 1 then
-			local previous = UpgradeConfig.IcePick[index - 1]
-			check(tier.TapDamage == previous.TapDamage * 2, row.Pick .. " doubles tap damage")
-			check(index == 2 or tier.Cost == previous.Cost * 10, row.Pick .. " costs 10 times the last")
+			local previous = UpgradeConfig.Tools[index - 1]
+			check(tool.TapDamage > previous.TapDamage and tool.Cost > previous.Cost, row.Tool .. " hits harder and costs more than the " .. previous.Name)
+			check(tool.Family ~= previous.Family, row.Tool .. ": the families take turns")
+			check(not previous.UnlockLevel or (tool.UnlockLevel and tool.UnlockLevel > previous.UnlockLevel), row.Tool .. ": the deep tools open deeper and deeper")
+			local upgrade = UpgradeConfig.Get("Tool" .. index)
+			check(upgrade and upgrade.Kind == "Tool" and upgrade.Tier == index and upgrade.Cost == tool.Cost and upgrade.UnlockLevel == tool.UnlockLevel, "Tool" .. index .. " is its upgrade")
 		end
+	end
+	for family, count in families do
+		check(count >= 3, family .. ": three or four tools")
+	end
+	check(UpgradeConfig.Tools[1].Cost == 0 and UpgradeConfig.Get("Tool1") == nil, "the Wooden Pick is the start, not an upgrade")
+	check(string.find(text, "a new tool about every 2–3 minutes", 1, true) ~= nil, "the doc says how often a new tool comes")
+	-- The old ice picks (before the tools) turn into the tool of the same material
+	local materials = { IcePick2 = "Stone", IcePick3 = "Iron", IcePick4 = "Gold", IcePick5 = "Diamond", IcePick6 = "Cosmic" }
+	for id, material in materials do
+		local tier = UpgradeConfig.OldPickTiers[id]
+		check(tier and string.find(UpgradeConfig.Tools[tier].Name, material, 1, true), id .. " turns into the " .. material .. " tool")
+		check(UpgradeConfig.Get(id) == nil, id .. " is no longer an upgrade")
 	end
 
 	-- Frost Touch.
@@ -98,8 +118,7 @@ return function(sources)
 		total += 1
 		check(type(upgrade.Cost) == "number" and upgrade.Cost > 0, upgrade.Id .. " has a positive cost")
 	end
-	check(total >= 50 and total <= 70 and string.find(text, "About 60 in all at launch", 1, true), "about 60 upgrades in all (" .. total .. ")")
-	check(UpgradeConfig.Get("IcePick1") == nil, "the wooden pick is the start, not an upgrade")
+	check(total >= 50 and total <= 70 and string.find(text, "About 65 in all at launch", 1, true), "about 60 upgrades in all (" .. total .. ")")
 
 	return passed
 end

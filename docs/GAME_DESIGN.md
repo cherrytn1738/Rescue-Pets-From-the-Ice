@@ -105,7 +105,7 @@ Auras follow the effect rules (your plot at full rate, others at half within 60 
 
 [Concept image in the Claude doc: Crack stages: an Epic Mini Yeti gets clearer at 20, 40, 60 and 80 percent, then breaks free at 100 percent\]
 
-**Every hit.** The block squashes about 3% and springs back (a new tap restarts it, never stacking), a small white glint flashes where the pick strikes, and ice chips, crystal bits and the pick's sparks burst out of the exact spot the player clicked or touched (where that ray meets the block, out along the face and towards the camera; a tap that misses the block uses the nearest point of the face towards the camera, a gamepad the middle of that face), and a crunch plays. Its pitch rises slightly during fast tapping streaks. Where the player clicked or touched, a small white flash with a few short white streaks bursts out (about 0.25 s), and "+N" pops up 30-70 px away at a random angle: the crystals that tap earned (the server's figure, so it matches the counter), in the chunky UI font, white with a dark outline and short numbers (+6, +1.2K), popping in with a little jiggle, then floating up and fading in about 0.7 s. With a gamepad it shows at the ice block. Auto Pick's taps don't show it, and reduced effects keeps the number but drops the streaks.
+**Every hit.** The block squashes about 3% and springs back (a new tap restarts it, never stacking), a small white glint flashes where the tool strikes, and ice chips, crystal bits and the tool's sparks burst out of the exact spot the player clicked or touched (where that ray meets the block, out along the face and towards the camera; a tap that misses the block uses the nearest point of the face towards the camera, a gamepad the middle of that face), and a crunch plays. Its pitch rises slightly during fast tapping streaks. Where the player clicked or touched, a small white flash with a few short white streaks bursts out (about 0.25 s), and "+N" pops up 30-70 px away at a random angle: the crystals that tap earned (the server's figure, so it matches the counter), in the chunky UI font, white with a dark outline and short numbers (+6, +1.2K), popping in with a little jiggle, then floating up and fading in about 0.7 s. With a gamepad it shows at the ice block. Auto Pick's taps don't show it, and reduced effects keeps the number but drops the streaks.
 
 **The rescue moment.** The block breaks into its own pre-cut pieces, which burst out and fade (a rare block also bursts in its aura's colour), with a crystal fountain worth about 30 seconds of the player's income. The creature shakes off the frost, a banner shows its rarity, and it runs to the player. A new, slightly bigger block then slides into the plot on a sled from the glacier.
 
@@ -138,11 +138,11 @@ Crystals come from damage: every point of damage on the ice drops one crystal, t
 
 **Upgrades.**
 
-- **Tap power:** each tier doubles tap damage and upgrades the player's ice pick. Each tier costs 10 times the last.
+- **Tap power:** 18 tools, each hitting harder than the last and each swung its own way (see Tools in "Upgrades in detail").
 - **Building upgrades:** double one building's damage and give it better parts. They unlock at 1, 10, 25, 50 and 100 owned.
 - **Ice upgrades:** a bigger crystal burst on each rescue, and a little more crystals per damage.
 
-All numbers are starting values. The economy simulation should hit three targets: the first rescue within 60 seconds, the first building within 30 seconds, and the first rebirth after about 30–40 minutes (reaching Layer 4).
+All numbers are starting values. The economy simulation should hit these targets: the first rescue within 60 seconds, the first building within 30 seconds, the first rebirth after about 30–40 minutes (reaching Layer 4), a new tool about every 2–3 minutes in the first run, and taps a meaningful share of the damage all the way through.
 
 ## Buildings in detail
 
@@ -281,18 +281,40 @@ Higher tiers don't just look different, they feel alive: each tier adds a layer 
 
 ## Upgrades in detail
 
-Upgrades are one-time purchases in the Upgrades panel. There are three kinds: the ice pick (tapping), building upgrades, and ice upgrades. About 60 in all at launch.
+Upgrades are one-time purchases in the Upgrades panel. There are three kinds: the tools (tapping, with Frost Touch), building upgrades, and ice upgrades. About 65 in all at launch.
 
-**Ice pick tiers** (tap power; each tier also changes the pick the player swings):
+**Tools** (tap power; each tier also changes the tool the player holds and how they swing it). 18 tools in five families that take turns, so each new tool feels different. In the first run a new tool comes along about every 2–3 minutes (13 of them by the rebirth); the deep tools (14–18) also need a block level in the current run, so they come in later runs: two in Layer 4, the top three in Layer 5 on the way into the Frozen Core. Damage and costs come from the economy simulation (`tools/economy_sim.py`); taps stay about 30–35% of a run's damage at every layer of the first run and in the deep layers of later runs.
 
-| Tier | Pick | Tap damage | Cost (crystals) |
-| --- | --- | --- | --- |
-| 1 | Wooden pick | 1 | Start |
-| 2 | Stone pick | 2 | 100 |
-| 3 | Iron pick | 4 | 1,000 |
-| 4 | Gold pick | 8 | 10,000 |
-| 5 | Diamond pick | 16 | 100,000 |
-| 6 | Cosmic pick | 32 | 1M |
+| Tier | Tool | Family | Tap damage | Cost (crystals) | Unlocks | First bought (simulation, 4 taps/s) |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | Wooden Pick | Pick | 1 | Start | – | – |
+| 2 | Stone Hammer | Hammer | 2 | 60 | – | 0:18 |
+| 3 | Copper Axe | Axe | 6 | 2,000 | – | 2:15 |
+| 4 | Iron Pick | Pick | 20 | 10,000 | – | 4:40 |
+| 5 | Steel Sword | Sword | 60 | 40,000 | – | 7:30 |
+| 6 | Frost Spear | Spear | 120 | 100,000 | – | 10:05 |
+| 7 | Gold Hammer | Hammer | 250 | 250,000 | – | 12:25 |
+| 8 | Crystal Axe | Axe | 500 | 500,000 | – | 14:50 |
+| 9 | Ice Drill | Spear | 800 | 750,000 | – | 17:55 |
+| 10 | Diamond Sword | Sword | 1,200 | 1.5M | – | 21:35 |
+| 11 | Flame Pick | Pick | 2,000 | 3M | – | 23:30 |
+| 12 | Thunder Hammer | Hammer | 3,000 | 5M | – | 28:15 |
+| 13 | Aurora Blade | Sword | 4,000 | 7.5M | – | 31:30 |
+| 14 | Lava Axe | Axe | 50,000 | 100M | Level 33 | Run 2 |
+| 15 | Starfall Spear | Spear | 250,000 | 2B | Level 37 | Run 4 |
+| 16 | Comet Hammer | Hammer | 1.5M | 20B | Level 41 | Run 4 |
+| 17 | Cosmic Pick | Pick | 6M | 200B | Level 45 | Run 5–6 |
+| 18 | Starbreaker | Sword | 25M | 2T | Level 48 | Run 7 |
+
+How each family swings (every swing is a wind-up, the strike, a small recoil bounce, a follow-through and the recovery):
+
+- **Pick:** an overhead strike, then diagonals from the left and from the right in turn.
+- **Hammer:** a slower wind-up that hangs at the top, a heavy slam with a deep knee dip, a stronger camera nudge and a chunkier burst of ice chips.
+- **Axe:** diagonal chops, alternating from over the left and the right shoulder.
+- **Sword:** a quick 3-hit combo (a sweep in from the right, a backhand from the left, an overhead) with a trail in the tool's colour during the slash.
+- **Spear** (the spears and the Ice Drill): a forward thrust with a short lunge; the drill's bit spins on the hit.
+
+**The tools' look.** The buildings' smooth toy style, about 20% bigger in the hand than the old ice picks (a hammer a little chunkier, a sword a little longer), held with one grip per family so the striking end always meets the ice. Tiers 1–10 are real materials, from wood to diamond; tiers 11–18 are magical, with a glow, a swing trail and a hit effect in their theme (fire, lightning, aurora light, lava, falling stars, comet fire, cosmic sparkles, and a big starburst for the Starbreaker). Each tier throws its own spark colour. Reduced effects keeps the tools and drops the extra effects. Buying a tool shows a short "New tool! <name>" banner with the tool spinning in it (it waits its turn with the other banners and never blocks tapping), then the tool appears in the player's hand with a flash. The Upgrades panel's tool tile shows the next tool's icon, name, damage per tap and cost, and a Tools tab shows all 18: the ones owned this run, the next one, and silhouettes of the later ones.
 
 **Frost Touch** keeps tapping worthwhile late in a run: each tier makes every tap also deal a share of the player's building damage per second.
 
@@ -392,13 +414,13 @@ The Creature Book is the long-term goal: every creature in the game, shown as a 
 | Epic (3) | +10% crystals and a frosty name-tag border |
 | Legendary (2) | +15% crystals and a golden name-tag border |
 | Mythic (2) | An aurora trail behind the player |
-| Golden (all 18) | The title "Ice Keeper" and a golden ice pick skin |
+| Golden (all 18) | The title "Ice Keeper" and a golden skin for whatever tool the player holds |
 
 Completion shows as a percentage on the book button, and the leaderboards in the plaza include creatures rescued.
 
 ## How buildings, upgrades and pets look
 
-Everything a player buys shows up in the world: buildings around the ice, upgrades on the buildings and the player's ice pick, and pets following the player.
+Everything a player buys shows up in the world: buildings around the ice, upgrades on the buildings and the player's tool, and pets following the player.
 
 **Buildings.** The plot has eight fixed building pads in a ring around the ice, one per type, so it never gets crowded. Small buildings sit close (the Ice Pick Post right at the base) and big ones sit further out or tower above (the Lava Pump, the Sun Mirror Tower). The first copy of a type rises out of the snow with a puff while the camera nudges toward it. More copies add a "×37" badge instead of more models, and the station grows at milestones:
 
@@ -416,7 +438,7 @@ Once a player owns the next building up, the older station shrinks and blends in
 
 **Upgrades.**
 
-- **Tap power** upgrades the ice pick the player swings on every tap: wood, stone, iron, gold, diamond, then cosmic, each with its own spark colour.
+- **Tap power** upgrades the tool the player swings on every tap: 18 tools in five families, from a Wooden Pick to the Starbreaker, each with its own swing and spark colour.
 - **Building upgrades** give the building better parts (a stone pick head, then iron, then gold; a hotter flame), change its hit sparks, and add a star to its badge.
 - **Ice upgrades** make the rescue burst bigger and turn the crystals from white to blue to gold.
 - **Rebirths** give a rank title and colour on the player's name tag ("Rebirth 7"; other players see it, your own is hidden for you so it never covers your ice) and change the colour of the plot's border.
@@ -428,11 +450,11 @@ Once a player owns the next building up, the older station shrinks and blends in
 | What | How it shows progress |
 | --- | --- |
 | The ice block | Gets bigger with each level and turns into a new kind of ice at every layer. It is the centre of the plot, so it is seen first. |
-| The ice pick | Wood, stone, iron, gold, diamond, cosmic, with matching sparks on every tap. Players carry it everywhere. |
+| The tool | 18 tools from a Wooden Pick to the Starbreaker, each swung its own way, with matching sparks on every tap. Players carry it everywhere. |
 | Pets | Rare, Golden and Mythic pets following the player are the main way to show off. |
 | Rebirth rank | A title and colour on the name tag and a plot border colour. |
 
-The ice block shows how far you have come, buildings show what is earning for you now, and the ice pick and pets are what you show off while walking around.
+The ice block shows how far you have come, buildings show what is earning for you now, and the tool and pets are what you show off while walking around.
 
 **Menus.** Each building card in the Build panel shows a 3D preview, the number owned, the price, damage per second and a bar for its share of income. Locked buildings show as dark silhouettes marked "???" until the player is close to affording them. Upgrades are a grid of square icons sorted by price, dimmed until affordable. Buying flashes the card and puffs the station in the world at the same moment.
 
@@ -547,7 +569,7 @@ Launch with 6 passes and 4 kinds of products. Prices were checked against 12 pop
 
 ## UI and controls
 
-Inside your plot, a tap anywhere on the screen swings your ice pick at the block, so phone players never have to aim. The swing is animated (other players see it): a quick wind-up with the pick back over the shoulder, the torso twisting and the knees bending, a fast strike, a small recoil bounce, then a follow-through and recovery, with a tiny camera nudge on the strike (not with reduced effects). Three variants take turns (overhead, a diagonal from the left, a diagonal from the right). The tap's effects and sound fire on the click itself; tapping faster than a full swing plays the swing faster and cuts into the next one, never queueing swings. Outside your plot, taps only count on a golden block.
+Inside your plot, a tap anywhere on the screen swings your tool at the block, so phone players never have to aim. The swing is animated (other players see it) and depends on the tool's family (see Tools in "Upgrades in detail"): a quick wind-up, the torso twisting, a fast strike, a small recoil bounce, then a follow-through and recovery, with a camera nudge on the strike (not with reduced effects); the knees bend only while standing. The family's variants take turns. The tap's effects and sound fire on the click itself; tapping faster than a full swing plays the swing faster and cuts into the next one, never queueing swings. Outside your plot, taps only count on a golden block.
 
 | Device | Hit the ice |
 | --- | --- |
@@ -605,7 +627,7 @@ Sound and effects carry most of the "every tap feels good" pillar. Every sound c
 
 | Moment | Sound | Visual effect |
 | --- | --- | --- |
-| Tap | Short icy crunch (four variants, a small random pitch), pitch rising slightly during streaks; at most 3 at once, so an autoclicker can't stack them | Ice chips, small crystal spray, pick swing; at the cursor a white burst and the "+N" earned |
+| Tap | Short icy crunch (four variants, a small random pitch), pitch rising slightly during streaks; at most 3 at once, so an autoclicker can't stack them | Ice chips, small crystal spray, tool swing; at the cursor a white burst and the "+N" earned |
 | Hover | A very short, very quiet tick when the mouse moves onto anything clickable (buttons, cards, tabs, the ice block, the chests and kiosk); on entering only, at most one every 0.08 s, desktop only | – |
 | Building hit | No sound per hit: now and then a quiet chip from your own plot, none from other plots | Building animation, the ice shudders |
 | Crack stage | A crack, deeper at each stage (20/40/60/80%) | New crack layer, chunks falling, camera nudge |
@@ -640,7 +662,7 @@ The server owns every number. The client sends tap counts and requests, and only
 - **Big numbers:** Luau numbers reach about 1e308, which is enough. Display uses suffixes (K, M, B, T, Qa, Qi, Sx, Sp, Oc, No, Dc, then Ud, Dd, Td, Qad, Qid, Sxd, Spd, Ocd, Nod, Vg, Uvg, Dvg, Tvg, Qavg, Qivg, Sxvg, Spvg, Ocvg, Novg, Tg); past Tg (1e93) a short exponent such as "1.82e96". Ice block HP passes Dc around level 200. Leaderboards store `math.floor(math.log10(total) * 1000)`, because OrderedDataStore only holds whole numbers up to about 9e18.
 - **Offline earnings:** building income only, at 50%, capped at 2 hours away, shown in a welcome-back popup ("You earn half your building income for up to 2 hours away." once the cap is reached).
 - **Anti-cheat:** every RemoteEvent is rate-limited. The server computes all prices and checks every buy and equip. Auto Pick runs on the server, so autoclickers can never beat the 20-taps-a-second cap.
-- **Phones:** building animations, ice chips and crystal particles run on the client only. Each plot shows one model per building type with a count badge. Every building, pick and plot mesh uses RenderFidelity Automatic (Roblox's level of detail), not Precise.
+- **Phones:** building animations, ice chips and crystal particles run on the client only. Each plot shows one model per building type with a count badge. Every building, tool and plot mesh uses RenderFidelity Automatic (Roblox's level of detail), not Precise.
 - **Streaming:** Workspace.StreamingEnabled is on, so distant plots stream out (target radius 240 studs, minimum 96, opportunistic stream-out). The plaza is a Persistent model (always loaded with its boards and chests); each station and the plot's own models are PersistentPerPlayer, always loaded for the plot's owner and streamed whole for everyone else. Plot models and their Block folders (the block's state) always reach every client, so ice blocks, beams, name tags and the Golden Glacier (drawn by the client) work at any distance.
 - **Analytics funnels:** Joined, First tap, First building, First rescue, First pet equipped, Tutorial done, First rebirth, plus a shop funnel. Two progression funnels (each step once per player): layers reached (1-6) and rebirth ranks (1, 3, 6, 10).
 - **Analytics events:** the crystal economy (every source: taps, Auto Pick, buildings, rescues, the Golden Glacier's and the Server Frost Rush's share, the daily chest, offline earnings, codes, bundles; every sink: buildings, upgrades), sent in 5-minute batches per player; Golden Glacier joins, wins and escapes as custom events.

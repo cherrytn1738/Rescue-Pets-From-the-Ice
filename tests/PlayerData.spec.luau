@@ -278,7 +278,7 @@ return function(sources)
 	live.Crystals, live.CrystalsThisRun, live.CrystalsAllTime = 1234.5, 2000, 1e40
 	live.BlockLevel, live.CurrentBlock = 24, { CreatureId = "FrostDragonHatchling", HpLeft = 31.25 }
 	live.Buildings.IcePickPost, live.Buildings.HeatLamp = 12, 3
-	table.insert(live.Upgrades, "IcePick2")
+	table.insert(live.Upgrades, "Tool2")
 	table.insert(live.Upgrades, "IcePickPostUpgrade1")
 	table.insert(live.Pets, { Uid = "pet-1", CreatureId = "SnowBunny", Golden = false })
 	table.insert(live.Pets, { Uid = "pet-2", CreatureId = "AuroraFox", Golden = true })
@@ -313,7 +313,7 @@ return function(sources)
 		SchemaVersion = 1,
 		CurrentBlock = { CreatureId = "Dinosaur", HpLeft = 10 },
 		Buildings = { IcePickPost = 2, RetiredBuilding = 4, HeatLamp = 0 },
-		Upgrades = { "IcePick2", "IcePick2", "NoSuchUpgrade", 5 },
+		Upgrades = { "IcePick4", "IcePick4", "Tool3", "NoSuchUpgrade", 5, "HeatLampUpgrade1" },
 		Pets = {
 			{ Uid = "a", CreatureId = "SealPup", Golden = "yes" },
 			{ Uid = "a", CreatureId = "SealPup" },
@@ -334,7 +334,8 @@ return function(sources)
 	data = PlayerData.Get(messyGame)
 	check(PlayerData.IsReady(messyGame) and data.CurrentBlock == nil, "a block with an unknown creature is rolled again")
 	check(data.Buildings.IcePickPost == 2 and data.Buildings.RetiredBuilding == nil and data.Buildings.HeatLamp == nil, "unknown buildings and zero counts are dropped")
-	check(#data.Upgrades == 1 and data.Upgrades[1] == "IcePick2", "unknown, repeated and junk upgrades are dropped")
+	check(table.concat(data.Upgrades, ",") == "Tool2,Tool3,Tool4,Tool5,Tool6,Tool7,HeatLampUpgrade1",
+		"an old ice pick (IcePick4, the gold pick) turns into every tool up to the Gold Hammer; unknown, repeated and junk upgrades are dropped")
 	check(#data.Pets == 2 and data.Pets[1].Uid == "a" and data.Pets[1].Golden == false and data.Pets[2].Uid == "c",
 		"pets: repeated uids, unknown creatures, empty uids and junk are dropped; Golden is a boolean")
 	check(#data.Equipped == 2 and data.Equipped[1] == "c" and data.Equipped[2] == "a", "equipped: only owned pets, each once")

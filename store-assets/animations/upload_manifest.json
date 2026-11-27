@@ -1,5 +1,23 @@
 {
  "assets": {
+  "PickSwingChopLeft.rbxm": {
+   "assetId": "80435661491688",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "21fedf526bc3f73d6a606e42796b73be2f19b3365a3d70dc38213a2c6546f0bd",
+   "updated": "2026-11-27T15:52:37+00:00"
+  },
+  "PickSwingChopRight.rbxm": {
+   "assetId": "98358725240018",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "1ef8d1137007318a246e03d5a1a563c8053080e45a600b1864645b9f424f7d01",
+   "updated": "2026-11-27T15:52:39+00:00"
+  },
   "PickSwingDip.rbxm": {
    "assetId": "127243049876513",
    "creator": {
@@ -27,6 +45,24 @@
    "sha256": "6246c49112b0be593661e12b949efd7da2dcf306f861e5a8a19715e7e7b37451",
    "updated": "2026-11-27T11:45:56+00:00"
   },
+  "PickSwingHammerDip.rbxm": {
+   "assetId": "123411023403962",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "2919aeac719e5d1f7c819bed7d4c65d1598ea1b23ae86025546953635debeffa",
+   "updated": "2026-11-27T15:52:41+00:00"
+  },
+  "PickSwingLunge.rbxm": {
+   "assetId": "86353792297686",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "3be51b50df1d711bbbf44fe1ffbeed7bf825f12c6d87a4ac827c8b6094ea627d",
+   "updated": "2026-11-27T15:52:43+00:00"
+  },
   "PickSwingOverhead.rbxm": {
    "assetId": "106668462275845",
    "creator": {
@@ -35,6 +71,69 @@
    "moderationState": "Approved",
    "sha256": "cc7e7a6517ed22629c3af0cd46c71001a7823ac7e78248440b3bb9562398a5d5",
    "updated": "2026-11-27T11:45:45+00:00"
+  },
+  "PickSwingSlam.rbxm": {
+   "assetId": "112147726668578",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "e2780c6370a5b858292723c8a0131627ffbfedd214c459f7be87aa10cb6bcf1c",
+   "updated": "2026-11-27T15:52:45+00:00"
+  },
+  "PickSwingSlamRight.rbxm": {
+   "assetId": "82847729121210",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "db7cf87b922d71e109e6fae3d9de947fef0adf0e5975c25a49e0a2c9cdee24bf",
+   "updated": "2026-11-27T15:52:47+00:00"
+  },
+  "PickSwingSlashLeft.rbxm": {
+   "assetId": "119961855935717",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "9abf356f08247018511a5703644fd188e411a7c56266037d22c51a869be4d827",
+   "updated": "2026-11-27T15:52:49+00:00"
+  },
+  "PickSwingSlashOverhead.rbxm": {
+   "assetId": "125195537816817",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "9d553454667702ff4ef7a288cd294ecfd4b18ba8e0228077ea15bef4bb498380",
+   "updated": "2026-11-27T15:52:51+00:00"
+  },
+  "PickSwingSlashRight.rbxm": {
+   "assetId": "88181411707133",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "056f225bf8a5f879aa675084b186e467adee1c3652c82d72e75c4dd136151672",
+   "updated": "2026-11-27T15:52:53+00:00"
+  },
+  "PickSwingThrust.rbxm": {
+   "assetId": "76853346354718",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "1207b660a0cec90ad1d2a3af413d8c282f28cf73ce4839c18cc9f9557fcba45f",
+   "updated": "2026-11-27T15:52:55+00:00"
+  },
+  "PickSwingThrustLow.rbxm": {
+   "assetId": "73611655188843",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "3c142b0fcb37c1a692e859c8014b622baa1d907dff58831450d586733d80d8fc",
+   "updated": "2026-11-27T15:52:57+00:00"
   }
  },
  "creator": {

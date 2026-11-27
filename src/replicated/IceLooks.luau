@@ -52,15 +52,27 @@ IceLooks.SledSeconds = 0.9 -- the slide itself (the rest of the wait the block i
 IceLooks.GlowBoostAtStage4 = 1.8
 IceLooks.Particles = { Chips = 5, Sparkles = 3, Shards = 26, Fountain = 40 } -- halved with reduced effects
 
--- The sparks your taps throw, by ice pick tier (docs/GAME_DESIGN.md, "Upgrades": wood, stone, iron, gold,
--- diamond, cosmic, "each with its own spark colour").
-IceLooks.PickSparks = {
-	Color3.fromRGB(255, 170, 90), -- wood: warm orange
-	Color3.fromRGB(215, 215, 205), -- stone: pale grey
-	Color3.fromRGB(235, 245, 255), -- iron: white-hot
-	Color3.fromRGB(255, 215, 70), -- gold
-	Color3.fromRGB(120, 245, 255), -- diamond: cyan
-	Color3.fromRGB(205, 120, 255), -- cosmic: violet
+-- The sparks your taps throw (and a sword's trail), by tool tier (docs/GAME_DESIGN.md, "Tools": "each tier gets
+-- its own spark colour").
+IceLooks.ToolSparks = {
+	Color3.fromRGB(255, 170, 90), -- Wooden Pick: warm orange
+	Color3.fromRGB(215, 215, 205), -- Stone Hammer: pale grey
+	Color3.fromRGB(255, 140, 70), -- Copper Axe: copper
+	Color3.fromRGB(235, 245, 255), -- Iron Pick: white-hot
+	Color3.fromRGB(190, 220, 255), -- Steel Sword: steel blue
+	Color3.fromRGB(140, 230, 255), -- Frost Spear: frost
+	Color3.fromRGB(255, 215, 70), -- Gold Hammer: gold
+	Color3.fromRGB(110, 245, 255), -- Crystal Axe: crystal cyan
+	Color3.fromRGB(150, 205, 255), -- Ice Drill: ice blue
+	Color3.fromRGB(90, 200, 255), -- Diamond Sword: diamond blue
+	Color3.fromRGB(255, 120, 40), -- Flame Pick: fire
+	Color3.fromRGB(255, 238, 90), -- Thunder Hammer: lightning
+	Color3.fromRGB(90, 255, 170), -- Aurora Blade: aurora green
+	Color3.fromRGB(255, 75, 30), -- Lava Axe: lava
+	Color3.fromRGB(255, 240, 170), -- Starfall Spear: starlight
+	Color3.fromRGB(90, 170, 255), -- Comet Hammer: comet blue
+	Color3.fromRGB(205, 120, 255), -- Cosmic Pick: violet
+	Color3.fromRGB(255, 170, 240), -- Starbreaker: starburst pink
 }
 
 -- The crystals (the tap spray, building-hit pops and the rescue fountain) by how many ice upgrade tiers the
