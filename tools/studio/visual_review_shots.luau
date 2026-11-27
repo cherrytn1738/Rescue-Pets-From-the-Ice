@@ -391,6 +391,10 @@ local PREPARE = {
 		dbg("SetRebirths", { Rebirths = 3 }) -- layer 6 open
 		home()
 	end,
+	["ice-options"] = function()
+		dbg("ClearDummyPlots")
+		home()
+	end,
 	pets = function()
 		dbg("SetRebirths", { Rebirths = 10 }) -- every rank slot
 		home()
@@ -646,6 +650,47 @@ shot("ice/mythic_block", function()
 	blockShot(true)
 	return { Wait = 5 }
 end)
+
+-- Ice options (the block redesign, part 1): each look (IceLooks.Options, the Studio switch StudioIceOption) on
+-- the Blue Ice layer with a Rare creature: from the tapping spot (the play camera), close up, from the plaza (every
+-- free plot filled with the same block) and at crack stage 3.
+local ICE_OPTION_LEVEL = 15
+for _, option in { "A", "B", "C" } do
+	local function setUp()
+		workspace:SetAttribute("StudioIceOption", option)
+		freshBlock(ICE_OPTION_LEVEL, rarityCreature("Rare"))
+	end
+	local function closeUp()
+		hold(plotPoint(8, 27, 11), plotPoint(0, 0, 12), 50)
+	end
+	shot(`ice-options/{option}_tapping`, function()
+		setUp()
+		home()
+		follow(Vector3.new(4, 7, 12), Vector3.new(0, 3, -16), 60)
+		return { Wait = 2.5 }
+	end)
+	shot(`ice-options/{option}_close`, function()
+		setUp()
+		closeUp()
+		return { Wait = 2 }
+	end)
+	shot(`ice-options/{option}_crack3`, function()
+		setUp()
+		dbg("SetBlockHp", { Percent = 39 })
+		closeUp()
+		return { Wait = 2 }
+	end)
+	shot(`ice-options/{option}_plaza`, function()
+		setUp()
+		dbg("FillDummyPlots", { Creature = rarityCreature("Rare"), Level = ICE_OPTION_LEVEL, Layer = 2, Stage = 0 })
+		-- from above the plaza's middle, towards your plot: it and both neighbours in view, under their gates
+		local angle = (plotIndex() - 1) / MapConfig.PlotCount * math.pi * 2
+		local out = Vector3.new(math.sin(angle), 0, math.cos(angle))
+		standAt(-out * 20 + Vector3.new(0, 4, 0), Vector3.zero)
+		hold(-out * 36 + Vector3.new(0, 34, 0), out * MapConfig.RingRadius + Vector3.new(0, 7, 0), 64)
+		return { Wait = 4 }
+	end)
+end
 
 -- Pets: each creature following, Golden too, the slot layouts, the aurora trail.
 for _, creature in CreatureConfig.Creatures do
@@ -1183,6 +1228,8 @@ elseif string.sub(SHOT, 1, 9) == "?prepare:" then
 	return "prepared " .. category
 elseif SHOT == "?cleanup" then
 	unfreeze() -- (a held pick swing)
+	workspace:SetAttribute("StudioIceOption", nil) -- (the ice options' look switch)
+	dbg("ClearDummyPlots") -- (the plaza shots fill the free plots)
 	ReplicatedStorage.SaveSettings:FireServer({ ReducedEffects = false }) -- (the effects shots turn it on)
 	for _, name in { "VisualReviewCamera", "VisualReviewStage" } do
 		pcall(function()
@@ -1205,10 +1252,10 @@ for _, entry in SHOTS do
 	if entry.Name == SHOT then
 		-- model shots hide the HUD; UI, rescue moments and effects keep it
 		local category = string.split(SHOT, "/")[1]
-		staging.hud = not (category == "buildings" or category == "picks" or category == "ice" or category == "pets" or category == "world")
+		staging.hud = not (category == "buildings" or category == "picks" or category == "ice" or category == "ice-options" or category == "pets" or category == "world")
 		staging.tutorial = false
 		-- the big moments only where they're the subject (building moments, rescues, UI, effects)
-		staging.banners = not (category == "picks" or category == "ice" or category == "pets" or category == "world")
+		staging.banners = not (category == "picks" or category == "ice" or category == "ice-options" or category == "pets" or category == "world")
 		stage()
 		local preClose = openWindows()
 		local result = entry.Run() or {}

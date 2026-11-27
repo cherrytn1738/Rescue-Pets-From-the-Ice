@@ -373,14 +373,20 @@ local ACTIONS = {
 	{
 		Id = "FillDummyPlots", Group = "Testing switches", Label = "Fill every empty plot with a maxed dummy plot (performance tests)",
 		NoTarget = true,
-		Params = { { Name = "Creature", Label = "Creature in the dummies' blocks", Kind = "choice", Choices = creatureChoices, Default = creatureChoices[1].Value } },
+		Params = {
+			{ Name = "Creature", Label = "Creature in the dummies' blocks", Kind = "choice", Choices = creatureChoices, Default = creatureChoices[1].Value },
+			amountParam("Level", "Their blocks' level", 1, 1000, 400),
+			amountParam("Layer", "Their blocks' layer (1-6)", 1, 6, 5),
+			amountParam("Stage", "Their blocks' crack stage (0-4)", 0, 4, 2),
+		},
 		Run = function(_, args)
 			studioOnly()
 			local creature = CreatureConfig.Get(args.Creature)
 			if not creature then
 				fail("Pick a creature")
 			end
-			return `Filled {PlotService.FillDummies(creature.Rarity, creature.Id)} empty plots with maxed dummies`
+			local filled = PlotService.FillDummies(creature.Rarity, creature.Id, args.Level, args.Layer, args.Stage)
+			return `Filled {filled} empty plots with maxed dummies`
 		end,
 	},
 	{

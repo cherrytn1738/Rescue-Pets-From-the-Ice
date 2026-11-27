@@ -979,6 +979,102 @@ window.SHOTS = [
   "before": null
  },
  {
+  "category": "ice-options",
+  "name": "A_close",
+  "file": "ice-options/A_close.jpg",
+  "before": null
+ },
+ {
+  "category": "ice-options",
+  "name": "A_crack3",
+  "file": "ice-options/A_crack3.jpg",
+  "before": null
+ },
+ {
+  "category": "ice-options",
+  "name": "A_plaza",
+  "file": "ice-options/A_plaza.jpg",
+  "before": "../visual-review-before/ice-options/A_plaza.jpg"
+ },
+ {
+  "category": "ice-options",
+  "name": "A_tapping",
+  "file": "ice-options/A_tapping.jpg",
+  "before": null
+ },
+ {
+  "category": "ice-options",
+  "name": "B_close",
+  "file": "ice-options/B_close.jpg",
+  "before": null
+ },
+ {
+  "category": "ice-options",
+  "name": "B_crack3",
+  "file": "ice-options/B_crack3.jpg",
+  "before": null
+ },
+ {
+  "category": "ice-options",
+  "name": "B_plaza",
+  "file": "ice-options/B_plaza.jpg",
+  "before": "../visual-review-before/ice-options/B_plaza.jpg"
+ },
+ {
+  "category": "ice-options",
+  "name": "B_tapping",
+  "file": "ice-options/B_tapping.jpg",
+  "before": null
+ },
+ {
+  "category": "ice-options",
+  "name": "C_close",
+  "file": "ice-options/C_close.jpg",
+  "before": null
+ },
+ {
+  "category": "ice-options",
+  "name": "C_crack3",
+  "file": "ice-options/C_crack3.jpg",
+  "before": null
+ },
+ {
+  "category": "ice-options",
+  "name": "C_plaza",
+  "file": "ice-options/C_plaza.jpg",
+  "before": "../visual-review-before/ice-options/C_plaza.jpg"
+ },
+ {
+  "category": "ice-options",
+  "name": "C_tapping",
+  "file": "ice-options/C_tapping.jpg",
+  "before": null
+ },
+ {
+  "category": "ice-options",
+  "name": "compare_close",
+  "file": "ice-options/compare_close.jpg",
+  "before": null
+ },
+ {
+  "category": "ice-options",
+  "name": "compare_crack3",
+  "file": "ice-options/compare_crack3.jpg",
+  "before": null
+ },
+ {
+  "category": "ice-options",
+  "name": "compare_plaza",
+  "file": "ice-options/compare_plaza.jpg",
+  "before": null
+ },
+ {
+  "category": "ice-options",
+  "name": "compare_tapping",
+  "file": "ice-options/compare_tapping.jpg",
+  "before": null
+ },
+ {
   "category": "pets",
   "name": "ArcticFoxKit",
   "file": "pets/ArcticFoxKit.jpg",

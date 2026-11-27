@@ -18,6 +18,7 @@ block"; the look is in IceLooks):
    and then a quiet chip as your buildings hit it; from other plots only Legendary and Mythic rescue
    jingles, quieter, within AudioConfig.Rules.OtherPlots.MaxDistance studs.
 IceBlocks.Hit(plotIndex, strength) makes a block shudder (your taps: TapFeedback).
+The redesigned look (IceBlockLook) replaces the classic one when the Studio switch StudioIceOption picks an option.
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -36,6 +37,7 @@ local HttpService = game:GetService("HttpService")
 local PetLooks = require(ReplicatedStorage.Pets.PetLooks)
 local SoundRules = require(ReplicatedStorage.SoundRules)
 local Effects = require(script.Parent.Effects)
+local IceBlockLook = require(script.Parent.IceBlockLook)
 
 local IceBlocks = {}
 
@@ -202,6 +204,24 @@ local function makeExtras(view, size: Vector3, layer: number, seed: number)
 		if old then
 			old:Destroy()
 		end
+	end
+end
+
+-- The classic look's cracks and extras go when the redesigned look takes over.
+local function clearClassic(view)
+	for _, group in view.cracks or {} do
+		for _, part in group do
+			part:Destroy()
+		end
+	end
+	view.cracks = nil
+	if view.extras then
+		view.extras:Destroy()
+		view.extras = nil
+	end
+	local inner = view.core:FindFirstChild("InnerLight")
+	if inner then
+		inner:Destroy()
 	end
 end
 
@@ -380,16 +400,24 @@ local function update(view, dt: number)
 		shatter(view, attrs:GetAttribute("Rescued"))
 	end
 
-	-- a new block: its look, cracks, silhouette
-	local key = `{level}:{creatureId}:{layer}`
+	-- a new block: its look, cracks, silhouette (the redesigned look when the Studio switch picks one)
+	local option = IceBlockLook.Option()
+	local key = `{level}:{creatureId}:{layer}:{option or "classic"}`
 	if present and creatureId and key ~= view.key then
 		view.key = key
 		view.layer = layer
 		view.block.Size = size
 		view.block.CFrame = view.base * CFrame.new(0, height / 2 - 0.5, 0)
-		makeCracks(view, size, level * 131 + #creatureId)
-		makeExtras(view, size, layer, level)
 		buildSilhouette(view, creatureId, height)
+		if option then
+			clearClassic(view)
+			IceBlockLook.Build(view, option, height, rarity)
+		else
+			IceBlockLook.Clear(view)
+			view.glow.Parent = view.core
+			makeCracks(view, size, level * 131 + #creatureId)
+			makeExtras(view, size, layer, level)
+		end
 		view.stage = 0
 	end
 	if present and not view.present then
@@ -464,7 +492,8 @@ local function update(view, dt: number)
 	view.block.Color = look.Color
 	view.block.Material = look.Material
 	local frost = look.Transparency + (look.Clear - look.Transparency) * (stage / 4)
-	view.block.Transparency = if present then frost else 1
+	view.block.Transparency = if present and not view.look then frost else 1
+	IceBlockLook.Update(view, present, stage, rarity, os.clock())
 
 	-- cracks by stage
 	for index, group in view.cracks or {} do
@@ -492,7 +521,8 @@ local function update(view, dt: number)
 	local sil = view.silhouette
 	if sil then
 		local wiggle = if stage >= 4 then CFrame.Angles(0, math.rad(math.sin(now * 9) * 8), math.rad(math.sin(now * 13) * 5)) else CFrame.identity
-		sil.model:PivotTo(view.base * sledOffset * CFrame.new(0, 0.2, 0) * wiggle * (if present then CFrame.identity else CFrame.new(0, -500, 0)))
+		local lift = if view.look then height * IceLooks.New.CreatureLift else 0.2
+		sil.model:PivotTo(view.base * sledOffset * CFrame.new(0, lift, 0) * wiggle * (if present then CFrame.identity else CFrame.new(0, -500, 0)))
 		local eyesOn = present and stage >= 3 and (now % 3.2) > 0.18
 		if eyesOn ~= sil.eyes then
 			sil.eyes = eyesOn
@@ -515,7 +545,7 @@ local function update(view, dt: number)
 		view.glow.Color, view.glow.Brightness, view.glow.Range = color, brightness, glow.Range
 		view.aura.Color = color
 		view.aura.Size = Vector3.one * height * 0.55
-		view.aura.Transparency = math.clamp(0.88 - 0.05 * brightness / glow.Brightness, 0.7, 0.92)
+		view.aura.Transparency = if view.look then 1 else math.clamp(0.88 - 0.05 * brightness / glow.Brightness, 0.7, 0.92)
 	else
 		view.glow.Enabled = false
 		view.aura.Transparency = 1

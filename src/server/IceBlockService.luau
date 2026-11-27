@@ -22,6 +22,7 @@ IceBlockService: each player's ice block (docs/GAME_DESIGN.md, "The ice block", 
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
 
 local BlockRules = require(ReplicatedStorage.BlockRules)
@@ -246,6 +247,12 @@ function IceBlockService.Rarity(player: Player): string?
 end
 
 function IceBlockService.Start()
+	-- the ice block's looks (ServerStorage.IceTemplates, tools/studio/build_templates.luau ONLY = "Ice") go where
+	-- every client can clone them: the clients draw the blocks (IceBlocks, IceBlockLook)
+	local templates = ServerStorage:FindFirstChild("IceTemplates")
+	if templates and not ReplicatedStorage:FindFirstChild("IceTemplates") then
+		templates:Clone().Parent = ReplicatedStorage
+	end
 	PlayerData.OnLoaded(function(player, data)
 		if not PlotService.IndexOf(player) then
 			PlotService.Assign(player)

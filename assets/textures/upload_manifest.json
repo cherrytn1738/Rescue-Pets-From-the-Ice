@@ -18,6 +18,35 @@
    "sha256": "392db66fa227705919dab1017f9fa504ea158efdd6a0806d7633f5f673e8da17",
    "updated": "2026-11-25T03:19:42+00:00"
   },
+  "ice/IceBlueAtlas.png": {
+   "assetId": "104417678687508",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "previousAssetId": "112335353202278",
+   "sha256": "716b5f86f9f521839eb2ec516a8e217e0d0365e381a1f62dcd299c69ea64827c",
+   "updated": "2026-11-27T13:01:29+00:00"
+  },
+  "ice/IceGlow.png": {
+   "assetId": "138336382402637",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "previousAssetId": "88858438522837",
+   "sha256": "fd8772d5973681d739598e6562cbf158d1af8c9f1e0d6932f65b820f865d81c7",
+   "updated": "2026-11-27T12:52:54+00:00"
+  },
+  "ice/IceShimmer.png": {
+   "assetId": "119012227357167",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "1a5140d53ec43b8e227c89f02d1e3f548cf55ac3436e37b5ea3ea0746d899a2e",
+   "updated": "2026-11-27T12:42:24+00:00"
+  },
   "particles/ember.png": {
    "assetId": "87423984170712",
    "creator": {

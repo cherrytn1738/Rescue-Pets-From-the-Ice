@@ -376,11 +376,12 @@ function PlotService.Release(player: Player)
 	end
 end
 
--- Studio performance tests (debug "Fill empty plots"): every free plot gets a dummy owner with every
--- building at 100 and every building upgrade (Masterworks), and a level-400 block holding `rarity`. The
--- dummy is a plain table, never a Player: nothing else treats it as one. ClearDummies frees them again.
+-- Studio performance tests and plaza screenshots (debug "Fill empty plots"): every free plot gets a dummy owner
+-- with every building at 100 and every building upgrade (Masterworks), and a block holding `rarity` (level 400 in
+-- layer 5 at crack stage 2 unless given). The dummy is a plain table, never a Player: nothing else treats it as
+-- one. ClearDummies frees them again.
 local dummies = {}
-function PlotService.FillDummies(rarity: string, creatureId: string): number
+function PlotService.FillDummies(rarity: string, creatureId: string, level: number?, layer: number?, stage: number?): number
 	local filled = 0
 	for index = 1, MapConfig.PlotCount do
 		if owners[index] == nil then
@@ -400,7 +401,8 @@ function PlotService.FillDummies(rarity: string, creatureId: string): number
 			end
 			PlotService.RefreshBuildings(dummy :: any, data)
 			local block = plot.Block
-			for name, value in { Present = true, Level = 400, Layer = 5, CreatureId = creatureId, Rarity = rarity, Hp = 1e72, HpMax = 1.8e72, Stage = 2, ArriveAt = 0 } do
+			local state = { Present = true, Level = level or 400, Layer = layer or 5, CreatureId = creatureId, Rarity = rarity, Hp = 1e72, HpMax = 1.8e72, Stage = stage or 2, ArriveAt = 0 }
+			for name, value in state do
 				block:SetAttribute(name, value)
 			end
 			filled += 1

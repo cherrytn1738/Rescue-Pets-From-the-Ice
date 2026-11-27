@@ -1,0 +1,66 @@
+{
+ "atlas": "assets/textures/ice/IceBlueAtlas.png",
+ "exportScale": 0.1,
+ "height": 14.0,
+ "models": {
+  "IceBlockA": {
+   "meshes": {
+    "IceBlockACrack1": 18,
+    "IceBlockACrack2": 40,
+    "IceBlockACrack3": 132,
+    "IceBlockACrack4": 162,
+    "IceBlockACrystals": 214,
+    "IceBlockAInner": 460,
+    "IceBlockAShell": 68,
+    "IceBlockASnow": 512
+   },
+   "size": [
+    10.8,
+    16.36,
+    11.11
+   ],
+   "top": 16.36,
+   "triangles": 1606
+  },
+  "IceBlockB": {
+   "meshes": {
+    "IceBlockBCrack1": 22,
+    "IceBlockBCrack2": 64,
+    "IceBlockBCrack3": 158,
+    "IceBlockBCrack4": 226,
+    "IceBlockBCrystals": 792,
+    "IceBlockBInner": 808,
+    "IceBlockBShell": 252,
+    "IceBlockBSnow": 1532
+   },
+   "size": [
+    15.17,
+    17.35,
+    14.81
+   ],
+   "top": 16.65,
+   "triangles": 3854
+  },
+  "IceBlockC": {
+   "meshes": {
+    "IceBlockCCrack1": 22,
+    "IceBlockCCrack2": 62,
+    "IceBlockCCrack3": 138,
+    "IceBlockCCrack4": 220,
+    "IceBlockCGlass": 1584,
+    "IceBlockCGlow": 576,
+    "IceBlockCInner": 736,
+    "IceBlockCShell": 652,
+    "IceBlockCSnow": 812
+   },
+   "size": [
+    14.36,
+    16.31,
+    14.68
+   ],
+   "top": 15.45,
+   "triangles": 4802
+  }
+ },
+ "width": 11.2
+}

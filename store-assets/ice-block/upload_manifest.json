@@ -1,0 +1,34 @@
+{
+ "assets": {
+  "IceBlockA.fbx": {
+   "assetId": "93574148754606",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "2a20a0fe62173f8a71e6ce0b293d8f057510d599534ce9fa0ec14367c2027dc5",
+   "updated": "2026-11-27T13:03:46+00:00"
+  },
+  "IceBlockB.fbx": {
+   "assetId": "109948280058251",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "9286f54cc4896d8eb61edeacc8ee9a251bbd88913914b46f68e3025d985145d3",
+   "updated": "2026-11-27T13:03:50+00:00"
+  },
+  "IceBlockC.fbx": {
+   "assetId": "86807805934381",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "2949d70301df0ebaab95549359779677420f85ef71f94fd2efc11cf4f0900fc7",
+   "updated": "2026-11-27T13:03:58+00:00"
+  }
+ },
+ "creator": {
+  "groupId": "921449746"
+ }
+}
