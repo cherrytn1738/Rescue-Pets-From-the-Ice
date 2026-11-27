@@ -6,7 +6,8 @@ Every step you do by hand to launch Rescue Pets From the Ice, in order. Tick eac
 
 - [x] Merge the `overnight-launch-prep` branch into `main` (done in the launch fix pass). Pull, and make sure `rojo serve` is running and the Studio plugin is connected.
 - [ ] Save the place in Studio and keep a backup copy of the `.rbxl` (File > Save to File As...). The building, pick, plot and plaza templates, the world and the streaming settings live only in the place file.
-- [ ] Run every spec: `python tools/run_specs.py` (Studio open in Edit mode). All must pass.
+- [ ] Run every spec: `python tools/run_specs.py` (Studio open in Edit mode). All 21 must pass.
+- [ ] Merge the `overnight-final` branch into `main` once you've read `OVERNIGHT_FINAL_REPORT.md` (soft shutdown, announcements, analytics, the visual review tools).
 - [ ] Workspace attributes: none of the Studio test switches may be set (`StudioFreshSave`, `StudioUseLiveSaves`, `StudioTimeAway`, `StudioPaidRandomRestricted`); on the client switches `StudioScreenSize`, `StudioGamepad` are never saved. Check Workspace > Attributes is empty of them.
 - [ ] `ProximityPromptService.Enabled` is ticked (it is saved with the place; the UI kit turns it off while a window is open in Edit mode).
 
@@ -16,6 +17,8 @@ Every step you do by hand to launch Rescue Pets From the Ice, in order. Tick eac
 - [x] Studio Play: `[PriceCheck] 24 items checked, 0 problems, 0 hidden`.
 - [ ] Look at each item on the Creator Hub (Monetization > Passes / Developer Products): name, description, price, icon and On Sale as you want them. The script is safe to re-run; it never makes duplicates.
 - [ ] The VIP lounge is built only once the VIP pass has a real id (it now has): check it once in Play.
+- [ ] Prices: the genre comparison and proposals are in `OVERNIGHT_FINAL_REPORT.md` (Phase 4). Nothing was changed. To change a price, change it on the Creator Hub, then `ExpectedPrice` in `MonetizationConfig.luau` and the doc's table, then Play and check PriceCheck shows 0 problems.
+- [ ] Studio note: your account owns every pass now, so a solo Play is not a normal player. Test balance and the shop as a test player (Test > Clients and Servers).
 
 ## 3. Who can use the developer tools
 
@@ -32,6 +35,7 @@ Every step you do by hand to launch Rescue Pets From the Ice, in order. Tick eac
   - Plot: a calm, cosy loop, about 80-95 BPM (soft piano, music box or mallets, no vocals).
   Play once and walk in and out of your plot: the music crossfades. An empty id simply plays nothing.
 - [ ] Every audio file is approved: `python tools/upload_models.py --check --manifest store-assets/audio/upload_manifest.json`.
+- [ ] Every asset id the game uses is the group's and approved: `python tools/check_asset_ids.py` (on 2026-11-26: 160 ids, all group-owned and approved; it reads the configs and asks Open Cloud about each id).
 - [ ] Every UI icon is approved: `python tools/upload_models.py --check --manifest store-assets/ui-icons/upload_manifest.json` (27 images, all approved on 2026-11-25), and the leaderboard model: `--manifest store-assets/plaza/upload_manifest.json` (approved at upload).
 
 ## 5. Codes
@@ -76,4 +80,7 @@ Your own account counts as owning every pass (you made them), so test the pass w
 - [ ] **Creator Hub > Analytics:** concurrent players, average session length (target 10-20 min), the onboarding funnel (Joined -> First tap -> First building -> First rescue -> First pet equipped -> Tutorial done -> First rebirth): a big drop at one step is where players get lost. The shop funnel: opened -> viewed -> prompted -> purchased.
 - [ ] **Server memory and performance** (Developer Console > Memory / Server Stats): 8 maxed plots is the heaviest case.
 - [ ] Join a live server yourself on a phone: the HUD, a window, tapping, buying.
-- [ ] Hotfix plan: fix in the repo, specs, publish; a running server keeps the old code until it closes (if urgent, use "Migrate to Latest Update" on the place, Creator Hub or Studio, which restarts servers with the new version).
+- [ ] **Updates (soft shutdown):** publishing alone leaves running servers on the old version until they empty. To move everyone: Creator Hub > the game > **Configurations > Server management** > select the place > **Restart Servers**, with **"Restart only servers with outdated versions"** ticked (optionally "Delay server restart", 1-60 min). Players see an "update coming" warning (with a delay), then "Updating the game, back in a moment"; every save is written first and Roblox moves them to a new server. "Shut Down All Servers" also brings them back, through a temporary reserved server. Check it the first time on a server you're in.
+- [ ] **Announcements:** F3 (admin window, you only) > Server > **Announce** (this server) or **AnnounceAll** (every server). Messages go through Roblox's text filter. Use it for "update in 5 minutes", events and likes codes.
+- [ ] **Analytics after the first day:** Creator Hub > Analytics: the Onboarding, RobuxShop, **LayersReached** and **RebirthRanks** funnels; the **Economy** page (currency Crystals: where they come from and what they're spent on); custom events **GoldenGlacierJoined / Won / Escaped**. What each answers is in `OVERNIGHT_FINAL_REPORT.md` (Phase 3).
+- [ ] Hotfix plan: fix in the repo, specs, publish, then Restart Servers (above).

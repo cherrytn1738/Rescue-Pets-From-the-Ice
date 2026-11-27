@@ -14,6 +14,7 @@ Economy: crystals on the server (docs/GAME_DESIGN.md, "Economy" and "Technical d
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local AnalyticsRules = require(ReplicatedStorage.AnalyticsRules)
 local EconomyRules = require(ReplicatedStorage.EconomyRules)
 local GameConfig = require(ReplicatedStorage.GameConfig)
 local MonetizationConfig = require(ReplicatedStorage.MonetizationConfig)
@@ -24,14 +25,52 @@ local PlayerData = require(script.Parent.PlayerData)
 local Economy = {}
 
 local MAX_CRYSTALS = 1e300 -- PlayerData's MAX_AMOUNT
-local extras = {} -- { { callback = function(player) -> multiplier, temporary = boolean } }
+local extras = {} -- { { callback = function(player) -> multiplier, temporary = boolean, source = string? } }
+local grantListeners = {}
+-- crystals from these sources are multiplied by the rushes running, so the rushes' share is reported
+-- under the rush's own source (analytics)
+local BOOSTED = { Taps = true, AutoPick = true, Buildings = true, Rescue = true }
 local tapLog = {} -- [player] = { { time, taps } }
 local tickListeners = {}
 
 -- A server-only crystal multiplier source: callback(player) -> number (1 = none). temporary: a rush
--- (the Golden Glacier's Frost Rush, the Server Frost Rush), left out of SteadyIncome.
-function Economy.AddExtra(callback, temporary: boolean?)
-	table.insert(extras, { callback = callback, temporary = temporary == true })
+-- (the Golden Glacier's Frost Rush, the Server Frost Rush), left out of SteadyIncome. source: a rush's
+-- name for analytics (the crystals it adds are reported as coming from it).
+function Economy.AddExtra(callback, temporary: boolean?, source: string?)
+	table.insert(extras, { callback = callback, temporary = temporary == true, source = source })
+end
+
+-- callback(player, source, amount, balance, sku) after every Grant that names its source (analytics).
+-- A boosted grant made while rushes run is reported in parts: each rush's share under its own source.
+function Economy.OnGrant(callback)
+	table.insert(grantListeners, callback)
+end
+
+local function reportGrant(player: Player, source: string, amount: number, balance: number, sku: string?)
+	local parts = { { Source = source, Amount = amount } }
+	if BOOSTED[source] then
+		local rushes = {}
+		for _, extra in extras do
+			if extra.temporary and extra.source then
+				local ok, value = pcall(extra.callback, player)
+				if ok and type(value) == "number" and value > 1 and value < math.huge then
+					table.insert(rushes, { Source = extra.source, Multiplier = value })
+				end
+			end
+		end
+		for _, share in AnalyticsRules.RushShares(rushes) do
+			table.insert(parts, { Source = share.Source, Amount = amount * share.Share })
+			parts[1].Amount -= amount * share.Share
+		end
+	end
+	for _, callback in grantListeners do
+		for _, part in parts do
+			local ok, err = pcall(callback, player, part.Source, part.Amount, balance, sku)
+			if not ok then
+				warn("[Economy] grant listener failed: " .. tostring(err))
+			end
+		end
+	end
 end
 
 function Economy.ExtraMultiplier(player: Player, permanentOnly: boolean?): number
@@ -57,8 +96,9 @@ function Economy.PermanentMultiplier(player: Player, data): number
 	return EconomyRules.Multiplier(data, Economy.ExtraMultiplier(player, true))
 end
 
--- Adds crystals to the live save. amount must be a real, non-negative number.
-function Economy.Grant(player: Player, data, amount: number)
+-- Adds crystals to the live save. amount must be a real, non-negative number. source (optional): where
+-- they came from, for analytics (an AnalyticsConfig.Economy.Sources key); sku: its item, if any.
+function Economy.Grant(player: Player, data, amount: number, source: string?, sku: string?)
 	if type(amount) ~= "number" or amount ~= amount or amount <= 0 or amount == math.huge then
 		return
 	end
@@ -66,6 +106,9 @@ function Economy.Grant(player: Player, data, amount: number)
 	data.Crystals = math.min(MAX_CRYSTALS, data.Crystals + amount)
 	data.CrystalsThisRun = math.min(MAX_CRYSTALS, data.CrystalsThisRun + amount)
 	data.CrystalsAllTime = math.min(MAX_CRYSTALS, data.CrystalsAllTime + amount)
+	if source and #grantListeners > 0 then
+		reportGrant(player, source, amount, data.Crystals, sku)
+	end
 end
 
 -- Spends crystals. Returns false (and spends nothing) if the player can't afford it.
@@ -151,7 +194,7 @@ function Economy.Start()
 		local income = EconomyRules.TotalBuildingDps(data) * Economy.Multiplier(player, data)
 		local amount = OfflineEarningsRules.Earnings(income, secondsAway, settings)
 		if amount > 0 then
-			Economy.Grant(player, data, amount)
+			Economy.Grant(player, data, amount, "Offline")
 		end
 		return amount, "crystals"
 	end)

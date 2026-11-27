@@ -14,6 +14,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
 local GameConfig = require(ReplicatedStorage.GameConfig)
+local Analytics = require(script.Parent.Analytics)
 local Economy = require(script.Parent.Economy)
 local PlazaService = require(script.Parent.PlazaService)
 local TapService = require(script.Parent.TapService)
@@ -67,6 +68,9 @@ local function onTap(player: Player, count)
 	if allowed <= 0 then
 		return
 	end
+	if not contributions[player] then
+		Analytics.Custom(player, "GlacierJoined")
+	end
 	contributions[player] = (contributions[player] or 0) + allowed
 	state:SetAttribute("Hp", math.max(0, state:GetAttribute("Hp") - allowed))
 end
@@ -90,6 +94,15 @@ local function runBlock()
 		task.wait(0.1)
 	end
 	if state:GetAttribute("Hp") > 0 then
+		local tappers = 0
+		for _ in contributions do
+			tappers += 1
+		end
+		for player in contributions do
+			if player.Parent == Players then
+				Analytics.Custom(player, "GlacierEscaped", tappers)
+			end
+		end
 		state:SetAttribute("State", "Idle")
 		gameEvent:FireAllClients("Golden", { Text = "The Golden Glacier melted away..." })
 		return
@@ -103,7 +116,9 @@ local function runBlock()
 	end
 	for player in contributions do
 		if player.Parent == Players then
-			giveRush(player, if player == top then SETTINGS.TopMultiplier else SETTINGS.RushMultiplier)
+			local multiplier = if player == top then SETTINGS.TopMultiplier else SETTINGS.RushMultiplier
+			giveRush(player, multiplier)
+			Analytics.Custom(player, "GlacierWon", multiplier, if player == top then "Place - Top" else "Place - Helper")
 		end
 	end
 	state:SetAttribute("State", "Idle")
@@ -132,7 +147,7 @@ function GoldenGlacierService.Start()
 	state:SetAttribute("Spot", PlazaService.GoldenSpot)
 	state.Parent = Workspace
 	ReplicatedStorage:WaitForChild("GoldenTap").OnServerEvent:Connect(onTap)
-	Economy.AddExtra(GoldenGlacierService.RushMultiplier, true)
+	Economy.AddExtra(GoldenGlacierService.RushMultiplier, true, "GoldenGlacier")
 	Players.PlayerRemoving:Connect(function(player)
 		contributions[player] = nil
 		rushes[player] = nil

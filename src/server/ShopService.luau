@@ -42,11 +42,11 @@ local function tooFast(player: Player): boolean
 	return false
 end
 
-local function bought(player, data, kind, id, count)
+local function bought(player, data, kind, id, count, cost)
 	PlayerData.Publish(player)
 	PlayerData.MarkImportant(player)
 	for _, callback in buyListeners do
-		task.spawn(callback, player, data, kind, id, count)
+		task.spawn(callback, player, data, kind, id, count, cost)
 	end
 end
 
@@ -70,7 +70,7 @@ function ShopService.BuyBuilding(player: Player, buildingId, amount)
 	data.Buildings[buildingId] = (data.Buildings[buildingId] or 0) + count
 	PlotService.RefreshBuildings(player, data)
 	gameEvent:FireClient(player, "Built", { BuildingId = buildingId, Count = count, Owned = data.Buildings[buildingId], First = first })
-	bought(player, data, "Building", buildingId, count)
+	bought(player, data, "Building", buildingId, count, cost)
 	return { ok = true, message = `Built {count} {building.Name}!`, count = count }
 end
 
@@ -98,7 +98,7 @@ function ShopService.BuyUpgrade(player: Player, upgradeId)
 		PlotService.RefreshBuildings(player, data)
 	end
 	gameEvent:FireClient(player, "Upgraded", { UpgradeId = upgradeId })
-	bought(player, data, "Upgrade", upgradeId, 1)
+	bought(player, data, "Upgrade", upgradeId, 1, upgrade.Cost)
 	return { ok = true, message = `{upgrade.Name} bought!` }
 end
 

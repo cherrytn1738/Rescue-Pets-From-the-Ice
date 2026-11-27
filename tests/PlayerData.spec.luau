@@ -42,7 +42,10 @@ return function(sources)
 			return false
 		end,
 	}
-	local TestAnalyticsConfig = { Onboarding = { "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10" } }
+	local TestAnalyticsConfig = {
+		Onboarding = { "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10" },
+		Progression = { Layers = { Steps = { "L1", "L2", "L3", "L4", "L5", "L6" } }, Ranks = { Steps = { "R1", "R3", "R6", "R10" } } },
+	}
 	local STEPS = #TestAnalyticsConfig.Onboarding
 
 	-- Loads a replicated module whose own requires (if any) see the test configs.
@@ -547,8 +550,29 @@ return function(sources)
 	put(101, { SchemaVersion = 1, Funnels = "nope" })
 	local notTable = join(101)
 	data = PlayerData.Get(notTable)
-	check(PlayerData.IsReady(notTable) and data.Funnels.Onboarding == STEPS, "a Funnels that isn't a table counts as done")
+	check(PlayerData.IsReady(notTable) and data.Funnels.Onboarding == STEPS and data.Funnels.Layers == 6 and data.Funnels.Ranks == 4,
+		"a Funnels that isn't a table counts as done (the progression funnels too)")
 	leave(notTable)
+	-- the progression funnels: how far each is logged, and the player's own funnel session id
+	local progress = join(102)
+	check(PlayerData.Edit(progress).Funnels.Layers == 0 and PlayerData.Edit(progress).Funnels.Ranks == 0 and PlayerData.Edit(progress).Funnels.ProgressId == nil,
+		"a new player has logged no progression step and has no session id yet")
+	PlayerData.Edit(progress).Funnels.Layers, PlayerData.Edit(progress).Funnels.Ranks = 3, 1
+	PlayerData.Edit(progress).Funnels.ProgressId = "11111111-2222-3333-4444-555555555555"
+	check(PlayerData.SaveNow(progress) and record(102).Funnels.Layers == 3 and record(102).Funnels.Ranks == 1
+		and record(102).Funnels.ProgressId == "11111111-2222-3333-4444-555555555555", "progression counts and the session id are saved")
+	leave(progress)
+	put(103, { SchemaVersion = 1, Funnels = { Onboarding = 2, Waiting = {} } })
+	local before = join(103)
+	data = PlayerData.Get(before)
+	check(PlayerData.IsReady(before) and data.Funnels.Layers == 0 and data.Funnels.Ranks == 0, "a save from before the progression funnels starts them at 0")
+	leave(before)
+	put(104, { SchemaVersion = 1, Funnels = { Onboarding = 2, Waiting = {}, Layers = 99, Ranks = -1, ProgressId = { "x" } } })
+	local badProgress = join(104)
+	data = PlayerData.Get(badProgress)
+	check(PlayerData.IsReady(badProgress) and data.Funnels.Layers == 6 and data.Funnels.Ranks == 4 and data.Funnels.ProgressId == nil,
+		"unreadable progression counts count as done, a bad session id is dropped, and the load never fails")
+	leave(badProgress)
 
 	-- Data that can't be read fails closed: no gameplay, a kick, and the record is never rewritten.
 	put(3, { SchemaVersion = 99, ExtraField = "future" })

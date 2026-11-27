@@ -38,6 +38,9 @@ local function nameOf(userId: number): string
 	return names[userId]
 end
 
+-- The DataStore requests this server has made for the boards (debug menu: the DataStore budget).
+LeaderboardService.Requests = { SetAsync = 0, GetSortedAsync = 0 }
+
 function LeaderboardService.Write(player: Player)
 	local data = PlayerData.Get(player)
 	if not data or PlayerData.IsThrowaway(player) then
@@ -47,6 +50,7 @@ function LeaderboardService.Write(player: Player)
 	for _, board in SETTINGS.Boards do
 		local value = LeaderboardRules.Encode(data[board.Field] or 0, board.Log)
 		if value > 0 then
+			LeaderboardService.Requests.SetAsync += 1
 			local ok, err = pcall(function()
 				storeOf(board):SetAsync(tostring(player.UserId), value)
 			end)
@@ -60,6 +64,7 @@ end
 function LeaderboardService.Read()
 	for _, board in SETTINGS.Boards do
 		local label = PlazaService.Boards[board.Id]
+		LeaderboardService.Requests.GetSortedAsync += 1
 		local ok, pages = pcall(function()
 			return storeOf(board):GetSortedAsync(false, SETTINGS.Top)
 		end)

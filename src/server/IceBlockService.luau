@@ -148,7 +148,7 @@ local function rescue(player: Player, data)
 	local burst = EconomyRules.BurstSeconds(data) * Economy.CrystalsPerSecond(player, data)
 	local first = (data.BookSeen[creature.Id] or 0) == 0
 	local pet = PetService.Rescue(player, data, creature.Id)
-	Economy.Grant(player, data, burst)
+	Economy.Grant(player, data, burst, "Rescue")
 	data.BlockLevel += 1
 	data.CurrentBlock = nil
 	local state = states[player]
@@ -186,14 +186,14 @@ local function rescue(player: Player, data)
 end
 
 -- Hits the player's block for `amount` damage and pays the crystals. Returns the damage dealt (0 when
--- there's no block on the mound).
-function IceBlockService.Damage(player: Player, data, amount: number): number
+-- there's no block on the mound). source: who hit it, for analytics ("Taps", "AutoPick", "Buildings").
+function IceBlockService.Damage(player: Player, data, amount: number, source: string?): number
 	local state = states[player]
 	local block = data.CurrentBlock
 	if not state or not block or state.arriveAt or type(amount) ~= "number" or amount ~= amount or amount <= 0 then
 		return 0
 	end
-	Economy.Grant(player, data, amount * Economy.Multiplier(player, data))
+	Economy.Grant(player, data, amount * Economy.Multiplier(player, data), source or "Taps")
 	block.HpLeft = math.max(0, block.HpLeft - amount)
 	if block.HpLeft <= 0 then
 		rescue(player, data)
@@ -266,7 +266,7 @@ function IceBlockService.Start()
 		if not state.arriveAt and not data.CurrentBlock then
 			rollBlock(player, data)
 		end
-		IceBlockService.Damage(player, data, EconomyRules.TotalBuildingDps(data) * dt)
+		IceBlockService.Damage(player, data, EconomyRules.TotalBuildingDps(data) * dt, "Buildings")
 		publish(player, data)
 	end)
 end

@@ -10,6 +10,10 @@ Events only record in a published game, so in Studio nothing is sent: each step 
 `[Analytics]` line instead. Nothing personal is sent: the player object (Roblox needs it), the step
 number and AnalyticsConfig's names.
 
+Also (AnalyticsConfig): the two progression funnels (layers reached, rebirth ranks; one funnel session
+per player, its id kept in the save), the crystal economy (every source and sink; steady flows are
+added up and sent every few minutes) and the Golden Glacier custom events.
+
 Hooks: a "Joined" onboarding step (if AnalyticsConfig has one) is logged when the player's data loads;
 gameplay calls Analytics.Onboarding(player, key) for its other steps. RobuxShop calls RobuxPrompted and
 RobuxPurchased. The Robux shop window says when it opens or closes and when an INFO button is tapped,
@@ -25,7 +29,9 @@ local RunService = game:GetService("RunService")
 local PlayerData = require(script.Parent.PlayerData)
 local AnalyticsConfig = require(ReplicatedStorage.AnalyticsConfig)
 local AnalyticsRules = require(ReplicatedStorage.AnalyticsRules)
+local LayerConfig = require(ReplicatedStorage.LayerConfig)
 local MonetizationConfig = require(ReplicatedStorage.MonetizationConfig)
+local NumberFormat = require(ReplicatedStorage.NumberFormat)
 
 local Analytics = {}
 
@@ -61,7 +67,7 @@ local function logOnboarding(player: Player, steps: { number })
 end
 
 local function logFunnel(player: Player, funnel: string, sessionId: string?, stepNames: { string }, steps: { number })
-	local visitNote = if sessionId then " (visit " .. string.sub(sessionId, 1, 8) .. ")" else ""
+	local visitNote = if sessionId then " (session " .. string.sub(sessionId, 1, 8) .. ")" else ""
 	for _, step in steps do
 		local name = stepNames[step]
 		send(player, `{funnel} {step} {name}{visitNote}`, function()
@@ -83,6 +89,116 @@ function Analytics.Onboarding(player: Player, key: string)
 	if state and step then
 		logOnboarding(player, AnalyticsRules.Reach(state, step, ONBOARDING_STEPS))
 	end
+end
+
+-- Progression ------------------------------------------------------------------------------------
+
+local function logProgress(player: Player, state, funnelKey: string, reached: number)
+	local config = AnalyticsConfig.Progression[funnelKey]
+	local steps, logged = AnalyticsRules.ProgressSteps(state[funnelKey], reached, #config.Steps)
+	if #steps == 0 then
+		return
+	end
+	state[funnelKey] = logged
+	state.ProgressId = state.ProgressId or HttpService:GenerateGUID(false)
+	logFunnel(player, config.Funnel, state.ProgressId, config.Steps, steps)
+end
+
+-- Logs the progression steps the player's save has reached and not logged yet: the layer of their
+-- current block level, and the rank of their rebirth count. Call after anything that can raise them
+-- (a load, a rescue, a rebirth); it's cheap when nothing is new.
+function Analytics.Progress(player: Player)
+	local state = funnels(player)
+	local data = state and PlayerData.Edit(player)
+	if not data then
+		return
+	end
+	local layer = LayerConfig.LayerForLevel(data.BlockLevel, data.MaxLayerOpened)
+	if layer then
+		logProgress(player, state, "Layers", layer.Number)
+	end
+	logProgress(player, state, "Ranks", AnalyticsRules.RankStep(data.Rebirths, AnalyticsConfig.Progression.Ranks.Rebirths))
+end
+
+-- Economy ----------------------------------------------------------------------------------------
+
+local ECONOMY = AnalyticsConfig.Economy
+local pending = {} -- [player] = { [flow .. key .. sku] = { flow, key, sku, amount } } (batched flows)
+
+local function sendEconomy(player: Player, flow: string, key: string, sku: string, amount: number, balance: number)
+	local config = if flow == "Source" then ECONOMY.Sources[key] else ECONOMY.Sinks[key]
+	local flowType = if flow == "Source" then Enum.AnalyticsEconomyFlowType.Source else Enum.AnalyticsEconomyFlowType.Sink
+	balance = math.max(0, balance)
+	send(player, `Economy {flow} {ECONOMY.Currency} {NumberFormat.Short(amount)} ({config.TransactionType}, {sku}), balance {NumberFormat.Short(balance)}`, function()
+		AnalyticsService:LogEconomyEvent(player, flowType, ECONOMY.Currency, amount, balance, config.TransactionType, sku)
+	end)
+end
+
+local function addFlow(player: Player, flow: string, key: string, amount: number, sku: string?, balance: number?)
+	local config = if flow == "Source" then ECONOMY.Sources[key] else ECONOMY.Sinks[key]
+	if not config or not isPlayer(player) or type(amount) ~= "number" or amount ~= amount or amount <= 0 or amount == math.huge then
+		return
+	end
+	sku = string.sub(tostring(config.Sku or sku or key), 1, 50)
+	if not config.Batched then
+		sendEconomy(player, flow, key, sku, amount, balance or player:GetAttribute("Crystals") or 0)
+		return
+	end
+	local list = pending[player]
+	if not list then
+		list = {}
+		pending[player] = list
+	end
+	local id = flow .. "|" .. key .. "|" .. sku
+	local entry = list[id]
+	if entry then
+		entry.amount += amount
+	else
+		list[id] = { flow = flow, key = key, sku = sku, amount = amount }
+	end
+end
+
+-- Crystals the player just got. source: an AnalyticsConfig.Economy.Sources key; balance: their
+-- crystals after it (batched sources use the balance when they're sent); sku: for sources without
+-- their own (a code, a product key). Unknown sources (the debug menu) send nothing.
+function Analytics.CrystalsEarned(player: Player, source: string, amount: number, balance: number?, sku: string?)
+	addFlow(player, "Source", source, amount, sku, balance)
+end
+
+-- Crystals the player just spent. sink: "Building" or "Upgrade"; sku: the building or upgrade id.
+function Analytics.CrystalsSpent(player: Player, sink: string, amount: number, balance: number?, sku: string?)
+	addFlow(player, "Sink", sink, amount, sku, balance)
+end
+
+-- Sends the player's batched crystal flows now (every FlushSeconds, when they leave, at shutdown and
+-- from the debug menu).
+function Analytics.FlushEconomy(player: Player)
+	local list = pending[player]
+	pending[player] = nil
+	if not list then
+		return 0
+	end
+	local balance = player:GetAttribute("Crystals") or 0
+	local sent = 0
+	for _, entry in list do
+		sendEconomy(player, entry.flow, entry.key, entry.sku, entry.amount, balance)
+		sent += 1
+	end
+	return sent
+end
+
+-- Custom events ----------------------------------------------------------------------------------
+
+-- A custom event (AnalyticsConfig.Custom key), with an optional value and CustomField01 text.
+function Analytics.Custom(player: Player, key: string, value: number?, field: string?)
+	local name = AnalyticsConfig.Custom[key]
+	if not name or not isPlayer(player) then
+		return
+	end
+	local fields = if field then { [Enum.AnalyticsCustomFieldKeys.CustomField01.Name] = field } else nil
+	send(player, `Custom {name} {tostring(value or 1)}{if field then " (" .. field .. ")" else ""}`, function()
+		AnalyticsService:LogCustomEvent(player, name, value or 1, fields)
+	end)
 end
 
 -- Shops ------------------------------------------------------------------------------------------
@@ -186,11 +302,27 @@ end
 function Analytics.Start()
 	PlayerData.OnLoaded(function(player)
 		Analytics.Onboarding(player, "Joined")
+		Analytics.Progress(player)
 	end)
 	local remote = ReplicatedStorage:WaitForChild("ShopVisit") :: RemoteEvent
 	remote.OnServerEvent:Connect(onVisit)
 	Players.PlayerRemoving:Connect(function(player)
+		Analytics.FlushEconomy(player)
 		visits[player], visitRequests[player], lastOpenAt[player] = nil, nil, nil
+	end)
+	-- batched crystal flows: every FlushSeconds, and at shutdown
+	task.spawn(function()
+		while true do
+			task.wait(ECONOMY.FlushSeconds)
+			for _, player in Players:GetPlayers() do
+				Analytics.FlushEconomy(player)
+			end
+		end
+	end)
+	game:BindToClose(function()
+		for _, player in Players:GetPlayers() do
+			Analytics.FlushEconomy(player)
+		end
 	end)
 end
 

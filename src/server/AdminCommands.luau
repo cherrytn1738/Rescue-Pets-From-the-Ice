@@ -14,9 +14,12 @@ Refuse with fail("message"). Commands go through the game's own systems; add the
 commands (events, announcements...) here as those systems are built.
 ]]
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TextService = game:GetService("TextService")
 local Workspace = game:GetService("Workspace")
 
 local AdminConfig = require(script.Parent.AdminConfig)
+local Announcements = require(script.Parent.Announcements)
 local PlayerEffects = require(script.Parent.PlayerEffects)
 
 local function fail(message: string)
@@ -31,6 +34,25 @@ local function notBusy(target: Player)
 	end
 end
 
+-- Text typed by a person must go through Roblox's filter before anyone else sees it. Studio's test
+-- players can't be filtered for (negative ids), so Studio falls back to the text as typed.
+local function filtered(text: string, caller: Player): string
+	local ok, result = pcall(function()
+		local filterResult = TextService:FilterStringAsync(text, caller.UserId, Enum.TextFilterContext.PublicChat)
+		return filterResult:GetNonChatStringForBroadcastAsync()
+	end)
+	if ok and type(result) == "string" then
+		return result
+	end
+	if RunService:IsStudio() then
+		return text
+	end
+	fail("Roblox's text filter didn't answer; try again in a moment")
+	return ""
+end
+
+local MESSAGE_PARAM = { Name = "Text", Label = "Message", Kind = "text", MaxLength = 150, Pattern = "^[%w%p ]+$" }
+
 local COMMANDS = {
 	-- Server
 	{
@@ -40,6 +62,29 @@ local COMMANDS = {
 			local uptime = math.floor(Workspace.DistributedGameTime)
 			local kind = if game.PrivateServerId ~= "" then "private" else "public"
 			return `{#Players:GetPlayers()} / {Players.MaxPlayers} players, up {uptime // 60} min {uptime % 60} s, place version {game.PlaceVersion}, {kind} server {if game.JobId ~= "" then game.JobId else "(Studio)"}`
+		end,
+	},
+	{
+		Id = "Announce", Group = "Server", Label = "Announce a message to everyone in this server",
+		NoTarget = true, Confirm = true,
+		Params = { MESSAGE_PARAM },
+		Run = function(_, args, caller)
+			local text = filtered(args.Text, caller)
+			Announcements.Show("ANNOUNCEMENT", text)
+			return `Shown to {#Players:GetPlayers()} player(s): "{text}"`
+		end,
+	},
+	{
+		Id = "AnnounceAll", Group = "Server", Label = "Announce a message in EVERY server of the game",
+		NoTarget = true, Confirm = true,
+		Params = { MESSAGE_PARAM },
+		Run = function(_, args, caller)
+			local text = filtered(args.Text, caller)
+			local ok, problem = Announcements.Broadcast("ANNOUNCEMENT", text)
+			if not ok then
+				fail(`Couldn't send it to the other servers: {problem}`)
+			end
+			return if problem then `{problem}: "{text}"` else `Sent to every server: "{text}"`
 		end,
 	},
 

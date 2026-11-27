@@ -48,7 +48,7 @@ function RewardService.ClaimDaily(player: Player): (boolean, string)
 	end
 	local amount = RewardService.DailyAmount(Economy.SteadyIncome(player, data))
 	data.DailyClaimDay = today
-	Economy.Grant(player, data, amount)
+	Economy.Grant(player, data, amount, "DailyChest")
 	PlayerData.MarkImportant(player)
 	PlayerData.Publish(player)
 	return true, `Daily chest: +{NumberFormat.Short(amount)} crystals!`
@@ -60,13 +60,13 @@ function RewardService.Start()
 		CanGive = function(player)
 			return PlayerData.Edit(player) ~= nil, "Your data isn't ready yet."
 		end,
-		Give = function(player, reward)
+		Give = function(player, reward, context)
 			local data = PlayerData.Edit(player)
 			local amount = if type(reward.Amount) == "number" then reward.Amount else 0
 			if not data or amount <= 0 then
 				return nil, "Couldn't give the crystals."
 			end
-			Economy.Grant(player, data, amount)
+			Economy.Grant(player, data, amount, context.Source or "Code", context.Sku or context.Key)
 			PlayerData.Publish(player)
 			return `{NumberFormat.Short(amount)} crystals`
 		end,

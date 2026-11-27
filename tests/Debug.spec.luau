@@ -198,6 +198,7 @@ return function(sources)
 				return true
 			end,
 			MarkImportant = record("MarkImportant"),
+			Publish = record("PublishData"),
 		},
 		CodeService = { ResetRedeemed = function()
 			table.insert(calls, { name = "ResetRedeemed" })
@@ -219,19 +220,31 @@ return function(sources)
 			return tier >= 1 and tier <= 6
 		end },
 		GoldenGlacierService = { SpawnNow = record("SpawnNow") },
+		LeaderboardService = { Requests = { SetAsync = 6, GetSortedAsync = 3 } },
+		RewardService = { Today = function()
+			return 20000
+		end },
+		SoftShutdown = { PreviewScreen = record("PreviewScreen"), PreviewScheduled = record("PreviewScheduled") },
+		Analytics = { FlushEconomy = function()
+			table.insert(calls, { name = "FlushEconomy", args = {} })
+			return 3
+		end },
 		RobuxPerks = {},
 		Economy = {},
 	}
 	local soundEvents = {}
 	local replicated = {
 		AnalyticsConfig = { Onboarding = {} },
+		BuildingConfig = { Buildings = { { Id = "HeatLamp", Name = "Heat Lamp" } } },
 		AudioConfig = { Sfx = { Tap = {}, Shatter = {} }, Ui = { Click = {} } },
 		EconomyRules = {},
 		GameEvent = { FireClient = function(_, player, kind, payload)
 			table.insert(soundEvents, { player = player, kind = kind, payload = payload })
 		end },
 		CreatureConfig = { Creatures = { { Id = "SnowBunny", Name = "Snow Bunny", Rarity = "Common" } } },
-		LayerConfig = { FloorLayer = 5, Layers = { {}, {}, {}, {}, {}, {} } },
+		LayerConfig = { FloorLayer = 5, Layers = { {}, {}, {}, {}, {}, {} }, BlockHp = function(level)
+			return level * 100
+		end },
 		RebirthConfig = { MaxLayerFor = function()
 			return 6
 		end },
@@ -292,7 +305,7 @@ return function(sources)
 			end
 		end
 	end
-	for _, id in { "SaveNow", "ShowSave", "ResetSave", "OfflineEarningsNow", "AnalyticsProgress", "AnalyticsRestart", "ResetCodes", "GivePass", "RemovePass", "SimulateReceipt", "DuplicateReceipt", "FreshSave", "UseLiveSaves", "FakeTimeAway", "PaidRandomRestricted", "TeleportToPlayer", "SetWalkSpeed", "Respawn" } do
+	for _, id in { "SaveNow", "ShowSave", "ResetSave", "OfflineEarningsNow", "AnalyticsProgress", "AnalyticsRestart", "AnalyticsFlush", "DailyChestYesterday", "SetBuilding", "SetBlockHp", "DataStoreRequests", "PreviewUpdateScreen", "PreviewRestartWarning", "ResetCodes", "GivePass", "RemovePass", "SimulateReceipt", "DuplicateReceipt", "FreshSave", "UseLiveSaves", "FakeTimeAway", "PaidRandomRestricted", "TeleportToPlayer", "SetWalkSpeed", "Respawn" } do
 		check(ids[id] ~= nil, `the debug menu has {id}`)
 	end
 	check(ids.ResetSave.Confirm and ids.UseLiveSaves.Confirm, "resetting a save and switching to live saves both ask first")
@@ -332,6 +345,21 @@ return function(sources)
 	check(ok and calls[#calls].name == "Pay" and calls[#calls].args[2] == 600, "offline earnings pay through OfflineEarnings.Pay(player, seconds)")
 	ok, message = run("AnalyticsProgress")
 	check(ok and string.find(message, "onboarding 3 of 0 (waiting: 5)", 1, true), "the funnel state reads the save's Funnels")
+	liveData.Buildings, liveData.Upgrades = { HeatLamp = 3 }, { "HeatLampUpgrade1", "IcePick2", "HeatLampUpgrade4" }
+	ok = run("SetBuilding", { Building = "HeatLamp", Count = 100, Upgrades = 2 })
+	check(ok and liveData.Buildings.HeatLamp == 100 and table.concat(liveData.Upgrades, ",") == "IcePick2,HeatLampUpgrade1,HeatLampUpgrade2"
+		and (calls[#calls].name == "RefreshBuildings" or calls[#calls - 1].name == "RefreshBuildings" or calls[#calls - 2].name == "RefreshBuildings"), "SetBuilding sets the count and exactly the first N of that building's upgrades, and redraws the plot")
+	ok = run("SetBuilding", { Building = "HeatLamp", Count = 0, Upgrades = 0 })
+	check(ok and liveData.Buildings.HeatLamp == nil and table.concat(liveData.Upgrades, ",") == "IcePick2", "...0 removes it")
+	liveData.BlockLevel, liveData.CurrentBlock = 4, { CreatureId = "SnowBunny", HpLeft = 400 }
+	ok = run("SetBlockHp", { Percent = 25 })
+	check(ok and liveData.CurrentBlock.HpLeft == 100, "SetBlockHp sets the block's HP to a share of its level's full HP")
+	liveData.CurrentBlock = nil
+	check(not run("SetBlockHp", { Percent = 25 }), "...and refuses while the block is on its sled")
+	ok = run("DailyChestYesterday")
+	check(ok and liveData.DailyClaimDay == 19999, "the daily chest can be set to 'last opened yesterday'")
+	ok, message = run("AnalyticsFlush")
+	check(ok and calls[#calls].name == "FlushEconomy" and string.find(message, "3 crystal events", 1, true), "the flush action sends the batched crystal events through Analytics.FlushEconomy")
 	ok = run("AnalyticsRestart")
 	check(ok and liveData.Funnels.Onboarding == 0 and #liveData.Funnels.Waiting == 0, "starting the funnels again resets them with AnalyticsRules.New")
 

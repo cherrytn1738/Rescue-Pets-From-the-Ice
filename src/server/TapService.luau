@@ -69,16 +69,17 @@ function TapService.AutoTaps(player: Player, count: number): number
 		return 0
 	end
 	bucket.tokens -= allowed
-	return TapService.AddTaps(player, allowed)
+	return TapService.AddTaps(player, allowed, "AutoPick")
 end
 
--- Lands `count` taps on the player's block. Returns the damage dealt.
-function TapService.AddTaps(player: Player, count: number): number
+-- Lands `count` taps on the player's block. Returns the damage dealt. source: analytics ("Taps" or
+-- "AutoPick").
+function TapService.AddTaps(player: Player, count: number, source: string?): number
 	local data = PlayerData.Edit(player)
 	if not data or count <= 0 then
 		return 0
 	end
-	local damage = IceBlockService.Damage(player, data, count * EconomyRules.TapDamage(data))
+	local damage = IceBlockService.Damage(player, data, count * EconomyRules.TapDamage(data), source or "Taps")
 	if damage > 0 then
 		Economy.RecordTaps(player, count)
 		for _, callback in tapListeners do

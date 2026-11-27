@@ -143,8 +143,33 @@ return function(sources)
 	}
 	modules.Players = { GetPlayers = function() return { developer } end, MaxPlayers = 12 }
 	modules.Workspace = { DistributedGameTime = 125 }
+	local shown, broadcast = {}, {}
+	local filterWorks, broadcastWorks = true, true
+	modules.Announcements = {
+		Show = function(title, text)
+			table.insert(shown, title .. ": " .. text)
+		end,
+		Broadcast = function(title, text)
+			if not broadcastWorks then
+				return false, "MessagingService is down"
+			end
+			table.insert(broadcast, title .. ": " .. text)
+			return true, nil
+		end,
+	}
+	modules.RunService = { IsStudio = function()
+		return false
+	end }
+	modules.TextService = { FilterStringAsync = function(_, text, userId)
+		if not filterWorks then
+			error("filter unavailable")
+		end
+		return { GetNonChatStringForBroadcastAsync = function()
+			return `filtered({userId}): {text}`
+		end }
+	end }
 	local AdminCommands = load("AdminCommands")
-	for _, id in { "ServerInfo", "Launch", "Rocket", "Jail", "Kick" } do
+	for _, id in { "ServerInfo", "Announce", "AnnounceAll", "Launch", "Rocket", "Jail", "Kick" } do
 		check(AdminCommands.ById[id] ~= nil, `the admin window has {id}`)
 	end
 	check(AdminCommands.ById.Kick.Confirm == true, "kicking asks first")
@@ -161,6 +186,27 @@ return function(sources)
 	check(ok and type(kicked) == "string", "Kick removes the target with a message")
 	ok, message = pcall(AdminCommands.ById.ServerInfo.Run)
 	check(ok and string.find(message, "1 / 12 players, up 2 min 5 s", 1, true), "server info reports players and uptime")
+
+	-- Announcements: developer only (the allowlist above), filtered, confirmed first
+	local announce, announceAll = AdminCommands.ById.Announce, AdminCommands.ById.AnnounceAll
+	check(announce.NoTarget and announce.Confirm and announceAll.NoTarget and announceAll.Confirm, "both announcements ask first and go to everyone")
+	local DebugRules = modules.DebugRules
+	local args = DebugRules.ValidateArgs(announce.Params, { Text = "Double crystals weekend!" })
+	check(args and args.Text == "Double crystals weekend!", "a normal message passes the input check")
+	check(DebugRules.ValidateArgs(announce.Params, { Text = string.rep("a", 151) }) == nil, "...a message over 150 characters doesn't")
+	check(DebugRules.ValidateArgs(announce.Params, { Text = "" }) == nil and DebugRules.ValidateArgs(announce.Params, { Text = "line\nbreak" }) == nil, "...nor an empty one or a line break")
+	ok, message = pcall(announce.Run, nil, args, developer)
+	check(ok and shown[#shown] == `ANNOUNCEMENT: filtered({DEVELOPER}): Double crystals weekend!` and string.find(message, "1 player", 1, true),
+		"Announce shows the FILTERED text to this server")
+	ok = pcall(announceAll.Run, nil, args, developer)
+	check(ok and broadcast[#broadcast] == `ANNOUNCEMENT: filtered({DEVELOPER}): Double crystals weekend!`, "AnnounceAll publishes the filtered text to every server")
+	broadcastWorks = false
+	ok, message = pcall(announceAll.Run, nil, args, developer)
+	check(not ok and string.find(message, "MessagingService is down", 1, true), "...and says so when publishing fails")
+	filterWorks = false
+	local before = #shown
+	ok, message = pcall(announce.Run, nil, args, developer)
+	check(not ok and #shown == before and string.find(message, "filter", 1, true), "live, an unfiltered message is never shown")
 
 	-- Nothing from the old game is left -------------------------------------------------------------------
 	for _, name in { "AdminCommands", "AdminService", "PlayerEffects", "AdminConfig" } do

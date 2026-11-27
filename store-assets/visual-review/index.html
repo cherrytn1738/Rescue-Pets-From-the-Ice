@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Visual review</title>
+<style>
+  :root { --bg: #0f1724; --panel: #172235; --text: #e8f1ff; --muted: #93a6c4; --accent: #6cc8ff; --line: #263552; }
+  @media (prefers-color-scheme: light) { :root { --bg: #f3f6fb; --panel: #ffffff; --text: #13213a; --muted: #5a6b86; --accent: #1f7fd1; --line: #d5deea; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); }
+  header { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  h1 { font-size: 18px; margin: 0 12px 0 0; }
+  nav { display: flex; flex-wrap: wrap; gap: 6px; }
+  nav a { color: var(--text); text-decoration: none; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; font-size: 13px; }
+  nav a:hover { border-color: var(--accent); }
+  input[type=search] { padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); min-width: 180px; }
+  label { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  main { padding: 8px 16px 40px; }
+  h2 { margin: 24px 0 10px; font-size: 16px; text-transform: capitalize; }
+  h2 small { color: var(--muted); font-weight: normal; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; cursor: zoom-in; }
+  .card .pics { display: flex; background: #000; }
+  .card img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: contain; background: #000; }
+  .card.pair .pics img { width: 50%; }
+  .card .name { padding: 6px 10px; font-size: 13px; word-break: break-all; }
+  .card .name em { color: var(--accent); font-style: normal; font-size: 12px; margin-left: 6px; }
+  .empty { color: var(--muted); padding: 40px 0; }
+  #view { position: fixed; inset: 0; background: rgba(0, 0, 0, .92); display: none; z-index: 10; flex-direction: column; }
+  #view.open { display: flex; }
+  #view .bar { color: #fff; padding: 10px 16px; display: flex; gap: 12px; align-items: center; }
+  #view .bar span { flex: 1; word-break: break-all; }
+  #view button { background: #24324a; color: #fff; border: 0; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+  #view .pics { flex: 1; display: flex; gap: 8px; padding: 0 16px 16px; min-height: 0; }
+  #view figure { margin: 0; flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  #view figcaption { color: #aab8d0; font-size: 13px; padding: 4px 0; }
+  #view img { flex: 1; min-height: 0; width: 100%; object-fit: contain; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Visual review</h1>
+  <nav id="nav"></nav>
+  <input id="filter" type="search" placeholder="Filter by name">
+  <label><input id="pairs" type="checkbox" checked> Before / after side by side</label>
+</header>
+<main id="main"></main>
+<div id="view" role="dialog" aria-modal="true">
+  <div class="bar"><button id="prev">&larr;</button><button id="next">&rarr;</button><span id="vname"></span><button id="close">Close (Esc)</button></div>
+  <div class="pics" id="vpics"></div>
+</div>
+<script src="shots.js"></script>
+<script>
+  // Shows every picture in this folder by category (the list is shots.js, written by
+  // tools/visual_review.py). A picture that has an older version in ../visual-review-before/ can be
+  // shown next to it.
+  const shots = (window.SHOTS || []);
+  const main = document.getElementById("main"), nav = document.getElementById("nav");
+  const filter = document.getElementById("filter"), pairs = document.getElementById("pairs");
+  let visible = [], current = 0;
+
+  function render() {
+    const q = filter.value.trim().toLowerCase();
+    main.innerHTML = ""; nav.innerHTML = ""; visible = [];
+    const cats = [...new Set(shots.map(s => s.category))];
+    if (!shots.length) { main.innerHTML = '<p class="empty">No pictures yet: run <code>python tools/visual_review.py</code>.</p>'; return; }
+    for (const cat of cats) {
+      const list = shots.filter(s => s.category === cat && (!q || s.name.toLowerCase().includes(q)));
+      if (!list.length) continue;
+      const a = document.createElement("a"); a.href = "#" + cat; a.textContent = `${cat} (${list.length})`; nav.appendChild(a);
+      const h = document.createElement("h2"); h.id = cat;
+      const befores = list.filter(s => s.before).length;
+      h.innerHTML = `${cat} <small>${list.length} pictures${befores ? `, ${befores} with a before` : ""}</small>`;
+      main.appendChild(h);
+      const grid = document.createElement("div"); grid.className = "grid"; main.appendChild(grid);
+      for (const s of list) {
+        const index = visible.push(s) - 1;
+        const card = document.createElement("div");
+        const pair = pairs.checked && s.before;
+        card.className = "card" + (pair ? " pair" : "");
+        card.innerHTML = `<div class="pics">${pair ? `<img loading="lazy" src="${s.before}" alt="before">` : ""}<img loading="lazy" src="${s.file}" alt="${s.name}"></div>` +
+          `<div class="name">${s.name}${s.before ? "<em>before/after</em>" : ""}</div>`;
+        card.onclick = () => open(index);
+        grid.appendChild(card);
+      }
+    }
+  }
+  function open(index) {
+    current = (index + visible.length) % visible.length;
+    const s = visible[current];
+    document.getElementById("vname").textContent = `${s.category} / ${s.name}`;
+    const pics = document.getElementById("vpics");
+    pics.innerHTML = (pairs.checked && s.before ? `<figure><figcaption>Before</figcaption><img src="${s.before}"></figure>` : "") +
+      `<figure><figcaption>${s.before && pairs.checked ? "After" : ""}</figcaption><img src="${s.file}"></figure>`;
+    document.getElementById("view").classList.add("open");
+  }
+  function closeView() { document.getElementById("view").classList.remove("open"); }
+  document.getElementById("close").onclick = closeView;
+  document.getElementById("prev").onclick = () => open(current - 1);
+  document.getElementById("next").onclick = () => open(current + 1);
+  document.addEventListener("keydown", e => {
+    if (!document.getElementById("view").classList.contains("open")) return;
+    if (e.key === "Escape") closeView();
+    if (e.key === "ArrowLeft") open(current - 1);
+    if (e.key === "ArrowRight") open(current + 1);
+  });
+  filter.oninput = render; pairs.onchange = render;
+  render();
+</script>
+</body>
+</html>
