@@ -16,7 +16,7 @@ Branch `overnight-retest` (from `main` at 7e93c1b). Pushed after every phase; no
 |---|---|
 | 0. Lighting note (Unified Lighting) | Done |
 | 1. Rebirth and Welcome Back screens | Done: both screens, 17 icons (approved), Double Welcome Back created (3737277177) and tested, screenshots |
-| 2. Play-throughs | Not started |
+| 2. Play-throughs | Done: first rebirth at 29.2 min, Layer 6, returning player, every reward kind |
 | 3. Long-run stability | Not started |
 | 4. Saves | Not started |
 | 5. Security | Not started |
@@ -111,3 +111,70 @@ Made with the icon pipeline in the game's style (`tools/icons/render_icons.py` b
 - **Shop:** pass cards carry a sentence each ("Doubles all your crystals, forever."). A big "x2" or "+1 slot" badge on the picture, with the sentence behind the INFO button.
 - **Codes:** "Enter a code to get free rewards!" and "Codes aren't case-sensitive. Each one works once." could be one picture of a ticket.
 - **Toasts and notices** ("Your Mythic Block arrived: a Rare creature is inside!") could lead with the rarity colour and an icon.
+
+## Phase 2: play-throughs
+
+### A fresh player to the first rebirth
+
+A scripted new player (`StudioFreshSave` and `StudioIgnoreOwnedPasses` on: no passes), 4 taps a second through the real tap remote, following the tutorial, buying the best payback (buildings, upgrades and tools), redeeming ICELAUNCH and THAWED, using the PLOT button's remote from the plaza at minute 3, and stopping at the rebirth level so I could rebirth through the new Rebirth screen with real clicks. Full log: `docs/playthrough_2026-11-28.txt`.
+
+| Milestone | Tonight | 2026-11-26 | 2026-11-25 |
+|---|---|---|---|
+| Tutorial done, first building, ICELAUNCH, THAWED | 0.3 min | 0.5 | 0.4 |
+| Tools: Stone Hammer / Copper Axe / Iron Pick / Steel Sword | 0.2 / 2.0 / 3.9 / 6.5 min (levels 1, 6, 10, 14) | (no tools then) | |
+| Frost Spear / Gold Hammer / Crystal Axe / Ice Drill | 9.7 / 11.7 / 12.9 / 15.2 min (levels 18, 20, 21, 23) | | |
+| Diamond Sword / Flame Pick / Thunder Hammer / Aurora Blade | 17.9 / 19.6 / 22.7 / 24.6 min (levels 25, 26, 28, 29) | | |
+| Layer 2 (Blue Ice) | 4.5 min | 5.1 | 4.4 |
+| First Rare or better | **5.8 min** (level 6) | 24.8 | 5.9 |
+| Layer 3 (Ancient Ice) | 13.0 min | 16.4 | 13.7 |
+| Rebirth ready (level 31, Layer 4) | **29.2 min, +5 Frost Cores** | 43.1 (+4) | 34.5 (+5) |
+| PLOT button from the plaza (minute 3) | landed on its own plot's tapping spot (z = 151, plot 1) | | |
+| First rebirth through the new screen | REBIRTH → "SURE?" → reborn, +5 Frost Cores, the frost-over and the banner | | |
+| Onboarding funnel | all 7 steps in order (Joined, First tap, First building, First rescue, First pet equipped, Tutorial done, First rebirth) | 7 | 7 |
+
+- **Against the 33-37 minute target: 29.2 minutes, about 4 minutes fast** for a near-perfect player. The early Rare guarantee (first Rare at level 6) took the luck out (last run waited until level 24). Real players are slower than this bot, so I changed nothing; a proposal is in the questions.
+- **Nowhere stuck:** no "saving up for 4+ minutes" line all run; rescues came every 0.3-2.5 minutes, the slowest at levels 28-30. The tutorial's step 3 (free your first creature) passes in seconds. Auto-equip kept the best pet in the one slot.
+- **No errors or warnings** from the game in Output.
+
+### A later run: rebirth 3, into Layer 6
+
+A fresh save set to rebirth 3 (Layer 6 open), tool 13, 900 billion crystals:
+
+| Check | Result |
+|---|---|
+| Lava Axe (14), Starfall Spear (15), Comet Hammer (16), Cosmic Pick (17) | each **refused one level below its unlock level** ("Reach level 33/37/41/45") and **bought at it** |
+| Starbreaker (18) at level 45 | refused ("Reach level 48") |
+| Block HP at levels 39 / 40 / 41 / 42 / 50 | 4.914e8 / 7.372e8 / 8.993e8 / 1.097e9 / 5.385e9, exactly `LayerConfig.BlockHp`; growth **x1.50 up to 40, then x1.22** |
+| Level 51 | the block is Layer 6, Frozen Core (attributes Layer 6, Level 51) |
+| Five rescues at levels 51-55 | Frost Turtle, Seal Pup, Polar Bear Cub, Frost Turtle, Snow Bunny: all from Layer 6's pool |
+| A Mythic (Aurora Fox) Layer 6 block | the black Frozen Core ice with orange veins, the creature's outline and yellow eyes, its glow and sparkles, the gold Shatter Now button; checked in a screenshot |
+
+At level 51, 75 seconds of tapping with the Cosmic Pick (8 taps a second) didn't break a block (6.6 billion HP); that's expected without buildings, so the rescues above were forced through the server's real shatter.
+
+### A returning player (your Studio save, owned passes ignored)
+
+| Check | Result |
+|---|---|
+| Codes (after "forget my codes") | THAWED: 250 crystals, then "You already redeemed that code."; ICELAUNCH: 500, then "icelaunch" refused as already redeemed |
+| Daily chest | +249K; same day "Already opened today. Come back in 11h 31m."; after the day change (debug) +249K again |
+| Away 2 hours | **+2.61M** (725/s building income x 3,600 s = 50% of 2 h), not capped; the new Welcome Back screen showed "+2.61M CRYSTALS", "Away for 2h" and "x2 +5.22M" |
+| Claim! (a real click) | the screen closed, the offer closed on the server; a purchase after it was refused |
+| Away 24 hours | **+2.61M, capped**; "Away for 1d (earns up to 2h)" |
+| x2 (a real click on the real product) | Roblox's purchase prompt opened (Studio's test prompt); cancelling it (Escape) brought x2 back; then the purchase (simulated, real receipt handler) paid +2.61M, the screen counted up to +5.22M and closed |
+| Rejoining mid-block | the same Crystal Stag came back, its HP kept (1.99189e9 of 1.99232e9), and **its Mythic Block look kept** (`MythicBlock` true) after two rejoins |
+| A save with old IcePick ids | **couldn't be checked live:** Studio refuses DataStore writes from Edit mode ("Access forbidden"), and a write during Play is overwritten by the session's own save. The migration is covered by the PlayerData spec (an old save with IcePick4 loads as every tool up to the Gold Hammer, through the real load path) |
+
+### Every reward kind through the simulated receipt (the real receipt handler)
+
+| Item | Result |
+|---|---|
+| Crystal Pouch / Sack / Chest / Giant Chest | PurchaseGranted: 508K / 2.99M / 17.9M / 71.7M |
+| Shatter Now | PurchaseGranted: the Common block shattered |
+| Server Frost Rush | PurchaseGranted: x2 for everyone, 15 minutes |
+| Mythic Block x3, then the same receipt again | 3 waiting; the duplicate: "already granted, nothing given", still 3 |
+| Lucky Ice, as a gift to themselves (its gift product) | PurchaseGranted; `Owns_LuckyIce` true |
+| Double Welcome Back (with an offer), then a duplicate | PurchaseGranted 2.87M; the duplicate gave nothing |
+| Mythic Block | PurchaseGranted (4 waiting); the next block rolled from its odds (an Epic Crystal Stag with the Mythic look) and kept the look through two rejoins |
+| **Auto Pick** | **2.00 taps a second** (measured from the block's HP with a 2,000-damage tool, buildings subtracted); with my own taps far over the cap on top: 10.5 a second over 15 s (the cap of 10 plus the bucket's first 10) |
+
+Found while doing this (fixed, see Phase 4): a rebirth with a bought Mythic Block still on the mound rolled it away.

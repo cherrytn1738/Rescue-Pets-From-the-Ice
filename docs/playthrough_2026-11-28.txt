@@ -1,0 +1,112 @@
+Playthrough 2026-11-28 (overnight re-test, Phase 2): a fresh save with owned passes ignored (StudioFreshSave, StudioIgnoreOwnedPasses), 4 taps a second through TapBatch, follows the tutorial, buys the best payback (buildings, upgrades, tools), ICELAUNCH and THAWED, the PLOT button's remote from the plaza at minute 3, and the first rebirth through the new Rebirth screen (clicked: REBIRTH, SURE?). Bot: tmp/play/autoplay3.luau (not committed).
+
+   0.0 min  start: fresh save true, ignore owned passes true, owns 2x false, tapping 4/s
+   0.0 min  tutorial step 1
+   0.0 min  snapshot: level 1, crystals 2.2, income 4/s (at 4 taps/s), 0 buildings, 0 pets, 0 equipped, tool 1
+   0.1 min  tutorial step 2
+   0.2 min  MILESTONE tool 2: Stone Hammer (level 1)
+   0.3 min  rescue 1: SnowBunny (Common) at level 1, 0.3 min since the last, NEW
+   0.3 min  MILESTONE first building: Heat Lamp
+   0.3 min  redeem ICELAUNCH: Code redeemed: 500 crystals!
+   0.3 min  first Heat Lamp
+   0.3 min  tutorial step 4
+   0.3 min  tutorial: equipped the first pet: Equipped!
+   0.3 min  tutorial step 5
+   0.3 min  redeem THAWED: Code redeemed: 250 crystals!
+   0.3 min  first Ice Pick Post
+   0.4 min  auto-equip check: 1 pets, 1 equipped
+   0.6 min  rescue 2: PenguinChick (Common) at level 2, 0.3 min since the last, NEW
+   0.7 min  auto-equip check: 2 pets, 1 equipped
+   0.8 min  first Chisel Mill
+   0.9 min  rescue 3: FrostMouse (Common) at level 3, 0.3 min since the last, NEW
+   1.0 min  auto-equip check: 3 pets, 1 equipped
+   1.3 min  rescue 4: PuffinPal (Common) at level 4, 0.4 min since the last, NEW
+   1.3 min  auto-equip check: 4 pets, 1 equipped
+   1.6 min  rescue 5: IceHedgehog (Uncommon) at level 5, 0.4 min since the last, NEW
+   1.8 min  upgrade Fast Sled 1
+   2.0 min  MILESTONE tool 3: Copper Axe (level 6)
+   2.0 min  snapshot: level 6, crystals 75, income 43.7/s (at 4 taps/s), 10 buildings, 5 pets, 1 equipped, tool 3
+   2.1 min  rescue 6: SnowBunny (Common) at level 6, 0.5 min since the last
+   2.5 min  upgrade Heat Lamp upgrade 1
+   2.6 min  rescue 7: IceHedgehog (Uncommon) at level 7, 0.5 min since the last
+   3.1 min  PLOT: standing in the plaza at 0, 3.59802508354187, 30
+   3.1 min  teleported (PLOT)
+   3.1 min  PLOT: after the button at 0, 3.348025321960449, 151 (plot 1)
+   3.2 min  rescue 8: FrostMouse (Common) at level 8, 0.5 min since the last
+   3.4 min  upgrade Bigger Burst 1
+   3.9 min  rescue 9: SnowBunny (Common) at level 9, 0.7 min since the last
+   3.9 min  MILESTONE tool 4: Iron Pick (level 10)
+   4.0 min  snapshot: level 10, crystals 5.34e+03, income 124/s (at 4 taps/s), 20 buildings, 9 pets, 1 equipped, tool 4
+   4.1 min  upgrade Heat Lamp upgrade 2
+   4.5 min  rescue 10: IceHedgehog (Uncommon) at level 10, 0.6 min since the last
+   4.5 min  MILESTONE layer 2: Blue Ice
+   5.0 min  first Ice Drill
+   5.2 min  rescue 11: FrostMouse (Common) at level 11, 0.7 min since the last
+   5.2 min  upgrade Ice Pick Post upgrade 1
+   5.8 min  rescue 12: GlacierOtter (Rare) at level 12, 0.7 min since the last, NEW
+   5.8 min  MILESTONE first Rare or better: Rare
+   5.8 min  upgrade Chisel Mill upgrade 1
+   6.0 min  snapshot: level 13, crystals 2.24e+03, income 564/s (at 4 taps/s), 40 buildings, 12 pets, 1 equipped, tool 4
+   6.2 min  upgrade Ice Pick Post upgrade 2
+   6.5 min  rescue 13: SnowBunny (Common) at level 13, 0.6 min since the last
+   6.5 min  MILESTONE tool 5: Steel Sword (level 14)
+   7.2 min  rescue 14: SnowyOwlet (Uncommon) at level 14, 0.7 min since the last, NEW
+   7.2 min  upgrade Chisel Mill upgrade 2
+   7.3 min  upgrade Crystal Yield 1
+   7.9 min  rescue 15: SnowBunny (Common) at level 15, 0.7 min since the last
+   8.0 min  snapshot: level 16, crystals 4.58e+04, income 1.7e+03/s (at 4 taps/s), 60 buildings, 15 pets, 1 equipped, tool 5
+   8.5 min  upgrade Fast Sled 2
+   8.7 min  rescue 16: PenguinChick (Common) at level 16, 0.8 min since the last
+   9.5 min  first Wrecking Crane
+   9.7 min  rescue 17: FrostMouse (Common) at level 17, 1.0 min since the last
+   9.7 min  MILESTONE tool 6: Frost Spear (level 18)
+   9.8 min  upgrade Ice Drill upgrade 1
+  10.0 min  snapshot: level 18, crystals 1.94e+04, income 3.15e+03/s (at 4 taps/s), 67 buildings, 17 pets, 1 equipped, tool 6
+  10.6 min  rescue 18: PuffinPal (Common) at level 18, 0.9 min since the last
+  10.6 min  upgrade Frost Touch I
+  11.4 min  upgrade Bigger Burst 2
+  11.6 min  rescue 19: IceHedgehog (Uncommon) at level 19, 1.0 min since the last
+  11.7 min  MILESTONE tool 7: Gold Hammer (level 20)
+  12.0 min  snapshot: level 20, crystals 2.4e+05, income 5.18e+03/s (at 4 taps/s), 76 buildings, 19 pets, 1 equipped, tool 7
+  12.9 min  rescue 20: IceHedgehog (Uncommon) at level 20, 1.3 min since the last
+  12.9 min  MILESTONE tool 8: Crystal Axe (level 21)
+  12.9 min  upgrade Ice Drill upgrade 2
+  13.0 min  MILESTONE layer 3: Ancient Ice
+  14.0 min  rescue 21: FrostMouse (Common) at level 21, 1.1 min since the last
+  14.0 min  snapshot: level 22, crystals 3.99e+05, income 1.12e+04/s (at 4 taps/s), 90 buildings, 21 pets, 1 equipped, tool 8
+  14.1 min  upgrade Heat Lamp upgrade 3
+  15.2 min  rescue 22: CrystalStag (Epic) at level 22, 1.2 min since the last, NEW
+  15.2 min  MILESTONE tool 9: Ice Drill (level 23)
+  15.7 min  first Flamethrower Turret
+  16.0 min  snapshot: level 23, crystals 5.31e+05, income 2.27e+04/s (at 4 taps/s), 105 buildings, 22 pets, 1 equipped, tool 9
+  16.5 min  rescue 23: PuffinPal (Common) at level 23, 1.4 min since the last
+  16.6 min  upgrade Wrecking Crane upgrade 1
+  17.2 min  upgrade Crystal Yield 2
+  17.4 min  upgrade Ice Pick Post upgrade 3
+  17.9 min  rescue 24: FrostMouse (Common) at level 24, 1.4 min since the last
+  17.9 min  MILESTONE tool 10: Diamond Sword (level 25)
+  18.0 min  upgrade Chisel Mill upgrade 3
+  18.0 min  snapshot: level 25, crystals 1.75e+06, income 4.29e+04/s (at 4 taps/s), 125 buildings, 24 pets, 1 equipped, tool 10
+  19.6 min  rescue 25: PenguinChick (Common) at level 25, 1.7 min since the last
+  19.6 min  MILESTONE tool 11: Flame Pick (level 26)
+  19.6 min  upgrade Wrecking Crane upgrade 2
+  20.1 min  snapshot: level 26, crystals 4.71e+04, income 7.19e+04/s (at 4 taps/s), 128 buildings, 25 pets, 1 equipped, tool 11
+  21.1 min  rescue 26: SnowyOwlet (Uncommon) at level 26, 1.5 min since the last
+  22.1 min  snapshot: level 27, crystals 1.73e+06, income 1e+05/s (at 4 taps/s), 148 buildings, 26 pets, 1 equipped, tool 11
+  22.7 min  rescue 27: ArcticFoxKit (Uncommon) at level 27, 1.6 min since the last, NEW
+  22.7 min  MILESTONE tool 12: Thunder Hammer (level 28)
+  22.8 min  upgrade Ice Drill upgrade 3
+  24.1 min  snapshot: level 28, crystals 7.74e+06, income 1.31e+05/s (at 4 taps/s), 159 buildings, 27 pets, 1 equipped, tool 12
+  24.6 min  rescue 28: CrystalStag (Epic) at level 28, 1.9 min since the last
+  24.6 min  MILESTONE tool 13: Aurora Blade (level 29)
+  24.6 min  upgrade Flamethrower Turret upgrade 1
+  26.1 min  snapshot: level 29, crystals 3.48e+06, income 1.88e+05/s (at 4 taps/s), 163 buildings, 28 pets, 1 equipped, tool 13
+  26.6 min  rescue 29: FrostTurtle (Rare) at level 29, 2.0 min since the last, NEW
+  26.6 min  upgrade Frost Touch II
+  28.1 min  snapshot: level 30, crystals 2.27e+07, income 2.15e+05/s (at 4 taps/s), 170 buildings, 29 pets, 1 equipped, tool 13
+  29.2 min  rescue 30: GlacierOtter (Rare) at level 30, 2.5 min since the last
+  29.2 min  MILESTONE rebirth ready (level 31, +5 Frost Cores): waiting for the Rebirth screen
+  29.2 min  MILESTONE layer 4: Crystal Ice
+  30.4 min  MILESTONE layer 1: Fresh Snow
+  30.4 min  MILESTONE first rebirth through the screen: 5 Frost Cores (waited 1.2 min for the click)
+  30.4 min  finished
