@@ -231,10 +231,15 @@ return function(sources)
 		end },
 		RobuxPerks = {},
 		Economy = {},
-		LightingService = { SetPreset = function(name)
-			table.insert(calls, { name = "SetPreset", args = { name } })
-			return name == "GoldenSunset" or name == "PinkDusk"
-		end },
+		LightingService = {
+			SetLook = function(name)
+				table.insert(calls, { name = "SetLook", args = { name } })
+				return name == nil or name == "Day" or name == "PinkDusk" or name == "Night"
+			end,
+			SetFast = function(on)
+				table.insert(calls, { name = "SetFast", args = { on } })
+			end,
+		},
 	}
 	local soundEvents = {}
 	local replicated = {
@@ -242,7 +247,7 @@ return function(sources)
 		BuildingConfig = { Buildings = { { Id = "HeatLamp", Name = "Heat Lamp" } } },
 		AudioConfig = { Sfx = { Tap = {}, Shatter = {} }, Ui = { Click = {} } },
 		EconomyRules = {},
-		LightingConfig = { Default = "PinkDusk", Presets = { PinkDusk = {}, GoldenSunset = {} } },
+		LightingConfig = { Default = "PinkDusk", Presets = { Day = {}, PinkDusk = {}, Night = {} }, Cycle = { Order = { "Day", "PinkDusk", "Night" } } },
 		GameEvent = { FireClient = function(_, player, kind, payload)
 			table.insert(soundEvents, { player = player, kind = kind, payload = payload })
 		end },
@@ -325,16 +330,24 @@ return function(sources)
 	check(not ok and string.find(message, "no products yet", 1, true), "with no products configured, simulating a receipt says so")
 	check(#calls == 0, "...and neither touched the monetization systems")
 
-	local lightingChoices = ids.SetLightingPreset.Params[1].Choices
-	check(ids.SetLightingPreset.NoTarget and #lightingChoices == 2 and lightingChoices[1].Value == "PinkDusk" and ids.SetLightingPreset.Params[1].Default == "PinkDusk",
-		"the lighting preset switch lists every preset, the default first")
-	ok, message = run("SetLightingPreset", { Preset = "GoldenSunset" })
-	check(ok and calls[#calls].name == "SetPreset" and calls[#calls].args[1] == "GoldenSunset" and string.find(message, "GoldenSunset", 1, true) ~= nil,
-		"switching the lighting goes through LightingService.SetPreset")
-	ok = run("SetLightingPreset", { Preset = "Disco" })
-	check(not ok, "an unknown preset is refused")
+	check(ids.SetLightingPreset == nil, "the old lighting preset switch is gone (the day look replaced the golden sunset)")
+	local lookChoices = ids.SetDayLook.Params[1].Choices
+	check(ids.SetDayLook.NoTarget and ids.SetDayLook.Group == "World" and #lookChoices == 4 and lookChoices[1].Value == "Cycle"
+		and lookChoices[2].Value == "Day" and lookChoices[3].Value == "PinkDusk" and lookChoices[4].Value == "Night",
+		"the day-night look switch: the cycle, or day, dusk or night for the whole server")
+	ok, message = run("SetDayLook", { Look = "Night" })
+	check(ok and calls[#calls].name == "SetLook" and calls[#calls].args[1] == "Night" and string.find(message, "Night", 1, true) ~= nil,
+		"forcing a look goes through LightingService.SetLook")
+	ok = run("SetDayLook", { Look = "Cycle" })
+	check(ok and calls[#calls].name == "SetLook" and calls[#calls].args[1] == nil, "...and \"the cycle runs\" clears it")
+	check(not run("SetDayLook", { Look = "Disco" }), "an unknown look is refused")
+	check(ids.FastDayCycle.NoTarget and ids.FastDayCycle.Group == "World", "the fast cycle switch is for the whole server")
+	ok = run("FastDayCycle", { State = "On" })
+	check(ok and calls[#calls].name == "SetFast" and calls[#calls].args[1] == true, "the fast cycle goes through LightingService.SetFast")
+	run("FastDayCycle", { State = "Off" })
+	check(calls[#calls].args[1] == false, "...and off again")
 	for index = #calls, 1, -1 do
-		if calls[index].name == "SetPreset" then
+		if calls[index].name == "SetLook" or calls[index].name == "SetFast" then
 			table.remove(calls, index)
 		end
 	end

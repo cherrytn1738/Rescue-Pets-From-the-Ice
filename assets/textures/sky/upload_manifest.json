@@ -1,5 +1,15 @@
 {
  "assets": {
+  "Aurora.png": {
+   "assetId": "121345685087118",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "previousAssetId": "73191475326742",
+   "sha256": "cf3e0687001adc32cf0336c96aa8b61768058e6afcaef431e0d5607629a9c6f8",
+   "updated": "2026-11-28T10:24:09+00:00"
+  },
   "SkyBk.png": {
    "assetId": "74529492771906",
    "creator": {
@@ -59,6 +69,114 @@
    "previousAssetId": "115670611050408",
    "sha256": "08d81cf6cd94d07804680429be487a4bdd3958b03e227bca8d5b762405d17b6c",
    "updated": "2026-11-28T04:43:23+00:00"
+  },
+  "day/SkyBk.png": {
+   "assetId": "122979432845792",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "ba9dfd87ad409afe85fdc06a4714354a48381dffffa3d2e2bbec602cf56fe944",
+   "updated": "2026-11-28T10:14:27+00:00"
+  },
+  "day/SkyDn.png": {
+   "assetId": "95270645121379",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "d0779fae1f84e4893ff398eb871cdbd4efd692e2cd2a5c18ea6275e77a7e5ad5",
+   "updated": "2026-11-28T10:14:29+00:00"
+  },
+  "day/SkyFt.png": {
+   "assetId": "99323392251546",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "2b3f06c33fa8a1b032d243f3d97976c5fa4abc1fdf7c42e7843936ac098ab00e",
+   "updated": "2026-11-28T10:14:31+00:00"
+  },
+  "day/SkyLf.png": {
+   "assetId": "77034042115053",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "4b2723f9f83c8a8345be2798a32097c6c30c443e71153fe6c7a775fad71e53ac",
+   "updated": "2026-11-28T10:14:33+00:00"
+  },
+  "day/SkyRt.png": {
+   "assetId": "85576364847485",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "4dd6fd0ea881fda7e3540ff1e2982f6cca11626ab0126f58583c83572f3c8d2c",
+   "updated": "2026-11-28T10:14:35+00:00"
+  },
+  "day/SkyUp.png": {
+   "assetId": "122599972465594",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "6f0a8dad7b7f8b6e0e11ac85bfcca6cb444e22736ea81bc80ebe01e3d23d292b",
+   "updated": "2026-11-28T10:14:37+00:00"
+  },
+  "night/SkyBk.png": {
+   "assetId": "120652674737428",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "cb20f6e6090b0761326ab5b2fe46421c384181b7f5db509a59e5b639184372e5",
+   "updated": "2026-11-28T10:14:39+00:00"
+  },
+  "night/SkyDn.png": {
+   "assetId": "133675510622637",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "236e3dbe5571038d999d514ee0a00f0f78e5c4ab6dcc73fbab3132cc6497a3d0",
+   "updated": "2026-11-28T10:14:41+00:00"
+  },
+  "night/SkyFt.png": {
+   "assetId": "133648367975067",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "bf0b7dfea526c0be9bc73db00d81dc1a64d800de652359604f7ec7435925cce2",
+   "updated": "2026-11-28T10:14:43+00:00"
+  },
+  "night/SkyLf.png": {
+   "assetId": "87376954858011",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "76c394b459a1557e5b9fe9161a79f34bbbe416b3eca9f2afd353690561ce5156",
+   "updated": "2026-11-28T10:14:45+00:00"
+  },
+  "night/SkyRt.png": {
+   "assetId": "110021717690534",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "0a837f29e27d15c85a76ff03228c738cfc2d4b3d4b0d0d76b1d1cd0af9dd19da",
+   "updated": "2026-11-28T10:14:47+00:00"
+  },
+  "night/SkyUp.png": {
+   "assetId": "102514024280218",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "b6e5875cdccd419fbbd89cb92bf9812ae508009d0c2da803d14b8492b5196764",
+   "updated": "2026-11-28T10:14:49+00:00"
   }
  },
  "creator": {

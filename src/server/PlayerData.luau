@@ -353,9 +353,9 @@ local function validate(record)
 	local function volume(value)
 		return if type(value) == "number" and value == value then math.clamp(value, 0, 1) else 1
 	end
-	-- (AutoEquip: on unless turned off)
+	-- (AutoEquip and DayNight, the day-night cycle: on unless turned off)
 	data.Settings = { Music = volume(settings.Music), Sounds = volume(settings.Sounds), ReducedEffects = settings.ReducedEffects == true,
-		AutoEquip = settings.AutoEquip ~= false }
+		AutoEquip = settings.AutoEquip ~= false, DayNight = settings.DayNight ~= false }
 
 	-- Tutorial: a new player starts it; a step that can't be read counts as done.
 	if isNew then

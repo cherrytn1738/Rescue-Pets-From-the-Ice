@@ -1,6 +1,7 @@
 --[[
 lighting.luau: the place's lighting in Edit mode (the command bar or MCP execute_luau), so Studio shows the game's
-warm winter sunset while editing; then save the place. Every value is in src/replicated/LightingConfig.luau, and the
+fixed look (LightingConfig.Default, the pink dusk) while editing; then save the place. In a Play each client runs the
+day-night cycle itself (DayNight.client). Every value is in src/replicated/LightingConfig.luau, and the
 game applies the same at the start of every server (LightingService), so the place file is never the only copy.
 
 Lighting.Technology can't be set from a script without plugin access: if the report says so, set

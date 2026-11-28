@@ -434,8 +434,7 @@ local PREPARE = {
 	world = function()
 		home()
 	end,
-	lighting = function()
-		dbg("SetRebirths", { Rebirths = 3 }) -- (Ancient Ice open)
+	["day-night"] = function()
 		setReduced(false)
 		home()
 	end,
@@ -1046,66 +1045,64 @@ shot("world/overview_tapping_spot", function()
 	return { Wait = 3 }
 end)
 
--- Lighting: the same views under each lighting preset (LightingConfig.Presets, switched with the debug menu), saved
--- as lighting/single/<view>_<preset>.jpg; visual_review.py puts each pair side by side as lighting/<view>.jpg.
-local LIGHTING_PRESETS = { { "pink_dusk", "PinkDusk" }, { "golden_sunset", "GoldenSunset" } }
-local function lightingShot(view: string, run, sizes)
-	for _, preset in LIGHTING_PRESETS do
-		shot(`lighting/single/{view}_{preset[1]}`, function()
-			dbg("SetLightingPreset", { Preset = preset[2] })
-			return run()
-		end, sizes)
-	end
+-- Day-night: the same views in each look of the cycle (LightingConfig.Cycle.Order, forced with the debug menu's
+-- "Day-night: set the look"), saved as day-night/<view>_<look>.jpg. Each look's views together (one switch each).
+local function setLook(look: string)
+	dbg("SetDayLook", { Look = look })
+	local Lighting = game:GetService("Lighting")
+	waitFor(function()
+		return Lighting:GetAttribute("LightingPreset") == look
+	end, 8)
+	task.wait(1.4) -- (the rest of the switch's fade)
 end
--- (no buildings first: the low blocks would break before their shot; the maxed plot last)
-lightingShot("tapping_spot", function()
-	onlyBuildings({})
-	freshBlock(LAYER_LEVELS[2], rarityCreature("Epic"))
-	home()
-	follow(Vector3.new(4, 7, 12), Vector3.new(0, 3, -16), 60)
-	return { Wait = 3 }
-end)
-lightingShot("blue_ice_close", function()
-	freshBlock(LAYER_LEVELS[2], rarityCreature("Common"))
-	blockShot(true)
-	return { Wait = 2.5 }
-end)
-lightingShot("ancient_ice_close", function()
-	freshBlock(LAYER_LEVELS[3], rarityCreature("Common"))
-	blockShot(true)
-	return { Wait = 2.5 }
-end)
-lightingShot("legendary_aura", function()
-	freshBlock(LAYER_LEVELS[2], rarityCreature("Legendary"))
-	hold(plotPoint(11, 40, 15), plotPoint(0, 0, 12), 55)
-	return { Wait = 3 }
-end)
-lightingShot("tapping_spot_phone", function()
-	freshBlock(LAYER_LEVELS[2], rarityCreature("Legendary"))
-	home()
-	staging.hud = true
-	follow(Vector3.new(4, 7, 12), Vector3.new(0, 3, -16), 60)
-	return { Wait = 3 }
-end, { "844x390" })
-lightingShot("plaza", function()
-	standAt(Vector3.new(0, 6, 30), Vector3.zero)
-	hold(Vector3.new(0, 55, 95), Vector3.new(0, 4, 0), 65)
-	return { Wait = 4 }
-end)
-lightingShot("across_the_ring", function()
-	release()
-	hold(Vector3.new(0, 260, 330), Vector3.new(0, 0, 0), 60)
-	return { Wait = 5 }
-end)
-lightingShot("maxed_plot", function()
-	for _, building in BuildingConfig.Buildings do
-		dbg("SetBuilding", { Building = building.Id, Count = 100, Upgrades = 5 })
-	end
-	dbg("SetBlockLevel", { Level = 400 })
-	home()
-	hold(plotPoint(-30, 75, 55), plotPoint(0, -5, 4), 60)
-	return { Wait = 4 }
-end)
+for _, look in require(ReplicatedStorage.LightingConfig).Cycle.Order do
+	local name = string.lower(look)
+	-- (no buildings first: the low blocks would break before their shot; the maxed plot last)
+	shot(`day-night/tapping_spot_{name}`, function()
+		setLook(look)
+		onlyBuildings({})
+		freshBlock(LAYER_LEVELS[2], rarityCreature("Rare"))
+		home()
+		follow(Vector3.new(4, 7, 12), Vector3.new(0, 3, -16), 60)
+		return { Wait = 3 }
+	end)
+	shot(`day-night/legendary_aura_{name}`, function()
+		setLook(look)
+		freshBlock(LAYER_LEVELS[2], rarityCreature("Legendary"))
+		hold(plotPoint(11, 40, 15), plotPoint(0, 0, 12), 55)
+		return { Wait = 3 }
+	end)
+	shot(`day-night/tapping_spot_phone_{name}`, function()
+		setLook(look)
+		freshBlock(LAYER_LEVELS[2], rarityCreature("Rare"))
+		home()
+		staging.hud = true
+		follow(Vector3.new(4, 7, 12), Vector3.new(0, 3, -16), 60)
+		return { Wait = 3 }
+	end, { "844x390" })
+	shot(`day-night/plaza_{name}`, function()
+		setLook(look)
+		standAt(Vector3.new(0, 6, 30), Vector3.zero)
+		hold(Vector3.new(0, 55, 95), Vector3.new(0, 4, 0), 65)
+		return { Wait = 4 }
+	end)
+	shot(`day-night/across_the_ring_{name}`, function()
+		setLook(look)
+		release()
+		hold(Vector3.new(0, 260, 330), Vector3.new(0, 0, 0), 60)
+		return { Wait = 5 }
+	end)
+	shot(`day-night/maxed_plot_{name}`, function()
+		setLook(look)
+		for _, building in BuildingConfig.Buildings do
+			dbg("SetBuilding", { Building = building.Id, Count = 100, Upgrades = 5 })
+		end
+		dbg("SetBlockLevel", { Level = 400 })
+		home()
+		hold(plotPoint(-30, 75, 55), plotPoint(0, -5, 4), 60)
+		return { Wait = 4 }
+	end)
+end
 
 -- UI: the HUD, every window and tab (desktop and both phone sizes), popups and moments.
 shot("ui/hud", function()
@@ -1456,9 +1453,13 @@ elseif string.sub(SHOT, 1, 9) == "?prepare:" then
 	end
 	dbg("SetTutorialStep", { Step = 5 }) -- (the tutorial's spotlight locks the HUD; its own shots set their step)
 	return "prepared " .. category
+elseif SHOT == "?open" then
+	-- the windows open now (after ?cleanup has shown everything again), as close-button paths: the helper closes them
+	-- before a category, so a popup from joining (offline earnings) never blurs the shots
+	return HttpService:JSONEncode(openWindows())
 elseif SHOT == "?cleanup" then
 	unfreeze() -- (a held pick swing)
-	dbg("SetLightingPreset", { Preset = require(ReplicatedStorage.LightingConfig).Default }) -- (the lighting shots switch it)
+	dbg("SetDayLook", { Look = "Cycle" }) -- (the day-night shots force a look)
 	dbg("ClearDummyPlots") -- (the plaza shots fill the free plots)
 	setReduced(false) -- (the effects shots turn it on)
 	for _, name in { "VisualReviewCamera", "VisualReviewStage" } do
@@ -1482,10 +1483,10 @@ for _, entry in SHOTS do
 	if entry.Name == SHOT then
 		-- model shots hide the HUD; UI, rescue moments and effects keep it
 		local category = string.split(SHOT, "/")[1]
-		staging.hud = not (category == "buildings" or category == "tools" or category == "ice" or category == "pets" or category == "world" or category == "lighting")
+		staging.hud = not (category == "buildings" or category == "tools" or category == "ice" or category == "pets" or category == "world" or category == "day-night")
 		staging.tutorial = false
 		-- the big moments only where they're the subject (building moments, rescues, UI, effects)
-		staging.banners = not (category == "tools" or category == "ice" or category == "pets" or category == "world" or category == "lighting")
+		staging.banners = not (category == "tools" or category == "ice" or category == "pets" or category == "world" or category == "day-night")
 		stage()
 		local preClose = openWindows()
 		local result = entry.Run() or {}

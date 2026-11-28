@@ -108,18 +108,11 @@ table.sort(soundChoices, function(a, b)
 end)
 soundChoices = choicesOr(soundChoices, "(no sounds in AudioConfig)")
 
--- the lighting presets (LightingConfig.Presets), the default first
-local lightingChoices = {}
-for name in LightingConfig.Presets do
-	table.insert(lightingChoices, { Value = name, Label = name .. (if name == LightingConfig.Default then " (the default)" else "") })
+-- the day-night looks (LightingConfig.Cycle.Order), after "the cycle runs"
+local lookChoices = { { Value = "Cycle", Label = "The cycle runs (no look forced)" } }
+for _, name in LightingConfig.Cycle.Order do
+	table.insert(lookChoices, { Value = name, Label = name })
 end
-table.sort(lightingChoices, function(a, b)
-	if (a.Value == LightingConfig.Default) ~= (b.Value == LightingConfig.Default) then
-		return a.Value == LightingConfig.Default
-	end
-	return a.Value < b.Value
-end)
-lightingChoices = choicesOr(lightingChoices, "(no lighting presets)")
 
 local lastSimulated = {} -- [buyer] = { product, gift, purchaseId }: the "duplicate receipt" action replays it
 
@@ -386,15 +379,25 @@ local ACTIONS = {
 		end,
 	},
 	{
-		-- for judging the looks side by side: everyone in this server sees the switch at once (Lighting replicates)
-		Id = "SetLightingPreset", Group = "World", Label = "Lighting preset (this server, at once; a new server starts on the default)",
+		-- the day-night cycle, for the whole server at once (every client applies the look from the Workspace attributes)
+		Id = "SetDayLook", Group = "World", Label = "Day-night: set the look for the whole server (or let the cycle run)",
 		NoTarget = true,
-		Params = { { Name = "Preset", Label = "Preset", Kind = "choice", Choices = lightingChoices, Default = lightingChoices[1].Value } },
+		Params = { { Name = "Look", Label = "Look", Kind = "choice", Choices = lookChoices, Default = "Cycle" } },
 		Run = function(_, args)
-			if not LightingService.SetPreset(args.Preset) then
-				fail("There's no lighting preset called " .. tostring(args.Preset))
+			local look = if args.Look == "Cycle" then nil else args.Look
+			if not LightingService.SetLook(look) then
+				fail("There's no look called " .. tostring(args.Look))
 			end
-			return `The lighting is {args.Preset} now`
+			return if look then `Everyone sees {look} now` else "The day-night cycle runs again"
+		end,
+	},
+	{
+		Id = "FastDayCycle", Group = "World", Label = "Day-night: fast cycle (the whole cycle in about 2 minutes)",
+		NoTarget = true,
+		Params = { stateParam() },
+		Run = function(_, args)
+			LightingService.SetFast(args.State == "On")
+			return if args.State == "On" then "The day-night cycle runs fast" else "The day-night cycle runs at normal speed"
 		end,
 	},
 	{

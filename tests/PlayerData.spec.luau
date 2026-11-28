@@ -346,6 +346,7 @@ return function(sources)
 		"New! badges: only seen, known creatures, each once; a Golden page badge only for a Golden version made")
 	check(data.DailyClaimDay == 0 and data.Settings.Music == 1 and data.Settings.Sounds == 1, "an unreadable daily day and settings fall back to defaults")
 	check(data.Settings.AutoEquip == true, "auto-equip is on unless turned off")
+	check(data.Settings.DayNight == true, "the day-night cycle is on unless turned off")
 	leave(messyGame)
 	local tooMany = {}
 	for index = 1, CreatureConfig.Pets.InventorySize + 5 do
@@ -741,7 +742,7 @@ return function(sources)
 	table.insert(full.BookNew, "SealPup")
 	full.FrostCores, full.Rebirths, full.MaxLayerOpened, full.CreaturesRescued = 4, 2, 5, 11
 	full.TutorialStep = 3 -- (not 5: an unreadable step loads as 5)
-	full.Settings = { Music = 0.3, Sounds = 0.6, ReducedEffects = true, AutoEquip = false }
+	full.Settings = { Music = 0.3, Sounds = 0.6, ReducedEffects = true, AutoEquip = false, DayNight = false }
 	full.DailyClaimDay = 20400
 	table.insert(full.Codes, "ROUNDTRIP")
 	full.GiftedPasses.AutoPick = true
