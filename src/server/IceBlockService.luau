@@ -245,6 +245,19 @@ function IceBlockService.Reroll(player: Player)
 	publish(player, data)
 end
 
+-- Shows the block the save holds now (after a change to it outside a rescue, e.g. a rebirth that kept a Mythic Block).
+function IceBlockService.Refresh(player: Player)
+	local data = PlayerData.Edit(player)
+	if not data or not states[player] then
+		return
+	end
+	states[player].arriveAt = nil
+	if not data.CurrentBlock then
+		rollBlock(player, data)
+	end
+	publish(player, data)
+end
+
 function IceBlockService.Rarity(player: Player): string?
 	local data = PlayerData.Get(player)
 	local block = data and data.CurrentBlock

@@ -6,6 +6,8 @@ RebirthService: rebirths and ranks (docs/GAME_DESIGN.md, "Rebirth"). Server only
    RebirthConfig.ResetOnRebirth (crystals, buildings, upgrades, the block level and block) and keeps the
    rest (pets, the book, Frost Cores, rank, Robux items). Rebirth ranks open pet slots (PetService) and
    layers (MaxLayerOpened). A rebirth worth 0 Frost Cores is allowed; the Rebirth screen warns first.
+ - A Mythic Block bought with Robux and still on the mound is paid for: it stays through the rebirth (the same
+   creature, at the new level's HP) instead of being rolled away with the block.
  - Ranks show as a title and colour on the player's name tag and their plot's border (RankService).
 ]]
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -43,9 +45,14 @@ function RebirthService.Apply(data)
 		return nil, `Reach level {RebirthConfig.RequiredLevel} (Layer 4: Crystal Ice) to rebirth.`
 	end
 	local cores = RebirthConfig.FrostCoresFor(data.CrystalsThisRun)
+	local block = data.CurrentBlock
+	local paidBlock = if type(block) == "table" and block.Mythic == true then block.CreatureId else nil
 	for _, field in RebirthConfig.ResetOnRebirth do
 		local default = DEFAULTS[field]
 		data[field] = if type(default) == "table" then {} else default
+	end
+	if paidBlock then
+		data.CurrentBlock = { CreatureId = paidBlock, HpLeft = LayerConfig.BlockHp(data.BlockLevel), Mythic = true }
 	end
 	data.FrostCores += cores
 	data.Rebirths += 1
@@ -71,7 +78,11 @@ function RebirthService.Handle(player: Player, action)
 		return { ok = false, message = reason }
 	end
 	PlayerData.MarkImportant(player)
-	IceBlockService.Reroll(player)
+	if data.CurrentBlock then
+		IceBlockService.Refresh(player) -- (a paid Mythic Block stays on the mound)
+	else
+		IceBlockService.Reroll(player)
+	end
 	PlotService.RefreshBuildings(player, data)
 	PetService.Publish(player, data)
 	Analytics.Onboarding(player, "FirstRebirth")

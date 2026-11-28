@@ -732,6 +732,20 @@ return function(sources)
 	local tooRich = join(150)
 	check(not PlayerData.IsReady(tooRich) and record(150).Crystals == 1e301, "crystals past the cap fail closed, untouched")
 	leave(tooRich)
+	-- every newer setting: a switch that isn't false stays on, a volume that isn't a number is full, any other is 0-1
+	put(154, { SchemaVersion = 1, Settings = { Music = 0 / 0, Sounds = -3, ReducedEffects = "yes", AutoEquip = 0, DayNight = "off" } })
+	local oddSettings = join(154)
+	local s = PlayerData.Get(oddSettings).Settings
+	check(PlayerData.IsReady(oddSettings) and s.Music == 1 and s.Sounds == 0 and s.ReducedEffects == false and s.AutoEquip == true and s.DayNight == true,
+		"unreadable settings: NaN volume full, a negative one 0, a switch that isn't a boolean back to its default")
+	leave(oddSettings)
+	put(155, { SchemaVersion = 1, Settings = { Music = math.huge, Sounds = 0.5, ReducedEffects = true, AutoEquip = false, DayNight = false } })
+	local offSettings = join(155)
+	s = PlayerData.Get(offSettings).Settings
+	check(s.Music == 1 and s.Sounds == 0.5 and s.ReducedEffects and s.AutoEquip == false and s.DayNight == false,
+		"settings turned off stay off (auto-equip, the day-night cycle); an infinite volume is full")
+	leave(offSettings)
+	check(record(155).Settings.DayNight == false and record(155).Settings.AutoEquip == false, "...and are saved that way")
 	put(151, { SchemaVersion = 1, CurrentBlock = { CreatureId = "SnowBunny", HpLeft = "lots" }, Settings = "loud" })
 	local oddBlock = join(151)
 	data = PlayerData.Get(oddBlock)

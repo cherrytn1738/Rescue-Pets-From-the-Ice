@@ -18,7 +18,7 @@ Branch `overnight-retest` (from `main` at 7e93c1b). Pushed after every phase; no
 | 1. Rebirth and Welcome Back screens | Done: both screens, 17 icons (approved), Double Welcome Back created (3737277177) and tested, screenshots |
 | 2. Play-throughs | Done: first rebirth at 29.2 min, Layer 6, returning player, every reward kind |
 | 3. Long-run stability | Not started |
-| 4. Saves | Not started |
+| 4. Saves | Done: every new field checked; a rebirth no longer loses a bought Mythic Block |
 | 5. Security | Not started |
 | 6. Phones and performance | Not started |
 | 7. Final pre-publish audit | Not started |
@@ -178,3 +178,23 @@ At level 51, 75 seconds of tapping with the Cosmic Pick (8 taps a second) didn't
 | **Auto Pick** | **2.00 taps a second** (measured from the block's HP with a 2,000-damage tool, buildings subtracted); with my own taps far over the cap on top: 10.5 a second over 15 s (the cap of 10 plus the bucket's first 10) |
 
 Found while doing this (fixed, see Phase 4): a rebirth with a bought Mythic Block still on the mound rolled it away.
+
+## Phase 4: saves
+
+(Committed before Phase 3's results: the 66-minute run was still going.)
+
+| Field (added since the last test) | Survives a rejoin | Survives a rebirth | Bad values cleaned | Where it's checked |
+|---|---|---|---|---|
+| `CurrentBlock.Mythic` | yes (spec; live: a Mythic Crystal Stag through two rejoins) | **now yes** (it was lost: fixed below) | anything but `true` dropped, the block kept | PlayerData, World specs |
+| `BookGolden` | yes | yes (kept) | unknown creatures and non-`true` dropped | PlayerData, World |
+| `BookNew` (incl. `Golden:<id>`) | yes | yes | repeats, unknown ids, junk dropped | PlayerData, World |
+| `Settings` (Music, Sounds, ReducedEffects, AutoEquip, DayNight) | yes, incl. AutoEquip and DayNight off | yes | **new checks:** NaN volume → full, negative → 0, infinite → full, a switch that isn't a boolean → its default (on); not a table → defaults | PlayerData, World |
+| Tool ids (`Tool2`...`Tool18` in `Upgrades`) | yes | reset with upgrades (by design) | unknown and repeated ids dropped; old `IcePick<n>` ids become every tool up to the matching one | PlayerData, Pick |
+| `WelcomeBack` (the x2 offer) | **new:** a prompted offer saved and loaded exactly | **new:** kept through a rebirth | **new:** unreadable → no offer (a string, NaN, infinite or non-positive amount, a fractional time, a non-whole Prompted) | PlayerData, World, WelcomeBack |
+| A debug reset | | | keeps a prompted offer (a purchase may be on its way), drops an unprompted one | PlayerData |
+
+**Fixed: a rebirth threw away a bought Mythic Block still on the mound.** A rebirth resets the block, so a Mythic Block (bought with Robux, rolled into the current block) that wasn't broken yet was simply re-rolled as an ordinary block. Now `RebirthService.Apply` keeps it: the same creature, Mythic look kept, at level 1's HP (`IceBlockService.Refresh` shows it instead of rolling a new one). An ordinary block is still rolled again. World spec +2 checks.
+
+The IcePick-to-Tool migration can't be checked live (Studio refuses DataStore writes from Edit mode, see Phase 2); the PlayerData spec loads an old save holding `IcePick4` through the real load path and gets every tool up to the Gold Hammer.
+
+Specs: 26 of 26 pass (8,093 checks).

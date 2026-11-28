@@ -79,6 +79,14 @@ return function(sources)
 	check(next(data.Buildings) == nil and #data.Upgrades == 0, "buildings and upgrades reset")
 	check(#data.Pets == 1 and data.Equipped[1] == "a" and data.BookSeen.SnowBunny == 3 and data.CrystalsAllTime == 9e9, "pets, the book and the all-time total are kept")
 	check(data.FrostCores == 3 and data.Rebirths == 1, "Frost Cores add up; the rebirth counts")
+	data = save({ CurrentBlock = { CreatureId = "AuroraFox", HpLeft = 5e9, Mythic = true } })
+	Rebirth.Apply(data)
+	check(data.CurrentBlock and data.CurrentBlock.CreatureId == "AuroraFox" and data.CurrentBlock.Mythic == true
+		and data.CurrentBlock.HpLeft == LayerConfig.BlockHp(1) and data.BlockLevel == 1,
+		"a Mythic Block bought with Robux and still on the mound stays through a rebirth: the same creature, at level 1's HP")
+	data = save({ CurrentBlock = { CreatureId = "AuroraFox", HpLeft = 5e9 } })
+	Rebirth.Apply(data)
+	check(data.CurrentBlock == nil, "...an ordinary block is rolled again")
 	data = save({ Rebirths = 2, CrystalsThisRun = 0 })
 	check(Rebirth.Apply(data) == 0 and data.Rebirths == 3, "a rebirth worth 0 cores is allowed (the screen warns)")
 	check(data.MaxLayerOpened == 6, "rebirth 3 (Glacier Diver) opens Layer 6, Frozen Core")
@@ -89,7 +97,9 @@ return function(sources)
 	-- FrostCores, Rebirths and MaxLayerOpened may grow).
 	local NEW_PLAYER = { Crystals = 0, CrystalsThisRun = 0, BlockLevel = 1, CurrentBlock = "none", Buildings = "empty", Upgrades = "empty" }
 	local full = save({
-		BookNew = { "SnowBunny" }, Settings = { Music = 0.2, Sounds = 0.4, ReducedEffects = true }, Codes = { "THAWED" },
+		BookNew = { "SnowBunny", "Golden:SnowBunny" }, Codes = { "THAWED" },
+		Settings = { Music = 0.2, Sounds = 0.4, ReducedEffects = true, AutoEquip = false, DayNight = false },
+		WelcomeBack = { Amount = 5000, At = 100, Prompted = 120 }, -- (a Welcome Back x2 purchase on its way)
 		Receipts = { { Id = "r1", Product = "ShatterNow", At = 5 } }, GiftedPasses = { VIP = true }, MythicBlocks = 2,
 		DailyClaimDay = 20400, TutorialStep = 5, Funnels = { Onboarding = 3, Waiting = {} }, BookGolden = { SnowBunny = true },
 	})
