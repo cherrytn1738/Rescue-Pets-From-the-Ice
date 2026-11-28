@@ -2212,109 +2212,109 @@ window.SHOTS = [
   "category": "day-night",
   "name": "across_the_ring_day",
   "file": "day-night/across_the_ring_day.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/across_the_ring_day.jpg"
  },
  {
   "category": "day-night",
   "name": "across_the_ring_night",
   "file": "day-night/across_the_ring_night.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/across_the_ring_night.jpg"
  },
  {
   "category": "day-night",
   "name": "across_the_ring_pinkdusk",
   "file": "day-night/across_the_ring_pinkdusk.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/across_the_ring_pinkdusk.jpg"
  },
  {
   "category": "day-night",
   "name": "legendary_aura_day",
   "file": "day-night/legendary_aura_day.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/legendary_aura_day.jpg"
  },
  {
   "category": "day-night",
   "name": "legendary_aura_night",
   "file": "day-night/legendary_aura_night.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/legendary_aura_night.jpg"
  },
  {
   "category": "day-night",
   "name": "legendary_aura_pinkdusk",
   "file": "day-night/legendary_aura_pinkdusk.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/legendary_aura_pinkdusk.jpg"
  },
  {
   "category": "day-night",
   "name": "maxed_plot_day",
   "file": "day-night/maxed_plot_day.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/maxed_plot_day.jpg"
  },
  {
   "category": "day-night",
   "name": "maxed_plot_night",
   "file": "day-night/maxed_plot_night.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/maxed_plot_night.jpg"
  },
  {
   "category": "day-night",
   "name": "maxed_plot_pinkdusk",
   "file": "day-night/maxed_plot_pinkdusk.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/maxed_plot_pinkdusk.jpg"
  },
  {
   "category": "day-night",
   "name": "plaza_day",
   "file": "day-night/plaza_day.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/plaza_day.jpg"
  },
  {
   "category": "day-night",
   "name": "plaza_night",
   "file": "day-night/plaza_night.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/plaza_night.jpg"
  },
  {
   "category": "day-night",
   "name": "plaza_pinkdusk",
   "file": "day-night/plaza_pinkdusk.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/plaza_pinkdusk.jpg"
  },
  {
   "category": "day-night",
   "name": "tapping_spot_day",
   "file": "day-night/tapping_spot_day.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/tapping_spot_day.jpg"
  },
  {
   "category": "day-night",
   "name": "tapping_spot_night",
   "file": "day-night/tapping_spot_night.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/tapping_spot_night.jpg"
  },
  {
   "category": "day-night",
   "name": "tapping_spot_phone_day_844x390",
   "file": "day-night/tapping_spot_phone_day_844x390.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/tapping_spot_phone_day_844x390.jpg"
  },
  {
   "category": "day-night",
   "name": "tapping_spot_phone_night_844x390",
   "file": "day-night/tapping_spot_phone_night_844x390.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/tapping_spot_phone_night_844x390.jpg"
  },
  {
   "category": "day-night",
   "name": "tapping_spot_phone_pinkdusk_844x390",
   "file": "day-night/tapping_spot_phone_pinkdusk_844x390.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/tapping_spot_phone_pinkdusk_844x390.jpg"
  },
  {
   "category": "day-night",
   "name": "tapping_spot_pinkdusk",
   "file": "day-night/tapping_spot_pinkdusk.jpg",
-  "before": null
+  "before": "../visual-review-before/day-night/tapping_spot_pinkdusk.jpg"
  },
  {
   "category": "lighting",
@@ -2932,19 +2932,19 @@ window.SHOTS = [
   "category": "ui",
   "name": "window_rebirth_ready",
   "file": "ui/window_rebirth_ready.jpg",
-  "before": null
+  "before": "../visual-review-before/ui/window_rebirth_ready.jpg"
  },
  {
   "category": "ui",
   "name": "window_rebirth_ready_667x375",
   "file": "ui/window_rebirth_ready_667x375.jpg",
-  "before": null
+  "before": "../visual-review-before/ui/window_rebirth_ready_667x375.jpg"
  },
  {
   "category": "ui",
   "name": "window_rebirth_ready_844x390",
   "file": "ui/window_rebirth_ready_844x390.jpg",
-  "before": null
+  "before": "../visual-review-before/ui/window_rebirth_ready_844x390.jpg"
  },
  {
   "category": "ui",

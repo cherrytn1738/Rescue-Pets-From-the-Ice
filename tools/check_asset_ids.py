@@ -15,7 +15,7 @@ import json, os, re, sys, time, urllib.error, urllib.request
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GROUP = "921449746"
-FILES = ["AudioConfig", "BuildingConfig", "CreatureConfig", "EffectsConfig", "MapConfig", "UITheme", "UpgradeConfig"]
+FILES = ["AudioConfig", "BuildingConfig", "CreatureConfig", "EffectsConfig", "IceLooks", "LightingConfig", "MapConfig", "SwingConfig", "UITheme", "UpgradeConfig"]
 PUBLIC = {"385956923": "UITheme.Assets.Checker (public library image)", "11560341132": "UITheme.Assets.Robux (public library image)"}
 
 

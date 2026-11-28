@@ -25,7 +25,7 @@ Every step you do by hand to launch Rescue Pets From the Ice, in order. Tick eac
 ## 3. Who can use the developer tools
 
 - [ ] `src/server/DebugConfig.luau`: `AllowedUserIds` is **empty** (the F2 debug menu gives crystals, passes and receipts; in a live game nobody should have it).
-- [ ] `src/server/AdminConfig.luau`: `AllowedUserIds` is **only `11704150663`** (you).
+- [ ] `src/server/AdminConfig.luau`: `AllowedUserIds` is **only `11704150663`** (you). (Both lists checked on 2026-11-28.)
 
 ## 4. The place
 
@@ -37,7 +37,7 @@ Every step you do by hand to launch Rescue Pets From the Ice, in order. Tick eac
   - Plot: a calm, cosy loop, about 80-95 BPM (soft piano, music box or mallets, no vocals).
   Play once and walk in and out of your plot: the music crossfades. An empty id simply plays nothing.
 - [ ] Every audio file is approved: `python tools/upload_models.py --check --manifest store-assets/audio/upload_manifest.json`.
-- [ ] Every asset id the game uses is the group's and approved: `python tools/check_asset_ids.py` (on 2026-11-26: 160 ids, all group-owned and approved; it reads the configs and asks Open Cloud about each id).
+- [ ] Every asset id the game uses is the group's and approved: `python tools/check_asset_ids.py` (on 2026-11-28: 249 ids, 248 group-owned and approved plus 1 public library image; it reads the configs, now including IceLooks, LightingConfig and SwingConfig, and asks Open Cloud about each id).
 - [ ] Every UI icon is approved: `python tools/upload_models.py --check --manifest store-assets/ui-icons/upload_manifest.json` (62 images, all approved on 2026-11-28, the Rebirth and Welcome Back screens' 17 included), and the leaderboard model: `--manifest store-assets/plaza/upload_manifest.json` (approved at upload).
 
 ## 5. Codes
@@ -80,6 +80,7 @@ Your own account counts as owning every pass (you made them), so test the pass w
   - DataStore warnings (throttling, failed saves). A failed load kicks the player with a message instead of overwriting their save.
 - [ ] **Creator Hub > Analytics:** concurrent players, average session length (target 10-20 min), the onboarding funnel (Joined -> First tap -> First building -> First rescue -> First pet equipped -> Tutorial done -> First rebirth): a big drop at one step is where players get lost. The shop funnel: opened -> viewed -> prompted -> purchased.
 - [ ] **Server memory and performance** (Developer Console > Memory / Server Stats): 8 maxed plots is the heaviest case.
+- [ ] **A full server on a phone:** up to 56 pets follow their players (about 200 parts each, animated by PetFollow). In Studio that cost about 1.4 ms a frame on a desktop (`OVERNIGHT_RETEST_REPORT.md`, Phase 6); check frame time on a mid-range phone in a busy server.
 - [ ] Join a live server yourself on a phone: the HUD, a window, tapping, buying.
 - [ ] **Updates (soft shutdown):** publishing alone leaves running servers on the old version until they empty. To move everyone: Creator Hub > the game > **Configurations > Server management** > select the place > **Restart Servers**, with **"Restart only servers with outdated versions"** ticked (optionally "Delay server restart", 1-60 min). Players see an "update coming" warning (with a delay), then "Updating the game, back in a moment"; every save is written first and Roblox moves them to a new server. "Shut Down All Servers" also brings them back, through a temporary reserved server. Check it the first time on a server you're in.
 - [ ] **Announcements:** F3 (admin window, you only) > Server > **Announce** (this server) or **AnnounceAll** (every server). Messages go through Roblox's text filter. Use it for "update in 5 minutes", events and likes codes.

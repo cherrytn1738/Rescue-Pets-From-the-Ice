@@ -514,6 +514,8 @@ A rebirth resets the run in exchange for Frost Cores, which add 5% crystals each
 | --- | --- |
 | Crystals, buildings, upgrades, block level | Pets, Frost Cores, rebirth rank, Robux items |
 
+A Mythic Block bought with Robux counts as a Robux item: one already on the mound stays there through a rebirth (with level 1's HP), and any still waiting keep waiting. An ordinary block is rolled again.
+
 **Goal on the HUD:** from level 25 the HUD shows the rebirth goal under the crystal counter: "Rebirth at level 31: N to go", then a pulsing "REBIRTH READY: +N Frost Cores" with the cores a rebirth would give now.
 
 **When:** the Rebirth button lights up once the player reaches Layer 4 (Crystal Ice, level 31). Rebirthing sends them back to level 1, but Frost Cores multiply every crystal, so buildings come sooner and they pass their old depth quickly. (Pets and Frost Cores multiply crystals, not damage: see the formula in Economy.)

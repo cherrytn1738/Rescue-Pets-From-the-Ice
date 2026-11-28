@@ -159,6 +159,11 @@ function showToast(text: string, color: Color3?)
 	limit.Parent = label
 	task.delay(4, function()
 		local fade = TweenService:Create(label, TweenInfo.new(0.5), { TextTransparency = 1 })
+		-- (the outline fades with the text: alone it left a dark, unreadable ghost of the line)
+		local outline = label:FindFirstChildOfClass("UIStroke")
+		if outline then
+			TweenService:Create(outline, TweenInfo.new(0.5), { Transparency = 1 }):Play()
+		end
 		fade:Play()
 		fade.Completed:Wait()
 		label:Destroy()

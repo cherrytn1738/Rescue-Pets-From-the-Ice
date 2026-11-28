@@ -130,6 +130,11 @@ for _, item in robuxBadge:GetDescendants() do
 		item.ZIndex = 7
 	end
 end
+-- the caption keeps clear of the badge (a long amount ran under it on phones)
+local doubleCaption = doubleButton.Visual:FindFirstChild("Caption") :: TextLabel?
+if doubleCaption then
+	doubleCaption.Size, doubleCaption.Position = UDim2.new(1, -84, 1, -6), UDim2.fromOffset(10, 0)
+end
 claimButton = UIKit.Button(content, "ClaimButton", "Claim!", "Buy", 40)
 claimButton.AnchorPoint = Vector2.new(0.5, 0.5)
 

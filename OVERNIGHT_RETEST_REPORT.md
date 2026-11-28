@@ -4,11 +4,53 @@ Branch `overnight-retest` (from `main` at 7e93c1b). Pushed after every phase; no
 
 ## Summary
 
-(Written at the end of the run.)
+All 8 phases are done, committed and pushed to `overnight-retest` (not merged). All 26 specs pass (8,093 checks).
+
+- **New:** picture-first Rebirth and Welcome Back screens (17 new icons, all approved), and the 19 R$ **Double Welcome Back** (product 3737277177). Its receipt pays only an offer whose prompt was opened, once; tested with simulated purchases, a duplicate receipt and a purchase after the offer was gone.
+- **Play-throughs:**
+  - a new player reaches the first rebirth in 29.2 minutes (target 33-37; question 1);
+  - Layer 6, a returning player (2 h and 24 h), every reward kind, and Auto Pick at 2 taps a second all work.
+- **An hour with three busy players:** no errors, and nothing grew without a limit.
+- **Security:** wrong and spammed input at all 15 remotes gained nothing.
+- **Fixed:**
+  - a rebirth threw away a bought Mythic Block;
+  - a server could freeze working out Frost Cores for a huge run;
+  - the codes list could outgrow what the save accepts;
+  - the settings sliders could save an older value;
+  - the x2 price badge covered the amount on phones;
+  - notices left a dark ghost line as they faded (the one visual change outside the two screens);
+  - the asset check skipped 46 ids (all fine).
+- **Phones:** 60 fps in every view in Studio with 8 maxed plots at night. Fewer triangles than at launch prep, but more draw calls across the ring at night. Three phone risks are proposed, not changed (question 3), and the Pets window is cramped on a landscape phone (question 5).
+- **Ready to publish** from tonight's side: the allowlists are right, no Studio switch is set, a clean Play has no game errors, the price check is 29/0, and all 249 asset ids are approved.
+- **For you:**
+  - answer the questions below;
+  - try a real controller once;
+  - merge the branch;
+  - **save the place and keep a backup copy** (File > Save to File As...). The templates, the world and the lighting live only in the place file.
 
 ## Questions for you
 
-(None yet.)
+1. **The first rebirth came 4 minutes early in the live run: 29.2 minutes against the 33-37 target (Phase 2).**
+   - Reasons: the scripted player buys perfectly, the early Rare came at level 6, and your account most likely gets the +10% group bonus, which the economy simulation leaves out.
+   - The simulation (4 taps a second, no group bonus) averages 34:47, inside the target.
+   - **My suggestion: change nothing now.** After launch, watch how long real players take to reach "First rebirth" in the onboarding funnel.
+   - If you'd rather slow it, the smallest lever is the block HP growth before level 31 (`LayerConfig.BlockHp`). Say so and I'll run the simulation first.
+2. **Double Welcome Back keeps a bought-but-not-yet-granted x2 for a day** (`WelcomeBackRules.Settings.PendingSeconds`), so a receipt that arrives late still pays what was bought.
+   - The one edge left: a server crash between the purchase and the grant, AND you away more than a day, AND you then buying x2 again. The old receipt would then pay the new amount, and the new receipt nothing.
+   - OK as it is, or should the pending window be longer?
+3. **Phone performance (Phase 6) has three proposals,** each of which changes how something looks:
+   - with reduced effects on, skip the northern lights and lamp lights, and other plots' upgrade parts;
+   - show fewer of other players' followers, and stop animating them sooner;
+   - lower-detail station templates for other plots.
+
+   Which, if any?
+4. **The next screens to redesign the picture-first way:** the list in Phase 1 ("Other menus that are still text-heavy"). Which first?
+5. **The Pets window on a landscape phone** shows only a 45 px sliver of the pet grid (Phase 6; the same on `main`). Two options:
+   - with a short screen, shrink the slots row and the buttons (the slots to about 60 px, the buttons to about 44): the grid gets about one full row of cards;
+   - move the slots into the grid's first row.
+
+   I'd do the first. Say which, and I'll do it and retake the shots.
+6. **By hand (no decision needed):** a real controller, once. Try PLOT, the Tools tab, buying a tool and a building, and x2 and Claim! on Welcome Back. Moving between buttons with the D-pad can't be driven from a script.
 
 ## Phase status
 
@@ -20,12 +62,12 @@ Branch `overnight-retest` (from `main` at 7e93c1b). Pushed after every phase; no
 | 3. Long-run stability | Done: 66 minutes, 3 players, no errors, nothing growing without a limit, no fix needed |
 | 4. Saves | Done: every new field checked; a rebirth no longer loses a bought Mythic Block |
 | 5. Security | Done: abuse at all 15 remotes gave nothing; 3 fixes (a frozen server on a huge run, the codes list, the settings sliders) |
-| 6. Phones and performance | Not started |
-| 7. Final pre-publish audit | Not started |
+| 6. Phones and performance | Done: 60 fps in every view with 8 maxed plots at night; 56 followers measured; gamepad pass; every window at both phone sizes (2 fixes, 3 older layout problems reported) |
+| 7. Final pre-publish audit | Done: allowlists right, no switches, clean Play, PriceCheck 29/0, 249 asset ids approved, whole visual set retaken |
 
 ## Visual changes outside the two screens
 
-None yet.
+- **Notices fade out cleanly** (`src/player/Banners.luau`). A toast's outline now fades with its text; before, the last half second of every notice showed a dark, unreadable copy of the line. That was a bug, found in the phone screenshots. Nothing else about the notices changed.
 
 ## Decisions I made
 
@@ -35,6 +77,10 @@ None yet.
 - **The x2 offer lasts 10 minutes** after the payout (`WelcomeBackRules.Settings.OfferSeconds`).
 - **Closing the Welcome Back screen any way (Claim!, X, B, a tap outside) closes the offer**, unless a purchase is running.
 - **Double Welcome Back's analytics:** its crystals are an IAP "Bundle" source with Sku `DoubleWelcomeBack` (no new source name needed).
+- **A rebirth keeps a bought Mythic Block that's on the mound** (Phase 4): the design doc already counted Robux items as kept, so the code now matches it, and the doc says so in words.
+- **`tools/check_asset_ids.py` reads three more configs** (IceLooks, LightingConfig, SwingConfig), so the ice atlases, skyboxes and swing animations are checked too.
+- **The Pets window's phone layout was left alone** (an older problem, and it isn't one of the two screens): it's a question instead.
+- **The rebirth screen opens with the close button selected on a gamepad** (as built in Phase 1), not REBIRTH, so a pad player can't rebirth by accident.
 - **New debug action "Simulate a purchase from the shop"** (prompt hooks, then the receipt), because Studio's own test prompt for a real id can't be clicked from a script, and Double Welcome Back's receipt pays only a prompted offer. The duplicate-receipt action replays its PurchaseId.
 
 ## Phase 0: Lighting note
@@ -288,3 +334,113 @@ A solo Play on a fresh save (1M crystals and three pets given first), with a cli
 - **More than 200 redeemed codes.** The save keeps the most recent 200 (`MAX_CODES` at load), but `CodeService` let the list grow past that, which the save's check would refuse. It now trims to 200 at once, like the load does. Codes spec +1 check (59).
 - **Settings sliders could lose the last change.** The window sent a save on every slider step, and the server takes one save every half second, so a quick drag could end with an older value saved. The window now waits 0.6 s after the last change and sends the latest (no change to how it looks).
 - AGENTS.md said the debug menu takes "about one request a second"; it is one every 0.1 s (`DebugConfig.RequestCooldownSeconds`). Text fixed.
+
+## Phase 6: phones and performance
+
+### Performance
+
+**Setup:** a solo Play on this PC, Studio in front, at night (the most lights: 48 lamps, the northern lights). The other 7 plots were maxed dummy plots (debug "Fill every empty plot": every building and upgrade, block level 400, Layer 6), and every block on all 8 plots was Legendary or Mythic (8 of 8 glowing). Camera views:
+- the plaza;
+- across the ring;
+- the tapping spot.
+
+Each view was sampled for 6 s, plus 4 s across each look switch. Studio caps at 60 fps, so the render CPU and GPU times say more than the fps.
+
+| View | Reduced effects | fps (worst frame) | Render CPU | GPU | Triangles | Draw calls |
+|---|---|---|---|---|---|---|
+| Plaza | off | 60 (34 ms) | 12.8 ms | 1.6 ms | 557k | 667 |
+| Across the ring | off | 60 (22 ms) | 13.8 ms | 1.8 ms | 1,141k | 882 |
+| Tapping spot | off | 60 (22 ms) | 11.8 ms | 1.3 ms | 38k | 172 |
+| Switch night → day | off | 60 (23 ms) | 11.9 ms | 2.7 ms | | |
+| Switch day → night | off | 60 (28 ms) | 12.1 ms | 3.3 ms | | |
+| Plaza | on | 59 (28 ms) | 13.3 ms | 1.6 ms | 557k | 673 |
+| Across the ring | on | 60 (20 ms) | 13.8 ms | 1.8 ms | 1,141k | 882 |
+| Tapping spot | on | 60 (24 ms) | 11.7 ms | 1.3 ms | 37k | 166 |
+| Switch night → day | on | 60 (22 ms) | 11.8 ms | 2.7 ms | | |
+| Switch day → night | on | 60 (25 ms) | 12.4 ms | 3.4 ms | | |
+
+**Followers (the cost Phase 3 pointed at):**
+- My player with the most a player can have (7 Spirit Whales: rank 10 and both slot passes): 1,372 instances.
+- Then 49 copies round the plaza and my plot, so 56 in all (a full server). That added 9,700 instances, 28k triangles and 34 draw calls, and render CPU went up 0.4 ms (plaza: 13.8 → 14.1 ms, 58.6 → 57.2 fps).
+- The copies stand still, so PetFollow's animation (0.024 ms a follower here, Phase 3) comes on top: about 1.4 ms a frame for 56 on this PC.
+
+**Memory, the game's own share:** textures 123 MB, particles 27 MB, sounds 13 MB, mesh parts 3 MB. Studio's total (3.1 GB) and its Lua heap (1.3 GB) are mostly Studio and its plugins, so they say little about a phone.
+
+**Against the launch-prep measurement** (daytime, before streaming and Automatic render fidelity):
+- triangles at the plaza: 821k → 557k; across the ring: 1,323k → 1,141k;
+- render CPU 2-3 ms lower in every view;
+- the views that ran at 51-58 fps then all hold 60 now;
+- one figure went up: draw calls across the ring at night, 690 → 882, likely the night lamps and the northern lights;
+- textures went up from 65 to 123 MB (an atlas per layer, three skyboxes, the new icons).
+
+**Reduced effects changes almost nothing here** (draw calls -0 to -6), as before. The cost is geometry and lights, not particles.
+
+**Phone risks (proposals only; each one changes how something looks, so nothing was changed):**
+1. **Across the ring at night: 1.1M triangles and 882 draw calls.** A mid-range phone will drop frames there. Ideas:
+   - with reduced effects on, skip the northern lights and the lamps' lights;
+   - with reduced effects on, show other plots' stations without their upgrade parts;
+   - a lower-detail copy of each station template for other players' plots.
+2. **56 followers in a full server: about 13,000 parts, plus their animation.** Ideas:
+   - with reduced effects on, show only your own pets and those of players near you;
+   - stop animating followers beyond 100 studs (today: 220).
+3. **Textures, 123 MB:** fine for most phones; keep an eye on it as layers are added.
+
+Looking at a busy server on a real phone is in `docs/LAUNCH_CHECKLIST.md`.
+
+### Gamepad
+
+With `StudioGamepad` on and the keyboard tool sending pad buttons:
+
+| Check | Result |
+|---|---|
+| R2 taps | 5 presses, 5 taps (the block lost 5 HP with a 1-damage tool) |
+| A taps in your plot | 3 presses, 3 taps; no tap while a button is selected |
+| D-pad left with nothing selected | selects the first HUD button (Build) |
+| Every HUD button selectable | all 9, PLOT included |
+| Upgrades window | opens with its first tab selected, inside the window; the Upgrades, Tools and Owned tabs selectable; on the Tools tab, all 22 buy buttons selectable; a selected button lifts (scale 1.05) and carries the gold `SelectionRim` |
+| Build window (buying) | opens with the first amount tab selected; 4 amount tabs and 8 buy buttons selectable |
+| Robux shop (buying) | opens on the Passes tab; both tabs and 14 buy buttons selectable |
+| B | closes each window; the selection goes back to the HUD |
+| The two new screens | Phase 1: Welcome Back opens with Claim! selected, x2 to its left; Rebirth opens with the close button selected, REBIRTH selectable |
+
+**What couldn't be checked from a script:** Roblox's own selection doesn't react to pad buttons sent this way. Simulated D-pad presses don't move between buttons, and a simulated A doesn't press the selected button. So "A on PLOT", "A on a buy button" and the D-pad moving between cards need a real controller. In the same way, the gold rim didn't show in the screenshot (Roblox probably draws it only while a real pad is in use). Everything the game's own code handles (taps, D-pad left, B, the first selection, every target selectable) works. **Please try a real controller once:** PLOT, the Tools tab, buy a tool and a building, the x2 and Claim! on Welcome Back.
+
+### Every window at 844x390 and 667x375
+
+These are from the Phase 7 retake: every window and each of its tabs, the HUD, the tutorial steps, the offers and the notices, at both phone sizes (contact sheets checked one by one).
+
+**Fixed:**
+- **Welcome Back: the "19" Robux badge covered the end of a long x2 amount** ("x2 +2.07M") on both phones. The x2 caption now keeps clear of the badge (it centres in the space left of it, and shrinks if it must). This is part of tonight's new screen. Retaken: clear at both sizes.
+- **Notices left a dark ghost when fading out.** The toast faded its text but not its outline, so for the last half second each line showed as dark, unreadable outlined text (seen on the phone shots, where the announcement repeats). The outline now fades with the text (`Banners`). Listed under visual changes.
+
+**Older layout problems (the same on `main`; not changed, a proposal in the questions):**
+- **Pets window on a landscape phone:** the slots row, the summary and the five buttons keep their full size. That leaves the pet grid about 45 px tall at 844x390 (less at 667x375), so a pet card is never fully visible; you only see the tops of the cards and have to scroll.
+- **Upgrades > Tools at 667x375:** the cards' buy buttons sit just below the fold until you scroll.
+- **Upgrades > Owned with nothing owned** is an empty box: there's no "nothing yet" line.
+
+**Everything else fits at both sizes:** HUD, Build (4 tabs), Upgrades, Book (7 tabs; short tab names at 667x375), Shop (2 tabs), Codes, Settings, Rebirth (both states), Welcome Back, the shatter offers, the Golden Glacier bar, the server notices, the update screen and every tutorial step. Nothing is off screen or overlapping a button, except where a shot caught a passing moment (a Book card or a "Page complete!" banner from a rescue during the shot, a layer banner).
+
+
+## Phase 7: final pre-publish audit
+
+| Check | Result |
+|---|---|
+| `DebugConfig.AllowedUserIds` | **empty** |
+| `AdminConfig.AllowedUserIds` | **only 11704150663** |
+| Studio test switches | **none set** (Workspace has no attributes; `StudioFreshSave` and `StudioIgnoreOwnedPasses`, used tonight, are cleared; `StudioGamepad` was only ever set on a Play client). `ProximityPromptService.Enabled` is on. |
+| A clean Play (no switches, your Studio save) | **no errors or warnings from the game.** Output: `[Server] started`, `[Client] started`, `[HUD] ready`, the save LOADED from `IcePets_PlayerData_Studio`, an offline payout, the price check. The only other lines are from outside the game (next row). |
+| Lines not from the game | `rbxassetid://203785492 failed: Asset type does not match` three times per Play. Nothing a script can read refers to it: a search of every service on the client and the server, plus the repo, finds nothing. It also showed in the earlier runs, so it's Studio or a plugin. Also Studio's Assistant plugin: "plugin version changed... restart Roblox Studio" (an MCP note, not the game). |
+| `[PriceCheck]` | **29 items checked, 0 problems, 0 hidden** |
+| `python tools/check_asset_ids.py` | **249 ids, 248 group-owned and approved, 0 problems** (+1 public library image). The check missed 46 uploaded ids (IceLooks: the ice atlases and kit; LightingConfig: the three skyboxes and the aurora; SwingConfig: the swing animations). It reads those configs now, and all 46 are the group's and approved. |
+| ServerStorage | only the five template folders the code uses: BuildingTemplates (8), ToolTemplates (18), IceTemplates (1), PlotTemplates (4), PlazaTemplates (3). Nothing unused. |
+| Docs against the code | `GAME_DESIGN.md`: the rebirth section now says a bought Mythic Block survives a rebirth (the Phase 4 fix; "Robux items" were already listed as kept). AGENTS.md: the debug rate (Phase 5). `LAUNCH_CHECKLIST.md`: the asset check's new count, both allowlists checked, and a new line for a phone in a busy server. |
+| Specs | **26 of 26 pass (8,093 checks)** at the end of every phase |
+| Visual review | **the whole set retaken:** 482 pictures in 41 minutes, 0 failed, 0 blank. Then the two fixed shots were taken again (Welcome Back, the rare-block notice). The 80 pictures not retaken are records, not shots: the ice-options part 1 record, the old lighting comparisons and tonight's Phase 1 before/after set. Before/after: `store-assets/visual-review/index.html` (old pictures in `store-assets/visual-review-before/`, which stays out of Git, 110 MB) |
+
+**What to look at by eye in the new set:**
+- `screens-redesign/`: the two new screens, before and after, at three sizes;
+- `ui/offline_earnings_popup*` and `ui/window_rebirth*`;
+- `ui/window_pets_844x390` (the cramped grid in question 5);
+- `day-night/` (unchanged code, retaken).
+
+Some shots caught a passing moment from the shot before: a Book card, "Page complete!", a layer banner, or a Golden Glacier that had already melted (`ui/golden_glacier_tap_bar_844x390`). The game is fine there; retake one with `python tools/visual_review.py --only ui/<name>` if you want a clean picture.
