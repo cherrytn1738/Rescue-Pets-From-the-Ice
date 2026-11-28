@@ -41,8 +41,16 @@ RebirthConfig.KeptOnRebirth = { "CrystalsAllTime", "Pets", "Equipped", "BookSeen
 
 -- Frost Cores earned for a run: floor(cube root(crystalsThisRun / 1,000,000)), exact for whole cubes.
 function RebirthConfig.FrostCoresFor(crystalsThisRun: number): number
+	if type(crystalsThisRun) ~= "number" or crystalsThisRun ~= crystalsThisRun then
+		return 0
+	end
 	local units = math.max(0, crystalsThisRun) / RebirthConfig.CrystalsPerCoreUnit
 	local cores = math.floor(units ^ (1 / 3))
+	-- Past 2^50 cores, adding 1 no longer changes a double: the exact-cube nudges below would never end (a frozen
+	-- server at about 1e51 crystals in a run). That far, the cube root is as exact as a number can be anyway.
+	if cores >= 2 ^ 50 or cores ~= cores then
+		return if cores ~= cores then 0 else cores
+	end
 	while (cores + 1) ^ 3 <= units do
 		cores += 1
 	end

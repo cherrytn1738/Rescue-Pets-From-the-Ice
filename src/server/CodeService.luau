@@ -20,6 +20,8 @@ local PurchaseRewards = require(script.Parent.PurchaseRewards)
 
 local CodeService = {}
 
+local MAX_CODES = 200 -- redeemed codes the save keeps (PlayerData's MAX_CODES)
+
 CodeRules.Validate(CodesConfig)
 
 local attempts = {} -- [player] = { os.clock() of recent attempts }
@@ -68,6 +70,10 @@ function CodeService.Redeem(player: Player, text): { ok: boolean, message: strin
 		return { ok = false, message = problem or "That code can't be used right now." }
 	end
 	table.insert(data.Codes, code)
+	-- (the save keeps the most recent MAX_CODES, as at load; never more, or the save would be refused)
+	while #data.Codes > MAX_CODES do
+		table.remove(data.Codes, 1)
+	end
 	PlayerData.MarkImportant(player)
 	PlayerData.Publish(player)
 	log(`{player.Name} redeemed {code}: {given}`)

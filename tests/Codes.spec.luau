@@ -185,6 +185,17 @@ return function(sources)
 	check(CodeService.ResetRedeemed(player) == 3 and #dataOf[player].Codes == 0, "debug: resetting forgets the redeemed codes")
 	reply = redeem("RELEASE")
 	check(reply.ok and dataOf[player].Points == 20, "...so they work again")
+	-- A save never holds more than 200 redeemed codes (more and the save is refused): the oldest goes.
+	local collector = { Name = "Collector", UserId = 7 }
+	local many = {}
+	for i = 1, 200 do
+		many[i] = "OLD" .. i
+	end
+	dataOf[collector] = { Points = 0, Codes = many }
+	clock += 60
+	reply = CodeService.Redeem(collector, "FROSTY")
+	check(reply.ok and #dataOf[collector].Codes == 200 and dataOf[collector].Codes[200] == "FROSTY" and dataOf[collector].Codes[1] == "OLD2",
+		"redeeming with 200 codes saved keeps the most recent 200 (the save would refuse more)")
 
 	return passed
 end

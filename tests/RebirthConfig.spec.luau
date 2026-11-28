@@ -76,5 +76,11 @@ return function(sources)
 		end
 	end
 
+	-- Huge runs end (past 2^50 cores a double can't count by ones: the old loop never finished, freezing the server)
+	for _, crystals in { 1e51, 1e54, 1e100, 1e300, math.huge } do
+		local cores = RebirthConfig.FrostCoresFor(crystals)
+		check(type(cores) == "number" and cores > 0, `{crystals} crystals: a rebirth's Frost Cores are worked out (no endless loop)`)
+	end
+	check(RebirthConfig.FrostCoresFor(0 / 0) == 0 and RebirthConfig.FrostCoresFor(-5) == 0, "an unreadable or negative run earns 0 Frost Cores")
 	return passed
 end

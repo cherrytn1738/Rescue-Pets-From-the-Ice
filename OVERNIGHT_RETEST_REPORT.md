@@ -19,7 +19,7 @@ Branch `overnight-retest` (from `main` at 7e93c1b). Pushed after every phase; no
 | 2. Play-throughs | Done: first rebirth at 29.2 min, Layer 6, returning player, every reward kind |
 | 3. Long-run stability | Done: 66 minutes, 3 players, no errors, nothing growing without a limit, no fix needed |
 | 4. Saves | Done: every new field checked; a rebirth no longer loses a bought Mythic Block |
-| 5. Security | Not started |
+| 5. Security | Done: abuse at all 15 remotes gave nothing; 3 fixes (a frozen server on a huge run, the codes list, the settings sliders) |
 | 6. Phones and performance | Not started |
 | 7. Final pre-publish audit | Not started |
 
@@ -259,3 +259,32 @@ Server to each client: GameEvent about 3,200 in the hour (under 1 a second).
 The IcePick-to-Tool migration can't be checked live (Studio refuses DataStore writes from Edit mode, see Phase 2); the PlayerData spec loads an old save holding `IcePick4` through the real load path and gets every tool up to the Gold Hammer.
 
 Specs: 26 of 26 pass (8,093 checks).
+
+## Phase 5: security
+
+A solo Play on a fresh save (1M crystals and three pets given first), with a client script firing wrong types, NaN, ±infinity, huge strings, other players' ids, bursts and spam at every client-to-server remote.
+
+**Nothing was gained.** Crystals fell only by one valid "Max" building purchase, plus the 250 of the one code redeemed once. The pet count fell by one valid delete. Frost Cores, rebirths and upgrades didn't change. Output stayed free of errors.
+
+| Remote | Kind | Server checks | Rate limit | Tonight's abuse, and the result |
+|---|---|---|---|---|
+| `DebugRequest` | Function | **Access first:** everyone in Studio; live, only `DebugConfig.AllowedUserIds` (empty). Then every input against the action's `Params` (type, range, choice) | 1 per 0.1 s per player | (Checked in the earlier runs; the live list is still empty, see Phase 7) |
+| `AdminRequest` | Function | **Access first:** live, only 11704150663. Then the command's arguments (a target in this server, a filtered message) | 1 per 0.5 s per player (`AdminConfig.RequestCooldownSeconds`) | (as above) |
+| `TapBatch` | Event | A whole number 1-1,000; standing in your own plot | **One bucket shared with GoldenTap: 10 taps a second, holding 10** | NaN, ±inf, -5, 2.5, 0, "10", a table, nil, true, 1e308: no damage. 165,000 taps asked in 10 s: 109 counted (10.9/s). 20 batches from the plaza: no damage |
+| `GoldenTap` | Event | A Golden Glacier active; a whole number 1-1,000; near it | the same bucket | NaN, inf, -1, "x", a table (no glacier up): ignored |
+| `BuyBuilding` | Function | A known building id; amount 1, 10, 100 or "Max"; the cost from the save, paid from the save | 1 per 0.1 s (shared with BuyUpgrade) | Amounts NaN, 5, -1, inf; ids "x", a table, nil: all "Unknown building". 20 at once with crystals: 1 bought, 19 "Slow down" |
+| `BuyUpgrade` | Function | A known upgrade id; its unlock (the tool before it, the building it needs); not owned yet; the price from the config | the same | Tool18, Tool3 (not unlocked), FrostTouch1 (no crane), "NoSuch", 5, NaN: refused. The same tool 10 at once: 1 bought, 9 "Slow down", then "Already owned" |
+| `PetRequest` | Function | A known action; uids you own; no repeats; a rarity name; a lock, combine or equip within your own pets and slots | 1 per 0.15 s | Delete { u, u } refused; delete a sparse list: only your own first pet; Equip, Delete and Lock with other uids, a 5,000-character uid, a table: refused; CombineGolden without 5: refused; DeleteBelow NaN: refused |
+| `PurchaseRequest` | Function | A known action and product key (≤ 32 characters); the reward kind's CanGive before Roblox's prompt; gifts: another player in this server | 1 per 0.5 s, and one prompt at a time (30 s lock) | x2 without an offer: refused; CloseOffer on another product: "Nothing to close"; gift to yourself, a NaN or 1e300 id, a non-giftable product: refused; a 33-character key, a table, an unknown action: "Unknown request" |
+| `RedeemCode` | Function | A string, trimmed and capped in length; upper case letters and digits; each code once per player | 1 per second, 6 a minute | 100,000 spaces, a table, NaN: "Type a code first"; THAWED twice: once |
+| `RebirthRequest` | Function | "Rebirth" only; level 31 or more | 1 per 2 s | Below 31: refused; another action: refused; again within 2 s: "Slow down" |
+| `SaveSettings` | Event | A table; both volumes numbers (NaN refuses the save, others clamped to 0-1); every switch a boolean or absent | 1 per 0.5 s | NaN volume: refused; inf / -1: saved as 1 / 0; "yes" or "off" for a switch: refused; a string: refused |
+| `GoHome` | Event | A plot, a live character, not jailed | 1 per 3 s (`GameConfig.Teleport`) | 30 presses from the plaza: 1 teleport; 10 more within 3 s: none |
+| `ShopVisit` | Event | "Robux" only; a known action; a known item key ≤ 32 characters; one visit at a time (analytics only, gives nothing) | 1 per 0.2 s, 40 a minute | Open, 100 Info, 20 Open in one frame: 1 "Opened shop" logged, the rest dropped; arguments in the wrong order: ignored |
+| `GameEvent`, `PurchaseNotice` | Event (server to client) | The server connects an empty handler, so anything a client fires at them is dropped | | Fired at the server: nothing happened |
+
+**Fixed (found by reading the handlers for this phase):**
+- **A frozen server on a huge run.** `RebirthConfig.FrostCoresFor` corrects the cube root with `while (cores + 1) ^ 3 <= units do cores += 1 end`. Past 2^50 cores (about 10^51 crystals in a run), adding 1 doesn't change a double any more, so the loop never ended and the server would hang on the rebirth screen's preview or the rebirth itself. It now stops nudging that far out, and returns 0 for NaN or anything that isn't a number. The economy doesn't reach 10^51 in normal play, but the debug menu's "Set crystals" can, and it would freeze the test server. Spec +6 checks.
+- **More than 200 redeemed codes.** The save keeps the most recent 200 (`MAX_CODES` at load), but `CodeService` let the list grow past that, which the save's check would refuse. It now trims to 200 at once, like the load does. Codes spec +1 check (59).
+- **Settings sliders could lose the last change.** The window sent a save on every slider step, and the server takes one save every half second, so a quick drag could end with an older value saved. The window now waits 0.6 s after the last change and sends the latest (no change to how it looks).
+- AGENTS.md said the debug menu takes "about one request a second"; it is one every 0.1 s (`DebugConfig.RequestCooldownSeconds`). Text fixed.

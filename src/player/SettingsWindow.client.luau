@@ -18,8 +18,16 @@ local current = { Music = 1, Sounds = 1, ReducedEffects = false, AutoEquip = tru
 local musicLabel, musicSlider, setMusic, soundLabel, soundSlider, setSound, effectsLabel, effectsButton
 local autoLabel, autoButton, cycleLabel, cycleButton
 
+-- The server takes one save every half second, so quick changes wait for a quiet moment and send the latest.
+local saveVersion = 0
 local function save()
-	remote:FireServer(table.clone(current))
+	saveVersion += 1
+	local version = saveVersion
+	task.delay(0.6, function()
+		if version == saveVersion then
+			remote:FireServer(table.clone(current))
+		end
+	end)
 end
 
 local window = ShowcaseKit.Window("SettingsWindow", "Settings", {
