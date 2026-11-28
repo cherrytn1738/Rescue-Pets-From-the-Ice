@@ -12,10 +12,12 @@ return function(sources)
 
 	-- the presets: the golden sunset is the default, the pink dusk is kept to compare; the old names are the default's
 	local presets = LightingConfig.Presets
-	check(LightingConfig.Default == "GoldenSunset" and presets.GoldenSunset ~= nil and presets.PinkDusk ~= nil,
-		"two presets, the golden sunset by default")
-	check(LightingConfig.Lighting == presets.GoldenSunset.Lighting and LightingConfig.Atmosphere == presets.GoldenSunset.Atmosphere,
+	check(LightingConfig.Default == "PinkDusk" and presets.GoldenSunset ~= nil and presets.PinkDusk ~= nil,
+		"two presets, the pink dusk by default")
+	check(LightingConfig.Lighting == presets.PinkDusk.Lighting and LightingConfig.Atmosphere == presets.PinkDusk.Atmosphere,
 		"LightingConfig.Lighting and the effects are the default preset's")
+	check(presets.PinkDusk.Lighting.Brightness < 3 and presets.PinkDusk.Lighting.Brightness >= 2.4,
+		"the pink dusk's sun a gentle step softer than the first pass (3.0), never dull")
 
 	local function luminance(c: Color3): number
 		return 0.2126 * c.R + 0.7152 * c.G + 0.0722 * c.B
@@ -119,7 +121,7 @@ return function(sources)
 	local report = Config.Apply(fakeLighting)
 	local L = Config.Lighting
 	check(fakeLighting.ClockTime == L.ClockTime and fakeLighting.OutdoorAmbient == L.OutdoorAmbient, "Apply sets the Lighting service")
-	check(attributes.LightingPreset == "GoldenSunset", "...to the default preset, and says which (the Lighting attribute LightingPreset)")
+	check(attributes.LightingPreset == "PinkDusk", "...to the default preset, and says which (the Lighting attribute LightingPreset)")
 	for _, name in { "Atmosphere", "Bloom", "ColorCorrection", "SunRays" } do
 		check(children[name] ~= nil, "Apply makes the " .. name .. " effect")
 	end
@@ -129,11 +131,11 @@ return function(sources)
 	check(type(report) == "string" and string.find(report, "skybox", 1, true) ~= nil, "Apply reports what it did")
 
 	-- another preset, and an unknown one
-	Config.Apply(fakeLighting, "PinkDusk")
-	check(fakeLighting.OutdoorAmbient == Config.Presets.PinkDusk.Lighting.OutdoorAmbient and children.Atmosphere.Haze == Config.Presets.PinkDusk.Atmosphere.Haze
-		and attributes.LightingPreset == "PinkDusk", "Apply with a preset's name switches to it, the effects too")
+	Config.Apply(fakeLighting, "GoldenSunset")
+	check(fakeLighting.OutdoorAmbient == Config.Presets.GoldenSunset.Lighting.OutdoorAmbient and children.Atmosphere.Haze == Config.Presets.GoldenSunset.Atmosphere.Haze
+		and attributes.LightingPreset == "GoldenSunset", "Apply with a preset's name switches to it, the effects too")
 	local before = fakeLighting.OutdoorAmbient
-	check(Config.Apply(fakeLighting, "Disco") == nil and fakeLighting.OutdoorAmbient == before and attributes.LightingPreset == "PinkDusk",
+	check(Config.Apply(fakeLighting, "Disco") == nil and fakeLighting.OutdoorAmbient == before and attributes.LightingPreset == "GoldenSunset",
 		"an unknown preset changes nothing")
 
 	return passed

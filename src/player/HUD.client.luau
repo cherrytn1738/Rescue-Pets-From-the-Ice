@@ -1,4 +1,4 @@
--- The HUD: the menu buttons down the left edge (BUILD, UPGRADES, PETS, BOOK, REBIRTH, HOME, SHOP, CODES), the settings gear and the crystal counter.
+-- The HUD: the menu buttons down the left edge (BUILD, UPGRADES, PETS, BOOK, REBIRTH, PLOT, SHOP, CODES), the settings gear and the crystal counter.
 --
 --   Menu (left edge): a grid of big square buttons, two to a row: SHOP (the Robux shop) and CODES.
 --     Each window finds its button by name (UIKit.MenuButton("Shop") finds "ShopButton") and opens
@@ -28,7 +28,7 @@ local MENU = {
 	{ Name = "Pets", Icon = "Pets", Text = "PETS", Palette = "Pink" },
 	{ Name = "Book", Icon = "Book", Text = "BOOK", Palette = "Teal" },
 	{ Name = "Rebirth", Icon = "Rebirth", Text = "REBIRTH", Palette = "Purple" },
-	{ Name = "Home", Icon = "Home", Text = "HOME", Palette = "Ice" },
+	{ Name = "Plot", Icon = "Home", Text = "PLOT", Palette = "Ice" }, -- (teleports you to your plot: the server decides)
 	{ Name = "Shop", Icon = "Shop", Text = "SHOP", Palette = "Glacier" },
 	{ Name = "Codes", Icon = "Codes", Text = "CODES", Palette = "Slate" },
 }
@@ -152,7 +152,9 @@ gear.Size = UDim2.fromOffset(58, 58)
 local gearScale = Instance.new("UIScale")
 gearScale.Parent = gear
 
--- HOME: back to your plot (the server moves you: GoHome).
+-- PLOT: teleports you to your plot's tapping spot, facing your ice. The client only asks (GoHome); the server checks the
+-- cooldown and that you have a plot and a live character, streams the plot in and moves you (PlazaService); the snow
+-- poofs where you leave and arrive (TeleportPoof.client).
 local goHome = ReplicatedStorage:WaitForChild("GoHome") :: RemoteEvent
 
 local shown = nil
@@ -233,7 +235,7 @@ RunService.RenderStepped:Connect(function(dt)
 	end
 end)
 
-grid:WaitForChild("HomeButton").Activated:Connect(function()
+grid:WaitForChild("PlotButton").Activated:Connect(function()
 	goHome:FireServer()
 end)
 

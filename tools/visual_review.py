@@ -33,8 +33,12 @@ OUT = os.path.join(REPO, "store-assets", "visual-review")
 BEFORE = os.path.join(REPO, "store-assets", "visual-review-before")
 CATEGORY_ORDER = ["buildings", "tools", "tools-samples", "ice", "ice-options", "pets", "rescue", "world", "lighting", "ui", "book", "effects"]
 # The lighting shots: each view under each preset (lighting/single/<view>_<preset>.jpg), paired side by side as
-# lighting/<view>.jpg (the first preset on the left: the one before, the second after).
-LIGHTING_PAIR = [("pink_dusk", "Pink dusk (before)"), ("golden_sunset", "Golden sunset (now)")]
+# lighting/<prefix><view>.jpg: (left preset key, right preset key, left label, right label, prefix).
+# pink_dusk_first_pass: the PinkDusk default before its sun was softened (kept from the earlier run, not retaken).
+LIGHTING_PAIRS = [
+    ("pink_dusk", "golden_sunset", "Pink dusk (the default)", "Golden sunset (the alternative)", ""),
+    ("pink_dusk_first_pass", "pink_dusk", "Pink dusk, first pass (before)", "Pink dusk, softer sun (now)", "pink_dusk_change_"),
+]
 
 
 class Studio:
@@ -128,35 +132,38 @@ def file_for(name, size):
 
 
 def pair_lighting():
-    """lighting/<view>.jpg: each view's two presets side by side, each half labelled. Returns how many."""
+    """lighting/<prefix><view>.jpg: each view's two looks side by side (LIGHTING_PAIRS), each half labelled."""
     from PIL import Image, ImageDraw, ImageFont
     single = os.path.join(OUT, "lighting", "single")
     if not os.path.isdir(single):
         return 0
-    (left_key, left_label), (right_key, right_label) = LIGHTING_PAIR
     made = 0
-    for file in sorted(os.listdir(single)):
-        if f"_{left_key}" not in file or not file.endswith(".jpg"):
-            continue
-        right = os.path.join(single, file.replace(f"_{left_key}", f"_{right_key}"))
-        if not os.path.exists(right):
-            continue
-        halves = [Image.open(os.path.join(single, file)).convert("RGB"), Image.open(right).convert("RGB")]
-        width = min(1280, halves[0].width)
-        halves = [h.resize((width, round(h.height * width / h.width)), Image.LANCZOS) for h in halves]
-        bar = 44
-        sheet = Image.new("RGB", (width * 2 + 8, halves[0].height + bar), (24, 26, 34))
-        draw = ImageDraw.Draw(sheet)
-        try:
-            font = ImageFont.truetype("arialbd.ttf", 26)
-        except OSError:
-            font = ImageFont.load_default()
-        for index, (half, label) in enumerate(zip(halves, (left_label, right_label))):
-            x = index * (width + 8)
-            sheet.paste(half, (x, bar))
-            draw.text((x + 14, 8), label, fill=(240, 240, 245), font=font)
-        sheet.save(os.path.join(OUT, "lighting", file.replace(f"_{left_key}", "")), "JPEG", quality=90)
-        made += 1
+    for left_key, right_key, left_label, right_label, prefix in LIGHTING_PAIRS:
+        pattern = re.compile(r"^(.+)_" + re.escape(left_key) + r"(_\d+x\d+)?\.jpg$")
+        for file in sorted(os.listdir(single)):
+            m = pattern.match(file)
+            if not m:
+                continue
+            view, size = m.group(1), m.group(2) or ""
+            right = os.path.join(single, f"{view}_{right_key}{size}.jpg")
+            if not os.path.exists(right):
+                continue
+            halves = [Image.open(os.path.join(single, file)).convert("RGB"), Image.open(right).convert("RGB")]
+            width = min(1280, halves[0].width)
+            halves = [h.resize((width, round(h.height * width / h.width)), Image.LANCZOS) for h in halves]
+            bar = 44
+            sheet = Image.new("RGB", (width * 2 + 8, halves[0].height + bar), (24, 26, 34))
+            draw = ImageDraw.Draw(sheet)
+            try:
+                font = ImageFont.truetype("arialbd.ttf", 26)
+            except OSError:
+                font = ImageFont.load_default()
+            for index, (half, label) in enumerate(zip(halves, (left_label, right_label))):
+                x = index * (width + 8)
+                sheet.paste(half, (x, bar))
+                draw.text((x + 14, 8), label, fill=(240, 240, 245), font=font)
+            sheet.save(os.path.join(OUT, "lighting", f"{prefix}{view}{size}.jpg"), "JPEG", quality=90)
+            made += 1
     return made
 
 

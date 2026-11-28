@@ -1,12 +1,11 @@
 --[[
 LightingConfig: every lighting setting of the game in one place (docs/GAME_DESIGN.md, "Art direction"): a warm,
 cinematic winter sunset. The sun sits low behind the mountains and throws long soft shadows across the snow; sunlit
-snow is golden-amber (a little peach where it is brightest), the shadows a cool blue, clearly darker; a light haze
-makes only the far mountains glow; a soft warm grade with a touch of contrast, a gentle bloom and sun rays when
-looking towards the sun.
+snow is pink and peach, the shadows a cool blue-violet; a warm haze makes the far mountains glow; a soft warm grade,
+a gentle bloom and sun rays when looking towards the sun (PinkDusk; GoldenSunset is the golden-amber alternative).
 
- * Presets: the looks, by name. Default (GoldenSunset) is what every server starts with; PinkDusk is the first pass,
-   kept to compare (debug menu F2: "Lighting preset" switches the server live). Each holds:
+ * Presets: the looks, by name. Default (PinkDusk) is what every server starts with; GoldenSunset is the alternative
+   (debug menu F2: "Lighting preset" switches the server live). Each holds:
    - Lighting: the Lighting service's own properties.
    - Atmosphere, Bloom, ColorCorrection, SunRays: the effects (each made if missing). DepthOfField stays off.
    Every preset keeps the same ClockTime and latitude: the skybox's baked sun glow is drawn round that sun.
@@ -28,9 +27,9 @@ end
 
 -- The looks (presets). Both share the sun's place (ClockTime, GeographicLatitude: the skybox bakes its glow there), the
 -- sky and the lamps; the debug menu (F2, "Lighting preset") switches between them live for a side-by-side look.
-LightingConfig.Default = "GoldenSunset"
+LightingConfig.Default = "PinkDusk"
 LightingConfig.Presets = {
-	-- The default: golden-amber sunlight on the snow (a little peach where it is brightest), cool blue shadows clearly
+	-- The alternative: golden-amber sunlight on the snow (a little peach where it is brightest), cool blue shadows clearly
 	-- darker than the lit snow, a light haze that only makes the far mountains glow, a touch more contrast.
 	GoldenSunset = {
 		Lighting = {
@@ -68,12 +67,12 @@ LightingConfig.Presets = {
 		},
 		SunRays = { Enabled = true, Intensity = 0.12, Spread = 0.55 },
 	},
-	-- The first pass: pink and peach sunlight, blue-violet shadows, a thick warm haze (kept for comparison).
+	-- The default: pink and peach sunlight, blue-violet shadows, a warm haze (the first pass, with a slightly softer sun).
 	PinkDusk = {
 		Lighting = {
 			ClockTime = 17.1,
 			GeographicLatitude = 38,
-			Brightness = 3.0,
+			Brightness = 2.7, -- (3.0 in the first pass: a gentle step down, a softer sun on the snow)
 			ExposureCompensation = -0.05,
 			Ambient = rgb(55, 60, 95),
 			OutdoorAmbient = rgb(100, 112, 165),
@@ -89,7 +88,7 @@ LightingConfig.Presets = {
 			Offset = 0.16,
 			Color = rgb(255, 205, 165),
 			Decay = rgb(200, 135, 130),
-			Glare = 0.5,
+			Glare = 0.4, -- (0.5 in the first pass: a softer sun glow)
 			Haze = 1.6,
 		},
 		Bloom = { Enabled = true, Intensity = 0.42, Size = 26, Threshold = 1.35 },
@@ -100,7 +99,7 @@ LightingConfig.Presets = {
 			Saturation = 0.15,
 			TintColor = rgb(255, 240, 224),
 		},
-		SunRays = { Enabled = true, Intensity = 0.14, Spread = 0.6 },
+		SunRays = { Enabled = true, Intensity = 0.11, Spread = 0.6 }, -- (0.14 in the first pass)
 	},
 }
 

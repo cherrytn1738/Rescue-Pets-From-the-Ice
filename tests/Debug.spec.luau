@@ -242,7 +242,7 @@ return function(sources)
 		BuildingConfig = { Buildings = { { Id = "HeatLamp", Name = "Heat Lamp" } } },
 		AudioConfig = { Sfx = { Tap = {}, Shatter = {} }, Ui = { Click = {} } },
 		EconomyRules = {},
-		LightingConfig = { Default = "GoldenSunset", Presets = { PinkDusk = {}, GoldenSunset = {} } },
+		LightingConfig = { Default = "PinkDusk", Presets = { PinkDusk = {}, GoldenSunset = {} } },
 		GameEvent = { FireClient = function(_, player, kind, payload)
 			table.insert(soundEvents, { player = player, kind = kind, payload = payload })
 		end },
@@ -326,10 +326,10 @@ return function(sources)
 	check(#calls == 0, "...and neither touched the monetization systems")
 
 	local lightingChoices = ids.SetLightingPreset.Params[1].Choices
-	check(ids.SetLightingPreset.NoTarget and #lightingChoices == 2 and lightingChoices[1].Value == "GoldenSunset" and ids.SetLightingPreset.Params[1].Default == "GoldenSunset",
+	check(ids.SetLightingPreset.NoTarget and #lightingChoices == 2 and lightingChoices[1].Value == "PinkDusk" and ids.SetLightingPreset.Params[1].Default == "PinkDusk",
 		"the lighting preset switch lists every preset, the default first")
-	ok, message = run("SetLightingPreset", { Preset = "PinkDusk" })
-	check(ok and calls[#calls].name == "SetPreset" and calls[#calls].args[1] == "PinkDusk" and string.find(message, "PinkDusk", 1, true) ~= nil,
+	ok, message = run("SetLightingPreset", { Preset = "GoldenSunset" })
+	check(ok and calls[#calls].name == "SetPreset" and calls[#calls].args[1] == "GoldenSunset" and string.find(message, "GoldenSunset", 1, true) ~= nil,
 		"switching the lighting goes through LightingService.SetPreset")
 	ok = run("SetLightingPreset", { Preset = "Disco" })
 	check(not ok, "an unknown preset is refused")

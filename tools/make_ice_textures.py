@@ -52,15 +52,17 @@ ATLAS = 512
 # Each layer (LayerConfig.Layers' Look): the side colours from the base up, how clear the middle is, how frosty the
 # rim, the frost streaks and glints, the second hue, the white frost, the crack strip, and any swatches recoloured.
 LAYERS = {
-    "FreshSnow": dict(  # packed white snow, soft edges, a hint of blue
-        stops=[(0.0, (176, 204, 236)), (0.3, (214, 232, 250)), (0.7, (238, 246, 255)), (1.0, (252, 253, 255))],
+    # (cooler than the first cut: under the pink-dusk light the white block melted into the pink snow)
+    "FreshSnow": dict(  # packed white snow, soft edges, a clear icy blue tint
+        stops=[(0.0, (142, 186, 238)), (0.3, (190, 220, 252)), (0.7, (222, 238, 255)), (1.0, (244, 249, 255))],
         centre=0.6, rim=0.97, base=0.25, streaks=0.0, glints=0.5, snowy=True,
-        second=[(0, (190, 214, 240)), (1, (240, 248, 255))], white=[(0, (220, 234, 250)), (1, (252, 253, 255))],
+        second=[(0, (168, 202, 240)), (1, (232, 244, 255))], white=[(0, (208, 228, 252)), (1, (248, 251, 255))],
         crack=((92, 130, 186), (178, 206, 238)),
         swatches={"BaseDeep": ((196, 216, 240), 0.95), "TopFrost": ((246, 250, 255), 0.95), "RimFrost": ((248, 251, 255), 0.98),
                   "Fracture": ((240, 246, 255), 0.95), "FractureDeep": ((206, 224, 246), 0.95)}),
+    # (bluer and more saturated than the first cut: under the pink-dusk light it leaned lavender)
     "BlueIce": dict(  # clear pale blue
-        stops=[(0.0, (34, 92, 182)), (0.18, (52, 128, 210)), (0.45, (104, 178, 236)), (0.75, (170, 222, 250)), (1.0, (228, 246, 255))],
+        stops=[(0.0, (20, 84, 196)), (0.18, (34, 122, 228)), (0.45, (76, 168, 248)), (0.75, (140, 206, 255)), (1.0, (208, 238, 255))],
         centre=0.36, rim=0.92, base=0.22, streaks=0.28, glints=1.0,
         second=[(0, (40, 140, 200)), (0.5, (110, 215, 240)), (1, (205, 248, 255))], white=[(0, (190, 222, 248)), (0.6, (226, 243, 255)), (1, (246, 251, 255))],
         crack=((26, 58, 108), (250, 253, 255)), swatches={}),

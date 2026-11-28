@@ -5,7 +5,9 @@ Server only. Greybox, built at start in Workspace.Plaza:
  - three leaderboard boards (LeaderboardService fills them), the codes board (opens the Codes window),
    the daily chest and the group chest (RewardService), the Golden Glacier landing ring, and the VIP
    lounge behind a gate (built only once the VIP pass in MonetizationConfig has a real Id: hidden until then);
- - the Home button's request (GoHome): sends the player to their plot, at most every 2 seconds.
+ - the PLOT button's request (GoHome): sends the player to their plot's tapping spot (TeleportRules decides,
+   PlotService moves them), at most every GameConfig.Teleport.CooldownSeconds, and tells nearby clients to poof the
+   snow where they left and arrived (GameEvent "Teleported").
 Players spawn in the plaza (the place's SpawnLocation); a glowing guide line leads them home
 (PlotGuide.client).
 ]]
@@ -14,10 +16,12 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
 
+local GameConfig = require(ReplicatedStorage.GameConfig)
 local MapConfig = require(ReplicatedStorage.MapConfig)
 local MonetizationConfig = require(ReplicatedStorage.MonetizationConfig)
 local PlayerEffects = require(script.Parent.PlayerEffects)
 local PlotService = require(script.Parent.PlotService)
+local TeleportRules = require(script.Parent.TeleportRules)
 
 local PlazaService = {}
 
@@ -278,16 +282,27 @@ function PlazaService.Start(boards)
 	local welcome = part(folder, "Welcome", Vector3.new(20, 6, 1), spot(24, 0, 10), Color3.fromRGB(40, 90, 150), Enum.Material.SmoothPlastic)
 	sign(welcome, "Rescue Pets From the Ice")
 
+	local gameEvent = ReplicatedStorage:WaitForChild("GameEvent") :: RemoteEvent
 	ReplicatedStorage:WaitForChild("GoHome").OnServerEvent:Connect(function(player)
+		local character = player.Character
+		local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+		local root = character and character:FindFirstChild("HumanoidRootPart")
 		local now = os.clock()
-		if lastHome[player] and now - lastHome[player] < 2 then
+		local ok = TeleportRules.Check({
+			now = now,
+			lastAt = lastHome[player],
+			hasPlot = PlotService.IndexOf(player) ~= nil,
+			alive = humanoid ~= nil and root ~= nil and humanoid.Health > 0,
+			jailed = PlayerEffects.Busy(player) == "jailed", -- (PLOT doesn't let a player out of the admin's jail early)
+		}, GameConfig.Teleport.CooldownSeconds)
+		if not ok then
 			return
 		end
 		lastHome[player] = now
-		if PlayerEffects.Busy(player) == "jailed" then
-			return -- (HOME doesn't let a player out of the admin's jail early)
+		local from = (root :: BasePart).Position
+		if PlotService.SendHome(player) and root and root.Parent then
+			gameEvent:FireAllClients("Teleported", { UserId = player.UserId, From = from, To = root.Position })
 		end
-		PlotService.SendHome(player)
 	end)
 	Players.PlayerRemoving:Connect(function(player)
 		lastHome[player] = nil

@@ -1,5 +1,5 @@
 --[[
-LightingService: the game's lighting at the start of every server (LightingConfig's default preset: the golden winter
+LightingService: the game's lighting at the start of every server (LightingConfig's default preset: the pink-dusk winter
 sunset; SetPreset switches it live, for the debug menu), and the
 lamps where the low sun leaves things dark (LightingConfig.Lamps):
  * a warm lantern light on the front of both posts of every plot gate;

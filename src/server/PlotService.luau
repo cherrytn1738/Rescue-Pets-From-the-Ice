@@ -24,6 +24,7 @@ local Workspace = game:GetService("Workspace")
 
 local BuildingConfig = require(ReplicatedStorage.BuildingConfig)
 local EconomyRules = require(ReplicatedStorage.EconomyRules)
+local GameConfig = require(ReplicatedStorage.GameConfig)
 local MapConfig = require(ReplicatedStorage.MapConfig)
 
 local PlotService = {}
@@ -316,13 +317,23 @@ function PlotService.Start()
 end
 
 -- Sends the player's character to their plot.
+-- Moves the player to their plot's tapping spot, facing the ice (the PLOT button, debug "Send to their plot"). Their
+-- plot is streamed in around the spot first (it yields up to GameConfig.Teleport.StreamSeconds), so they never land in
+-- an empty area. False without a plot or a character (or if the character changed while streaming).
 function PlotService.SendHome(player: Player): boolean
 	local index = PlotService.IndexOf(player)
 	local character = player.Character
 	if not index or not character then
 		return false
 	end
-	character:PivotTo(PlotService.ArrivalCFrame(index))
+	local arrival = PlotService.ArrivalCFrame(index)
+	pcall(function()
+		player:RequestStreamAroundAsync(arrival.Position, GameConfig.Teleport.StreamSeconds)
+	end)
+	if player.Character ~= character or not character.Parent then
+		return false
+	end
+	character:PivotTo(arrival)
 	return true
 end
 

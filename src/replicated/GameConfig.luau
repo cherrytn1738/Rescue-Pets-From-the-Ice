@@ -13,6 +13,11 @@ return {
 		RateWindowSeconds = 5, -- the HUD's crystals/s counts taps over this window
 	},
 
+	-- The PLOT button (the HUD; GoHome): the server moves you to your plot's tapping spot, facing your ice block, at most
+	-- once every CooldownSeconds. It first streams your plot in around the spot (waiting at most StreamSeconds), so you
+	-- never land in an empty area. Everyone within PoofRange studs sees the snow poof where you leave and arrive.
+	Teleport = { CooldownSeconds = 3, StreamSeconds = 3, PoofRange = 150 },
+
 	-- The server tick: building damage, block HP and crystals, this many times a second.
 	TicksPerSecond = 4,
 

@@ -122,8 +122,8 @@ Every uploaded asset of the game, created by the group 921449746 with `tools/upl
 | Image | Particle texture Rune2 | `assets/textures/particles/rune_2.png` | 80847461207119 | Approved |
 | Image | Particle texture Rune3 | `assets/textures/particles/rune_3.png` | 138045371002432 | Approved |
 | Image | Particle texture Rune4 | `assets/textures/particles/rune_4.png` | 80271496086902 | Approved |
-| Image | Ice block texture FreshSnow | `assets/textures/ice/IceFreshSnowAtlas.png` | 114602828856860 | Approved |
-| Image | Ice block texture BlueIce | `assets/textures/ice/IceBlueIceAtlas.png` | 118232142318427 | Approved |
+| Image | Ice block texture FreshSnow | `assets/textures/ice/IceFreshSnowAtlas.png` | 112783237432685 | Reviewing |
+| Image | Ice block texture BlueIce | `assets/textures/ice/IceBlueIceAtlas.png` | 97114150892897 | Reviewing |
 | Image | Ice block texture AncientIce | `assets/textures/ice/IceAncientIceAtlas.png` | 111223972877647 | Approved |
 | Image | Ice block texture CrystalIce | `assets/textures/ice/IceCrystalIceAtlas.png` | 126663887658563 | Approved |
 | Image | Ice block texture PrimordialIce | `assets/textures/ice/IcePrimordialIceAtlas.png` | 100770305195930 | Approved |
@@ -135,4 +135,4 @@ Every uploaded asset of the game, created by the group 921449746 with `tools/upl
 | Image | Ice block texture Flame | `assets/textures/ice/IceFlame.png` | 71126004192467 | Approved |
 | Model | Ice block kit | `store-assets/ice-block/IceBlockKit.fbx` | 121512291794378 | Approved |
 
-Not approved yet: none.
+Not approved yet: Ice block texture FreshSnow (Reviewing), Ice block texture BlueIce (Reviewing)

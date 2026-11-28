@@ -205,8 +205,18 @@ local function release()
 	end
 end
 
+-- (the server takes one PLOT teleport per GameConfig.Teleport.CooldownSeconds: wait out the last one first)
+local function teleportReady()
+	local cooldown = require(ReplicatedStorage.GameConfig).Teleport.CooldownSeconds + 0.2
+	local gap = cooldown - (os.clock() - (me:GetAttribute("VisualReviewHomeAt") or -100))
+	if gap > 0 then
+		task.wait(gap)
+	end
+	me:SetAttribute("VisualReviewHomeAt", os.clock())
+end
 local function home()
 	release()
+	teleportReady()
 	ReplicatedStorage.GoHome:FireServer()
 	task.wait(1.5)
 end
@@ -1116,6 +1126,14 @@ for _, window in WINDOWS do
 		return { Clicks = { menu(window) }, Close = { closeOf(window) }, Wait = 1.5, Tabs = window }
 	end, PHONES)
 end
+-- The PLOT button: from the plaza, a real click; the player lands at the tapping spot (the snow poof is over by the capture).
+shot("ui/plot_teleport", function()
+	standAt(Vector3.new(0, 6, 30), Vector3.zero)
+	release()
+	follow(Vector3.new(4, 7, 12), Vector3.new(0, 3, -16), 60)
+	teleportReady() -- (the click below is the teleport)
+	return { Clicks = { menu("Plot") }, Wait = 0.35 }
+end)
 shot("ui/window_settings", function()
 	home()
 	uiCamera()
@@ -1440,7 +1458,7 @@ elseif string.sub(SHOT, 1, 9) == "?prepare:" then
 	return "prepared " .. category
 elseif SHOT == "?cleanup" then
 	unfreeze() -- (a held pick swing)
-	dbg("SetLightingPreset", { Preset = "GoldenSunset" }) -- (the lighting shots switch it)
+	dbg("SetLightingPreset", { Preset = require(ReplicatedStorage.LightingConfig).Default }) -- (the lighting shots switch it)
 	dbg("ClearDummyPlots") -- (the plaza shots fill the free plots)
 	setReduced(false) -- (the effects shots turn it on)
 	for _, name in { "VisualReviewCamera", "VisualReviewStage" } do

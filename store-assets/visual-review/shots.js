@@ -2240,6 +2240,24 @@ window.SHOTS = [
  },
  {
   "category": "lighting",
+  "name": "pink_dusk_change_blue_ice_close",
+  "file": "lighting/pink_dusk_change_blue_ice_close.jpg",
+  "before": null
+ },
+ {
+  "category": "lighting",
+  "name": "pink_dusk_change_plaza",
+  "file": "lighting/pink_dusk_change_plaza.jpg",
+  "before": null
+ },
+ {
+  "category": "lighting",
+  "name": "pink_dusk_change_tapping_spot",
+  "file": "lighting/pink_dusk_change_tapping_spot.jpg",
+  "before": null
+ },
+ {
+  "category": "lighting",
   "name": "plaza",
   "file": "lighting/plaza.jpg",
   "before": null
@@ -2327,6 +2345,12 @@ window.SHOTS = [
   "name": "offline_earnings_popup_844x390",
   "file": "ui/offline_earnings_popup_844x390.jpg",
   "before": "../visual-review-before/ui/offline_earnings_popup_844x390.jpg"
+ },
+ {
+  "category": "ui",
+  "name": "plot_teleport",
+  "file": "ui/plot_teleport.jpg",
+  "before": "../visual-review-before/ui/plot_teleport.jpg"
  },
  {
   "category": "ui",

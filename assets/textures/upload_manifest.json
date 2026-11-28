@@ -28,13 +28,14 @@
    "updated": "2026-11-27T13:57:42+00:00"
   },
   "ice/IceBlueIceAtlas.png": {
-   "assetId": "118232142318427",
+   "assetId": "97114150892897",
    "creator": {
     "groupId": "921449746"
    },
    "moderationState": "Approved",
-   "sha256": "f7e180d8eb52f9df3eb116d9188346f1f307093cc8413f265362cd010936535f",
-   "updated": "2026-11-27T13:57:44+00:00"
+   "previousAssetId": "118232142318427",
+   "sha256": "9c39e9c15723acdcdc8a385e98ed1330e2e42593c70732f53f3c86f0cb1508b3",
+   "updated": "2026-11-28T09:41:33+00:00"
   },
   "ice/IceCrystalIceAtlas.png": {
    "assetId": "126663887658563",
@@ -55,13 +56,14 @@
    "updated": "2026-11-27T13:57:48+00:00"
   },
   "ice/IceFreshSnowAtlas.png": {
-   "assetId": "114602828856860",
+   "assetId": "112783237432685",
    "creator": {
     "groupId": "921449746"
    },
    "moderationState": "Approved",
-   "sha256": "fde838803e51c44c7dbe2ce55a70e42cc5c0877deff4fb90d732b3d07d795a6c",
-   "updated": "2026-11-27T13:57:50+00:00"
+   "previousAssetId": "114602828856860",
+   "sha256": "221af3bdd1decead4320844dc561574921d9edbfeb57bb188022ccff8558630d",
+   "updated": "2026-11-28T09:41:35+00:00"
   },
   "ice/IceFrozenCoreAtlas.png": {
    "assetId": "125764290350747",
