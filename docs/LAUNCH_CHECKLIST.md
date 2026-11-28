@@ -75,7 +75,6 @@ Your own account counts as owning every pass (you made them), so test the pass w
 - [ ] **Developer Console > Server log** (F9 in a live server, or the Creator Hub's error reports): no red errors. Watch for:
   - `[Purchase]` lines: every receipt `PurchaseGranted`; any `NotProcessedYet` repeating means a reward can't apply (read its note).
   - `[PriceCheck]` problems.
-  - `[Taps] ... tapping faster than 20/s`: autoclickers (they are capped; this is only a log).
   - DataStore warnings (throttling, failed saves). A failed load kicks the player with a message instead of overwriting their save.
 - [ ] **Creator Hub > Analytics:** concurrent players, average session length (target 10-20 min), the onboarding funnel (Joined -> First tap -> First building -> First rescue -> First pet equipped -> Tutorial done -> First rebirth): a big drop at one step is where players get lost. The shop funnel: opened -> viewed -> prompted -> purchased.
 - [ ] **Server memory and performance** (Developer Console > Memory / Server Stats): 8 maxed plots is the heaviest case.

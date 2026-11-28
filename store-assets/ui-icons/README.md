@@ -28,7 +28,7 @@ on a checkerboard.
 | `Building_FlamethrowerTurret.png` | Build window | The tier-1 Flamethrower Turret station, same camera |
 | `Building_LavaPump.png` | Build window | The tier-1 Lava Pump station, same camera |
 | `Building_SunMirrorTower.png` | Build window | The tier-1 Sun Mirror Tower station, same camera |
-| `Pick1.png` ... `Pick6.png` | Upgrades window, ice pick tiers | The six picks at the same angle, each head pushed to its own colour (icon only; the models are unchanged) with a glow of that colour behind it, and a round tier badge (bold white 1-6, dark outline) bottom right: 1 warm brown wood, 2 grey stone, 3 dark steel-blue iron, 4 gold, 5 cyan crystal (diamond), 6 violet cosmic |
+| `Tool1.png` ... `Tool18.png` | Upgrades window and its Tools tab, the 18 tools | Each tool leaning right with its head at the top (its own model from tools/blender/tools_tiers.py), a glow of its spark colour (IceLooks.ToolSparks) behind the head, and a round tier badge (bold white 1-18, dark outline) in that colour bottom right; the magical tiers 11-18 get a sparkle. `Pick1.png` ... `Pick6.png` are the retired ice picks' icons (no longer used) |
 | `FrostTouch.png` | Upgrades window, Frost Touch | The iron pick with ice on its head inside a glowing cyan frost swirl, snowflakes |
 | `BiggerBurst.png` | Upgrades window, ice upgrade | A fountain of cyan crystals bursting up out of a shattered ice block |
 | `CrystalYield.png` | Upgrades window, ice upgrade | A crystal pile with a green 3D plus |

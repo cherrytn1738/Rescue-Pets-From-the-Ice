@@ -30,7 +30,7 @@ Copy the name, description and price straight onto the Creator Hub. Paste each i
 | Key | Name | Price (Robux) | Store description | Id | Gift product (developer product, same price) | Gift id |
 |---|---|---|---|---|---|---|
 | DoubleCrystals | 2x Crystals | 349 | Doubles all your crystals, forever. | 2102063611 | Gift: 2x Crystals | 3736501716 |
-| AutoPick | Auto Pick | 199 | Taps the ice 5 times a second for you while you're in your plot. | 2100372547 | Gift: Auto Pick | 3736501737 |
+| AutoPick | Auto Pick | 199 | Taps the ice 2 times a second for you while you're in your plot. | 2100372547 | Gift: Auto Pick | 3736501737 |
 | VIP | VIP | 299 | +20% crystals, a gold name tag and the VIP lounge in the plaza. | 2098692454 | Gift: VIP | 3736501753 |
 | ExtraPetSlot | Extra Pet Slot | 399 | One more pet follows you. | 2099292504 | Gift: Extra Pet Slot | 3736501769 |
 | PetSquad | Pet Squad | 699 | Two more pets follow you (with Extra Pet Slot, +3 in all). | 2101811657 | Gift: Pet Squad | 3736501785 |
@@ -54,7 +54,7 @@ Gift product description (the same for each): "A gift: <name> for another player
 ## What each item does (as built)
 
 - **Passes** count the moment they're bought (no rejoin), and gifted passes count the moment the gift arrives.
-- **2x Crystals** and **VIP** multiply every crystal (x2 and x1.2). **Auto Pick** taps 5 times a second on the server while you stand in your own plot; with your own taps it stays inside the 20-taps-a-second cap. **Lucky Ice** doubles the Legendary and Mythic chances of every block you roll (taken from Common). **VIP** also turns your name tag gold and opens the lounge door in the plaza. The pet-slot passes add equip slots.
+- **2x Crystals** and **VIP** multiply every crystal (x2 and x1.2). **Auto Pick** taps 2 times a second on the server while you stand in your own plot; with your own taps it stays inside the 10-taps-a-second cap. **Lucky Ice** doubles the Legendary and Mythic chances of every block you roll (taken from Common). **VIP** also turns your name tag gold and opens the lounge door in the plaza. The pet-slot passes add equip slots.
 - **Crystal bundles** pay 10 min / 1 h / 6 h / 24 h of your income (Pouch, Sack, Chest, Giant Crystal Chest): the HUD's crystals per second with the permanent bonuses but no rushes, your taps counted at least 4 a second (`Economy.SteadyIncome`).
 - **Shatter Now** breaks the block on your mound. It can't be bought while the next block is still on its sled (the button hides then, and the server refuses). Its HUD button grows, turns gold and pulses when a Rare or better creature is inside.
 - **Server Frost Rush** gives x2 crystals to everyone in the server for 15 minutes and announces the buyer; another one while it runs adds 15 minutes. It isn't saved, so it ends if the server shuts down.

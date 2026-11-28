@@ -3,7 +3,7 @@ GoldenGlacierService: the Golden Glacier rush (docs/GAME_DESIGN.md, "Social and 
 GameConfig.GoldenGlacier). Server only.
 
 Every 5-8 minutes a golden block falls into the plaza's landing ring after a countdown (everyone is
-told). While it stands, taps near it (GoldenTap, the same 20-a-second cap as the ice) knock its HP down.
+told). While it stands, taps near it (GoldenTap, the same 10-a-second cap as the ice) knock its HP down.
 When it breaks, everyone who tapped it gets a Frost Rush (x3 crystals for 60 s) and whoever tapped it
 most gets x5. Nobody breaks it in time: it melts, no rush. The state is on Workspace.GoldenGlacier's
 attributes (State "Idle" | "Countdown" | "Active", LandsAt, EndsAt, Hp, HpMax) for every client to draw;

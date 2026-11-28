@@ -4,6 +4,8 @@
 -- (BuyUpgrade). Each tile shows its icon (UITheme.Icons, rendered from the game's models: the tool,
 -- the building with an up-arrow badge, Frost Touch, the ice upgrades); without the picture, its kind's
 -- emoji. The bottom line shows your crystals, or for a few seconds the answer to a purchase.
+-- The Tools tab shows all 18 tools in order: the ones you own this run (the one in your hand says HOLDING), the next one
+-- (its price, or the block level it waits for, and a buy button), and dark silhouettes of the later ones.
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local EconomyRules = require(ReplicatedStorage.EconomyRules)
@@ -56,7 +58,7 @@ local window = ShowcaseKit.Window("UpgradesWindow", "Upgrades", {
 local content = window.content
 
 local refresh
-tabs = UIKit.Tabs(content, { { Id = "Shop", Name = "UPGRADES", Width = 190 }, { Id = "Owned", Name = "OWNED" } }, function(id)
+tabs = UIKit.Tabs(content, { { Id = "Shop", Name = "UPGRADES", Width = 190 }, { Id = "Tools", Name = "TOOLS" }, { Id = "Owned", Name = "OWNED" } }, function(id)
 	view = id
 	refresh()
 end)
@@ -96,15 +98,17 @@ local function buy(upgradeId: string)
 	end
 end
 
-local function tileFor(upgrade)
-	local tile = tiles[upgrade.Id]
+-- A tile (key: its own name in the grid; the Tools tab keeps its own tiles, "Tools/Tool<n>").
+local function tileFor(upgrade, key: string?)
+	key = key or upgrade.Id
+	local tile = tiles[key]
 	if tile then
 		return tile
 	end
 	local look = KIND_LOOK[upgrade.Kind]
-	local card = ShowcaseKit.Card(grid, upgrade.Id, look.Palette)
-	local key, badged = iconFor(upgrade)
-	local image = UIKit.IconImage(key)
+	local card = ShowcaseKit.Card(grid, key, look.Palette)
+	local iconKey, badged = iconFor(upgrade)
+	local image = UIKit.IconImage(iconKey)
 	local icon
 	if image then
 		icon = Instance.new("ImageLabel")
@@ -150,9 +154,44 @@ local function tileFor(upgrade)
 			buy(upgrade.Id)
 		end
 	end)
-	tile = { card = card, button = button, palette = look.Palette }
-	tiles[upgrade.Id] = tile
+	tile = { card = card, button = button, palette = look.Palette, icon = icon, name = name, effect = effect, upgrade = upgrade }
+	tiles[key] = tile
 	return tile
+end
+
+-- The Tools tab: every tool in order, owned, next, or a silhouette.
+local function showTools(data)
+	local holding = EconomyRules.ToolTier(data)
+	for tier, info in UpgradeConfig.Tools do
+		local upgrade = UpgradeConfig.Get("Tool" .. tier) or { Id = "Tool1", Kind = "Tool", Name = info.Name, Tier = 1, Cost = 0 }
+		local tile = tileFor(upgrade, "Tools/Tool" .. tier)
+		tile.card.Visible = true
+		tile.card.LayoutOrder = tier
+		local later = tier > holding + 1
+		tile.name.Text = if later then "???" else info.Name
+		tile.effect.Text = if later then `Tool {tier} of {#UpgradeConfig.Tools}` else EconomyRules.Describe(upgrade)
+		if tile.icon:IsA("ImageLabel") then
+			ShowcaseKit.SetSilhouette(tile.icon, later)
+		else
+			tile.icon.TextTransparency = if later then 0.6 else 0
+		end
+		if tier == holding then
+			UIKit.SetButton(tile.button, "HOLDING", "Gold", false)
+			ShowcaseKit.SetCardPalette(tile.card, tile.palette)
+		elseif tier < holding then
+			UIKit.SetButton(tile.button, "OWNED", "Gold", false)
+			ShowcaseKit.SetCardPalette(tile.card, tile.palette)
+		elseif tier == holding + 1 then
+			local unlocked, reason = EconomyRules.UpgradeUnlocked(data, upgrade.Id)
+			local affordable = unlocked and data.Crystals >= upgrade.Cost
+			local caption = if unlocked then "💎 " .. NumberFormat.Short(upgrade.Cost) else tostring(reason)
+			UIKit.SetButton(tile.button, caption, if affordable then "Buy" else "Done", affordable)
+			ShowcaseKit.SetCardPalette(tile.card, if affordable then tile.palette else "Locked")
+		else
+			UIKit.SetButton(tile.button, "LOCKED", "Done", false)
+			ShowcaseKit.SetCardPalette(tile.card, "Locked")
+		end
+	end
 end
 
 function refresh()
@@ -166,6 +205,10 @@ function refresh()
 	end
 	for _, tile in tiles do
 		tile.card.Visible = false
+	end
+	if view == "Tools" then
+		showTools(data)
+		return
 	end
 	if view == "Owned" then
 		for order, id in data.Upgrades do

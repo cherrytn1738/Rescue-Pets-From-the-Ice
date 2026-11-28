@@ -9,17 +9,17 @@ character's animations replicate from its owner).
  * The knees (the family's Dip: a dip, the hammer's deeper one, the spear's lunge) only while the character is
    (nearly) standing still, so walking legs stay free.
  * At the strike: the family's camera nudge (Effects.Nudge: none with reduced effects) and a drill's bit spinning
-   (the tool's BitJoint Weld, turned on this client).
- * Swords draw a trail during the slash (the tool's SwingTrail, in the tier's spark colour; not with reduced effects).
+   (ToolFX.SpinBit).
+ * Swords and the magical tools draw a trail during the slash (ToolFX.Trail: the tool's SwingTrail, in the tier's
+   spark colour; not with reduced effects). Other players see both through ToolFX too.
  * An R6 avatar, or a variant with no uploaded animation, gets the default tool slash instead.
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
 
-local IceLooks = require(ReplicatedStorage.IceLooks)
 local SwingConfig = require(ReplicatedStorage.SwingConfig)
 local Effects = require(script.Parent.Effects)
+local ToolFX = require(script.Parent.ToolFX)
 
 local PickSwing = {}
 
@@ -67,57 +67,6 @@ local function defaultSlash(tool: Tool)
 	end
 end
 
--- A drill's bit spinning after the hit, slowing to a stop: the tool's BitJoint (a Weld whose C0 sits on the bit's
--- axis) turned about Y on this client only.
-local spinning = {}
-local function spinBit(tool: Tool)
-	local joint = tool:FindFirstChild("BitJoint", true)
-	if not joint or not joint:IsA("Weld") then
-		return
-	end
-	local spin = spinning[joint]
-	if spin then
-		spin.left = SwingConfig.BitSpin.Seconds
-		return
-	end
-	spin = { left = SwingConfig.BitSpin.Seconds, angle = 0, base = joint.C0 }
-	spinning[joint] = spin
-	local connection
-	connection = RunService.RenderStepped:Connect(function(dt)
-		spin.left -= dt
-		if not joint.Parent or spin.left <= 0 then
-			joint.C0 = spin.base
-			connection:Disconnect()
-			spinning[joint] = nil
-			return
-		end
-		spin.angle += SwingConfig.BitSpin.Speed * (spin.left / SwingConfig.BitSpin.Seconds) * dt
-		joint.C0 = spin.base * CFrame.Angles(0, spin.angle, 0)
-	end)
-end
-
--- The trail during the slash: on from the top of the wind-up to just after the strike.
-local function trail(tool: Tool, family, startAt: number, speed: number, started: number)
-	local swingTrail = tool:FindFirstChild("SwingTrail", true)
-	if not swingTrail or not swingTrail:IsA("Trail") or Effects.Reduced() then
-		return
-	end
-	local colour = IceLooks.ToolSparks[tool:GetAttribute("Tier")] or Color3.new(1, 1, 1)
-	swingTrail.Color = ColorSequence.new(colour:Lerp(Color3.new(1, 1, 1), 0.4), colour)
-	local on = math.max(0, family.WindUpEnd - startAt) / speed
-	local off = (family.ImpactAt + SwingConfig.Trail.AfterImpact - startAt) / speed
-	task.delay(on, function()
-		if lastStart == started and swingTrail.Parent then
-			swingTrail.Enabled = true
-		end
-	end)
-	task.delay(off, function()
-		if lastStart == started and swingTrail.Parent then
-			swingTrail.Enabled = false
-		end
-	end)
-end
-
 function PickSwing.Swing()
 	local character = player.Character
 	local tool = character and character:FindFirstChild(PickSwing.ToolName)
@@ -153,13 +102,16 @@ function PickSwing.Swing()
 		dip.TimePosition = startAt
 	end
 	lastVariant, lastFamily, lastStart = variant, familyName, now
-	if family.Trail then
-		trail(tool, family, startAt, speed, now)
+	local function current()
+		return lastStart == now -- (not when the next swing already cut in)
+	end
+	if ToolFX.HasTrail(tool, family) then
+		ToolFX.Trail(tool, family, startAt, speed, current)
 	end
 	task.delay(math.max(0, family.ImpactAt - startAt) / speed, function()
-		if lastStart == now then -- (not when the next swing already cut in)
+		if current() then
 			Effects.Nudge(family.Nudge.Strength, family.Nudge.Seconds)
-			spinBit(tool)
+			ToolFX.SpinBit(tool)
 		end
 	end)
 end

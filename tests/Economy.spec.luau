@@ -186,18 +186,19 @@ return function(sources)
 	}, { __index = getfenv(1) }))
 	local TapService = chunk()
 	local tapper = { Name = "Tapper", UserId = 5 }
+	check(modules.GameConfig.Taps.MaxPerSecond == 10, "the server takes at most 10 taps a second")
 	check(TapService.Allow(tapper, 5) == 5, "a normal batch is allowed")
-	check(TapService.Allow(tapper, 100) == 15, "a huge batch is cut to what's left of a second's taps")
-	check(#warnings == 1, "...and the player is logged")
-	clock = 0.25
-	check(TapService.Allow(tapper, 10) == 5, "after 0.25 s, 5 more taps (20 a second)")
+	check(TapService.Allow(tapper, 100) == 5, "a huge batch is cut to what's left of a second's taps")
+	check(#warnings == 0, "...quietly: nobody is logged for tapping fast")
+	clock = 0.5
+	check(TapService.Allow(tapper, 10) == 5, "after 0.5 s, 5 more taps (10 a second)")
 	local total = 0
 	for step = 1, 40 do
-		clock = 0.25 + step * 0.25
+		clock = 0.5 + step * 0.25
 		total += TapService.Allow(tapper, 50)
 	end
-	check(total <= 20 * 10 + 1, "an autoclicker never beats 20 taps a second")
-	check(#warnings == 1, "...and the log is throttled")
+	check(total <= 10 * 10 + 1, "an autoclicker never beats 10 taps a second")
+	check(#warnings == 0, "...and still nothing logged")
 
 	-- Steady income (Economy.SteadyIncome: crystal bundles and the daily chest): the HUD's rate with the
 	-- permanent bonuses but no rushes, taps at least MonetizationConfig.BundleTapsPerSecond --------------------
@@ -235,9 +236,9 @@ return function(sources)
 	check(near(Economy.PermanentMultiplier(earner, save), permanent), "...the permanent one doesn't")
 	local idle = (modules.EconomyRules.TotalBuildingDps(save) + 4 * modules.EconomyRules.TapDamage(save)) * permanent
 	check(near(Economy.SteadyIncome(earner, save), idle), "not tapping (the shop is open): taps count at 4 a second, no rush")
-	Economy.RecordTaps(earner, 20 * modules.GameConfig.Taps.RateWindowSeconds)
-	local tapping = (modules.EconomyRules.TotalBuildingDps(save) + 20 * modules.EconomyRules.TapDamage(save)) * permanent
-	check(near(Economy.SteadyIncome(earner, save), tapping), "tapping 20 a second: the HUD's tap rate counts")
+	Economy.RecordTaps(earner, 10 * modules.GameConfig.Taps.RateWindowSeconds)
+	local tapping = (modules.EconomyRules.TotalBuildingDps(save) + 10 * modules.EconomyRules.TapDamage(save)) * permanent
+	check(near(Economy.SteadyIncome(earner, save), tapping), "tapping 10 a second: the HUD's tap rate counts")
 	check(Economy.SteadyIncome(earner, save) < Economy.CrystalsPerSecond(earner, save), "...still below the HUD's rate while a rush runs")
 
 	-- The click's "+N" (TapValue, published for TapFeedback): what one tap pays, rushes and passes included

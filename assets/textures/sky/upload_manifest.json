@@ -1,58 +1,64 @@
 {
  "assets": {
   "SkyBk.png": {
-   "assetId": "113070635814835",
+   "assetId": "74529492771906",
    "creator": {
     "groupId": "921449746"
    },
    "moderationState": "Approved",
-   "sha256": "50d999d7f1f177aec74805ebecf5b04da9b5bfb12070279db0d632031966e856",
-   "updated": "2026-11-25T08:48:44+00:00"
+   "previousAssetId": "124868465419430",
+   "sha256": "493f7d5965038230c8f844f6763a11602905342ba3471aa83f941e4305a9aa6d",
+   "updated": "2026-11-28T04:43:12+00:00"
   },
   "SkyDn.png": {
-   "assetId": "100435546213305",
+   "assetId": "122642767365993",
    "creator": {
     "groupId": "921449746"
    },
    "moderationState": "Approved",
-   "sha256": "6ccb739fb5aab959b8987e49e63ba348e7ca193e79dbc57256c25e2f5563bfee",
-   "updated": "2026-11-25T08:48:46+00:00"
+   "previousAssetId": "100435546213305",
+   "sha256": "5d7a952af9f04da149028e57db8579275f44f30ecba9654c39192e2f45c79e0e",
+   "updated": "2026-11-28T04:39:32+00:00"
   },
   "SkyFt.png": {
-   "assetId": "100780803505256",
+   "assetId": "129032932102952",
    "creator": {
     "groupId": "921449746"
    },
    "moderationState": "Approved",
-   "sha256": "acc515f51c153c1d3d9acb65915d208676af2cba9123db42b18279e816a451b0",
-   "updated": "2026-11-25T08:48:51+00:00"
+   "previousAssetId": "87423537709354",
+   "sha256": "22155ed17124ae130403c2685a2eab8c9632c8a98be46e1610d20d3717309dbf",
+   "updated": "2026-11-28T04:43:17+00:00"
   },
   "SkyLf.png": {
-   "assetId": "91102508470648",
+   "assetId": "131452679739982",
    "creator": {
     "groupId": "921449746"
    },
    "moderationState": "Approved",
-   "sha256": "b127a89ad48c2844501c5facef75ff1f1e450ef81d427ae06cd4fa137b462b1d",
-   "updated": "2026-11-25T08:48:53+00:00"
+   "previousAssetId": "137012692369473",
+   "sha256": "7c5aa42e48f8231f83b5fa32e063b896ebce5f0833143ccc438a93c54fefb390",
+   "updated": "2026-11-28T04:43:19+00:00"
   },
   "SkyRt.png": {
-   "assetId": "77382841776376",
+   "assetId": "127399318612123",
    "creator": {
     "groupId": "921449746"
    },
    "moderationState": "Approved",
-   "sha256": "89c90862efbacf940fe68396418836252f9b770b61510e2fb87262a49612c6d0",
-   "updated": "2026-11-25T08:48:55+00:00"
+   "previousAssetId": "97890325547972",
+   "sha256": "bb226eaf6e0a0dafffd1b60cd97b2d8a5c1c39a610307f058aa907d139bb461d",
+   "updated": "2026-11-28T04:43:21+00:00"
   },
   "SkyUp.png": {
-   "assetId": "122741017703354",
+   "assetId": "134378334693788",
    "creator": {
     "groupId": "921449746"
    },
    "moderationState": "Approved",
-   "sha256": "8f9ce61282bba56ba3e9c5593eb34add8ce57010412564bbe916568055944ded",
-   "updated": "2026-11-25T08:48:59+00:00"
+   "previousAssetId": "115670611050408",
+   "sha256": "08d81cf6cd94d07804680429be487a4bdd3958b03e227bca8d5b762405d17b6c",
+   "updated": "2026-11-28T04:43:23+00:00"
   }
  },
  "creator": {

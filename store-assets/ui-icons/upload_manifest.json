@@ -231,6 +231,168 @@
    "sha256": "2f0450eed9edbe6308c86dc75999b0cc7562abc7dd40925bacee0b935a6dac9f",
    "updated": "2026-11-25T21:56:45+00:00"
   },
+  "Tool1.png": {
+   "assetId": "125367121542168",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "e4fc88b06b07cfc723afe1c9b1446a7c56b4c41111d51dc92fb7109bac11847a",
+   "updated": "2026-11-28T00:12:31+00:00"
+  },
+  "Tool10.png": {
+   "assetId": "135016566042715",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "bf9651bf6ecf0bd0e39aee0b99d5f9fc09b0e328959b9dd807486e8e93fb6a17",
+   "updated": "2026-11-28T00:12:33+00:00"
+  },
+  "Tool11.png": {
+   "assetId": "136505024177461",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "e71e68867b2b33dcd0300bd5602c3f6ebb80726399e314a63bb96a963b4696ca",
+   "updated": "2026-11-28T00:12:35+00:00"
+  },
+  "Tool12.png": {
+   "assetId": "127289744433202",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "1b9830eb4de996c370dc60d7843043e44a56b62294a5e10ecb89fba96d0857c9",
+   "updated": "2026-11-28T00:12:37+00:00"
+  },
+  "Tool13.png": {
+   "assetId": "78386884489222",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "8b3499c8875410fccae062f60c7181d63750b1fdd2b15d08d535ea89a7397c7e",
+   "updated": "2026-11-28T00:12:39+00:00"
+  },
+  "Tool14.png": {
+   "assetId": "110733582821650",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "ff833880465900368dfd99848441071a6d45b63a09e2d80a5bba84b996a3e0f5",
+   "updated": "2026-11-28T00:12:41+00:00"
+  },
+  "Tool15.png": {
+   "assetId": "131943298512350",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "efda031446954ef21eabfef42a8aa182b2169e06a6d331b77c672bf5e830c4e4",
+   "updated": "2026-11-28T00:12:43+00:00"
+  },
+  "Tool16.png": {
+   "assetId": "122896140284061",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "c9e1dad0c53de2df0a98858e342ec10cbb7d118a9ccb209b620286185c320b1c",
+   "updated": "2026-11-28T00:12:45+00:00"
+  },
+  "Tool17.png": {
+   "assetId": "95543462163784",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "ba69f2ec69ef145a81221e4b1b00fb6c3a0c473b1b372816a71f6c3584920bf4",
+   "updated": "2026-11-28T00:12:47+00:00"
+  },
+  "Tool18.png": {
+   "assetId": "75822816926038",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "6fbb5d35597dd1501d5076c4adfc13352d59f845243efabb8c49fa1b61f43a5d",
+   "updated": "2026-11-28T00:12:50+00:00"
+  },
+  "Tool2.png": {
+   "assetId": "111855337371216",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "978101c88b6586b137a9aba7edffa0c16a15e95ccd608025bdc2bad2f81e76f7",
+   "updated": "2026-11-28T00:12:52+00:00"
+  },
+  "Tool3.png": {
+   "assetId": "87540040473208",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "990b616b0c2c4e6a3deec482e427de05e33ed80ab258d791aa6bcb6dfbd82aa2",
+   "updated": "2026-11-28T00:12:54+00:00"
+  },
+  "Tool4.png": {
+   "assetId": "87725696141633",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "fbda4a4f87c3f582ad251470d6a518046420a95c53a58f586d4a7fefb8eff737",
+   "updated": "2026-11-28T00:12:56+00:00"
+  },
+  "Tool5.png": {
+   "assetId": "125890854703154",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "40a5043b15ea936a934dd8ab9e15e8edc56e0e68687b72cdabb536ef7c80af5a",
+   "updated": "2026-11-28T00:12:58+00:00"
+  },
+  "Tool6.png": {
+   "assetId": "82403741175877",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "4a395e9c438ba1e789542164fb0ca7babf29b40acd46217096ff2d76740ea53c",
+   "updated": "2026-11-28T00:13:00+00:00"
+  },
+  "Tool7.png": {
+   "assetId": "80677528036769",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "9e9ab95b42e0980a28020fa8fed6ea00a181005ab5d83422bb8a3b0a1d62348b",
+   "updated": "2026-11-28T00:13:02+00:00"
+  },
+  "Tool8.png": {
+   "assetId": "75737821369474",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "43d280a8771ba2cca0453603c7d899a120b9f1568488b0c1a2f4742783747f5a",
+   "updated": "2026-11-28T00:13:04+00:00"
+  },
+  "Tool9.png": {
+   "assetId": "86813501547951",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "e272276d5fbc2841ad811ca04d02486e5f2e8bdc388111615626bd7391c7bd75",
+   "updated": "2026-11-28T00:13:06+00:00"
+  },
   "UpgradeBadge.png": {
    "assetId": "99395304409533",
    "creator": {

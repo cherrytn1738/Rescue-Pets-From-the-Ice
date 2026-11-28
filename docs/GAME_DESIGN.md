@@ -76,7 +76,11 @@ Each block has HP, a creature frozen inside, and five crack stages. When its HP 
 \text{BlockHP}(L) = 100 \times 1.5^{\,L-1}
 ```
 
-This is a starting value. The economy simulation tunes it so a rescue comes every 1–3 minutes at the intended pace.
+up to level 40. **Past level 40, each block has 1.22 times the HP of the one before** (instead of 1.5): late in the game a player's damage grows ever more slowly (Frost Cores multiply crystals, not damage), so with 1.5 all the way down, players who kept rebirthing stopped at about level 50 and never saw the Frozen Core. With it, the simulated player (4 taps a second) reaches the Frozen Core (level 51) in run 5 and level 60 in run 6; the first run is unchanged.
+
+These are starting values. The economy simulation tunes them so a rescue comes every 1–3 minutes at the intended pace.
+
+**Nobody stands inside the ice.** An invisible ring 4 studs out from every face of the block (on the mound, so it never blocks the tapping spot, the footpath or the pads) stops players walking into it, so every strike of a tool lands on the block's surface. It only stops characters: shatter pieces, crystals and chunks fly straight through it, and tapping works from anywhere in the plot as before.
 
 **The look.** A rounded, bevelled block in the buildings' toy style: frosty white edges and glints, colour deepening from the top down, a clearer middle with trapped bubbles and frost streaks, a snow cap with icicles, small crystals and snow round the base, a slow shimmer sweeping across the faces and a little frost mist at its foot. Each layer has its own version (Fresh Snow packed white snow with drifts, Blue Ice clear pale blue, Ancient Ice deep blue full of bubbles, Crystal Ice clear cyan with faceted crystal clusters and sparkles, Primordial Ice dark teal with glowing veins, the Frozen Core black ice lit from inside with orange veins), and three shape variants (snow cap, icicles, base crystals) are picked at random per block. A Mythic Block bought with Robux has glowing crystal clusters bursting out of its corners and a rainbow aura, whatever it holds.
 
@@ -142,7 +146,7 @@ Crystals come from damage: every point of damage on the ice drops one crystal, t
 - **Building upgrades:** double one building's damage and give it better parts. They unlock at 1, 10, 25, 50 and 100 owned.
 - **Ice upgrades:** a bigger crystal burst on each rescue, and a little more crystals per damage.
 
-All numbers are starting values. The economy simulation should hit these targets: the first rescue within 60 seconds, the first building within 30 seconds, the first rebirth after about 30–40 minutes (reaching Layer 4), a new tool about every 2–3 minutes in the first run, and taps a meaningful share of the damage all the way through.
+All numbers are starting values. The economy simulation should hit these targets: the first rescue within 60 seconds, the first building within 30 seconds, the first rebirth after about 30–40 minutes (reaching Layer 4), a new tool about every 2–3 minutes in the first run, and taps a meaningful share of the damage all the way through. Faster tapping helps without breaking the run: the rebirth level at 33–37 minutes at 4 taps a second, about 28 minutes at 7, 28–30 with Auto Pick (4 + 2), and no sooner than 24 minutes at the 10-a-second cap (each the average of three runs). Players who keep rebirthing reach the Frozen Core (level 51) around run 4 or 5, and level 60 soon after.
 
 ## Buildings in detail
 
@@ -283,28 +287,28 @@ Higher tiers don't just look different, they feel alive: each tier adds a layer 
 
 Upgrades are one-time purchases in the Upgrades panel. There are three kinds: the tools (tapping, with Frost Touch), building upgrades, and ice upgrades. About 65 in all at launch.
 
-**Tools** (tap power; each tier also changes the tool the player holds and how they swing it). 18 tools in five families that take turns, so each new tool feels different. In the first run a new tool comes along about every 2–3 minutes (13 of them by the rebirth); the deep tools (14–18) also need a block level in the current run, so they come in later runs: two in Layer 4, the top three in Layer 5 on the way into the Frozen Core. Damage and costs come from the economy simulation (`tools/economy_sim.py`); taps stay about 30–35% of a run's damage at every layer of the first run and in the deep layers of later runs.
+**Tools** (tap power; each tier also changes the tool the player holds and how they swing it). 18 tools in five families that take turns, so each new tool feels different. Each tool unlocks at a block level in the current run (and is bought in order), so in the first run a new one comes along about every 2–3 minutes (13 of them by the rebirth) however fast the player taps; the deep tools (14–18) come in later runs: two in Layer 4, the top three in Layer 5 on the way into the Frozen Core. Damage, costs and levels come from the economy simulation (`tools/economy_sim.py`). At 4 taps a second, taps deal about 30% of the damage in Layer 1 and 15–20% after it (Frost Touch adds a few points from Layer 2); tapping faster helps, up to the server's 10 taps a second: the rebirth level comes at about 35 minutes at 4 taps a second, 30 with Auto Pick, 29 at 7 and 24.5 at 10.
 
 | Tier | Tool | Family | Tap damage | Cost (crystals) | Unlocks | First bought (simulation, 4 taps/s) |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | Wooden Pick | Pick | 1 | Start | – | – |
-| 2 | Stone Hammer | Hammer | 2 | 60 | – | 0:18 |
-| 3 | Copper Axe | Axe | 6 | 2,000 | – | 2:15 |
-| 4 | Iron Pick | Pick | 20 | 10,000 | – | 4:40 |
-| 5 | Steel Sword | Sword | 60 | 40,000 | – | 7:30 |
-| 6 | Frost Spear | Spear | 120 | 100,000 | – | 10:05 |
-| 7 | Gold Hammer | Hammer | 250 | 250,000 | – | 12:25 |
-| 8 | Crystal Axe | Axe | 500 | 500,000 | – | 14:50 |
-| 9 | Ice Drill | Spear | 800 | 750,000 | – | 17:55 |
-| 10 | Diamond Sword | Sword | 1,200 | 1.5M | – | 21:35 |
-| 11 | Flame Pick | Pick | 2,000 | 3M | – | 23:30 |
-| 12 | Thunder Hammer | Hammer | 3,000 | 5M | – | 28:15 |
-| 13 | Aurora Blade | Sword | 4,000 | 7.5M | – | 31:30 |
+| 2 | Stone Hammer | Hammer | 2 | 50 | – | 0:16 |
+| 3 | Copper Axe | Axe | 3 | 500 | Level 6 | 2:00 |
+| 4 | Iron Pick | Pick | 10 | 2,500 | Level 10 | 4:05 |
+| 5 | Steel Sword | Sword | 30 | 10,000 | Level 14 | 6:50 |
+| 6 | Frost Spear | Spear | 60 | 25,000 | Level 18 | 10:20 |
+| 7 | Gold Hammer | Hammer | 125 | 60,000 | Level 20 | 12:30 |
+| 8 | Crystal Axe | Axe | 250 | 125,000 | Level 21 | 13:50 |
+| 9 | Ice Drill | Spear | 400 | 200,000 | Level 23 | 16:40 |
+| 10 | Diamond Sword | Sword | 600 | 400,000 | Level 25 | 20:05 |
+| 11 | Flame Pick | Pick | 1,000 | 750,000 | Level 26 | 22:05 |
+| 12 | Thunder Hammer | Hammer | 1,500 | 1.25M | Level 28 | 26:40 |
+| 13 | Aurora Blade | Sword | 2,000 | 2M | Level 29 | 29:00 |
 | 14 | Lava Axe | Axe | 50,000 | 100M | Level 33 | Run 2 |
 | 15 | Starfall Spear | Spear | 250,000 | 2B | Level 37 | Run 4 |
 | 16 | Comet Hammer | Hammer | 1.5M | 20B | Level 41 | Run 4 |
-| 17 | Cosmic Pick | Pick | 6M | 200B | Level 45 | Run 5–6 |
-| 18 | Starbreaker | Sword | 25M | 2T | Level 48 | Run 7 |
+| 17 | Cosmic Pick | Pick | 6M | 200B | Level 45 | Run 5 |
+| 18 | Starbreaker | Sword | 25M | 2T | Level 48 | Run 6 |
 
 How each family swings (every swing is a wind-up, the strike, a small recoil bounce, a follow-through and the recovery):
 
@@ -490,7 +494,8 @@ Each plot is a 100 × 100 stud square of snow with the ice block in the middle, 
 - **Plaza** in the centre: the spawn point, the Golden Glacier landing ring, three leaderboards, the codes board, the daily and group reward chests, and the VIP lounge behind a gate (built only once the VIP pass exists on Roblox, with a real id).
 - **Plots:** eight plots in a ring around the plaza, each with its open front facing the centre, so players see other players' ice glowing as they walk around.
 - **Getting to your plot:** a glowing arrow and a short path lead from spawn to the player's plot; a Home button in the HUD walks or teleports them back.
-- **Around the ring:** a snowy winter world with no visible grid: frozen ponds between the plots, snowy hills with clumps of snowy pines beyond them, big hazy mountains on the horizon and a bright winter sky. Nothing stands between the plaza and any plot's open front.
+- **Around the ring:** a snowy winter world with no visible grid: frozen ponds between the plots, snowy hills with clumps of snowy pines beyond them, big hazy mountains on the horizon and a sunset sky. Nothing stands between the plaza and any plot's open front.
+- **Light: a warm, cinematic winter sunset.** The sun sits low behind the mountains (late afternoon) and throws long, soft shadows across the snow. Sunlit snow is golden-orange with pink and peach where the light catches it; the shadows are a cool blue-violet, for a strong warm/cold contrast. The sky runs from deep orange at the horizon through pink and violet to dusky blue overhead, with a few lit clouds and a big soft sun, and a light warm haze makes the distant mountains glow. A soft warm colour grade, a gentle bloom and stronger sun rays when looking towards the sun, never washed out. The ice still reads as blue ice with its creature, outline and eyes clear on every layer, and the rarity glows and auras stand out against the warm snow. Warm lamps light the plot gates, the leaderboards and the plaza. Every value is in one config (`LightingConfig`), which the game applies at the start of every server.
 
 ## Rebirth
 
@@ -539,7 +544,7 @@ Launch with 6 passes and 4 kinds of products. Prices were checked against 12 pop
 | Item | Type | Price (Robux) | What it does |
 | --- | --- | --- | --- |
 | 2x Crystals | Pass | 349 | Doubles all crystals, forever |
-| Auto Pick | Pass | 199 | The server taps 5 times a second for you while you're in your plot |
+| Auto Pick | Pass | 199 | The server taps 2 times a second for you while you're in your plot |
 | VIP | Pass | 299 | +20% crystals, a gold name tag, a VIP lounge in the plaza |
 | Extra Pet Slot | Pass | 399 | One more pet follows you |
 | Pet Squad | Pass | 699 | Two more pets follow you (with Extra Pet Slot, +3 in all) |
@@ -653,7 +658,7 @@ A "reduced effects" setting halves particles and turns off camera shake for low-
 
 The server owns every number. The client sends tap counts and requests, and only animates what the server decides.
 
-- **Taps:** the client counts taps and sends the total every 0.25 seconds. The server allows up to 20 taps per second, drops anything over that, and logs players who keep going over.
+- **Taps:** the client counts taps and sends the total every 0.25 seconds. The server allows up to 10 taps per second and quietly ignores anything over that (a click past the cap still swings and chips the ice, but earns nothing and shows no "+N").
 - **Server tick:** 4 times a second the server adds building damage, lowers the block's HP, adds crystals, and frees the creature when the HP reaches zero.
 - **The creature roll:** the server rolls the creature when a block spawns and stores it on the block, so the silhouette and glow can show from the start. The roll is final; nothing on the client can change it.
 - **The ice look:** a see-through ice shell around a copy of the pet model coloured one dark shade, as the silhouette. Each crack stage lowers the frost on the ice and swaps in a crack layer. The glow is a light inside the block in the rarity colour. Test glass and lights on a low-end phone early.
@@ -661,7 +666,7 @@ The server owns every number. The client sends tap counts and requests, and only
 - **Saving:** PlayerData from Steal Safari Pets (session lock, schema version, separate Studio stores). It saves crystals, crystals earned this run and all time, buildings owned, upgrades, block level, the current block's creature, pets and equipped slots, Frost Cores, rebirths, creatures rescued and passes.
 - **Big numbers:** Luau numbers reach about 1e308, which is enough. Display uses suffixes (K, M, B, T, Qa, Qi, Sx, Sp, Oc, No, Dc, then Ud, Dd, Td, Qad, Qid, Sxd, Spd, Ocd, Nod, Vg, Uvg, Dvg, Tvg, Qavg, Qivg, Sxvg, Spvg, Ocvg, Novg, Tg); past Tg (1e93) a short exponent such as "1.82e96". Ice block HP passes Dc around level 200. Leaderboards store `math.floor(math.log10(total) * 1000)`, because OrderedDataStore only holds whole numbers up to about 9e18.
 - **Offline earnings:** building income only, at 50%, capped at 2 hours away, shown in a welcome-back popup ("You earn half your building income for up to 2 hours away." once the cap is reached).
-- **Anti-cheat:** every RemoteEvent is rate-limited. The server computes all prices and checks every buy and equip. Auto Pick runs on the server, so autoclickers can never beat the 20-taps-a-second cap.
+- **Anti-cheat:** every RemoteEvent is rate-limited. The server computes all prices and checks every buy and equip. Auto Pick runs on the server, so autoclickers can never beat the 10-taps-a-second cap.
 - **Phones:** building animations, ice chips and crystal particles run on the client only. Each plot shows one model per building type with a count badge. Every building, tool and plot mesh uses RenderFidelity Automatic (Roblox's level of detail), not Precise.
 - **Streaming:** Workspace.StreamingEnabled is on, so distant plots stream out (target radius 240 studs, minimum 96, opportunistic stream-out). The plaza is a Persistent model (always loaded with its boards and chests); each station and the plot's own models are PersistentPerPlayer, always loaded for the plot's owner and streamed whole for everyone else. Plot models and their Block folders (the block's state) always reach every client, so ice blocks, beams, name tags and the Golden Glacier (drawn by the client) work at any distance.
 - **Analytics funnels:** Joined, First tap, First building, First rescue, First pet equipped, Tutorial done, First rebirth, plus a shop funnel. Two progression funnels (each step once per player): layers reached (1-6) and rebirth ranks (1, 3, 6, 10).
@@ -704,7 +709,7 @@ A plan for Claude Code: what is saved, where the numbers live, and how the clien
 
 | Remote | Client sends | Server does |
 | --- | --- | --- |
-| TapBatch | Tap count for the last 0.25 s | Clamps to 20/s, applies damage |
+| TapBatch | Tap count for the last 0.25 s | Clamps to 10/s, applies damage |
 | BuyBuilding | buildingId, amount | Checks price, adds buildings |
 | BuyUpgrade | upgradeId | Checks unlock rule and price |
 | EquipPet, CombineGolden, DeletePet | Pet uids | Checks ownership and slots |

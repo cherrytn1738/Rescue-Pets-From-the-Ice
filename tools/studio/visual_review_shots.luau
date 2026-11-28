@@ -52,6 +52,21 @@ local function dbg(action: string, args)
 	return result
 end
 
+-- Reduced effects on or off: SaveSettings takes the whole settings (both volumes too) and at most one save every
+-- 0.5 s, so it sends the player's own volumes back and waits for the save to land.
+local function setReduced(on: boolean)
+	local settings = { Music = 0.5, Sounds = 0.8, ReducedEffects = on }
+	local ok, progress = pcall(HttpService.JSONDecode, HttpService, me:GetAttribute("Progress") or "")
+	if ok and type(progress) == "table" and type(progress.Settings) == "table" then
+		settings.Music = tonumber(progress.Settings.Music) or settings.Music
+		settings.Sounds = tonumber(progress.Settings.Sounds) or settings.Sounds
+		settings.AutoEquip = progress.Settings.AutoEquip
+	end
+	task.wait(0.6)
+	ReplicatedStorage.SaveSettings:FireServer(settings)
+	task.wait(0.8)
+end
+
 local function plotIndex(): number
 	return me:GetAttribute("PlotIndex") or 1
 end
@@ -381,7 +396,7 @@ local PREPARE = {
 		dbg("SetBlockLevel", { Level = 400 })
 		home()
 	end,
-	picks = function()
+	tools = function()
 		dbg("ResetSave") -- (no Golden page yet, so the tiers show their own look; the golden skin is last)
 		task.wait(3)
 		dbg("SetTutorialStep", { Step = 5 })
@@ -391,7 +406,7 @@ local PREPARE = {
 	ice = function()
 		dbg("SetRebirths", { Rebirths = 3 }) -- layer 6 open
 		onlyBuildings({}) -- (no building hits: the low blocks would break before their shot)
-		ReplicatedStorage.SaveSettings:FireServer({ ReducedEffects = false })
+		setReduced(false)
 		home()
 	end,
 	pets = function()
@@ -498,9 +513,10 @@ shot("buildings/moment_evolved", function()
 	return { Wait = 0.35 }
 end)
 
--- Tools (the "picks" category until part 2 renames it): each made tool in the hand (close up, standing), then from
--- the normal play camera mid-swing (frozen at its family's strike) and walking; the golden skin last; then each
--- family's variants at the wind-up and the strike.
+-- Tools: each of the 18 tools in the hand (close up, standing), then from the normal play camera mid-swing (frozen at
+-- its family's strike) and walking; each family striking from the invisible ring round the ice; the magical tiers'
+-- swings and hit effects (real clicks on the ice), with reduced effects too; the "New tool!" banner; the golden skin;
+-- then each family's variants at the wind-up and the strike.
 local function animator(): Animator?
 	local humanoid = me.Character and me.Character:FindFirstChildOfClass("Humanoid")
 	return humanoid and humanoid:FindFirstChildOfClass("Animator")
@@ -565,14 +581,14 @@ local function walkShot()
 	end
 	return { Wait = 1.1 }
 end
-local TOOL_LOOKS = {} -- the tiers with a model (the others hold their family's nearest)
+local TOOL_LOOKS = {} -- the tiers with a model (all 18; a tier without one would hold its family's nearest)
 for _, info in UpgradeConfig.Tools do
 	if info.ModelId then
 		table.insert(TOOL_LOOKS, info.Tier)
 	end
 end
 for _, tier in TOOL_LOOKS do
-	shot(`picks/tool_tier{tier}`, function()
+	shot(`tools/tool_tier{tier}`, function()
 		unfreeze()
 		dbg("SetToolTier", { Tier = tier })
 		task.wait(1)
@@ -580,19 +596,83 @@ for _, tier in TOOL_LOOKS do
 		follow(Vector3.new(4.6, 3.0, -6.8), Vector3.new(0.9, 2.4, -0.2), 42)
 		return { Wait = 1.5 }
 	end)
-	shot(`picks/tool_tier{tier}_swing`, function()
+	shot(`tools/tool_tier{tier}_swing`, function()
 		dbg("SetToolTier", { Tier = tier })
 		task.wait(1)
 		return swingShot()
 	end)
-	shot(`picks/tool_tier{tier}_walk`, function()
+	shot(`tools/tool_tier{tier}_walk`, function()
 		dbg("SetToolTier", { Tier = tier })
 		task.wait(1)
 		return walkShot()
 	end)
 end
+-- Each family striking the ice from the ring (MapConfig.BlockRing): pressed against it, the strike lands on the face.
+for _, familyName in SwingConfig.FamilyOrder do
+	local tier = nil
+	for _, candidate in TOOL_LOOKS do
+		if UpgradeConfig.Tools[candidate].Family == familyName and candidate >= 4 then
+			tier = candidate
+			break
+		end
+	end
+	shot(`tools/strike_at_ring_{string.lower(familyName)}`, function()
+		unfreeze()
+		dbg("SetToolTier", { Tier = tier })
+		task.wait(1)
+		-- up on the mound (a jump from the ground), walk at the ice until the ring stops you, then hold the strike
+		standAt(plotPoint(0, 14.5, 8), plotPoint(0, 0, 8))
+		release()
+		local humanoid = me.Character and me.Character:FindFirstChildOfClass("Humanoid")
+		if humanoid then
+			humanoid:MoveTo(plotPoint(0, 2, 4))
+		end
+		task.wait(2.5)
+		hold(plotPoint(15, 10.5, 9), plotPoint(0, 10.5, 6), 50) -- (from the side: the gap between you and the ice)
+		holdSwing()
+		return { Wait = 0.6 }
+	end)
+end
+-- The magical tiers: real clicks on the ice from the tap spot, seen from the side: the swing's trail in the tier's
+-- colour and its hit effect bursting off the block.
+local function magicShot(tier: number, reduced: boolean)
+	unfreeze()
+	setReduced(reduced)
+	dbg("SetToolTier", { Tier = tier })
+	freshBlock(400, "SnowBunny")
+	home()
+	hold(plotPoint(14, 30, 9), plotPoint(-1, 12, 5), 44)
+	task.wait(3.5) -- (a layer banner from the level change passes first)
+	local block = MapConfig.BlockBase(plotIndex())
+	local point = camera:WorldToScreenPoint(block.Position + Vector3.new(0, 6, 0))
+	local taps = {}
+	for _ = 1, 14 do
+		table.insert(taps, { math.floor(point.X + math.random(-10, 10)), math.floor(point.Y + math.random(-10, 10)) })
+	end
+	return { TapAt = taps, Wait = 0.9 }
+end
+for tier = 11, 18 do
+	shot(`tools/magic_tier{tier}`, function()
+		return magicShot(tier, false)
+	end)
+end
+shot("tools/magic_tier18_reduced_effects", function()
+	return magicShot(18, true)
+end)
+-- Buying a tool: "New tool!" with the tool turning in the banner, and the flash on it in the hand.
+shot("tools/new_tool_banner", function()
+	unfreeze()
+	setReduced(false)
+	staging.banners = true
+	dbg("SetToolTier", { Tier = 12 })
+	task.wait(1.5)
+	home()
+	playCamera()
+	dbg("SetToolTier", { Tier = 13 })
+	return { Wait = 0.9 }
+end)
 local TOP_LOOK = TOOL_LOOKS[#TOOL_LOOKS] or 1
-shot("picks/tool_golden_skin", function()
+shot("tools/tool_golden_skin", function()
 	-- the Creature Book's Golden page: every creature Golden
 	for _, creature in CreatureConfig.Creatures do
 		petOf(creature.Id, true)
@@ -604,7 +684,7 @@ shot("picks/tool_golden_skin", function()
 	follow(Vector3.new(4.6, 3.0, -6.8), Vector3.new(0.9, 2.4, -0.2), 42)
 	return { Wait = 1.5 }
 end)
-shot("picks/tool_golden_skin_swing", swingShot)
+shot("tools/tool_golden_skin_swing", swingShot)
 -- Each family's variants (SwingConfig), held at the top of the wind-up and at the strike, from the play camera's side.
 for _, familyName in SwingConfig.FamilyOrder do
 	local family = SwingConfig.Families[familyName]
@@ -617,7 +697,7 @@ for _, familyName in SwingConfig.FamilyOrder do
 	end
 	for _, variant in (if tier then family.Variants else {}) do
 		for _, moment in { { "windup", family.WindUpEnd }, { "strike", family.ImpactAt } } do
-			shot(`picks/swing_{string.lower(familyName)}_{string.lower(variant)}_{moment[1]}`, function()
+			shot(`tools/swing_{string.lower(familyName)}_{string.lower(variant)}_{moment[1]}`, function()
 				unfreeze()
 				dbg("SetToolTier", { Tier = tier })
 				standAt(plotPoint(0, 26, 4), plotPoint(0, 0, 4))
@@ -629,7 +709,7 @@ for _, familyName in SwingConfig.FamilyOrder do
 		end
 	end
 end -- (after the golden skin shot: the skin is already on)
-shot("picks/tool_golden_skin_walk", walkShot)
+shot("tools/tool_golden_skin_walk", walkShot)
 
 -- Ice: every layer with every rarity, the crack stages, the shatter, the sled, the Mythic Block.
 for layer, level in LAYER_LEVELS do
@@ -696,7 +776,7 @@ for _, rarity in { "Epic", "Legendary", "Mythic" } do
 	end
 end
 shot("ice/aura_Legendary_reduced", function() -- (reduced effects: the ring and fewer particles, no rays or flames)
-	ReplicatedStorage.SaveSettings:FireServer({ ReducedEffects = true })
+	setReduced(true)
 	freshBlock(LAYER_LEVELS[2], rarityCreature("Legendary"))
 	hold(plotPoint(11, 40, 15), plotPoint(0, 0, 12), 55)
 	task.wait(1)
@@ -705,7 +785,7 @@ end)
 -- Each layer from the tapping spot (the play camera), with an Epic creature.
 for layer, level in LAYER_LEVELS do
 	shot(`ice/tapping_layer{layer}`, function()
-		ReplicatedStorage.SaveSettings:FireServer({ ReducedEffects = false })
+		setReduced(false)
 		freshBlock(level, rarityCreature("Epic"))
 		home()
 		follow(Vector3.new(4, 7, 12), Vector3.new(0, 3, -16), 60)
@@ -1266,7 +1346,7 @@ end)
 for _, reduced in { false, true } do
 	shot(`effects/reduced_effects_{if reduced then "on" else "off"}`, function()
 		staging.hud, staging.banners = false, false -- (the world's effects only)
-		ReplicatedStorage.SaveSettings:FireServer({ ReducedEffects = reduced })
+		setReduced(reduced)
 		for _, building in BuildingConfig.Buildings do
 			dbg("SetBuilding", { Building = building.Id, Count = 100, Upgrades = 5 })
 		end
@@ -1295,7 +1375,7 @@ elseif string.sub(SHOT, 1, 9) == "?prepare:" then
 elseif SHOT == "?cleanup" then
 	unfreeze() -- (a held pick swing)
 	dbg("ClearDummyPlots") -- (the plaza shots fill the free plots)
-	ReplicatedStorage.SaveSettings:FireServer({ ReducedEffects = false }) -- (the effects shots turn it on)
+	setReduced(false) -- (the effects shots turn it on)
 	for _, name in { "VisualReviewCamera", "VisualReviewStage" } do
 		pcall(function()
 			RunService:UnbindFromRenderStep(name)
@@ -1317,10 +1397,10 @@ for _, entry in SHOTS do
 	if entry.Name == SHOT then
 		-- model shots hide the HUD; UI, rescue moments and effects keep it
 		local category = string.split(SHOT, "/")[1]
-		staging.hud = not (category == "buildings" or category == "picks" or category == "ice" or category == "pets" or category == "world")
+		staging.hud = not (category == "buildings" or category == "tools" or category == "ice" or category == "pets" or category == "world")
 		staging.tutorial = false
 		-- the big moments only where they're the subject (building moments, rescues, UI, effects)
-		staging.banners = not (category == "picks" or category == "ice" or category == "pets" or category == "world")
+		staging.banners = not (category == "tools" or category == "ice" or category == "pets" or category == "world")
 		stage()
 		local preClose = openWindows()
 		local result = entry.Run() or {}

@@ -87,11 +87,24 @@ Every uploaded asset of the game, created by the group 921449746 with `tools/upl
 | Model | SunMirrorTower tier 4 upgrades | `store-assets/buildings/SunMirrorTower/fbx/SunMirrorTower_T4_Upgrades.fbx` | 81176694067545 | Approved |
 | Model | SunMirrorTower tier 5 station | `store-assets/buildings/SunMirrorTower/fbx/SunMirrorTower_T5.fbx` | 127928225520843 | Approved |
 | Model | SunMirrorTower tier 5 upgrades | `store-assets/buildings/SunMirrorTower/fbx/SunMirrorTower_T5_Upgrades.fbx` | 88381654547929 | Approved |
+| Model | Tool tier 1 (Wooden Pick) | `store-assets/tools/fbx/Tool_T1.fbx` | 97778535941555 | Approved |
+| Model | Tool tier 2 (Stone Hammer) | `store-assets/tools/fbx/Tool_T2.fbx` | 106347512642707 | Approved |
+| Model | Tool tier 3 (Copper Axe) | `store-assets/tools/fbx/Tool_T3.fbx` | 105261200273228 | Approved |
 | Model | Tool tier 4 (Iron Pick) | `store-assets/tools/fbx/Tool_T4.fbx` | 121823405442127 | Approved |
+| Model | Tool tier 5 (Steel Sword) | `store-assets/tools/fbx/Tool_T5.fbx` | 74201442043207 | Approved |
+| Model | Tool tier 6 (Frost Spear) | `store-assets/tools/fbx/Tool_T6.fbx` | 93257241666971 | Approved |
 | Model | Tool tier 7 (Gold Hammer) | `store-assets/tools/fbx/Tool_T7.fbx` | 91107081366944 | Approved |
 | Model | Tool tier 8 (Crystal Axe) | `store-assets/tools/fbx/Tool_T8.fbx` | 91759224577271 | Approved |
 | Model | Tool tier 9 (Ice Drill) | `store-assets/tools/fbx/Tool_T9.fbx` | 101169888558067 | Approved |
 | Model | Tool tier 10 (Diamond Sword) | `store-assets/tools/fbx/Tool_T10.fbx` | 94165974376326 | Approved |
+| Model | Tool tier 11 (Flame Pick) | `store-assets/tools/fbx/Tool_T11.fbx` | 121394923713909 | Approved |
+| Model | Tool tier 12 (Thunder Hammer) | `store-assets/tools/fbx/Tool_T12.fbx` | 103061517139470 | Approved |
+| Model | Tool tier 13 (Aurora Blade) | `store-assets/tools/fbx/Tool_T13.fbx` | 130244588321479 | Approved |
+| Model | Tool tier 14 (Lava Axe) | `store-assets/tools/fbx/Tool_T14.fbx` | 106847971300446 | Approved |
+| Model | Tool tier 15 (Starfall Spear) | `store-assets/tools/fbx/Tool_T15.fbx` | 102064493293376 | Approved |
+| Model | Tool tier 16 (Comet Hammer) | `store-assets/tools/fbx/Tool_T16.fbx` | 117002597001166 | Approved |
+| Model | Tool tier 17 (Cosmic Pick) | `store-assets/tools/fbx/Tool_T17.fbx` | 93856558816882 | Approved |
+| Model | Tool tier 18 (Starbreaker) | `store-assets/tools/fbx/Tool_T18.fbx` | 81811013570207 | Approved |
 | Model | Retired ice pick 1 (Wooden) | `store-assets/tools/fbx/IcePick_T1.fbx` | 87084297887291 | Approved |
 | Model | Retired ice pick 2 (Stone) | `store-assets/tools/fbx/IcePick_T2.fbx` | 90204611101082 | Approved |
 | Model | Retired ice pick 3 (Iron) | `store-assets/tools/fbx/IcePick_T3.fbx` | 114047905090497 | Approved |

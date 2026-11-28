@@ -21,6 +21,7 @@ local GameConfig = require(game:GetService("ReplicatedStorage").GameConfig)
 local GoldenGlacierService = require(script.Parent.GoldenGlacierService)
 local IceBlockService = require(script.Parent.IceBlockService)
 local LeaderboardService = require(script.Parent.LeaderboardService)
+local LightingService = require(script.Parent.LightingService)
 local OfflineEarnings = require(script.Parent.OfflineEarnings)
 local PaidRandomPolicy = require(script.Parent.PaidRandomPolicy)
 local PetService = require(script.Parent.PetService)
@@ -70,6 +71,7 @@ LeaderboardService.Start()
 GoldenGlacierService.Start()
 RewardService.Start()
 RobuxPerks.Start() -- what each pass and product does (reward kinds, pass perks, Auto Pick, Server Frost Rush)
+LightingService.Start() -- the warm winter sunset (LightingConfig) and the lamps at the gates, boards and plaza
 
 -- Live ops: server-wide messages (admin announcements, every server via MessagingService) and the soft
 -- shutdown (saves, an update screen and straight back on a new server when servers restart).

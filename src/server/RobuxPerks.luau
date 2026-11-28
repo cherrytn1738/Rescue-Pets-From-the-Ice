@@ -14,7 +14,7 @@ never yields and never saves, the caller records the receipt and saves):
 Pass perks (GamePasses.Owns, so a bought, gifted or Studio-given pass all count):
  * CrystalMultiplier (2x Crystals, VIP) through Economy.AddExtra; Lucky (Lucky Ice) through
    IceBlockService.AddLuck; AutoTapsPerSecond (Auto Pick): every tick, the server taps for the player while
-   they're in their own plot (TapService.AutoTaps, inside the same 20-a-second cap). The VIP name tag is
+   they're in their own plot (TapService.AutoTaps, inside the same 10-a-second cap). The VIP name tag is
    RankService's, the lounge door PlazaService's and VipLounge.client's; pet slots PetService's.
 The Server Frost Rush is on Workspace attributes ServerRushEndsAt (server clock), ServerRushMultiplier and
 ServerRushBy (the HUD shows it).
@@ -182,7 +182,7 @@ function RobuxPerks.Start()
 	Economy.AddExtra(RobuxPerks.PassMultiplier)
 	Economy.AddExtra(RobuxPerks.ServerRushMultiplier, true, "ServerFrostRush")
 	IceBlockService.AddLuck(RobuxPerks.IsLucky)
-	-- Auto Pick: the server taps for you while you're in your own plot, inside the 20-a-second cap.
+	-- Auto Pick: the server taps for you while you're in your own plot, inside the 10-a-second cap.
 	Economy.OnTick(function(player, _, dt)
 		local rate = RobuxPerks.AutoTapsPerSecond(player)
 		if rate <= 0 or not PlotService.InOwnPlot(player) then

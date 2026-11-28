@@ -7,7 +7,7 @@ server:
  - accepts a whole number only, and only while the player stands in their own plot;
  - allows at most MaxPerSecond taps a second: a bucket that refills at that rate and holds at most
    BurstSeconds' worth, so a late batch isn't punished but an autoclicker can't beat the cap. Taps
-   over the cap are dropped, and a player who keeps going over is logged ([Taps]) now and then;
+   over the cap are quietly dropped (no log, no message: a fast clicker isn't a cheater);
  - hits the block with taps x EconomyRules.TapDamage (IceBlockService pays the crystals).
 AddTaps(player, count) is the same path for taps the server makes itself; AutoTaps(player, count) lands the
 Auto Pick pass's taps through the same bucket (so with your own taps they never pass the cap), quietly.
@@ -26,7 +26,7 @@ local TapService = {}
 
 local TAPS = GameConfig.Taps
 local MAX_BATCH = 1000 -- anything bigger isn't a tap count
-local buckets = {} -- [player] = { tokens, at, over, loggedAt }
+local buckets = {} -- [player] = { tokens, at }
 local tapListeners = {}
 
 -- callback(player, taps) after taps land (the tutorial and analytics watch the first one).
@@ -37,7 +37,7 @@ end
 local function bucketOf(player: Player)
 	local bucket = buckets[player]
 	if not bucket then
-		bucket = { tokens = TAPS.MaxPerSecond * TAPS.BurstSeconds, at = os.clock(), over = 0, loggedAt = -math.huge }
+		bucket = { tokens = TAPS.MaxPerSecond * TAPS.BurstSeconds, at = os.clock() }
 		buckets[player] = bucket
 	end
 	local now = os.clock()
@@ -46,18 +46,11 @@ local function bucketOf(player: Player)
 	return bucket
 end
 
--- How many of `count` taps are allowed now (and takes them from the bucket).
+-- How many of `count` taps are allowed now (and takes them from the bucket); the rest are ignored.
 function TapService.Allow(player: Player, count: number): number
 	local bucket = bucketOf(player)
-	local allowed = math.min(count, math.floor(bucket.tokens))
+	local allowed = math.max(0, math.min(count, math.floor(bucket.tokens)))
 	bucket.tokens -= allowed
-	if allowed < count then
-		bucket.over += count - allowed
-		if os.clock() - bucket.loggedAt >= TAPS.OverLimitLogSeconds then
-			bucket.loggedAt = os.clock()
-			warn(`[Taps] {player.Name} ({player.UserId}) is tapping faster than {TAPS.MaxPerSecond}/s: {bucket.over} taps dropped so far`)
-		end
-	end
 	return allowed
 end
 

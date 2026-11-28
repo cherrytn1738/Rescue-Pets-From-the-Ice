@@ -92,5 +92,24 @@ return function(sources)
 	end
 	check(new.Shimmer.Period >= 3 and new.Shimmer.TileHeights >= 2, "the shimmer sweeps slowly, now and then")
 
+	-- The tools: a spark colour per tier, and the magical tiers (11-18) each with a light and a themed hit effect
+	check(#IceLooks.ToolSparks == 18, "a spark colour for each of the 18 tools")
+	local textures = { SoftGlow = true, Sparkle = true, Snowflake = true, Ember = true, SmokePuff = true, Star = true, WaterDroplet = true }
+	local kinds = {}
+	for tier = 1, 18 do
+		local magic = IceLooks.ToolMagic[tier]
+		check((magic ~= nil) == (tier >= 11), "tool " .. tier .. (if tier >= 11 then " is magical" else " is a real material"))
+		if magic then
+			local hit = IceLooks.MagicHits[magic.Hit]
+			check(hit ~= nil and textures[hit.Texture], "tool " .. tier .. "'s hit effect " .. tostring(magic.Hit) .. " exists, with a known texture")
+			check(magic.Light[1] > 0 and magic.Light[2] > 0 and magic.Light[2] <= 2, "tool " .. tier .. " has a soft light")
+			check(hit.Count >= 6 and hit.Speed[1] <= hit.Speed[2] and hit.Life[1] <= hit.Life[2] and hit.Light <= 0.6,
+				magic.Hit .. ": a burst with sane ranges, its added light kept low (it vanishes against snow)")
+			check(not kinds[magic.Hit], magic.Hit .. " belongs to one tool only")
+			kinds[magic.Hit] = true
+		end
+	end
+	check(IceLooks.MagicHits.Starburst.Count >= 20 and IceLooks.ToolMagic[18].Hit == "Starburst", "the Starbreaker gets the big starburst")
+
 	return passed
 end

@@ -11,9 +11,13 @@ By hand (Blender 5.x; the newest under C:\\Program Files\\Blender Foundation\\):
     blender -b --factory-startup --python tools/icons/render_icons.py -- picks  <work dir>
     blender -b --factory-startup --python tools/icons/render_icons.py -- render <work dir> <IconName>
     blender -b --factory-startup --python tools/icons/render_icons.py -- ui     <work dir> <Key>
+    blender -b --factory-startup --python tools/icons/render_icons.py -- tools  <work dir>
 
   picks   builds the six ice pick tiers from tools/blender/tools_ice_picks.py (its geometry, nothing is
           written to store-assets/tools/) into <work>/picks.blend, which the icon scenes append from.
+  tools   builds the 18 tools from tools/blender/tools_tiers.py (its geometry, nothing is written to
+          store-assets/tools/) into <work>/tools.blend and their head points into <work>/tools.json (the UI
+          icons Tool1-Tool18 append from it).
   render  renders one icon into <work>/<IconName>/: <layer>.png per layer and meta.json (the layer order
           plus a few projected 2D points, e.g. the pick's pivot for the motion arcs).
   ui      the same for one in-game UI icon (compose_icons.py --ui) into <work>/ui/<Key>/.
@@ -81,6 +85,29 @@ def build_picks():
     image.pack()
     os.makedirs(WORK, exist_ok=True)
     bpy.ops.wm.save_as_mainfile(filepath=os.path.join(WORK, 'picks.blend'))
+
+
+def build_tools():
+    src = open(os.path.join(REPO, 'tools', 'blender', 'tools_tiers.py'), encoding='utf-8').read()
+    src = src.replace('\nbuild_tools()\n', '\n')          # use its geometry; don't write its sheets / fbx
+    g = {'REPO': REPO, '__name__': 'tools_tiers', '__file__': os.path.join(REPO, 'tools', 'blender', 'tools_tiers.py')}
+    exec(compile(src, 'tools_tiers.py', 'exec'), g)
+    g['SCENE_NAME'] = 'B_Tools'
+    scene = g['fresh_scene']()
+    image = bpy.data.images.get('BuildingPalette') or bpy.data.images.load(os.path.join(REPO, 'assets', 'textures', 'BuildingPalette.png'))
+    g['MATERIALS'] = g['palette_materials'](image)
+    heads = {}
+    for tier, look in sorted(g['TOOLS'].items()):
+        g['Q'].update({'round': 1.0, 'minor': 1.0, 'corner': 2, 'edge': 2, 'bevel': 2, 'tiny': 0.6})
+        b = g['Builder']('ToolT%d' % tier, g['coll_in'](scene, 'Tool %d' % tier))
+        atts = g['FAMILY_BUILD'][look['family']](b, tier, look)
+        b.finish()
+        a, z = atts['TrailA'].translation, atts['TrailB'].translation
+        heads[tier] = list((a + z) / 2)     # the middle of the striking part: the icon's glow sits behind it
+    image.pack()
+    os.makedirs(WORK, exist_ok=True)
+    json.dump(heads, open(os.path.join(WORK, 'tools.json'), 'w'))
+    bpy.ops.wm.save_as_mainfile(filepath=os.path.join(WORK, 'tools.blend'))
 
 
 # ---------------------------------------------------------------- scene
@@ -635,6 +662,23 @@ def gem_burst(centre, radius, count, size, seed, up=1.0, spread=1.0):
 def add_pick(tier, loc, rot_deg, scale=1.0):
     path = os.path.join(WORK, 'picks.blend')
     prefix = 'IcePickT%d' % tier
+    with bpy.data.libraries.load(path, link=False) as (src, dst):
+        dst.objects = [n for n in src.objects if n == prefix or (n.startswith(prefix) and not n[len(prefix):][:1].isdigit())]
+    root = None
+    for o in dst.objects:
+        link(o)
+        if o.type == 'EMPTY':
+            root = o
+    root.location = loc
+    root.rotation_euler = [math.radians(a) for a in rot_deg]
+    root.scale = (scale, scale, scale)
+    bpy.context.view_layer.update()
+    return [o for o in dst.objects if o.type == 'MESH'], root
+
+
+def add_tool(tier, loc, rot_deg, scale=1.0):
+    path = os.path.join(WORK, 'tools.blend')
+    prefix = 'ToolT%d' % tier
     with bpy.data.libraries.load(path, link=False) as (src, dst):
         dst.objects = [n for n in src.objects if n == prefix or (n.startswith(prefix) and not n[len(prefix):][:1].isdigit())]
     root = None
@@ -1225,6 +1269,23 @@ for _t in range(1, 7):
     globals()['ui_Pick%d' % _t] = (lambda t: (lambda: _pick_icon(t)))(_t)
 
 
+# The 18 tools (Tool1-Tool18): each tool leaning right with its head at the top, the striking side out; the
+# composer puts its tier colour behind the head and its tier number in a badge.
+TOOL_ROT = (0, 40, -14)
+
+
+def _tool_icon(tier):
+    objs, root = add_tool(tier, (0, 0, 0), TOOL_ROT)
+    heads = json.load(open(os.path.join(WORK, 'tools.json')))
+    head = root.matrix_world @ Vector(heads[str(tier)])
+    camera(objs, yaw=0, pitch=8, lens=60, fill=0.9)
+    render_layers(ui_out('Tool%d' % tier), [('main', objs)], {'head': head})
+
+
+for _t in range(1, 19):
+    globals()['ui_Tool%d' % _t] = (lambda t: (lambda: _tool_icon(t)))(_t)
+
+
 def ui_Build():
     objs = add_building('IcePickPost')
     wood, steel = plastic('HammerWood', (165, 100, 50), 0.5), plastic('HammerSteel', (175, 185, 200), 0.3, metal=0.5)
@@ -1496,6 +1557,8 @@ UI_ICONS = {k[3:]: v for k, v in globals().items() if k.startswith('ui_') and k 
 if __name__ == '__main__':
     if MODE == 'picks':
         build_picks()
+    elif MODE == 'tools':
+        build_tools()
     elif MODE in ('render', 'ui'):
         table = ICONS if MODE == 'render' else UI_ICONS
         for icon in NAMES or sorted(table):
@@ -1506,4 +1569,4 @@ if __name__ == '__main__':
             table[icon]()
             print('ICON_DONE', icon)
     else:
-        raise SystemExit('mode must be picks, render or ui')
+        raise SystemExit('mode must be picks, tools, render or ui')

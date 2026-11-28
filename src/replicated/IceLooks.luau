@@ -75,6 +75,46 @@ IceLooks.ToolSparks = {
 	Color3.fromRGB(255, 170, 240), -- Starbreaker: starburst pink
 }
 
+-- The magical tools (tiers 11-18; docs/GAME_DESIGN.md, "The tools' look"): a soft light in the tool's spark colour
+-- (Light: range in studs, brightness), the swing trail on every family (not only swords), and a hit effect in its
+-- theme at the strike (Hit: a MagicHits entry). Reduced effects keeps the tools and drops all three (ToolFX).
+IceLooks.ToolMagic = {
+	[11] = { Hit = "Embers", Light = { 7, 1.1 } }, -- Flame Pick: fire
+	[12] = { Hit = "Lightning", Light = { 7, 1.2 } }, -- Thunder Hammer
+	[13] = { Hit = "Aurora", Light = { 7, 1.0 } }, -- Aurora Blade
+	[14] = { Hit = "Lava", Light = { 7, 1.2 } }, -- Lava Axe
+	[15] = { Hit = "Starfall", Light = { 8, 1.1 } }, -- Starfall Spear: falling stars
+	[16] = { Hit = "Comet", Light = { 8, 1.2 } }, -- Comet Hammer: comet fire
+	[17] = { Hit = "Cosmic", Light = { 8, 1.2 } }, -- Cosmic Pick: cosmic sparkles
+	[18] = { Hit = "Starburst", Light = { 10, 1.4 } }, -- Starbreaker: the big starburst
+}
+-- The themed hit effects: particles burst out of the strike point (EffectsConfig textures), along the face's normal.
+--   Texture, Colours (start, end), Count, Speed {min, max}, Spread (degrees), Size {start, end} (studs), Life {min, max}
+--   (seconds), Gravity (studs/s^2, + pulls down, - floats up), Spin (degrees/s), Light (0-1 additive: kept low, since added
+--   light vanishes against snow and sky), and Flash {size, seconds} (a soft glow at the point).
+local function c(r, g, b)
+	return Color3.fromRGB(r, g, b)
+end
+IceLooks.MagicHits = {
+	Embers = { Texture = "Ember", Colours = { c(255, 210, 70), c(255, 70, 20) }, Count = 22, Speed = { 5, 11 }, Spread = 60,
+		Size = { 1.8, 0.3 }, Life = { 0.7, 1.1 }, Gravity = -10, Spin = 120, Light = 0.35, Flash = { 5, 0.2 } },
+	Lightning = { Texture = "Sparkle", Colours = { c(255, 255, 220), c(255, 225, 60) }, Count = 18, Speed = { 10, 20 }, Spread = 80,
+		Size = { 1.4, 0 }, Life = { 0.25, 0.45 }, Gravity = 0, Spin = 0, Light = 0.5, Flash = { 6, 0.16 } },
+	Aurora = { Texture = "SoftGlow", Colours = { c(90, 255, 170), c(180, 120, 255) }, Count = 9, Speed = { 3, 6 }, Spread = 70,
+		Size = { 3, 0 }, Life = { 0.9, 1.3 }, Gravity = -5, Spin = 40, Light = 0.3, Flash = { 4, 0.2 } },
+	Lava = { Texture = "Ember", Colours = { c(255, 220, 80), c(230, 50, 10) }, Count = 16, Speed = { 10, 16 }, Spread = 45,
+		Size = { 1.3, 0.5 }, Life = { 0.6, 0.95 }, Gravity = 34, Spin = 60, Light = 0.3, Flash = { 4, 0.16 } },
+	Starfall = { Texture = "Star", Colours = { c(255, 250, 210), c(255, 210, 90) }, Count = 12, Speed = { 5, 11 }, Spread = 70,
+		Size = { 1.8, 0.3 }, Life = { 0.8, 1.2 }, Gravity = 12, Spin = 180, Light = 0.4, Flash = { 4, 0.18 } },
+	Comet = { Texture = "Sparkle", Colours = { c(200, 240, 255), c(60, 150, 255) }, Count = 18, Speed = { 8, 14 }, Spread = 45,
+		Size = { 2.2, 0 }, Life = { 0.5, 0.85 }, Gravity = 4, Spin = 0, Light = 0.5, Flash = { 6, 0.22 } },
+	Cosmic = { Texture = "Star", Colours = { c(230, 170, 255), c(120, 60, 255) }, Count = 14, Speed = { 3, 9 }, Spread = 90,
+		Size = { 1.5, 0 }, Life = { 0.8, 1.2 }, Gravity = -3, Spin = 240, Light = 0.4, Flash = { 5, 0.2 } },
+	Starburst = { Texture = "Star", Colours = { c(255, 245, 200), c(255, 140, 230) }, Count = 26, Speed = { 14, 28 }, Spread = 180,
+		Size = { 3.2, 0 }, Life = { 0.6, 1.0 }, Gravity = 0, Spin = 200, Light = 0.5, Flash = { 11, 0.28 } },
+}
+
+
 -- The crystals (the tap spray, building-hit pops and the rescue fountain) by how many ice upgrade tiers the
 -- player owns (Bigger Burst, Crystal Yield, Fast Sled: 7 in all): white, then blue, then gold.
 IceLooks.CrystalColours = {
@@ -161,11 +201,12 @@ IceLooks.Creature = {
 -- particles, no rays or spirals).
 IceLooks.Auras = {
 	Epic = { Halo = 2.3, HaloTransparency = 0.5, Wisps = { Rate = 9, Colour = Color3.fromRGB(165, 95, 255) } },
+	-- (stronger since the sunset: the warm snow and orange sky took some of its contrast)
 	Legendary = {
-		Halo = 2.6, HaloTransparency = 0.3, Pulse = { Speed = 2, Depth = 0.3 },
-		Flames = { Rate = 26, Colour = Color3.fromRGB(255, 150, 40), Tip = Color3.fromRGB(255, 70, 20) },
-		Embers = { Rate = 12, Colour = Color3.fromRGB(255, 120, 30) },
-		Rays = { Count = 5, Length = 1.4, Width = { 0.16, 0.6 }, Spread = 44, Transparency = 0.35 },
+		Halo = 2.6, HaloTransparency = 0.22, Pulse = { Speed = 2, Depth = 0.3 },
+		Flames = { Rate = 34, Colour = Color3.fromRGB(255, 175, 40), Tip = Color3.fromRGB(255, 60, 10) },
+		Embers = { Rate = 16, Colour = Color3.fromRGB(255, 140, 30) },
+		Rays = { Count = 5, Length = 1.5, Width = { 0.18, 0.66 }, Spread = 44, Transparency = 0.25 },
 	},
 	Mythic = {
 		Halo = 2.9, HaloTransparency = 0.3, PulseEvery = 3.5, PulseSeconds = 0.5,

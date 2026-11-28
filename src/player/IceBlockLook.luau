@@ -354,6 +354,7 @@ local function chunkFrom(look, template: BasePart, pivot: CFrame): BasePart
 	end
 	part.Anchored = false
 	part.CanCollide, part.CanQuery, part.CanTouch = true, false, false
+	Effects.DebrisGroup(part)
 	part.CastShadow = false
 	part.Parent = Effects.Folder()
 	return part

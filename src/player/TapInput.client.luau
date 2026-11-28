@@ -27,8 +27,20 @@ local TAPS = GameConfig.Taps
 
 local pending = 0
 local goldenPending = 0
-local lastTap = 0
-local MIN_GAP = 1 / TAPS.MaxPerSecond -- taps faster than the server allows don't even count here
+-- The server's tap cap, mirrored here (TapService: MaxPerSecond, with BurstSeconds' worth in hand): a click past
+-- it still swings and chips the ice, but it isn't sent and shows no "+N" (the server would ignore it anyway).
+local tokens = TAPS.MaxPerSecond * TAPS.BurstSeconds
+local tokensAt = os.clock()
+local function takeToken(): boolean
+	local now = os.clock()
+	tokens = math.min(TAPS.MaxPerSecond * TAPS.BurstSeconds, tokens + (now - tokensAt) * TAPS.MaxPerSecond)
+	tokensAt = now
+	if tokens < 1 then
+		return false
+	end
+	tokens -= 1
+	return true
+end
 
 pcall(StarterGui.SetCoreGuiEnabled, StarterGui, Enum.CoreGuiType.Backpack, false)
 
@@ -78,16 +90,14 @@ local function tap(screenPosition: Vector2?)
 			return
 		end
 	end
-	local now = os.clock()
-	if now - lastTap < MIN_GAP then
-		return
-	end
-	lastTap = now
 	swingPick()
+	local counted = takeToken()
 	if mine then
-		pending += 1
-		TapFeedback.Tap(screenPosition)
-	else
+		if counted then
+			pending += 1
+		end
+		TapFeedback.Tap(screenPosition, counted)
+	elseif counted then
 		goldenPending += 1
 		TapFeedback.Float(screenPosition, "+1", Color3.fromRGB(255, 220, 100))
 	end

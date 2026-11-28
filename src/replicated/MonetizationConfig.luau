@@ -45,7 +45,7 @@ local MonetizationConfig = {}
 -- pass does (RobuxPerks):
 --  * CrystalMultiplier: all crystals times this (2x Crystals: 2, VIP: 1.2).
 --  * AutoTapsPerSecond: the server taps this often for you while you're in your own plot (Auto Pick);
---    they share the 20-taps-a-second cap with your own taps (TapService).
+--    they share the 10-taps-a-second cap with your own taps (TapService).
 --  * GoldNameTag / Lounge (VIP): a gold name tag, and the VIP lounge in the plaza lets you in.
 --  * Lucky: doubles the chance of Legendary and Mythic blocks (BlockRules, Lucky Ice).
 --  * PetSlots: equip slots the pass adds (PetService).
@@ -54,8 +54,8 @@ local MonetizationConfig = {}
 MonetizationConfig.Passes = {
 	{ Key = "DoubleCrystals", Name = "2x Crystals", Id = 2102063611, GiftId = 3736501716, ExpectedPrice = 349, CrystalMultiplier = 2,
 		Description = "Doubles all your crystals, forever." },
-	{ Key = "AutoPick", Name = "Auto Pick", Id = 2100372547, GiftId = 3736501737, ExpectedPrice = 199, AutoTapsPerSecond = 5,
-		Description = "Taps the ice 5 times a second for you while you're in your plot." },
+	{ Key = "AutoPick", Name = "Auto Pick", Id = 2100372547, GiftId = 3736501737, ExpectedPrice = 199, AutoTapsPerSecond = 2,
+		Description = "Taps the ice 2 times a second for you while you're in your plot." },
 	{ Key = "VIP", Name = "VIP", Id = 2098692454, GiftId = 3736501753, ExpectedPrice = 299, CrystalMultiplier = 1.2, GoldNameTag = true, Lounge = true,
 		Description = "+20% crystals, a gold name tag and the VIP lounge in the plaza." },
 	{ Key = "ExtraPetSlot", Name = "Extra Pet Slot", Id = 2099292504, GiftId = 3736501769, ExpectedPrice = 399, PetSlots = 1,

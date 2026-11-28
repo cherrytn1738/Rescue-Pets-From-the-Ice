@@ -32,6 +32,7 @@ local UpgradeConfig = require(ReplicatedStorage.UpgradeConfig)
 local ClientState = require(script.Parent.ClientState)
 local Effects = require(script.Parent.Effects)
 local IceBlocks = require(script.Parent.IceBlocks)
+local ToolFX = require(script.Parent.ToolFX)
 
 local TapFeedback = {}
 
@@ -70,17 +71,17 @@ function TapFeedback.TapValue(): number
 	return if ok then estimate else 1
 end
 
--- Your crystal and spark colours (ice upgrades, tool tier) and your tool family's impact (SwingConfig: a hammer's
--- chunkier burst, a sword's extra sparks).
-local function colours(): (Color3, Color3, { Chips: number, ChipSize: number, Sparks: number })
+-- Your crystal and spark colours (ice upgrades, tool tier), your tool family's impact (SwingConfig: a hammer's
+-- chunkier burst, a sword's extra sparks) and your tool's tier.
+local function colours(): (Color3, Color3, { Chips: number, ChipSize: number, Sparks: number }, number)
 	local data = ClientState.Data()
 	if not data then
-		return IceLooks.CrystalColour(0), IceLooks.ToolSparks[1], SwingConfig.Family("Pick").Impact
+		return IceLooks.CrystalColour(0), IceLooks.ToolSparks[1], SwingConfig.Family("Pick").Impact, 1
 	end
 	local tier = EconomyRules.ToolTier(data)
 	local tool = UpgradeConfig.Tools[tier]
 	return IceLooks.CrystalColour(EconomyRules.IceTiersTotal(data)), IceLooks.ToolSparks[tier] or IceLooks.ToolSparks[1],
-		SwingConfig.Family(tool and tool.Family).Impact
+		SwingConfig.Family(tool and tool.Family).Impact, tier
 end
 
 -- Ice chips, crystal bits and pick sparks out of the spot you hit ---------------------------------------------
@@ -245,7 +246,7 @@ local function chips(index: number, screenPosition: Vector2?)
 	local function speed(): number
 		return CHIPS.Speed[1] + math.random() * (CHIPS.Speed[2] - CHIPS.Speed[1])
 	end
-	local crystal, spark, impact = colours()
+	local crystal, spark, impact, tier = colours()
 	for _ = 1, Effects.Count(math.round(CHIPS.Chips * impact.Chips)) do
 		emit("Chip", at, direction() * speed(), Vector3.one * (0.25 + math.random() * 0.3) * impact.ChipSize, block.Color, Enum.Material.Ice)
 	end
@@ -255,6 +256,7 @@ local function chips(index: number, screenPosition: Vector2?)
 	for _ = 1, Effects.Count(math.round(CHIPS.Sparks * impact.Sparks)) do
 		emit("Spark", at, direction() * speed() * 1.4, Vector3.new(0.1, 0.1, 0.65), spark, Enum.Material.Neon)
 	end
+	ToolFX.Hit(tier, at, out) -- (a magical tool's themed burst: fire, lightning, stars...)
 end
 
 -- The click burst and the "+N" ---------------------------------------------------------------------
@@ -440,8 +442,9 @@ end
 
 local streak, lastTapAt = 0, 0
 local tapSounds = SoundRules.TapLimiter(AudioConfig.Rules.Tap)
--- Your tap on your own block. screenPosition: where you clicked or touched (nil: a gamepad button).
-function TapFeedback.Tap(screenPosition: Vector2?)
+-- Your tap on your own block. screenPosition: where you clicked or touched (nil: a gamepad button). counted: false
+-- for a click past the tap cap (TapInput): the chips and the sound, but no burst or "+N", since it earns nothing.
+function TapFeedback.Tap(screenPosition: Vector2?, counted: boolean?)
 	local index = player:GetAttribute("PlotIndex")
 	local view = type(index) == "number" and IceBlocks.View(index) or nil
 	if type(index) == "number" then
@@ -456,7 +459,7 @@ function TapFeedback.Tap(screenPosition: Vector2?)
 		Audio.Play("Tap", { Speed = SoundRules.TapSpeed(streak, AudioConfig.Rules.Tap) })
 	end
 	-- the burst and "+N" (only while there is a block to earn from: none while the next one slides in)
-	if view and view.present then
+	if view and view.present and counted ~= false then
 		local at = screenPosition or blockOnScreen(index)
 		showBurst(at, Effects.Reduced())
 		showNumber(at, "+" .. NumberFormat.Short(math.max(1, TapFeedback.TapValue())))

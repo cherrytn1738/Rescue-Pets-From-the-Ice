@@ -21,6 +21,7 @@ IceBlockService: each player's ice block (docs/GAME_DESIGN.md, "The ice block", 
    Mythic block arrived, with its PlotIndex, so others can come and watch: RareWatch.client; and again
    with Freed = true when it breaks).
 ]]
+local PhysicsService = game:GetService("PhysicsService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
@@ -30,6 +31,7 @@ local BlockRules = require(ReplicatedStorage.BlockRules)
 local CreatureConfig = require(ReplicatedStorage.CreatureConfig)
 local EconomyRules = require(ReplicatedStorage.EconomyRules)
 local LayerConfig = require(ReplicatedStorage.LayerConfig)
+local MapConfig = require(ReplicatedStorage.MapConfig)
 local MonetizationConfig = require(ReplicatedStorage.MonetizationConfig)
 local Economy = require(script.Parent.Economy)
 local PetService = require(script.Parent.PetService)
@@ -250,7 +252,20 @@ function IceBlockService.Rarity(player: Player): string?
 	return creature and creature.Rarity
 end
 
+-- The ring round the ice (MapConfig.BlockRing, built by each client in IceBlocks) stops characters but lets flying
+-- pieces through: two collision groups that don't collide (registered here, they replicate to every client).
+local function registerRingGroups()
+	local ring = MapConfig.BlockRing
+	for _, name in { ring.Group, ring.DebrisGroup } do
+		if not PhysicsService:IsCollisionGroupRegistered(name) then
+			PhysicsService:RegisterCollisionGroup(name)
+		end
+	end
+	PhysicsService:CollisionGroupSetCollidable(ring.Group, ring.DebrisGroup, false)
+end
+
 function IceBlockService.Start()
+	registerRingGroups()
 	-- the ice block's looks (ServerStorage.IceTemplates, tools/studio/build_templates.luau ONLY = "Ice") go where
 	-- every client can clone them: the clients draw the blocks (IceBlocks, IceBlockLook)
 	local templates = ServerStorage:FindFirstChild("IceTemplates")

@@ -18,9 +18,11 @@ block"; the look is in IceLooks):
    and then a quiet chip as your buildings hit it; from other plots only Legendary and Mythic rescue
    jingles, quieter, within AudioConfig.Rules.OtherPlots.MaxDistance studs.
 IceBlocks.Hit(plotIndex, strength) makes a block shudder (your taps: TapFeedback).
+Each block also gets an invisible ring of walls (MapConfig.BlockRing) that keeps characters out of the block.
 The look itself is IceBlockLook (the carved block, per layer and rarity, with the auras, chunks and shatter pieces);
 the classic look below (a plain Part with Extras) only shows while the kit template is missing.
 ]]
+local PhysicsService = game:GetService("PhysicsService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -76,6 +78,72 @@ local function containerFolder()
 		container.Parent = Workspace
 	end
 	return container
+end
+
+-- The invisible ring round each block (MapConfig.BlockRing): one folder for every plot's ring, so raycasts can skip it.
+local ringFolder
+function IceBlocks.Rings(): Folder
+	if not ringFolder or not ringFolder.Parent then
+		ringFolder = Instance.new("Folder")
+		ringFolder.Name = "IceRings"
+		ringFolder.Parent = containerFolder()
+	end
+	return ringFolder
+end
+
+-- A part's collision group, once the server has registered it (it replicates a moment after joining).
+function IceBlocks.UseGroup(part: BasePart, group: string)
+	if PhysicsService:IsCollisionGroupRegistered(group) then
+		part.CollisionGroup = group
+		return
+	end
+	task.spawn(function()
+		for _ = 1, 40 do
+			task.wait(0.25)
+			if not part.Parent then
+				return
+			end
+			if PhysicsService:IsCollisionGroupRegistered(group) then
+				part.CollisionGroup = group
+				return
+			end
+		end
+	end)
+end
+
+local RING = MapConfig.BlockRing
+local function makeRing(index: number)
+	local model = Instance.new("Model")
+	model.Name = "IceRing" .. index
+	for _, name in { "Front", "Back", "Left", "Right" } do
+		local wall = Instance.new("Part")
+		wall.Name = name
+		wall.Anchored = true
+		wall.CanCollide, wall.CanTouch = true, false
+		wall.Transparency = 1
+		wall.CastShadow = false
+		wall.Size = Vector3.one
+		IceBlocks.UseGroup(wall, RING.Group)
+		wall.Parent = model
+	end
+	model.Parent = IceBlocks.Rings()
+	return model
+end
+
+-- The ring's walls Gap studs out from the faces of a block this size, from the ground up.
+local function placeRing(view, size: Vector3)
+	local ring = view.ring
+	local halfX, halfZ = size.X / 2 + RING.Gap, size.Z / 2 + RING.Gap
+	local t = RING.Thickness
+	local y = RING.Height / 2 - (MapConfig.Mound.Height + 1) -- (view.base is the mound's top + 1)
+	ring.Front.Size = Vector3.new(halfX * 2 + t * 2, RING.Height, t)
+	ring.Back.Size = ring.Front.Size
+	ring.Left.Size = Vector3.new(t, RING.Height, halfZ * 2)
+	ring.Right.Size = ring.Left.Size
+	ring.Front.CFrame = view.base * CFrame.new(0, y, -(halfZ + t / 2))
+	ring.Back.CFrame = view.base * CFrame.new(0, y, halfZ + t / 2)
+	ring.Left.CFrame = view.base * CFrame.new(-(halfX + t / 2), y, 0)
+	ring.Right.CFrame = view.base * CFrame.new(halfX + t / 2, y, 0)
 end
 
 -- callback(plotIndex, creatureId, view) when a block shatters (RescueMoment listens for the owner's).
@@ -323,7 +391,10 @@ local function makeView(plot: Model)
 		rescueCount = plot.Block:GetAttribute("RescueCount") or 0,
 		lastHp = nil,
 		heartbeatAt = 0,
+		ring = makeRing(index),
 	}
+	local height = BlockRules.Height(view.attrs:GetAttribute("Level") or 1)
+	placeRing(view, Vector3.new(height * IceLooks.BlockWidthShare, height, height * IceLooks.BlockWidthShare))
 	views[plot] = view
 	return view
 end
@@ -411,6 +482,7 @@ local function update(view, dt: number)
 		view.layer = layer
 		view.block.Size = size
 		view.block.CFrame = view.base * CFrame.new(0, height / 2 - 0.5, 0)
+		placeRing(view, size)
 		buildSilhouette(view, creatureId, height)
 		if kitLook then
 			clearClassic(view)

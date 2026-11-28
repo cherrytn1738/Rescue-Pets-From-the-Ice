@@ -37,7 +37,8 @@ return function(sources)
 			local previous = UpgradeConfig.Tools[index - 1]
 			check(tool.TapDamage > previous.TapDamage and tool.Cost > previous.Cost, row.Tool .. " hits harder and costs more than the " .. previous.Name)
 			check(tool.Family ~= previous.Family, row.Tool .. ": the families take turns")
-			check(not previous.UnlockLevel or (tool.UnlockLevel and tool.UnlockLevel > previous.UnlockLevel), row.Tool .. ": the deep tools open deeper and deeper")
+			check(not previous.UnlockLevel or (tool.UnlockLevel and tool.UnlockLevel > previous.UnlockLevel), row.Tool .. ": the tools open deeper and deeper")
+			check(index <= 2 or tool.UnlockLevel ~= nil, row.Tool .. " waits for a block level (tapping faster can't buy it ahead of the run)")
 			local upgrade = UpgradeConfig.Get("Tool" .. index)
 			check(upgrade and upgrade.Kind == "Tool" and upgrade.Tier == index and upgrade.Cost == tool.Cost and upgrade.UnlockLevel == tool.UnlockLevel, "Tool" .. index .. " is its upgrade")
 		end

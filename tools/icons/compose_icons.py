@@ -550,6 +550,18 @@ _PICK_NAMES = ['Wooden', 'Stone', 'Iron', 'Gold', 'Diamond', 'Cosmic']
 for _t in range(1, 7):
     UI_SPECS['Pick%d' % _t] = dict(card='Window', what='Ice pick tier %d (%s): %s, tier badge %d' % (_t, _PICK_NAMES[_t - 1], PICK_TIERS[_t][0], _t),
                                    glow=(220, 240, 255), sparkles=0, tier=_t, box=(70, 50, 890, 870))
+# the 18 tools (Tool1-Tool18): the tier's spark colour (IceLooks.ToolSparks) glowing behind the head and on the badge
+TOOL_COLOURS = [(255, 170, 90), (215, 215, 205), (255, 140, 70), (235, 245, 255), (190, 220, 255), (140, 230, 255), (255, 215, 70),
+                (110, 245, 255), (150, 205, 255), (90, 200, 255), (255, 120, 40), (255, 238, 90), (90, 255, 170), (255, 75, 30),
+                (255, 240, 170), (90, 170, 255), (205, 120, 255), (255, 170, 240)]
+TOOL_NAMES = ['Wooden Pick', 'Stone Hammer', 'Copper Axe', 'Iron Pick', 'Steel Sword', 'Frost Spear', 'Gold Hammer', 'Crystal Axe',
+              'Ice Drill', 'Diamond Sword', 'Flame Pick', 'Thunder Hammer', 'Aurora Blade', 'Lava Axe', 'Starfall Spear', 'Comet Hammer',
+              'Cosmic Pick', 'Starbreaker']
+for _t in range(1, 19):
+    _c = TOOL_COLOURS[_t - 1]
+    UI_SPECS['Tool%d' % _t] = dict(card='Window', what='Tool tier %d: the %s, tier badge %d' % (_t, TOOL_NAMES[_t - 1], _t),
+                                   glow=(220, 240, 255), sparkles=1 if _t >= 11 else 0, tier=_t, box=(70, 50, 890, 870),
+                                   colours=(_c, tuple(int(v * 0.85) for v in _c), tuple(int(v * 0.42) for v in _c)))
 UI_SPECS.update({
     'FrostTouch': dict(card='Window', what='The iron pick crusted with ice inside a glowing frost swirl, snowflakes',
                        glow=(170, 230, 255), extras=['snowflakes'], sparkles=0),
@@ -588,12 +600,12 @@ def draw_streaks(canvas, union):
     canvas.alpha_composite(colour_layer(m, (255, 255, 255)))
 
 
-def tier_badge(canvas, tier, r=182):
+def tier_badge(canvas, tier, r=182, colours=None):
     """a round badge in the tier's colour in the bottom-right corner, a bold white numeral with a dark outline"""
     cx = cy = S - r - 34
     disc = Image.new('L', (S, S), 0)
     ImageDraw.Draw(disc).ellipse((cx - r, cy - r, cx + r, cy + r), fill=255)
-    _, _, top, bottom = PICK_TIERS[tier]
+    top, bottom = colours or PICK_TIERS[tier][2:]
     canvas.alpha_composite(colour_layer(dilate(disc, 30), INK))
     fill = gradient((S, S), top, bottom, cy - r, cy + r)
     fill.putalpha(disc)
@@ -601,8 +613,8 @@ def tier_badge(canvas, tier, r=182):
     shine = Image.new('L', (S, S), 0)                           # a soft highlight on the upper half
     ImageDraw.Draw(shine).ellipse((cx - r * 0.72, cy - r * 0.86, cx + r * 0.72, cy - r * 0.05), fill=60)
     canvas.alpha_composite(colour_layer(shine.filter(ImageFilter.GaussianBlur(8)), (255, 255, 255)))
-    font = ImageFont.truetype(FONT, int(r * 1.62))
     text = str(tier)
+    font = ImageFont.truetype(FONT, int(r * (1.62 if len(text) == 1 else 1.18)))
     l, t, rr, b = font.getbbox(text)
     x, y = cx - (l + rr) / 2, cy - (t + b) / 2 + 4
     d = ImageDraw.Draw(canvas)
@@ -636,7 +648,8 @@ def compose_ui(work, key):
         blob = Image.new('L', (S, S), 0)
         ImageDraw.Draw(blob).ellipse((hx - 260, hy - 200, hx + 260, hy + 200), fill=255)
         blob = blob.filter(ImageFilter.GaussianBlur(90))
-        canvas.alpha_composite(colour_layer(ImageChops.multiply(blob, edge_fade()), PICK_TIERS[spec['tier']][1], 0.95))
+        colour = spec['colours'][0] if spec.get('colours') else PICK_TIERS[spec['tier']][1]
+        canvas.alpha_composite(colour_layer(ImageChops.multiply(blob, edge_fade()), colour, 0.95))
     shadow = dilate(solid(union), UI_RING).filter(ImageFilter.GaussianBlur(10))
     moved = Image.new('L', (S, S), 0)
     moved.paste(shadow, (0, 14))
@@ -654,7 +667,7 @@ def compose_ui(work, key):
     for x, y, rr in free_spots(union, spec.get('sparkles', 0), sum(map(ord, key)), radius=0.44):
         ui_sparkle(canvas, x, y, rr * 1.3)
     if spec.get('tier'):
-        tier_badge(canvas, spec['tier'])
+        tier_badge(canvas, spec['tier'], colours=spec['colours'][1:] if spec.get('colours') else None)
     os.makedirs(OUT_UI, exist_ok=True)
     path = os.path.join(OUT_UI, key + '.png')
     canvas.resize((UI_SIZE, UI_SIZE), Image.LANCZOS).save(path, optimize=True)
@@ -739,6 +752,9 @@ def render(work, names, jobs, mode='render'):
     if not os.path.exists(os.path.join(work, 'picks.blend')):
         print('building the ice picks ...')
         run_blender(['picks', work])
+    if any(n.startswith('Tool') for n in names) and (not os.path.exists(os.path.join(work, 'tools.blend')) or '--fresh-tools' in sys.argv):
+        print('building the 18 tools ...')
+        run_blender(['tools', work])
     def one(n):
         run_blender([mode, work, n])
         print('rendered', n)

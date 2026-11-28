@@ -34,10 +34,14 @@ LayerConfig.Layers = {
 		Odds = { Common = 35, Uncommon = 28, Rare = 20, Epic = 11, Legendary = 5, Mythic = 1 } },
 }
 
--- The ice block. BlockHP(L) = BaseHp × HpGrowth^(L - 1).
+-- The ice block. BlockHP(L) = BaseHp × HpGrowth^(L - 1) up to level SlowerFromLevel, then each level after it
+-- multiplies by SlowerHpGrowth instead (a player's damage grows ever slower late on: Frost Cores multiply crystals,
+-- not damage, so the deep levels would otherwise stop at about level 50).
 LayerConfig.Block = {
 	BaseHp = 100,
 	HpGrowth = 1.5,
+	SlowerFromLevel = 40,
+	SlowerHpGrowth = 1.22,
 	CrackStages = { 20, 40, 60, 80, 100 }, -- percent damage at each crack stage (100 = it shatters)
 	HeightAtFirstLevel = 14, -- studs, at level 1 (about 2.5 avatars)
 	HeightAtLevel50 = 20, -- studs, by level 50 (and after)
@@ -47,7 +51,10 @@ LayerConfig.Block = {
 }
 
 function LayerConfig.BlockHp(level: number): number
-	return LayerConfig.Block.BaseHp * LayerConfig.Block.HpGrowth ^ (level - 1)
+	local block = LayerConfig.Block
+	local early = math.min(level, block.SlowerFromLevel)
+	local late = math.max(0, level - block.SlowerFromLevel)
+	return block.BaseHp * block.HpGrowth ^ (early - 1) * block.SlowerHpGrowth ^ late
 end
 
 -- The layer a block of this level is made of, for a player who has opened layers up to

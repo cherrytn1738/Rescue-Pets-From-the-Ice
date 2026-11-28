@@ -62,7 +62,7 @@ params.FilterType = Enum.RaycastFilterType.Exclude
 local function worldAt(point: Vector2): Instance?
 	local camera = Workspace.CurrentCamera
 	local ray = camera:ViewportPointToRay(point.X, point.Y)
-	params.FilterDescendantsInstances = { player.Character }
+	params.FilterDescendantsInstances = { player.Character, IceBlocks.Rings() } -- (the invisible ring round the ice)
 	local hit = Workspace:Raycast(ray.Origin, ray.Direction * 400, params)
 	if not hit then
 		return nil

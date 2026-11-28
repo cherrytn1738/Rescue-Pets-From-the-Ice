@@ -9,10 +9,12 @@ Effects (client): shared bits for world effects.
   Effects.Sound(name)          a sound effect from AudioConfig (quiet until the game has sound ids)
 ]]
 local Debris = game:GetService("Debris")
+local PhysicsService = game:GetService("PhysicsService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
+local MapConfig = require(ReplicatedStorage.MapConfig)
 local UIKit = require(ReplicatedStorage.UIKit)
 local ClientState = require(script.Parent.ClientState)
 
@@ -64,6 +66,15 @@ function Effects.Folder(): Folder
 end
 
 -- props: Size, CFrame, Color, Material, Transparency, Velocity, Spin, Life, Shape
+-- A flying piece's collision group: it passes through the ring round the ice (MapConfig.BlockRing) but still
+-- bounces on the ground. (The group is registered by the server; until it replicates the piece stays Default.)
+function Effects.DebrisGroup(part: BasePart)
+	local group = MapConfig.BlockRing.DebrisGroup
+	if PhysicsService:IsCollisionGroupRegistered(group) then
+		part.CollisionGroup = group
+	end
+end
+
 function Effects.Debris(props)
 	local part = Instance.new("Part")
 	part.Size = props.Size or Vector3.one * 0.6
@@ -73,6 +84,9 @@ function Effects.Debris(props)
 	part.Transparency = props.Transparency or 0
 	part.CanCollide = props.CanCollide == true
 	part.CanQuery, part.CanTouch = false, false
+	if part.CanCollide then
+		Effects.DebrisGroup(part) -- (flies through the invisible ring round the ice)
+	end
 	part.CastShadow = false
 	if props.Shape then
 		part.Shape = props.Shape

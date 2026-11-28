@@ -612,11 +612,41 @@ return {
 		},
 	},
 	Tools = {
+		[1] = { Name = "Wooden Pick", Family = "Pick", Attachments = {
+			Grip = { Position = Vector3.new(-0, 0.7, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			Tip = { Position = Vector3.new(-1.38, 3.16, 0), Out = Vector3.new(-0.86, -0.51, 0), Up = Vector3.new(-0.51, 0.86, 0) },
+			TrailA = { Position = Vector3.new(-0.3, 3.78, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			TrailB = { Position = Vector3.new(-1.38, 3.16, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+		} },
+		[2] = { Name = "Stone Hammer", Family = "Hammer", Attachments = {
+			Grip = { Position = Vector3.new(-0, 0.7, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			Tip = { Position = Vector3.new(-1.04, 3.5, 0), Out = Vector3.new(-1, 0, 0), Up = Vector3.new(-0, 1, 0) },
+			TrailA = { Position = Vector3.new(-0.5, 3.5, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			TrailB = { Position = Vector3.new(-1.04, 3.5, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+		} },
+		[3] = { Name = "Copper Axe", Family = "Axe", Attachments = {
+			Grip = { Position = Vector3.new(-0, 0.7, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			Tip = { Position = Vector3.new(-1.58, 3.5, 0), Out = Vector3.new(-1, 0, 0), Up = Vector3.new(-0, 1, 0) },
+			TrailA = { Position = Vector3.new(-0.4, 3.5, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			TrailB = { Position = Vector3.new(-1.58, 3.5, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+		} },
 		[4] = { Name = "Iron Pick", Family = "Pick", Attachments = {
 			Grip = { Position = Vector3.new(-0, 0.7, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
 			Tip = { Position = Vector3.new(-1.38, 3.28, 0), Out = Vector3.new(-0.86, -0.51, 0), Up = Vector3.new(-0.51, 0.86, 0) },
 			TrailA = { Position = Vector3.new(-0.3, 3.78, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
 			TrailB = { Position = Vector3.new(-1.38, 3.28, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+		} },
+		[5] = { Name = "Steel Sword", Family = "Sword", Attachments = {
+			Grip = { Position = Vector3.new(-0, 0.62, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			Tip = { Position = Vector3.new(-0.33, 3.6, 0), Out = Vector3.new(-1, 0, 0), Up = Vector3.new(-0, 1, 0) },
+			TrailA = { Position = Vector3.new(-0, 1.64, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			TrailB = { Position = Vector3.new(-0, 4.55, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+		} },
+		[6] = { Name = "Frost Spear", Family = "Spear", Attachments = {
+			Grip = { Position = Vector3.new(-0, 0.75, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			Tip = { Position = Vector3.new(-0, 4.8, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			TrailA = { Position = Vector3.new(-0, 3.38, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			TrailB = { Position = Vector3.new(-0, 4.8, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
 		} },
 		[7] = { Name = "Gold Hammer", Family = "Hammer", Attachments = {
 			Grip = { Position = Vector3.new(-0, 0.7, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
@@ -642,6 +672,54 @@ return {
 			Tip = { Position = Vector3.new(-0.33, 3.6, 0), Out = Vector3.new(-1, 0, 0), Up = Vector3.new(-0, 1, 0) },
 			TrailA = { Position = Vector3.new(-0, 1.64, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
 			TrailB = { Position = Vector3.new(-0, 4.55, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+		} },
+		[11] = { Name = "Flame Pick", Family = "Pick", Attachments = {
+			Grip = { Position = Vector3.new(-0, 0.7, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			Tip = { Position = Vector3.new(-1.38, 3.28, 0), Out = Vector3.new(-0.86, -0.51, 0), Up = Vector3.new(-0.51, 0.86, 0) },
+			TrailA = { Position = Vector3.new(-0.3, 3.78, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			TrailB = { Position = Vector3.new(-1.38, 3.28, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+		} },
+		[12] = { Name = "Thunder Hammer", Family = "Hammer", Attachments = {
+			Grip = { Position = Vector3.new(-0, 0.7, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			Tip = { Position = Vector3.new(-1.04, 3.5, 0), Out = Vector3.new(-1, 0, 0), Up = Vector3.new(-0, 1, 0) },
+			TrailA = { Position = Vector3.new(-0.5, 3.5, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			TrailB = { Position = Vector3.new(-1.04, 3.5, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+		} },
+		[13] = { Name = "Aurora Blade", Family = "Sword", Attachments = {
+			Grip = { Position = Vector3.new(-0, 0.62, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			Tip = { Position = Vector3.new(-0.33, 3.6, 0), Out = Vector3.new(-1, 0, 0), Up = Vector3.new(-0, 1, 0) },
+			TrailA = { Position = Vector3.new(-0, 1.64, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			TrailB = { Position = Vector3.new(-0, 4.55, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+		} },
+		[14] = { Name = "Lava Axe", Family = "Axe", Attachments = {
+			Grip = { Position = Vector3.new(-0, 0.7, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			Tip = { Position = Vector3.new(-1.58, 3.5, 0), Out = Vector3.new(-1, 0, 0), Up = Vector3.new(-0, 1, 0) },
+			TrailA = { Position = Vector3.new(-0.4, 3.5, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			TrailB = { Position = Vector3.new(-1.58, 3.5, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+		} },
+		[15] = { Name = "Starfall Spear", Family = "Spear", Attachments = {
+			Grip = { Position = Vector3.new(-0, 0.75, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			Tip = { Position = Vector3.new(-0, 4.8, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			TrailA = { Position = Vector3.new(-0, 3.38, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			TrailB = { Position = Vector3.new(-0, 4.8, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+		} },
+		[16] = { Name = "Comet Hammer", Family = "Hammer", Attachments = {
+			Grip = { Position = Vector3.new(-0, 0.7, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			Tip = { Position = Vector3.new(-1.04, 3.5, 0), Out = Vector3.new(-1, 0, 0), Up = Vector3.new(-0, 1, 0) },
+			TrailA = { Position = Vector3.new(-0.5, 3.5, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			TrailB = { Position = Vector3.new(-1.04, 3.5, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+		} },
+		[17] = { Name = "Cosmic Pick", Family = "Pick", Attachments = {
+			Grip = { Position = Vector3.new(-0, 0.7, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			Tip = { Position = Vector3.new(-1.38, 3.28, 0), Out = Vector3.new(-0.86, -0.51, 0), Up = Vector3.new(-0.51, 0.86, 0) },
+			TrailA = { Position = Vector3.new(-0.3, 3.78, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			TrailB = { Position = Vector3.new(-1.38, 3.28, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+		} },
+		[18] = { Name = "Starbreaker", Family = "Sword", Attachments = {
+			Grip = { Position = Vector3.new(-0, 0.62, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			Tip = { Position = Vector3.new(-0.396, 3.8, 0), Out = Vector3.new(-1, 0, 0), Up = Vector3.new(-0, 1, 0) },
+			TrailA = { Position = Vector3.new(-0, 1.64, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
+			TrailB = { Position = Vector3.new(-0, 4.75, 0), Out = Vector3.new(-0, 1, 0), Up = Vector3.new(-0, 0, 1) },
 		} },
 	},
 }

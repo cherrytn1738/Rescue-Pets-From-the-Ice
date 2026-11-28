@@ -107,7 +107,7 @@ return function(sources)
 	check(Config.GetPass("ExtraPetSlot").PetSlots == 1 and Config.GetPass("PetSquad").PetSlots == 2, "Extra Pet Slot adds 1 slot and Pet Squad 2")
 	check(Config.GetPass("DoubleCrystals").CrystalMultiplier == 2 and Config.GetPass("VIP").CrystalMultiplier == 1.2, "2x Crystals doubles, VIP adds 20%")
 	check(Config.GetPass("VIP").GoldNameTag and Config.GetPass("VIP").Lounge, "VIP has the gold name tag and the lounge")
-	check(Config.GetPass("AutoPick").AutoTapsPerSecond == 5 and Config.GetPass("LuckyIce").Lucky, "Auto Pick taps 5 a second; Lucky Ice is lucky")
+	check(Config.GetPass("AutoPick").AutoTapsPerSecond == 2 and Config.GetPass("LuckyIce").Lucky, "Auto Pick taps 2 a second; Lucky Ice is lucky")
 	local rush = Config.GetProduct("ServerFrostRush").Reward
 	check(rush.Kind == "ServerFrostRush" and rush.Multiplier == 2 and rush.Seconds == 900, "Server Frost Rush: x2 for 15 minutes")
 	local mythic = Config.GetProduct("MythicBlock")

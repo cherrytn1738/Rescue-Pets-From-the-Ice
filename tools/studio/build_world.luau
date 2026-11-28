@@ -11,7 +11,8 @@ place file, not in Git.
    plots starts CLEAR_RADIUS studs from the plaza's centre, past the plots' back corners.
  - Workspace.Scenery: clumps of snowy pines (store-assets/scenery/Pines.fbx, uploaded as group 921449746) on the
    hills, coloured by mesh name; trunks and needles collide, snow doesn't.
- - Lighting.Sky: the winter sky (assets/textures/sky/, uploaded as group 921449746).
+ - Lighting: the sunset sky and light (LightingConfig.Apply: the skybox in assets/textures/sky/, uploaded as group
+   921449746; the game sets the same at start).
 Light enough for phones: three terrain voxel layers under the ground, one shared mesh per pine part.
 ]]
 local InsertService = game:GetService("InsertService")
@@ -27,14 +28,6 @@ local MapConfig = require(fresh)
 fresh:Destroy()
 
 local PINES = 138595808045459 -- store-assets/scenery/upload_manifest.json
-local SKY = { -- assets/textures/sky/upload_manifest.json (tools/make_skybox.py)
-	SkyboxBk = 113070635814835,
-	SkyboxDn = 100435546213305,
-	SkyboxFt = 100780803505256,
-	SkyboxLf = 91102508470648,
-	SkyboxRt = 77382841776376,
-	SkyboxUp = 122741017703354,
-}
 local GROUND_HALF = 900
 -- Smooth terrain draws a filled layer's surface about half a voxel (2 studs) above the layer's top, so every fill
 -- here is that much lower; the report measures where the surface really is.
@@ -229,22 +222,10 @@ if templates.PineTall and templates.PineShort then
 end
 table.insert(report, string.format("%d pines in Workspace.Scenery.Pines", count))
 
--- The sky.
-local sky = Lighting:FindFirstChildOfClass("Sky") or Instance.new("Sky")
-local skySet = true
-for face, id in SKY do
-	if id == 0 then
-		skySet = false
-	end
-end
-if skySet then
-	for face, id in SKY do
-		sky[face] = "rbxassetid://" .. id
-	end
-	sky.CelestialBodiesShown = true
-	sky.StarCount = 0
-	sky.SunAngularSize = 14
-	sky.Parent = Lighting
-end
-table.insert(report, if skySet then "sky: the winter skybox" else "sky: NOT SET (no ids yet)")
+-- The sky and the light: LightingConfig (the sunset skybox, the sun, the haze), as the game sets them at start.
+local freshLighting = ReplicatedStorage.LightingConfig:Clone()
+freshLighting.Parent = ServerStorage
+local LightingConfig = require(freshLighting)
+freshLighting:Destroy()
+table.insert(report, LightingConfig.Apply(Lighting))
 return table.concat(report, "\n")

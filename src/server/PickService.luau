@@ -82,12 +82,17 @@ local function skinFor(data): string
 end
 
 local GOLD = Color3.fromRGB(255, 200, 60)
+local GOLD_GLOW = Color3.fromRGB(255, 230, 140)
 local function applySkin(tool: Tool, skin: string)
 	if skin ~= "Golden" then
 		return
 	end
 	for _, part in tool:GetDescendants() do
-		if part:IsA("MeshPart") then
+		if part:IsA("MeshPart") and string.sub(part.Name, -4) == "Glow" then
+			part.TextureID = "" -- (a magical tool's glowing pieces stay lit: glowing gold)
+			part.Color = GOLD_GLOW
+			part.Material = Enum.Material.Neon
+		elseif part:IsA("MeshPart") then
 			part.TextureID = ""
 			part.Color = GOLD
 			part.Material = Enum.Material.Foil

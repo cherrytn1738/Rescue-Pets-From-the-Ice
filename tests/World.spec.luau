@@ -246,6 +246,22 @@ return function(sources)
 			check(math.abs(shape.X - pad.X) >= clear or math.abs(shape.Z - pad.Z) >= clear, where .. " is clear of the " .. building.Id .. " pad")
 		end
 	end
+	-- The invisible ring round the ice (IceBlocks): about 4 studs out from the biggest block, still on the mound, so it
+	-- never blocks the tap spot, the footpath or a pad; tall enough that nobody jumps over it.
+	local ring = MapConfig.BlockRing
+	local tallest = loadPure("BlockRules").Height(500)
+	local biggest = tallest * loadPure("IceLooks").BlockWidthShare
+	local ringOut = biggest / 2 + ring.Gap + ring.Thickness
+	check(ring.Gap >= 3.5 and ring.Gap <= 5, "the ring stands about 4 studs out from the ice")
+	check(ringOut <= mound, "the ring stays on the mound, even round the biggest block")
+	check(ringOut + 2 < MapConfig.TapSpot.Z and ringOut < ground.Footpath.FromZ, "...clear of the tap spot and the footpath")
+	for _, building in modules.BuildingConfig.Buildings do
+		local pad = building.Pad
+		check(math.max(math.abs(pad.X), math.abs(pad.Z)) - pad.Size / 2 > ringOut, "the ring is clear of the " .. building.Id .. " pad")
+	end
+	check(ring.Height >= MapConfig.Mound.Height + 1 + tallest + 10, "nobody jumps over the ring")
+	check(ring.Group ~= ring.DebrisGroup, "the ring and the flying pieces have their own collision groups")
+
 	local rush = GameConfig.GoldenGlacier
 	check(rush.MinSeconds == 300 and rush.MaxSeconds == 480, "a Golden Glacier every 5-8 minutes")
 	check(rush.RushMultiplier == 3 and rush.RushSeconds == 60 and rush.TopMultiplier == 5, "Frost Rush: x3 for 60 s, x5 for the top tapper")

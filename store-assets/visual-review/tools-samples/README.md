@@ -1,5 +1,9 @@
 # Tools, part 1: the tier table and five sample tools
 
+(The part 1 record. Part 2 retuned the table for the 10-taps-a-second cap and the slower Auto Pick: every tool now
+unlocks at a block level too. The current numbers are in docs/GAME_DESIGN.md, "Tools", and
+docs/economy_sim_2026-11-27.txt; all 18 tools are in store-assets/visual-review/tools/.)
+
 One sample of each family, made at the new size, with its swing and hit effects: Iron Pick (Pick), Gold Hammer
 (Hammer), Crystal Axe (Axe), Ice Drill (Spear family) and Diamond Sword (Sword). The other 13 tiers already work
 in game and hold the nearest sample of their family until their own model is made in part 2.

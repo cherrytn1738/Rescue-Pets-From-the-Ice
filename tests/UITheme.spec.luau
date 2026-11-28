@@ -96,9 +96,13 @@ return function(sources)
 		allowed[id] = true
 	end
 	for _, key in { "Build", "Upgrades", "Pets", "Book", "Rebirth", "Home", "Shop", "Codes", "UpgradeBadge", "FrostTouch",
-		"BiggerBurst", "CrystalYield", "FastSled", "Pick1", "Pick6", "Building_IcePickPost", "Building_SunMirrorTower" } do
+		"BiggerBurst", "CrystalYield", "FastSled", "Building_IcePickPost", "Building_SunMirrorTower" } do
 		check(UITheme.Icons[key] ~= nil, "an icon for " .. key)
 	end
+	for tier = 1, 18 do
+		check(UITheme.Icons["Tool" .. tier] ~= nil, "an icon for tool " .. tier)
+	end
+	check(UITheme.Icons.Pick1 == nil, "the retired ice picks' icons are gone")
 	check(next(UITheme.ShopIcons) == nil, "no shop pictures yet")
 	check(next(UITheme.Sheets.Groups) == nil, "no picture sheets yet")
 	check(AudioConfig.Ui.Click ~= nil and AudioConfig.Sfx.Tap ~= nil, "the game's own sounds")

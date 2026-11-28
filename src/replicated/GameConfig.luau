@@ -4,13 +4,12 @@ return {
 	GameName = "Rescue Pets From the Ice",
 
 	-- Tapping: the client counts taps and sends the total every BatchSeconds; the server allows up to
-	-- MaxPerSecond (a short burst of up to BurstSeconds' worth is allowed, then the rate) and logs a
-	-- player who keeps going over (at most once every OverLimitLogSeconds).
+	-- MaxPerSecond (a short burst of up to BurstSeconds' worth is allowed, then the rate) and quietly ignores
+	-- the rest (Auto Pick's taps count inside the same cap). Faster clicking helps up to the cap, not past it.
 	Taps = {
 		BatchSeconds = 0.25,
-		MaxPerSecond = 20,
+		MaxPerSecond = 10,
 		BurstSeconds = 1,
-		OverLimitLogSeconds = 30,
 		RateWindowSeconds = 5, -- the HUD's crystals/s counts taps over this window
 	},
 

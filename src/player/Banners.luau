@@ -1,6 +1,8 @@
 --[[
 Banners (client): the big moments on screen, in the house style (UIKit labels).
-  Banners.Big(title, subtitle, color, seconds?)   a big centre banner (rarity reveal, new layer), one at a time
+  Banners.Big(title, subtitle, color, seconds?, decorate?)   a big centre banner (rarity reveal, new layer, new tool),
+                                                  one at a time; decorate(frame) adds something to it while it shows
+                                                  (the new tool turning) and returns its clean-up
   Banners.Toast(text, color?)                     a short line at the top (announcements, notices)
   Banners.Hold() / Banners.Release()              another big moment is on screen (the Book card): banners and
                                                   toasts wait until it's released
@@ -71,6 +73,11 @@ local function nextBig()
 	title.Text, subtitle.Text = item.title, item.subtitle or ""
 	title.TextColor3 = item.color or Color3.new(1, 1, 1)
 	bigFrame.Visible = true
+	local cleanUp = nil
+	if item.decorate then
+		local ok, result = pcall(item.decorate, bigFrame)
+		cleanUp = if ok and type(result) == "function" then result else nil
+	end
 	-- (never wider than the screen, and on a narrow screen never over the HUD's menu column: it moves into the
 	-- space beside it and shrinks to fit there)
 	local screen = UIKit.ScreenSize()
@@ -96,12 +103,15 @@ local function nextBig()
 		out:Play()
 		out.Completed:Wait()
 		bigFrame.Visible = false
+		if cleanUp then
+			pcall(cleanUp)
+		end
 		nextBig()
 	end)
 end
 
-function Banners.Big(titleText: string, subtitleText: string?, color: Color3?, seconds: number?)
-	table.insert(queue, { title = titleText, subtitle = subtitleText, color = color, seconds = seconds })
+function Banners.Big(titleText: string, subtitleText: string?, color: Color3?, seconds: number?, decorate: ((Frame) -> (() -> ())?)?)
+	table.insert(queue, { title = titleText, subtitle = subtitleText, color = color, seconds = seconds, decorate = decorate })
 	if not showing then
 		nextBig()
 	end

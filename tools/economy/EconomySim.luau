@@ -18,7 +18,8 @@ The simulated player:
   - keeps every rescued pet, equips the best ones it has slots for, and combines 5 into a Golden;
   - rebirths (RebirthService's rules) once it is past the rebirth level and a new block would take longer than
     REBIRTH_WHEN_BLOCK_OVER seconds to break (the pull to rebirth), or the run passes MAX_RUN_MINUTES.
-Pet rolls use a fixed seed, so a run repeats exactly; the 4 taps/s player plays three seeds, eight runs each.
+Pet rolls use a fixed seed, so a run repeats exactly. Every tap speed plays its first run on three seeds (averaged), and
+the 4 taps/s player plays the same three seeds run after run (ten runs each).
 ]]
 return function(sources)
 	local modules = {}
@@ -333,36 +334,71 @@ return function(sources)
 	end
 
 	local only = sources.SimOnly -- (optional) "first": the first runs only
-	-- 1. The other tap speeds, the first run only.
-	for _, scenario in {
+	local SEEDS = 3
+	local function seedRng(seed)
+		return Random.new(seed * 101)
+	end
+
+	-- 1. Every tap speed's first run, three seeds each (the same seeds as the normal player's runs below).
+	-- Auto Pick taps 2 a second on top of the player's own; the server takes at most 10 a second (GameConfig.Taps).
+	local speeds = {
 		{ name = "Relaxed (2 taps/s)", taps = 2 },
+		{ name = "Normal (4 taps/s)", taps = 4 },
+		{ name = "Normal with Auto Pick (4 + 2 taps/s)", taps = 6 },
 		{ name = "Fast (7 taps/s)", taps = 7 },
-		{ name = "Normal with Auto Pick (4 + 5 taps/s)", taps = 9 },
-		{ name = "Capped (20 taps/s)", taps = 20 },
-	} do
-		local data = newSave()
-		local log = playRun(data, scenario, Random.new(7), { uid = 1 })
-		say(`== {scenario.name}, first run ==`)
-		sayFirstRun(log)
-		sayTools(log)
-		sayShare(log)
+		{ name = "Capped (10 taps/s, the server's cap)", taps = 10 },
+	}
+	local rebirthTimes = {}
+	for _, scenario in speeds do
+		say(`== {scenario.name}, first run, seeds 1-{SEEDS} ==`)
+		local times = {}
+		local shares = {}
+		for seed = 1, SEEDS do
+			local data = newSave()
+			local log = playRun(data, scenario, seedRng(seed), { uid = 1 })
+			say(`-- seed {seed}`)
+			sayFirstRun(log)
+			sayTools(log)
+			sayShare(log)
+			table.insert(times, log.levelAt[RebirthConfig.RequiredLevel] or math.huge)
+			for number, share in log.share do
+				local sum = shares[number] or { tool = 0, taps = 0, total = 0 }
+				shares[number] = sum
+				sum.tool += share.tool / share.total
+				sum.taps += share.taps / share.total
+				sum.total += 1
+			end
+		end
+		local total = 0
+		for _, t in times do
+			total += t
+		end
+		local parts = {}
+		for number = 1, #LayerConfig.Layers do
+			local sum = shares[number]
+			if sum then
+				table.insert(parts, `L{number} {pct(sum.taps, sum.total)} (tool {pct(sum.tool, sum.total)})`)
+			end
+		end
+		table.insert(rebirthTimes, { name = scenario.name, average = total / #times, times = times, share = table.concat(parts, ", ") })
 	end
 
 	-- 2. The normal player (4 taps/s), three seeds, run after run.
-	local RUNS = if only == "first" then 1 else (tonumber(sources.SimRuns) or 8)
+	local RUNS = if only == "first" then 0 else (tonumber(sources.SimRuns) or 10)
 	local summary = {}
-	for seed = 1, 3 do
+	local deepest = {}
+	local runSeeds = if RUNS > 0 then SEEDS else 0
+	for seed = 1, runSeeds do
 		local data = newSave()
-		local rng = Random.new(seed * 101)
+		local rng = seedRng(seed)
 		local clock = { uid = 1 }
-		say(`== Normal (4 taps/s), seed {seed} ==`)
+		deepest[seed] = {}
+		say(`== Normal (4 taps/s), seed {seed}, run after run ==`)
 		for runNumber = 1, RUNS do
 			local log = playRun(data, { name = "Normal", taps = 4 }, rng, clock)
-			local deepest = LayerConfig.LayerForLevel(log.level, data.MaxLayerOpened)
-			say(`-- run {runNumber}: Frost Cores {data.FrostCores}, pets +{math.floor(log.petBonus * 100)}%, {log.length // 60} min, deepest level {log.level} (L{deepest.Number}), tool T{log.toolTier}, income {string.format("%.3g", log.income)}/s`)
-			if runNumber == 1 then
-				sayFirstRun(log)
-			end
+			local layer = LayerConfig.LayerForLevel(log.level, data.MaxLayerOpened)
+			table.insert(deepest[seed], `{log.level} ({log.length // 60}m)`)
+			say(`-- run {runNumber}: Frost Cores {data.FrostCores}, pets +{math.floor(log.petBonus * 100)}%, {log.length // 60} min, deepest level {log.level} (L{layer.Number}), tool T{log.toolTier}, income {string.format("%.3g", log.income)}/s`)
 			if seed == 1 and (runNumber == 1 or runNumber == RUNS) then
 				local parts = {}
 				for _, sample in log.samples do
@@ -371,8 +407,10 @@ return function(sources)
 				end
 				say("each minute: " .. table.concat(parts, "; "))
 			end
-			sayTools(log)
-			sayShare(log)
+			if runNumber > 1 then
+				sayTools(log)
+				sayShare(log)
+			end
 			for tier, bought in log.tools do
 				local row = summary[tier] or {}
 				summary[tier] = row
@@ -385,15 +423,34 @@ return function(sources)
 			end
 		end
 	end
-	say("== The tools: first bought (4 taps/s, seeds 1 | 2 | 3) ==")
-	for _, tool in UpgradeConfig.Tools do
-		local row = summary[tool.Tier]
+
+	say("== Time to the rebirth level (31), first run, the average of seeds 1-3 ==")
+	for _, row in rebirthTimes do
 		local cells = {}
-		for seed = 1, 3 do
-			local cell = row and row[seed]
-			table.insert(cells, if cell then `run {cell.run} {mmss(cell.t)} L{cell.level}` else "-")
+		for _, t in row.times do
+			table.insert(cells, mmss(t))
 		end
-		say(string.format("T%-2d %-15s dmg %-9s cost %-9s %s", tool.Tier, tool.Name, NumberFormat.Short(tool.TapDamage), NumberFormat.Short(tool.Cost), table.concat(cells, " | ")))
+		say(string.format("%-40s %s  (%s)", row.name, mmss(row.average), table.concat(cells, ", ")))
+	end
+	say("== Tap share of damage by layer, first run, the average of seeds 1-3, with Frost Touch (the tool alone) ==")
+	for _, row in rebirthTimes do
+		say(string.format("%-40s %s", row.name, row.share))
+	end
+	if RUNS > 0 then
+		say("== Deepest level each run (4 taps/s; the run's length) ==")
+		for seed = 1, SEEDS do
+			say(`seed {seed}: ` .. table.concat(deepest[seed], ", "))
+		end
+		say("== The tools: first bought (4 taps/s, seeds 1 | 2 | 3) ==")
+		for _, tool in UpgradeConfig.Tools do
+			local row = summary[tool.Tier]
+			local cells = {}
+			for seed = 1, SEEDS do
+				local cell = row and row[seed]
+				table.insert(cells, if cell then `run {cell.run} {mmss(cell.t)} L{cell.level}` else "-")
+			end
+			say(string.format("T%-2d %-15s dmg %-9s cost %-9s %s", tool.Tier, tool.Name, NumberFormat.Short(tool.TapDamage), NumberFormat.Short(tool.Cost), table.concat(cells, " | ")))
+		end
 	end
 	return table.concat(lines, "\n")
 end

@@ -48,6 +48,12 @@ MapConfig.PlazaModels = {
 	CodesKiosk = 99536553992465,
 }
 MapConfig.TapSpot = { X = 0, Z = 24 } -- where a player arrives in their plot: in front of the ice
+-- The invisible ring round every ice block (IceBlocks): walls Gap studs out from each face, from the ground up to
+-- Height studs, so nobody stands inside the block and every strike lands on its surface. It follows the block's size
+-- (still on the mound, clear of the tap spot, the footpath and the pads) and only stops characters: its collision
+-- group (Group) doesn't collide with DebrisGroup (shatter pieces, crystals and chunks: Effects.Debris, IceBlockLook),
+-- and the hover tick's raycast skips it. The server registers both groups (IceBlockService).
+MapConfig.BlockRing = { Gap = 4, Height = 40, Thickness = 1, Group = "IceRing", DebrisGroup = "IceDebris" }
 -- The light column over your own plot's entrance while you're outside it (PlotGuide.client): it starts above the
 -- gate's snow (the gate's top is about 26 studs up) and fades out as it rises.
 MapConfig.HomeMarker = { Bottom = 28, Height = 55, Width = 3.5 }

@@ -56,6 +56,15 @@ return function(sources)
 	local base, growth = string.match(text, "\\text{BlockHP}%(L%) = (%d+) \\times ([%d%.]+)")
 	check(tonumber(base) == LayerConfig.Block.BaseHp and tonumber(growth) == LayerConfig.Block.HpGrowth, "block HP base and growth match the formula")
 	check(LayerConfig.BlockHp(1) == 100 and LayerConfig.BlockHp(3) == 225, "BlockHp(1) = 100, BlockHp(3) = 225")
+	local from, slower = string.match(text, "Past level (%d+), each block has ([%d%.]+) times the HP of the one before")
+	check(tonumber(from) == LayerConfig.Block.SlowerFromLevel and tonumber(slower) == LayerConfig.Block.SlowerHpGrowth,
+		"past level 40, block HP grows by the doc's slower factor")
+	local function near(x, y)
+		return math.abs(x - y) <= 1e-9 * math.max(1, math.abs(y))
+	end
+	check(near(LayerConfig.BlockHp(40), 100 * 1.5 ^ 39) and near(LayerConfig.BlockHp(41), 100 * 1.5 ^ 39 * tonumber(slower)),
+		"level 40 is still 1.5 a level; level 41 grows by the slower factor")
+	check(near(LayerConfig.BlockHp(31), 100 * 1.5 ^ 30), "the first run's blocks (up to level 31) are unchanged")
 
 	-- Crack stages and block size.
 	local stages = doc:Table({ "Damage", "What changes" })
