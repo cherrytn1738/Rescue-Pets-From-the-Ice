@@ -24,19 +24,20 @@ end
 
 local window = ShowcaseKit.Window("SettingsWindow", "Settings", {
 	width = 640,
-	height = 520,
+	height = 420,
 	onLayout = function(width)
 		musicLabel.Position, musicLabel.Size = UDim2.fromOffset(0, 0), UDim2.fromOffset(width, 32)
 		musicSlider.Position, musicSlider.Size = UDim2.fromOffset(20, 40), UDim2.fromOffset(width - 40, 34)
 		soundLabel.Position, soundLabel.Size = UDim2.fromOffset(0, 96), UDim2.fromOffset(width, 32)
 		soundSlider.Position, soundSlider.Size = UDim2.fromOffset(20, 136), UDim2.fromOffset(width - 40, 34)
-		local half = width / 2
-		effectsLabel.Position, effectsLabel.Size = UDim2.fromOffset(0, 196), UDim2.fromOffset(half - 8, 32)
-		effectsButton.Position, effectsButton.Size = UDim2.fromOffset(half / 2 - 110, 236), UDim2.fromOffset(220, 64)
-		autoLabel.Position, autoLabel.Size = UDim2.fromOffset(half + 8, 196), UDim2.fromOffset(half - 8, 32)
-		autoButton.Position, autoButton.Size = UDim2.fromOffset(half + half / 2 - 110, 236), UDim2.fromOffset(220, 64)
-		cycleLabel.Position, cycleLabel.Size = UDim2.fromOffset(0, 316), UDim2.fromOffset(width, 32)
-		cycleButton.Position, cycleButton.Size = UDim2.fromOffset(width / 2 - 110, 356), UDim2.fromOffset(220, 64)
+		-- the three switches side by side (a fourth row didn't fit the small phone screens)
+		local third = width / 3
+		local button = math.min(180, third - 16)
+		for column, pair in { { effectsLabel, effectsButton }, { autoLabel, autoButton }, { cycleLabel, cycleButton } } do
+			local left = third * (column - 1)
+			pair[1].Position, pair[1].Size = UDim2.fromOffset(left + 4, 196), UDim2.fromOffset(third - 8, 32)
+			pair[2].Position, pair[2].Size = UDim2.fromOffset(left + third / 2 - button / 2, 236), UDim2.fromOffset(button, 64)
+		end
 	end,
 })
 local content = window.content
