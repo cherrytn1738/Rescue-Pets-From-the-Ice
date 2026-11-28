@@ -4,18 +4,14 @@ fixed look (LightingConfig.Default, the pink dusk) while editing; then save the 
 day-night cycle itself (DayNight.client). Every value is in src/replicated/LightingConfig.luau, and the
 game applies the same at the start of every server (LightingService), so the place file is never the only copy.
 
-Lighting.Technology can't be set from a script without plugin access: if the report says so, set
-Lighting > Technology = Future in the Properties window by hand.
+Unified Lighting: Apply also sets Lighting.LightingStyle (Realistic) and PrioritizeLightingQuality (off) from
+LightingConfig.Style; Lighting.Technology no longer exists.
 ]]
 local Lighting = game:GetService("Lighting")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 
 local report = {}
-local ok = pcall(function()
-	Lighting.Technology = Enum.Technology.Future
-end)
-table.insert(report, if ok then "Technology = Future" else "Technology: SET BY HAND (Lighting > Technology = Future)")
 
 -- a fresh copy of LightingConfig (Studio's require keeps the first copy it loaded in a session)
 local fresh = ReplicatedStorage.LightingConfig:Clone()
@@ -24,5 +20,6 @@ local LightingConfig = require(fresh)
 fresh:Destroy()
 
 table.insert(report, LightingConfig.Apply(Lighting))
+table.insert(report, `style: {Lighting.LightingStyle.Name}, PrioritizeLightingQuality {Lighting.PrioritizeLightingQuality}`)
 table.insert(report, "save the place")
 return table.concat(report, "\n")

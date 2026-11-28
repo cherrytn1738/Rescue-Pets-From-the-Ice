@@ -27,7 +27,7 @@ Every step you do by hand to launch Rescue Pets From the Ice, in order. Tick eac
 
 ## 4. The place
 
-- [ ] Lighting > Technology is **Future** (Properties; the tools can't read it).
+- [x] Lighting uses Unified Lighting: **LightingStyle Realistic**, PrioritizeLightingQuality off (Technology no longer exists). Both are in `LightingConfig.Style`, which every server applies at start, so there is nothing to check by hand.
 - [ ] Workspace > StreamingEnabled is ticked, StreamingTargetRadius 240, StreamingMinRadius 96, StreamOutBehavior Opportunistic (set in the launch fix pass; saved with the place).
 - [ ] Every template MeshPart is RenderFidelity Automatic: if you rebuild templates, `tools/studio/build_templates.luau` already sets it.
 - [ ] Music: in the Toolbox (Creator Store > Audio, licensed tracks from Roblox, APM or ProSoundEffects), pick two loops and paste their ids into `AudioConfig.Music` with the source and licence beside each:

@@ -164,6 +164,10 @@ return function(sources)
 	local Config = apply()
 	local report = Config.Apply(fakeLighting)
 	check(fakeLighting.ClockTime == 17.1 and fakeLighting.OutdoorAmbient == Config.Lighting.OutdoorAmbient, "Apply sets the Lighting service")
+	check(Config.Style.LightingStyle == "Realistic" and Config.Style.PrioritizeLightingQuality == false,
+		"Unified Lighting: Realistic, without prioritising lighting quality (the developer's choice)")
+	check(fakeLighting.LightingStyle == Enum.LightingStyle.Realistic and fakeLighting.PrioritizeLightingQuality == false,
+		"Apply sets the lighting style")
 	check(attributes.LightingPreset == "PinkDusk", "...to the fixed look by default, and says which (the Lighting attribute LightingPreset)")
 	for _, name in { "Atmosphere", "Bloom", "ColorCorrection", "SunRays" } do
 		check(children[name] ~= nil, "Apply makes the " .. name .. " effect")

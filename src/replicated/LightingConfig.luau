@@ -18,9 +18,10 @@ cycle of three looks, each fixed while it lasts (no blending), Day -> PinkDusk -
  * Aurora: the northern lights' curtains (Beams with the aurora texture, built by DayNight.client).
  * Lamps: warm lights where the low sun or the night leaves things dark (LightingService places them at start, off in
    the day look): the plot gates' posts, the leaderboards, the plaza, and on every plot by its gate and its stage.
-LightingConfig.Apply(Lighting, preset?) sets the service, its effects and the sky: the server at start, each client at
-every switch, tools/studio/lighting.luau in Edit mode. Lighting.Technology (Future) can't be set from a script: it's set
-by hand in the place.
+ * Style: the place's Unified Lighting settings (Lighting.LightingStyle, Lighting.PrioritizeLightingQuality; they replaced
+   Lighting.Technology). Apply sets them where they differ, so the place and every server match.
+LightingConfig.Apply(Lighting, preset?) sets the style, the service, its effects and the sky: the server at start, each
+client at every switch, tools/studio/lighting.luau in Edit mode.
 ]]
 local LightingConfig = {}
 
@@ -30,6 +31,12 @@ end
 
 -- The fixed look (Edit mode, the server at start, the cycle turned off in Settings).
 LightingConfig.Default = "PinkDusk"
+
+-- Unified Lighting (the developer's choice, 2026-11-28): Realistic, without prioritising lighting quality over speed.
+LightingConfig.Style = {
+	LightingStyle = "Realistic", -- an Enum.LightingStyle name: Realistic or Soft
+	PrioritizeLightingQuality = false,
+}
 
 LightingConfig.Presets = {
 	-- Day (a winter afternoon): bright and clear, a blue sky, crisp white snow, soft blue shadows, a warm sun higher
@@ -268,6 +275,18 @@ function LightingConfig.Apply(Lighting: Lighting, presetName: string?): string?
 	if not preset then
 		return nil
 	end
+	-- the style only where it differs (a property this Studio doesn't have yet is skipped)
+	pcall(function()
+		local style = (Enum :: any).LightingStyle[LightingConfig.Style.LightingStyle]
+		if (Lighting :: any).LightingStyle ~= style then
+			(Lighting :: any).LightingStyle = style
+		end
+	end)
+	pcall(function()
+		if (Lighting :: any).PrioritizeLightingQuality ~= LightingConfig.Style.PrioritizeLightingQuality then
+			(Lighting :: any).PrioritizeLightingQuality = LightingConfig.Style.PrioritizeLightingQuality
+		end
+	end)
 	for property, value in preset.Lighting do
 		(Lighting :: any)[property] = value
 	end
