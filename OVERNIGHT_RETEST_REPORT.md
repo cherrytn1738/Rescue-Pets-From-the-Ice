@@ -17,7 +17,7 @@ Branch `overnight-retest` (from `main` at 7e93c1b). Pushed after every phase; no
 | 0. Lighting note (Unified Lighting) | Done |
 | 1. Rebirth and Welcome Back screens | Done: both screens, 17 icons (approved), Double Welcome Back created (3737277177) and tested, screenshots |
 | 2. Play-throughs | Done: first rebirth at 29.2 min, Layer 6, returning player, every reward kind |
-| 3. Long-run stability | Not started |
+| 3. Long-run stability | Done: 66 minutes, 3 players, no errors, nothing growing without a limit, no fix needed |
 | 4. Saves | Done: every new field checked; a rebirth no longer loses a bought Mythic Block |
 | 5. Security | Not started |
 | 6. Phones and performance | Not started |
@@ -178,6 +178,67 @@ At level 51, 75 seconds of tapping with the Cosmic Pick (8 taps a second) didn't
 | **Auto Pick** | **2.00 taps a second** (measured from the block's HP with a 2,000-damage tool, buildings subtracted); with my own taps far over the cap on top: 10.5 a second over 15 s (the cap of 10 plus the bucket's first 10) |
 
 Found while doing this (fixed, see Phase 4): a rebirth with a bought Mythic Block still on the mound rolled it away.
+
+## Phase 3: three players for an hour
+
+A Studio test with 3 players on fresh saves, sampled every 3-4 minutes for 66 minutes, the fast day-night cycle on all the time (it went round the three looks many times). A bot on each client did everything at once:
+- tapped 15 a second, over the cap of 10;
+- bought buildings and upgrades (about 3,000 purchases each);
+- rebirthed every 9 minutes (12 rebirths each);
+- forced each rarity in turn every 150 s, Legendary and Mythic included (305 rescues each);
+- joined and spawned Golden Glaciers (25-29 each, about 8,270 glacier taps);
+- pressed PLOT every 5 minutes and walked to the other plots;
+- deleted pets, and opened and closed every window in turn.
+
+**Nothing kept growing without a limit, so nothing needed fixing.** The numbers (the clients as the range over the three):
+
+| Minute | Server memory MB / Lua heap MB / Workspace | Clients memory MB | Clients Lua heap MB | Clients Workspace | Clients PlayerGui | Clients' followers and effects |
+|---|---|---|---|---|---|---|
+| 0 | 2,007 / 10.7 / 2,256 | 1,967-2,050 | 8.0-12.5 | 3,472-3,696 | 1,835-2,130 | 659-905 |
+| 10 | 2,048 / 11.1 / 2,368 | 2,049-2,104 | 8.0-10.8 | 3,704-3,960 | 1,835 | 668-913 |
+| 21 | 2,057 / 11.6 / 2,741 | 2,096-2,147 | 10.1-11.4 | 4,170-4,448 | 7,152-7,777 | 718-1,003 |
+| 31 | 2,031 / 7.1 / 2,878 | 1,903-2,138 | 10.0-10.5 | 5,067-5,226 | 7,998-8,623 | 1,305-1,468 |
+| 42 | 2,043 / 7.5 / 2,104 | 1,955-2,165 | 9.2-9.8 | 4,774-4,777 | 8,625-9,250 | 1,975 |
+| 52 | 2,024 / 7.9 / 2,621 | 1,945-2,162 | 9.9-10.5 | 5,303-5,416 | 8,625-9,250 | 1,987-2,059 |
+| 63 | 1,854 / 8.5 / 2,391 | 1,868-2,165 | 10.4-11.3 | 5,681-5,760 | 8,753-9,315 | 2,694-2,748 |
+
+What the growing columns are:
+- **Clients' Workspace** grew only by `ClientEffects`. At the end, that folder held the 12 pets following the players (4 each: the rebirth ranks had opened pet slots, and auto-equip had picked the best creatures: an Aurora Fox is 237 instances, a Spirit Whale 197). The rest of the Workspace stayed at about 3,000 (2,916 at the start, 3,005 at the end). The cap is 7 followers per player. Rescue models, chips and confetti came and went: a rescue model seen once was gone seconds later.
+- **PlayerGui** jumped each time a window was opened for the first time:
+  - Pets at minute 17 (+5,400: a card per pet, at most 50);
+  - Book at minute 24;
+  - Rebirth at minute 31.
+
+  It stayed at about 9,300 once every window had been built.
+- **Client memory** rose by 100-120 MB in the first 35 minutes (more creature models and textures, the windows), then levelled off. For example, Player 3 went from 2,149 to 2,165 MB between minutes 35 and 63.
+- **Server Lua heap** rose by 0.045 MB a minute in both stretches (minutes 0-21 and 24-63). The collector's one full pass, at minute 24, brought it down to 6.7 MB, below the 10.7 MB at the start: garbage waiting to be collected, not a leak.
+- Sounds: 79 on each client at the start and at the end.
+
+**Script errors:** 0 on the server and on every client in each 10-minute count. Output was free of errors and warnings on all four at the end.
+
+**Remote traffic** (RemoteEvents client to server, counted on the server):
+- TapBatch: 46,462, about 4 a second per player (the client batches its taps);
+- GoldenTap: 8,268;
+- GoHome: 154;
+- ShopVisit: 6.
+
+Server to each client: GameEvent about 3,200 in the hour (under 1 a second).
+
+**DataStore budget:**
+- UpdateAsync: 714 calls in 62.4 minutes with 3 players, 11.4 a minute (3.8 per player). The budget left kept rising (11,076 UpdateAsync left at the end).
+- GetSortedAsync: 1.6 a minute.
+- Leaderboard writes: 0. That's expected: fresh test saves are throwaway records, and `LeaderboardService.Write` skips those.
+
+**Per-frame systems** (MicroProfiler through LibMP, each script's own time, averaged over a capture at the end with all 12 followers out):
+- Client: 1.29 ms of scripts per frame in a 16.7 ms frame (60 fps held). The biggest are:
+  - PetFollow: 0.29 ms (about 0.024 ms per follower);
+  - ClientMain: 0.25 ms (the ice blocks, tap feedback);
+  - HUD: 0.09 ms;
+  - NameTags: 0.07 ms;
+  - BuildingEffects: 0.04 ms.
+- Server: 0.19 ms per frame for ServerMain (everything) with three bots tapping 15 a second.
+
+**For Phase 6:** a full server is up to 56 followers. That's about 13,000 client-side parts, plus about 1.4 ms of PetFollow a frame on a desktop. This is the biggest per-player cost found, so Phase 6 measures it on purpose.
 
 ## Phase 4: saves
 
