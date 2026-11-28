@@ -231,6 +231,10 @@ return function(sources)
 		end },
 		RobuxPerks = {},
 		Economy = {},
+		LightingService = { SetPreset = function(name)
+			table.insert(calls, { name = "SetPreset", args = { name } })
+			return name == "GoldenSunset" or name == "PinkDusk"
+		end },
 	}
 	local soundEvents = {}
 	local replicated = {
@@ -238,6 +242,7 @@ return function(sources)
 		BuildingConfig = { Buildings = { { Id = "HeatLamp", Name = "Heat Lamp" } } },
 		AudioConfig = { Sfx = { Tap = {}, Shatter = {} }, Ui = { Click = {} } },
 		EconomyRules = {},
+		LightingConfig = { Default = "GoldenSunset", Presets = { PinkDusk = {}, GoldenSunset = {} } },
 		GameEvent = { FireClient = function(_, player, kind, payload)
 			table.insert(soundEvents, { player = player, kind = kind, payload = payload })
 		end },
@@ -319,6 +324,20 @@ return function(sources)
 	ok, message = run("SimulateReceipt", { Product = ids.SimulateReceipt.Params[1].Default, GiftTo = 0 })
 	check(not ok and string.find(message, "no products yet", 1, true), "with no products configured, simulating a receipt says so")
 	check(#calls == 0, "...and neither touched the monetization systems")
+
+	local lightingChoices = ids.SetLightingPreset.Params[1].Choices
+	check(ids.SetLightingPreset.NoTarget and #lightingChoices == 2 and lightingChoices[1].Value == "GoldenSunset" and ids.SetLightingPreset.Params[1].Default == "GoldenSunset",
+		"the lighting preset switch lists every preset, the default first")
+	ok, message = run("SetLightingPreset", { Preset = "PinkDusk" })
+	check(ok and calls[#calls].name == "SetPreset" and calls[#calls].args[1] == "PinkDusk" and string.find(message, "PinkDusk", 1, true) ~= nil,
+		"switching the lighting goes through LightingService.SetPreset")
+	ok = run("SetLightingPreset", { Preset = "Disco" })
+	check(not ok, "an unknown preset is refused")
+	for index = #calls, 1, -1 do
+		if calls[index].name == "SetPreset" then
+			table.remove(calls, index)
+		end
+	end
 
 	ok, message = run("SetToolTier", { Tier = 4 })
 	check(ok and calls[#calls].name == "SetTier" and calls[#calls].args[2] == 4 and message == "Tester holds tool tier 4", "the tool tier goes through PickService.SetTier")

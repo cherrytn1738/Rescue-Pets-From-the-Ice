@@ -1,5 +1,6 @@
 --[[
-LightingService: the game's lighting at the start of every server (LightingConfig: the warm winter sunset), and the
+LightingService: the game's lighting at the start of every server (LightingConfig's default preset: the golden winter
+sunset; SetPreset switches it live, for the debug menu), and the
 lamps where the low sun leaves things dark (LightingConfig.Lamps):
  * a warm lantern light on the front of both posts of every plot gate;
  * a spotlight over each leaderboard, shining down on its face;
@@ -86,6 +87,12 @@ function LightingService.PlaceLamps()
 		pointLight(holder(folder, "PlazaLamp" .. k, CFrame.new(at)), spec)
 	end
 	return folder
+end
+
+-- Switches the whole server to another preset (LightingConfig.Presets; the debug menu's "Lighting preset"). False for an
+-- unknown name.
+function LightingService.SetPreset(name: string): boolean
+	return LightingConfig.Apply(Lighting, name) ~= nil
 end
 
 function LightingService.Start()

@@ -28,6 +28,7 @@ local SoftShutdown = require(script.Parent.SoftShutdown)
 local CodeService = require(script.Parent.CodeService)
 local GoldenGlacierService = require(script.Parent.GoldenGlacierService)
 local IceBlockService = require(script.Parent.IceBlockService)
+local LightingService = require(script.Parent.LightingService)
 local LeaderboardService = require(script.Parent.LeaderboardService)
 local PetService = require(script.Parent.PetService)
 local PickService = require(script.Parent.PickService)
@@ -46,6 +47,7 @@ local AudioConfig = require(ReplicatedStorage.AudioConfig)
 local BuildingConfig = require(ReplicatedStorage.BuildingConfig)
 local CreatureConfig = require(ReplicatedStorage.CreatureConfig)
 local LayerConfig = require(ReplicatedStorage.LayerConfig)
+local LightingConfig = require(ReplicatedStorage.LightingConfig)
 local RebirthConfig = require(ReplicatedStorage.RebirthConfig)
 local MonetizationConfig = require(ReplicatedStorage.MonetizationConfig)
 
@@ -105,6 +107,19 @@ table.sort(soundChoices, function(a, b)
 	return a.Label < b.Label
 end)
 soundChoices = choicesOr(soundChoices, "(no sounds in AudioConfig)")
+
+-- the lighting presets (LightingConfig.Presets), the default first
+local lightingChoices = {}
+for name in LightingConfig.Presets do
+	table.insert(lightingChoices, { Value = name, Label = name .. (if name == LightingConfig.Default then " (the default)" else "") })
+end
+table.sort(lightingChoices, function(a, b)
+	if (a.Value == LightingConfig.Default) ~= (b.Value == LightingConfig.Default) then
+		return a.Value == LightingConfig.Default
+	end
+	return a.Value < b.Value
+end)
+lightingChoices = choicesOr(lightingChoices, "(no lighting presets)")
 
 local lastSimulated = {} -- [buyer] = { product, gift, purchaseId }: the "duplicate receipt" action replays it
 
@@ -368,6 +383,18 @@ local ACTIONS = {
 			end
 			ReplicatedStorage.GameEvent:FireClient(target, "DebugSound", { Name = args.Sound })
 			return `{target.Name} hears {args.Sound}`
+		end,
+	},
+	{
+		-- for judging the looks side by side: everyone in this server sees the switch at once (Lighting replicates)
+		Id = "SetLightingPreset", Group = "World", Label = "Lighting preset (this server, at once; a new server starts on the default)",
+		NoTarget = true,
+		Params = { { Name = "Preset", Label = "Preset", Kind = "choice", Choices = lightingChoices, Default = lightingChoices[1].Value } },
+		Run = function(_, args)
+			if not LightingService.SetPreset(args.Preset) then
+				fail("There's no lighting preset called " .. tostring(args.Preset))
+			end
+			return `The lighting is {args.Preset} now`
 		end,
 	},
 	{

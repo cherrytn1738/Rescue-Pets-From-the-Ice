@@ -1,5 +1,6 @@
--- LightingConfig spec: the warm winter sunset's settings stay sane (a late-afternoon sun, a warm sun and cool shadows,
--- a subtle grade, the uploaded sunset sky, the lamps), and Apply sets them on the Lighting service and its effects.
+-- LightingConfig spec: the warm winter sunset's settings stay sane in every preset (a late-afternoon sun, a warm sun and
+-- cool shadows clearly darker than the lit snow, a subtle grade, the uploaded sunset sky, the lamps), the default is the
+-- golden sunset, and Apply sets a preset on the Lighting service and its effects.
 return function(sources)
 	local passed = 0
 	local function check(condition, message)
@@ -8,23 +9,52 @@ return function(sources)
 	end
 
 	local LightingConfig = assert(loadstring(sources.LightingConfig, "LightingConfig"))()
-	local L = LightingConfig.Lighting
 
-	-- the light
-	check(L.ClockTime >= 16.5 and L.ClockTime <= 17.8, "a late-afternoon sun, low over the mountains")
-	local top, shade = L.ColorShift_Top, L.OutdoorAmbient
-	check(top.R > top.G and top.G > top.B, "the sunlight is golden-orange")
-	check(shade.B > shade.R and shade.B > shade.G, "the shadows are cool blue-violet")
-	check(L.GlobalShadows == true and L.ShadowSoftness > 0 and L.ShadowSoftness < 0.5, "long, soft shadows")
-	check(math.abs(L.ExposureCompensation) <= 0.3 and L.Brightness >= 1.5 and L.Brightness <= 4, "bright, never washed out")
+	-- the presets: the golden sunset is the default, the pink dusk is kept to compare; the old names are the default's
+	local presets = LightingConfig.Presets
+	check(LightingConfig.Default == "GoldenSunset" and presets.GoldenSunset ~= nil and presets.PinkDusk ~= nil,
+		"two presets, the golden sunset by default")
+	check(LightingConfig.Lighting == presets.GoldenSunset.Lighting and LightingConfig.Atmosphere == presets.GoldenSunset.Atmosphere,
+		"LightingConfig.Lighting and the effects are the default preset's")
 
-	-- the haze and the post-processing, all subtle
-	local a = LightingConfig.Atmosphere
-	check(a.Density > 0.1 and a.Density < 0.45 and a.Haze > 0 and a.Color.R >= a.Color.B, "a light, warm haze")
-	check(LightingConfig.Bloom.Intensity <= 0.6 and LightingConfig.Bloom.Threshold >= 1, "a gentle bloom")
-	local grade = LightingConfig.ColorCorrection
-	check(grade.TintColor.R >= grade.TintColor.B and math.abs(grade.Contrast) <= 0.25 and math.abs(grade.Saturation) <= 0.25, "a soft warm grade")
-	check(LightingConfig.SunRays.Intensity > 0 and LightingConfig.SunRays.Intensity <= 0.3, "sun rays when looking towards the sun")
+	local function luminance(c: Color3): number
+		return 0.2126 * c.R + 0.7152 * c.G + 0.0722 * c.B
+	end
+	for name, preset in presets do
+		local L = preset.Lighting
+		-- the light
+		check(L.ClockTime == presets.GoldenSunset.Lighting.ClockTime and L.GeographicLatitude == presets.GoldenSunset.Lighting.GeographicLatitude,
+			name .. ": the sun stands where the skybox bakes its glow (one ClockTime and latitude for every preset)")
+		check(L.ClockTime >= 16.5 and L.ClockTime <= 17.8, name .. ": a late-afternoon sun, low over the mountains")
+		local top, shade = L.ColorShift_Top, L.OutdoorAmbient
+		check(top.R > top.G and top.G > top.B, name .. ": the sunlight is warm")
+		check(shade.B > shade.R and shade.B > shade.G, name .. ": the shadows are cool blue")
+		check(L.GlobalShadows == true and L.ShadowSoftness > 0 and L.ShadowSoftness < 0.5, name .. ": long, soft shadows")
+		check(math.abs(L.ExposureCompensation) <= 0.3 and L.Brightness >= 1.5 and L.Brightness <= 10, name .. ": bright, never washed out")
+
+		-- the haze and the post-processing, all subtle
+		local a = preset.Atmosphere
+		check(a.Density > 0.05 and a.Density < 0.45 and a.Haze > 0 and a.Color.R >= a.Color.B, name .. ": a light, warm haze")
+		check(preset.Bloom.Intensity <= 0.6 and preset.Bloom.Threshold >= 1, name .. ": a gentle bloom")
+		local grade = preset.ColorCorrection
+		check(grade.TintColor.R >= grade.TintColor.B and math.abs(grade.Contrast) <= 0.3 and math.abs(grade.Saturation) <= 0.25, name .. ": a soft warm grade")
+		check(preset.SunRays.Intensity > 0 and preset.SunRays.Intensity <= 0.3, name .. ": sun rays when looking towards the sun")
+	end
+
+	-- the golden sunset against the pink dusk it replaced: golden (not pink) light, blue (not lavender) shadows, less haze
+	local golden, pink = presets.GoldenSunset, presets.PinkDusk
+	local function hue(c: Color3): number
+		return (c:ToHSV())
+	end
+	check(hue(golden.Lighting.ColorShift_Top) > hue(pink.Lighting.ColorShift_Top), "the golden sunlight is more golden (less red) than the pink dusk's")
+	check(golden.Lighting.OutdoorAmbient.B - golden.Lighting.OutdoorAmbient.R > pink.Lighting.OutdoorAmbient.B - pink.Lighting.OutdoorAmbient.R,
+		"its shadows are bluer, less lavender")
+	check(golden.Atmosphere.Density < pink.Atmosphere.Density and golden.Atmosphere.Haze < pink.Atmosphere.Haze and golden.Atmosphere.Offset > pink.Atmosphere.Offset,
+		"less haze, starting further out: the plots stay crisp")
+	check(luminance(golden.Lighting.OutdoorAmbient) < luminance(golden.Lighting.ColorShift_Top) * 0.6,
+		"the shadows are clearly darker than the sunlight (the pink dusk's lavender ones weren't)")
+	check(golden.Lighting.EnvironmentDiffuseScale < pink.Lighting.EnvironmentDiffuseScale, "less of the pink sky on the shaded sides")
+	check(golden.ColorCorrection.Contrast > pink.ColorCorrection.Contrast, "a touch more contrast")
 
 	-- the sky: six uploaded faces and a big sun
 	for _, face in { "SkyboxBk", "SkyboxDn", "SkyboxFt", "SkyboxLf", "SkyboxRt", "SkyboxUp" } do
@@ -48,7 +78,11 @@ return function(sources)
 		end, Destroy = function() end }
 	end
 	local children = {}
+	local attributes = {}
 	local fakeLighting = {
+		SetAttribute = function(_, name, value)
+			attributes[name] = value
+		end,
 		FindFirstChild = function(_, name)
 			return children[name]
 		end,
@@ -83,7 +117,9 @@ return function(sources)
 	}, { __index = getfenv(1) }))
 	local Config = apply()
 	local report = Config.Apply(fakeLighting)
+	local L = Config.Lighting
 	check(fakeLighting.ClockTime == L.ClockTime and fakeLighting.OutdoorAmbient == L.OutdoorAmbient, "Apply sets the Lighting service")
+	check(attributes.LightingPreset == "GoldenSunset", "...to the default preset, and says which (the Lighting attribute LightingPreset)")
 	for _, name in { "Atmosphere", "Bloom", "ColorCorrection", "SunRays" } do
 		check(children[name] ~= nil, "Apply makes the " .. name .. " effect")
 	end
@@ -91,6 +127,14 @@ return function(sources)
 	local sky = fakeLighting:FindFirstChildOfClass("Sky")
 	check(sky and sky.SkyboxUp == "rbxassetid://" .. LightingConfig.Sky.Faces.SkyboxUp, "Apply puts up the sunset sky")
 	check(type(report) == "string" and string.find(report, "skybox", 1, true) ~= nil, "Apply reports what it did")
+
+	-- another preset, and an unknown one
+	Config.Apply(fakeLighting, "PinkDusk")
+	check(fakeLighting.OutdoorAmbient == Config.Presets.PinkDusk.Lighting.OutdoorAmbient and children.Atmosphere.Haze == Config.Presets.PinkDusk.Atmosphere.Haze
+		and attributes.LightingPreset == "PinkDusk", "Apply with a preset's name switches to it, the effects too")
+	local before = fakeLighting.OutdoorAmbient
+	check(Config.Apply(fakeLighting, "Disco") == nil and fakeLighting.OutdoorAmbient == before and attributes.LightingPreset == "PinkDusk",
+		"an unknown preset changes nothing")
 
 	return passed
 end

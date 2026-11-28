@@ -8,7 +8,9 @@ All items belong to the game (universe 10778596196, owned by group 921449746). I
 
 All 28 items were created through Open Cloud on 2026-11-26 by `python tools/create_products.py` (on sale, icons from `store-assets/icons/`); their ids are in the tables below, in `MonetizationConfig.luau` and in `store-assets/icons/products_manifest.json`. The script is safe to re-run: it matches existing items by name and never makes duplicates (`--dry-run` lists without creating or changing).
 
-**Changing a price:** edit the price in the table below and `ExpectedPrice` in `MonetizationConfig.luau` (they must agree), run `python tools/create_products.py --dry-run` to see what would change, then without `--dry-run`. It PATCHes the price of the item and its gift twin, then reads every item back and prints the price Roblox shows. The prices were last set this way on 2026-11-26 (Phase 4 of `OVERNIGHT_FINAL_REPORT.md`). A description change is still done on the Creator Hub.
+**Changing a price:** edit the price in the table below and `ExpectedPrice` in `MonetizationConfig.luau` (they must agree), run `python tools/create_products.py --dry-run` to see what would change, then without `--dry-run`. It PATCHes the price of the item and its gift twin, then reads every item back and prints the price Roblox shows. The prices were last set this way on 2026-11-26 (Phase 4 of `OVERNIGHT_FINAL_REPORT.md`).
+
+**Changing a description:** edit the store description in the table below and run the same two commands. The script PATCHes the description of any item whose Roblox description differs from the table (a gift twin's is always "A gift: <name> for another player in your server."), then reads every item back and prints its description. Auto Pick's ("2 times a second") was synced this way on 2026-11-28.
 
 ## Creating an item by hand
 

@@ -2209,6 +2209,54 @@ window.SHOTS = [
   "before": "../visual-review-before/world/terrain_pines_sky.jpg"
  },
  {
+  "category": "lighting",
+  "name": "across_the_ring",
+  "file": "lighting/across_the_ring.jpg",
+  "before": null
+ },
+ {
+  "category": "lighting",
+  "name": "ancient_ice_close",
+  "file": "lighting/ancient_ice_close.jpg",
+  "before": null
+ },
+ {
+  "category": "lighting",
+  "name": "blue_ice_close",
+  "file": "lighting/blue_ice_close.jpg",
+  "before": null
+ },
+ {
+  "category": "lighting",
+  "name": "legendary_aura",
+  "file": "lighting/legendary_aura.jpg",
+  "before": null
+ },
+ {
+  "category": "lighting",
+  "name": "maxed_plot",
+  "file": "lighting/maxed_plot.jpg",
+  "before": null
+ },
+ {
+  "category": "lighting",
+  "name": "plaza",
+  "file": "lighting/plaza.jpg",
+  "before": null
+ },
+ {
+  "category": "lighting",
+  "name": "tapping_spot",
+  "file": "lighting/tapping_spot.jpg",
+  "before": null
+ },
+ {
+  "category": "lighting",
+  "name": "tapping_spot_phone_844x390",
+  "file": "lighting/tapping_spot_phone_844x390.jpg",
+  "before": null
+ },
+ {
   "category": "ui",
   "name": "golden_glacier_tap_bar",
   "file": "ui/golden_glacier_tap_bar.jpg",

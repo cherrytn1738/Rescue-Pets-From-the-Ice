@@ -424,6 +424,11 @@ local PREPARE = {
 	world = function()
 		home()
 	end,
+	lighting = function()
+		dbg("SetRebirths", { Rebirths = 3 }) -- (Ancient Ice open)
+		setReduced(false)
+		home()
+	end,
 	ui = function()
 		-- a calm screen: no rescues (no buildings, high block level), no creature new (a new one opens the Book)
 		onlyBuildings({})
@@ -1031,6 +1036,67 @@ shot("world/overview_tapping_spot", function()
 	return { Wait = 3 }
 end)
 
+-- Lighting: the same views under each lighting preset (LightingConfig.Presets, switched with the debug menu), saved
+-- as lighting/single/<view>_<preset>.jpg; visual_review.py puts each pair side by side as lighting/<view>.jpg.
+local LIGHTING_PRESETS = { { "pink_dusk", "PinkDusk" }, { "golden_sunset", "GoldenSunset" } }
+local function lightingShot(view: string, run, sizes)
+	for _, preset in LIGHTING_PRESETS do
+		shot(`lighting/single/{view}_{preset[1]}`, function()
+			dbg("SetLightingPreset", { Preset = preset[2] })
+			return run()
+		end, sizes)
+	end
+end
+-- (no buildings first: the low blocks would break before their shot; the maxed plot last)
+lightingShot("tapping_spot", function()
+	onlyBuildings({})
+	freshBlock(LAYER_LEVELS[2], rarityCreature("Epic"))
+	home()
+	follow(Vector3.new(4, 7, 12), Vector3.new(0, 3, -16), 60)
+	return { Wait = 3 }
+end)
+lightingShot("blue_ice_close", function()
+	freshBlock(LAYER_LEVELS[2], rarityCreature("Common"))
+	blockShot(true)
+	return { Wait = 2.5 }
+end)
+lightingShot("ancient_ice_close", function()
+	freshBlock(LAYER_LEVELS[3], rarityCreature("Common"))
+	blockShot(true)
+	return { Wait = 2.5 }
+end)
+lightingShot("legendary_aura", function()
+	freshBlock(LAYER_LEVELS[2], rarityCreature("Legendary"))
+	hold(plotPoint(11, 40, 15), plotPoint(0, 0, 12), 55)
+	return { Wait = 3 }
+end)
+lightingShot("tapping_spot_phone", function()
+	freshBlock(LAYER_LEVELS[2], rarityCreature("Legendary"))
+	home()
+	staging.hud = true
+	follow(Vector3.new(4, 7, 12), Vector3.new(0, 3, -16), 60)
+	return { Wait = 3 }
+end, { "844x390" })
+lightingShot("plaza", function()
+	standAt(Vector3.new(0, 6, 30), Vector3.zero)
+	hold(Vector3.new(0, 55, 95), Vector3.new(0, 4, 0), 65)
+	return { Wait = 4 }
+end)
+lightingShot("across_the_ring", function()
+	release()
+	hold(Vector3.new(0, 260, 330), Vector3.new(0, 0, 0), 60)
+	return { Wait = 5 }
+end)
+lightingShot("maxed_plot", function()
+	for _, building in BuildingConfig.Buildings do
+		dbg("SetBuilding", { Building = building.Id, Count = 100, Upgrades = 5 })
+	end
+	dbg("SetBlockLevel", { Level = 400 })
+	home()
+	hold(plotPoint(-30, 75, 55), plotPoint(0, -5, 4), 60)
+	return { Wait = 4 }
+end)
+
 -- UI: the HUD, every window and tab (desktop and both phone sizes), popups and moments.
 shot("ui/hud", function()
 	home()
@@ -1374,6 +1440,7 @@ elseif string.sub(SHOT, 1, 9) == "?prepare:" then
 	return "prepared " .. category
 elseif SHOT == "?cleanup" then
 	unfreeze() -- (a held pick swing)
+	dbg("SetLightingPreset", { Preset = "GoldenSunset" }) -- (the lighting shots switch it)
 	dbg("ClearDummyPlots") -- (the plaza shots fill the free plots)
 	setReduced(false) -- (the effects shots turn it on)
 	for _, name in { "VisualReviewCamera", "VisualReviewStage" } do
@@ -1397,10 +1464,10 @@ for _, entry in SHOTS do
 	if entry.Name == SHOT then
 		-- model shots hide the HUD; UI, rescue moments and effects keep it
 		local category = string.split(SHOT, "/")[1]
-		staging.hud = not (category == "buildings" or category == "tools" or category == "ice" or category == "pets" or category == "world")
+		staging.hud = not (category == "buildings" or category == "tools" or category == "ice" or category == "pets" or category == "world" or category == "lighting")
 		staging.tutorial = false
 		-- the big moments only where they're the subject (building moments, rescues, UI, effects)
-		staging.banners = not (category == "tools" or category == "ice" or category == "pets" or category == "world")
+		staging.banners = not (category == "tools" or category == "ice" or category == "pets" or category == "world" or category == "lighting")
 		stage()
 		local preClose = openWindows()
 		local result = entry.Run() or {}

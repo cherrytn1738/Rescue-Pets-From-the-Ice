@@ -1,18 +1,23 @@
 --[[
 LightingConfig: every lighting setting of the game in one place (docs/GAME_DESIGN.md, "Art direction"): a warm,
 cinematic winter sunset. The sun sits low behind the mountains and throws long soft shadows across the snow; sunlit
-snow is golden-orange with pink and peach, the shadows a cool blue-violet; a warm haze makes the far mountains glow;
-a soft warm grade, a gentle bloom and sun rays when looking towards the sun.
+snow is golden-amber (a little peach where it is brightest), the shadows a cool blue, clearly darker; a light haze
+makes only the far mountains glow; a soft warm grade with a touch of contrast, a gentle bloom and sun rays when
+looking towards the sun.
 
- * Lighting: the Lighting service's own properties.
- * Atmosphere, Bloom, ColorCorrection, SunRays: the effects (each made if missing). DepthOfField stays off.
+ * Presets: the looks, by name. Default (GoldenSunset) is what every server starts with; PinkDusk is the first pass,
+   kept to compare (debug menu F2: "Lighting preset" switches the server live). Each holds:
+   - Lighting: the Lighting service's own properties.
+   - Atmosphere, Bloom, ColorCorrection, SunRays: the effects (each made if missing). DepthOfField stays off.
+   Every preset keeps the same ClockTime and latitude: the skybox's baked sun glow is drawn round that sun.
  * Sky: the sunset skybox (tools/make_skybox.py, uploaded as group 921449746; assets/textures/sky/upload_manifest.json)
    and the sun's size. The skybox bakes its sun glow where Roblox draws the sun at this ClockTime and latitude, so
    change those together (make_skybox.py reads them from here).
  * Lamps: warm lights where the low sun leaves things dark (LightingService puts them on at start): the plot gates'
    posts, the leaderboards and the plaza.
-LightingConfig.Apply(Lighting) sets the service and its effects: LightingService at the start of every server (so
-the place file is never the only copy), and tools/studio/lighting.luau in Edit mode (so Studio shows the same).
+LightingConfig.Apply(Lighting, preset?) sets the service and its effects (the default preset when none is named):
+LightingService at the start of every server (so the place file is never the only copy), and tools/studio/lighting.luau
+in Edit mode (so Studio shows the same).
 Lighting.Technology (Future) can't be set from a script: it's set by hand in the place.
 ]]
 local LightingConfig = {}
@@ -21,41 +26,91 @@ local function rgb(r: number, g: number, b: number): Color3
 	return Color3.fromRGB(r, g, b)
 end
 
-LightingConfig.Lighting = {
-	ClockTime = 17.1, -- late afternoon: the sun low over the mountains (13 degrees up; any lower and the peaks shade the plots)
-	GeographicLatitude = 38,
-	Brightness = 3.0,
-	ExposureCompensation = -0.05,
-	Ambient = rgb(55, 60, 95), -- indoors and under roofs: dusky violet, never black
-	OutdoorAmbient = rgb(100, 112, 165), -- the shadows on the snow: cool blue-violet
-	EnvironmentDiffuseScale = 0.32, -- a little of the sunset sky on the shaded sides (more turned everything pink)
-	EnvironmentSpecularScale = 0.5,
-	GlobalShadows = true,
-	ShadowSoftness = 0.22, -- long, soft-edged shadows
-	ColorShift_Top = rgb(255, 165, 85), -- the low sun's golden-orange on everything it lights
-	ColorShift_Bottom = rgb(20, 20, 50),
+-- The looks (presets). Both share the sun's place (ClockTime, GeographicLatitude: the skybox bakes its glow there), the
+-- sky and the lamps; the debug menu (F2, "Lighting preset") switches between them live for a side-by-side look.
+LightingConfig.Default = "GoldenSunset"
+LightingConfig.Presets = {
+	-- The default: golden-amber sunlight on the snow (a little peach where it is brightest), cool blue shadows clearly
+	-- darker than the lit snow, a light haze that only makes the far mountains glow, a touch more contrast.
+	GoldenSunset = {
+		Lighting = {
+			ClockTime = 17.1, -- late afternoon: the sun low over the mountains (13 degrees up; any lower and the peaks shade the plots)
+			GeographicLatitude = 38,
+			-- a strong sun against dark blue ambient: at 13 degrees the sun barely lights flat snow, so a weaker sun let the
+			-- ambient colour take over everything (the pink dusk's lavender film)
+			Brightness = 6.5,
+			ExposureCompensation = -0.1, -- (higher and the sunlit snow clips to white, losing its gold)
+			Ambient = rgb(40, 50, 76), -- indoors and under roofs: a dark cool blue, never black
+			OutdoorAmbient = rgb(70, 104, 158), -- the shadows on the snow: cool blue, well below the lit snow (darker went navy)
+			EnvironmentDiffuseScale = 0.05, -- almost none of the sky on the shaded sides (more turns the snow pink)
+			EnvironmentSpecularScale = 0.15, -- (more mirrors the pink sky into the shadows: lavender)
+			GlobalShadows = true,
+			ShadowSoftness = 0.2, -- long, soft-edged shadows
+			-- golden-amber sunlight; any deeper (more orange) and the snow reads as desert sand
+			ColorShift_Top = rgb(255, 196, 118),
+			ColorShift_Bottom = rgb(15, 25, 55),
+		},
+		Atmosphere = {
+			Density = 0.14,
+			Offset = 0.4, -- the haze starts far out: the plots stay crisp
+			Color = rgb(255, 206, 150), -- a golden haze
+			Decay = rgb(235, 165, 115), -- far things fade to warm amber
+			Glare = 0.3, -- the sun's halo when looking towards it
+			Haze = 0.9, -- only the distant mountains glow
+		},
+		Bloom = { Enabled = true, Intensity = 0.25, Size = 24, Threshold = 2 }, -- (only the brightest things: the strong sun made gold glow)
+		ColorCorrection = {
+			Enabled = true,
+			Brightness = 0.0,
+			Contrast = 0.2,
+			Saturation = 0.08,
+			TintColor = rgb(255, 248, 238), -- a soft warm grade
+		},
+		SunRays = { Enabled = true, Intensity = 0.12, Spread = 0.55 },
+	},
+	-- The first pass: pink and peach sunlight, blue-violet shadows, a thick warm haze (kept for comparison).
+	PinkDusk = {
+		Lighting = {
+			ClockTime = 17.1,
+			GeographicLatitude = 38,
+			Brightness = 3.0,
+			ExposureCompensation = -0.05,
+			Ambient = rgb(55, 60, 95),
+			OutdoorAmbient = rgb(100, 112, 165),
+			EnvironmentDiffuseScale = 0.32,
+			EnvironmentSpecularScale = 0.5,
+			GlobalShadows = true,
+			ShadowSoftness = 0.22,
+			ColorShift_Top = rgb(255, 165, 85),
+			ColorShift_Bottom = rgb(20, 20, 50),
+		},
+		Atmosphere = {
+			Density = 0.28,
+			Offset = 0.16,
+			Color = rgb(255, 205, 165),
+			Decay = rgb(200, 135, 130),
+			Glare = 0.5,
+			Haze = 1.6,
+		},
+		Bloom = { Enabled = true, Intensity = 0.42, Size = 26, Threshold = 1.35 },
+		ColorCorrection = {
+			Enabled = true,
+			Brightness = 0.0,
+			Contrast = 0.14,
+			Saturation = 0.15,
+			TintColor = rgb(255, 240, 224),
+		},
+		SunRays = { Enabled = true, Intensity = 0.14, Spread = 0.6 },
+	},
 }
 
-LightingConfig.Atmosphere = {
-	Density = 0.28,
-	Offset = 0.16,
-	Color = rgb(255, 205, 165), -- a warm peach haze
-	Decay = rgb(200, 135, 130), -- far things fade to a warm rose
-	Glare = 0.5, -- the sun's halo when looking towards it
-	Haze = 1.6, -- the distant mountains glow
-}
-
-LightingConfig.Bloom = { Enabled = true, Intensity = 0.42, Size = 26, Threshold = 1.35 }
-
-LightingConfig.ColorCorrection = {
-	Enabled = true,
-	Brightness = 0.0,
-	Contrast = 0.14,
-	Saturation = 0.15,
-	TintColor = rgb(255, 240, 224), -- a soft warm grade
-}
-
-LightingConfig.SunRays = { Enabled = true, Intensity = 0.14, Spread = 0.6 }
+-- The default preset's parts, by their old names (make_skybox.py and the specs read these).
+local default = LightingConfig.Presets[LightingConfig.Default]
+LightingConfig.Lighting = default.Lighting
+LightingConfig.Atmosphere = default.Atmosphere
+LightingConfig.Bloom = default.Bloom
+LightingConfig.ColorCorrection = default.ColorCorrection
+LightingConfig.SunRays = default.SunRays
 
 LightingConfig.Sky = {
 	-- the sunset skybox (assets/textures/sky/upload_manifest.json; tools/make_skybox.py)
@@ -97,16 +152,22 @@ local function effect(Lighting: Instance, className: string, name: string)
 	return found
 end
 
--- Sets the Lighting service, its effects and the sky. Returns a short report.
-function LightingConfig.Apply(Lighting: Lighting): string
-	for property, value in LightingConfig.Lighting do
+-- Sets the Lighting service, its effects and the sky to a preset (default: LightingConfig.Default). Returns a short
+-- report. An unknown preset name is refused (nil and the reason).
+function LightingConfig.Apply(Lighting: Lighting, presetName: string?): string?
+	presetName = presetName or LightingConfig.Default
+	local preset = LightingConfig.Presets[presetName :: string]
+	if not preset then
+		return nil
+	end
+	for property, value in preset.Lighting do
 		(Lighting :: any)[property] = value
 	end
 	local sets = {
-		{ "Atmosphere", "Atmosphere", LightingConfig.Atmosphere },
-		{ "BloomEffect", "Bloom", LightingConfig.Bloom },
-		{ "ColorCorrectionEffect", "ColorCorrection", LightingConfig.ColorCorrection },
-		{ "SunRaysEffect", "SunRays", LightingConfig.SunRays },
+		{ "Atmosphere", "Atmosphere", preset.Atmosphere },
+		{ "BloomEffect", "Bloom", preset.Bloom },
+		{ "ColorCorrectionEffect", "ColorCorrection", preset.ColorCorrection },
+		{ "SunRaysEffect", "SunRays", preset.SunRays },
 	}
 	for _, set in sets do
 		local made = effect(Lighting, set[1], set[2])
@@ -137,7 +198,8 @@ function LightingConfig.Apply(Lighting: Lighting): string
 		sky.StarCount = LightingConfig.Sky.StarCount
 		sky.CelestialBodiesShown = LightingConfig.Sky.CelestialBodiesShown
 	end
-	return if skySet then "lighting: the sunset, with its skybox" else "lighting: the sunset (the skybox ids aren't set yet)"
+	Lighting:SetAttribute("LightingPreset", presetName)
+	return `lighting: {presetName}{if skySet then ", with the sunset skybox" else " (the skybox ids aren't set yet)"}`
 end
 
 return LightingConfig

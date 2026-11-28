@@ -1,7 +1,7 @@
 """create_products.py - creates every Robux item of this game through Open Cloud, safely re-runnable.
 
     python tools/create_products.py --dry-run     # read everything, list what exists, show what it would create or change
-    python tools/create_products.py               # create what's missing, fix prices, then write the ids into the game
+    python tools/create_products.py               # create what's missing, fix prices and descriptions, then write the ids into the game
 
 What it creates (universe 10778596196, owned by group 921449746):
   * each game pass in docs/ROBUX_PRODUCTS.md ("Game passes" table) as a game pass;
@@ -14,10 +14,12 @@ Everything is created on sale (isForSale = true).
 Safe to re-run: before creating anything it lists the universe's existing passes and developer products and
 matches them by name, so an item that already exists is never created twice (its id is taken instead).
 
-Prices: an item that exists with a different price on Roblox than the doc's gets the doc's price, through
-PATCH on the game pass or developer product (multipart form field "price"; only that field is sent). Its gift
-twin follows. At the end it reads every item back and prints the price Roblox shows. To change a price: edit
-the doc's table and ExpectedPrice, run with --dry-run, then without. Ids
+Prices and descriptions: an item that exists on Roblox with a different price or store description than the doc's
+gets the doc's, through PATCH on the game pass or developer product (multipart form fields "price" and
+"description"; only the fields that differ are sent). Its gift twin follows (the twin's description is
+GIFT_DESCRIPTION). At the end it reads every item back and prints the price and description Roblox shows. To change a
+price: edit the doc's table and ExpectedPrice; to change a description, the doc's table; run with --dry-run, then
+without. Ids
 are kept in store-assets/icons/products_manifest.json. After a successful run it writes every Id and GiftId
 into MonetizationConfig.luau and the doc's Items tables.
 
@@ -142,6 +144,7 @@ def list_all(path, field, id_field):
         for item in page.get(field) or []:
             found[item["name"]] = {"id": int(item[id_field]),
                                    "price": (item.get("priceInformation") or {}).get("defaultPriceInRobux"),
+                                   "description": item.get("description"),
                                    "forSale": item.get("isForSale")}
         token = page.get("nextPageToken") or ""
         if not token:
@@ -190,7 +193,7 @@ def main():
         return 1
     print(f"already in the universe: {len(passes)} game passes, {len(products)} developer products")
 
-    created, repriced = 0, 0
+    created, repriced, described = 0, 0, 0
     try:
         for item in items:
             entry = manifest.setdefault(item["key"], {"Id": 0, "GiftId": 0})
@@ -204,17 +207,31 @@ def main():
                 what = "game pass" if is_pass else "developer product"
                 if existing:
                     entry[field] = existing["id"]
-                    if existing["price"] == item["price"]:
-                        print(f"  exists   {what:17} {name:28} id {existing['id']}, {item['price']} Robux")
+                    changes = {}
+                    if existing["price"] != item["price"]:
+                        changes["price"] = str(item["price"])
+                    if (existing["description"] or "") != description:
+                        changes["description"] = description
+                    if not changes:
+                        print(f"  exists   {what:17} {name:28} id {existing['id']}, {item['price']} Robux, description as the doc")
                         continue
+                    notes = []
+                    if "price" in changes:
+                        notes.append(f"price {existing['price']} -> {item['price']} Robux")
+                    if "description" in changes:
+                        notes.append(f"description {existing['description']!r} -> {description!r}")
                     if args.dry_run:
-                        print(f"  would reprice {what:12} {name:28} id {existing['id']}: {existing['price']} -> {item['price']} Robux")
+                        print(f"  would update {what:13} {name:28} id {existing['id']}: " + "; ".join(notes))
                         continue
                     path = (PASSES if is_pass else PRODUCTS) + f"/{existing['id']}"
-                    call("PATCH", path, {"price": str(item["price"])})
-                    print(f"  REPRICED {what:17} {name:28} id {existing['id']}: {existing['price']} -> {item['price']} Robux")
-                    existing["price"] = item["price"]
-                    repriced += 1
+                    call("PATCH", path, changes)
+                    print(f"  UPDATED  {what:17} {name:28} id {existing['id']}: " + "; ".join(notes))
+                    if "price" in changes:
+                        existing["price"] = item["price"]
+                        repriced += 1
+                    if "description" in changes:
+                        existing["description"] = description
+                        described += 1
                     continue
                 if args.dry_run:
                     print(f"  would create {what:13} {name:28} {item['price']} Robux, icon {os.path.basename(item['icon'])}")
@@ -237,7 +254,7 @@ def main():
         print("dry run: nothing created, changed or written")
         return 0
 
-    # Read everything back: the price each item has on Roblox now.
+    # Read everything back: the price and description each item has on Roblox now.
     try:
         passes = list_all(PASSES, "gamePasses", "gamePassId")
         products = list_all(PRODUCTS, "developerProducts", "productId")
@@ -247,14 +264,21 @@ def main():
     wrong = 0
     print("as Roblox shows them now:")
     for item in items:
-        for name, found in ((item["name"], (passes if item["kind"] == "pass" else products).get(item["name"])),
-                            ("Gift: " + item["name"], products.get("Gift: " + item["name"]))):
+        for name, found, description in (
+                (item["name"], (passes if item["kind"] == "pass" else products).get(item["name"]), item["description"]),
+                ("Gift: " + item["name"], products.get("Gift: " + item["name"]), GIFT_DESCRIPTION.format(name=item["name"]))):
             price = found and found["price"]
-            mark = "" if price == item["price"] else f"   <- EXPECTED {item['price']}"
-            wrong += mark != ""
-            print(f"  {name:30} {price} Robux{'' if found and found['forSale'] else ' (NOT FOR SALE)'}{mark}")
+            shown = found and found["description"]
+            marks = []
+            if price != item["price"]:
+                marks.append(f"price EXPECTED {item['price']}")
+            if shown != description:
+                marks.append(f"description EXPECTED {description!r}")
+            wrong += len(marks)
+            print(f"  {name:30} {price} Robux{'' if found and found['forSale'] else ' (NOT FOR SALE)'}  {shown!r}"
+                  + (f"   <- {'; '.join(marks)}" if marks else ""))
     if wrong:
-        print(f"{wrong} prices on Roblox don't match the doc")
+        print(f"{wrong} prices or descriptions on Roblox don't match the doc")
         return 1
     json.dump(manifest, open(MANIFEST, "w", encoding="utf-8"), indent=1, sort_keys=True)
     missing = [k for k, v in manifest.items() if not v["Id"] or not v["GiftId"]]
@@ -262,7 +286,7 @@ def main():
         print("missing ids for:", ", ".join(missing))
         return 1
     write_back(manifest)
-    print(f"created {created}, repriced {repriced}; every Id and GiftId written into MonetizationConfig.luau and docs/ROBUX_PRODUCTS.md")
+    print(f"created {created}, repriced {repriced}, descriptions updated {described}; every Id and GiftId written into MonetizationConfig.luau and docs/ROBUX_PRODUCTS.md")
     return 0
 
 

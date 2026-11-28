@@ -2,6 +2,7 @@
 
     python tools/visual_review.py                       # every shot
     python tools/visual_review.py buildings ui          # some categories
+    python tools/visual_review.py lighting              # each view under each lighting preset, paired side by side
     python tools/visual_review.py --only ice/crack_stage2 --only ui/window_shop
     python tools/visual_review.py --list                # the shot names
     python tools/visual_review.py --index               # only rebuild the gallery's shot list
@@ -30,7 +31,10 @@ from run_specs import StudioMcp  # noqa: E402
 SHOTS_LUAU = os.path.join(HERE, "studio", "visual_review_shots.luau")
 OUT = os.path.join(REPO, "store-assets", "visual-review")
 BEFORE = os.path.join(REPO, "store-assets", "visual-review-before")
-CATEGORY_ORDER = ["buildings", "tools", "tools-samples", "ice", "ice-options", "pets", "rescue", "world", "ui", "book", "effects"]
+CATEGORY_ORDER = ["buildings", "tools", "tools-samples", "ice", "ice-options", "pets", "rescue", "world", "lighting", "ui", "book", "effects"]
+# The lighting shots: each view under each preset (lighting/single/<view>_<preset>.jpg), paired side by side as
+# lighting/<view>.jpg (the first preset on the left: the one before, the second after).
+LIGHTING_PAIR = [("pink_dusk", "Pink dusk (before)"), ("golden_sunset", "Golden sunset (now)")]
 
 
 class Studio:
@@ -123,6 +127,39 @@ def file_for(name, size):
     return os.path.join(OUT, category, base + suffix + ".jpg")
 
 
+def pair_lighting():
+    """lighting/<view>.jpg: each view's two presets side by side, each half labelled. Returns how many."""
+    from PIL import Image, ImageDraw, ImageFont
+    single = os.path.join(OUT, "lighting", "single")
+    if not os.path.isdir(single):
+        return 0
+    (left_key, left_label), (right_key, right_label) = LIGHTING_PAIR
+    made = 0
+    for file in sorted(os.listdir(single)):
+        if f"_{left_key}" not in file or not file.endswith(".jpg"):
+            continue
+        right = os.path.join(single, file.replace(f"_{left_key}", f"_{right_key}"))
+        if not os.path.exists(right):
+            continue
+        halves = [Image.open(os.path.join(single, file)).convert("RGB"), Image.open(right).convert("RGB")]
+        width = min(1280, halves[0].width)
+        halves = [h.resize((width, round(h.height * width / h.width)), Image.LANCZOS) for h in halves]
+        bar = 44
+        sheet = Image.new("RGB", (width * 2 + 8, halves[0].height + bar), (24, 26, 34))
+        draw = ImageDraw.Draw(sheet)
+        try:
+            font = ImageFont.truetype("arialbd.ttf", 26)
+        except OSError:
+            font = ImageFont.load_default()
+        for index, (half, label) in enumerate(zip(halves, (left_label, right_label))):
+            x = index * (width + 8)
+            sheet.paste(half, (x, bar))
+            draw.text((x + 14, 8), label, fill=(240, 240, 245), font=font)
+        sheet.save(os.path.join(OUT, "lighting", file.replace(f"_{left_key}", "")), "JPEG", quality=90)
+        made += 1
+    return made
+
+
 def write_index():
     """store-assets/visual-review/shots.js: every picture (and its 'before', if any) for index.html."""
     entries = []
@@ -155,6 +192,7 @@ def main():
     parser.add_argument("--studio", help="the Studio id (default: the one in Play)")
     args = parser.parse_args()
     if args.index:
+        print(pair_lighting(), "lighting pairs")
         print(write_index(), "pictures listed in store-assets/visual-review/shots.js")
         return 0
 
@@ -226,6 +264,8 @@ def main():
                     failed.append(label)
                     print(f"  FAIL {label}: {e}", flush=True)
         studio.luau(studio.shot_code("?cleanup"), "Client", 60)
+        if category == "lighting":
+            print(f"  {pair_lighting()} lighting pairs side by side", flush=True)
     count = write_index()
     print(f"{taken} pictures in {(time.time() - started) / 60:.1f} min; {len(failed)} failed; index lists {count}")
     for label in failed:
