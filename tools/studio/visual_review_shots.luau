@@ -1131,6 +1131,22 @@ shot("ui/plot_teleport", function()
 	teleportReady() -- (the click below is the teleport)
 	return { Clicks = { menu("Plot") }, Wait = 0.35 }
 end)
+-- The Rebirth screen ready to rebirth, with numbers in every card: rebirth 2 (Frost Finder) -> 3 (Glacier Diver, which
+-- opens a pet slot and Layer 6), 12 Frost Cores, about 3 billion crystals this run (+14 cores).
+shot("ui/window_rebirth_ready", function()
+	dbg("SetRebirths", { Rebirths = 2 })
+	local cores = me:GetAttribute("FrostCores") or 0
+	if cores < 12 then
+		dbg("AddFrostCores", { Amount = 12 - cores })
+	end
+	dbg("SetBlockLevel", { Level = 31 })
+	if (progress().CrystalsThisRun or 0) < 2.8e9 then
+		dbg("AddCrystals", { Amount = 3e9 })
+	end
+	home()
+	uiCamera()
+	return { Clicks = { menu("Rebirth") }, Close = { closeOf("Rebirth") }, Wait = 1.5 }
+end, PHONES)
 shot("ui/window_settings", function()
 	home()
 	uiCamera()
@@ -1139,7 +1155,9 @@ end, PHONES)
 shot("ui/offline_earnings_popup", function()
 	home()
 	uiCamera()
+	dbg("SetBlockLevel", { Level = 400 }) -- (first: a block the buildings can't break, so no rescue banners over the screen)
 	dbg("SetBuilding", { Building = "HeatLamp", Count = 25, Upgrades = 2 }) -- (income to earn while away)
+	task.wait(3) -- (any banner already showing passes)
 	dbg("OfflineEarningsNow", { Seconds = 5400 })
 	return { Wait = 1.5, Close = { closeOf("OfflineEarnings") } }
 end, PHONES)

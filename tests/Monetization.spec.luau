@@ -46,7 +46,7 @@ return function(sources)
 		return modules[name]
 	end
 	for _, name in {
-		"MonetizationConfig", "MonetizationRules", "AnalyticsConfig", "AnalyticsRules",
+		"MonetizationConfig", "MonetizationRules", "AnalyticsConfig", "AnalyticsRules", "WelcomeBackRules",
 		-- the game configs PlayerData checks saved ids against
 		"LayerConfig", "CreatureConfig", "BuildingConfig", "UpgradeConfig",
 	} do
@@ -59,7 +59,7 @@ return function(sources)
 	local DesignDoc = assert(loadstring(sources.DesignDoc))()
 	local doc = DesignDoc.new(sources["GAME_DESIGN.md"])
 	local docRows = doc:Table({ "Item", "Type" })
-	check(#docRows == 11, "the doc's Monetization table has its 11 rows")
+	check(#docRows == 12, "the doc's Monetization table has its 12 rows")
 	local BUNDLES = { { "CrystalPouch", 600 }, { "CrystalSack", 3600 }, { "CrystalChest", 21600 }, { "GiantCrystalChest", 86400 } }
 	for _, row in docRows do
 		if row.Item == "Crystal bundles" then
@@ -83,7 +83,7 @@ return function(sources)
 			check(item.ExpectedPrice == DesignDoc.Number(row["Price (Robux)"]), `{row.Item} costs the doc's {row["Price (Robux)"]} Robux`)
 		end
 	end
-	check(#Config.Passes == 6 and #Config.Products == 8, "6 passes and 8 products, nothing else")
+	check(#Config.Passes == 6 and #Config.Products == 9, "6 passes and 9 products, nothing else")
 	-- Every item exists on Roblox (tools/create_products.py): its Id and GiftId are the ones in
 	-- docs/ROBUX_PRODUCTS.md's Items tables, and no two items share an id.
 	local products = DesignDoc.new(sources["ROBUX_PRODUCTS.md"])
@@ -96,10 +96,17 @@ return function(sources)
 	for _, list in { Config.Passes, Config.Products } do
 		for _, entry in list do
 			local ids = docIds[entry.Key]
-			check(ids and Config.IsLive(entry) and entry.Id == ids[1] and type(entry.GiftId) == "number" and entry.GiftId > 0 and entry.GiftId == ids[2],
-				`{entry.Key} has its real Id and GiftId (as in docs/ROBUX_PRODUCTS.md)`)
-			check(not usedIds[entry.Id] and not usedIds[entry.GiftId] and entry.Id ~= entry.GiftId, `{entry.Key}'s ids are its own`)
-			usedIds[entry.Id], usedIds[entry.GiftId] = true, true
+			if entry.NoGift then
+				check(ids and Config.IsLive(entry) and entry.Id == ids[1] and entry.GiftId == 0 and (ids[2] == nil or ids[2] == 0),
+					`{entry.Key} has its real Id and no gift product (as in docs/ROBUX_PRODUCTS.md)`)
+				check(not usedIds[entry.Id], `{entry.Key}'s id is its own`)
+				usedIds[entry.Id] = true
+			else
+				check(ids and Config.IsLive(entry) and entry.Id == ids[1] and type(entry.GiftId) == "number" and entry.GiftId > 0 and entry.GiftId == ids[2],
+					`{entry.Key} has its real Id and GiftId (as in docs/ROBUX_PRODUCTS.md)`)
+				check(not usedIds[entry.Id] and not usedIds[entry.GiftId] and entry.Id ~= entry.GiftId, `{entry.Key}'s ids are its own`)
+				usedIds[entry.Id], usedIds[entry.GiftId] = true, true
+			end
 			check(type(entry.Reward) == "table" and type(entry.Reward.Kind) == "string", `{entry.Key} has a reward kind (gifts use it for passes)`)
 			check(type(entry.Description) == "string" and #entry.Description <= 120, `{entry.Key} has a short description`)
 		end
@@ -121,14 +128,18 @@ return function(sources)
 	check(Config.GetGiftable("VIP") == Config.GetPass("VIP") and Config.GetGiftable("ShatterNow") == Config.GetProduct("ShatterNow"), "passes and products can both be gifted")
 	check(Config.GetProduct("Anything") == nil and Config.GetPass("Anything") == nil and Config.FindByProductId(1) == nil, "an unknown key or id finds nothing")
 	local priced, hidden = Config.AllPriced()
-	check(#priced == 28 and hidden == 0, "PriceCheck checks all 28 (14 items and their 14 gift products), none hidden")
+	check(#priced == 29 and hidden == 0, "PriceCheck checks all 29 (15 items and 14 gift products: Double Welcome Back has none), none hidden")
+	local double = Config.GetProduct("DoubleWelcomeBack")
+	check(double and double.ShopHidden and double.Tab == nil and double.NoGift and double.Reward.Kind == "WelcomeBackDouble" and double.ExpectedPrice == 19,
+		"Double Welcome Back: 19 Robux, only on the Welcome Back screen (not in the shop), never a gift")
+	check(Config.GetGiftable("DoubleWelcomeBack") == nil and Config.FindByProductId(0) == nil, "...so gifting can't find it, and its missing gift id finds nothing")
 	local kindA, itemA = Config.FindByProductId(Config.GetProduct("ShatterNow").Id)
 	local kindB, itemB = Config.FindByProductId(Config.GetPass("VIP").GiftId)
 	check(kindA == "Product" and itemA == Config.GetProduct("ShatterNow") and kindB == "Gift" and itemB == Config.GetPass("VIP"),
 		"a receipt's product id finds its item, a pass's gift product too")
-	-- every reward kind the config names is registered by the game (RobuxPerks, or RewardService's Crystals)
+	-- every reward kind the config names is registered by the game (RobuxPerks, RewardService's Crystals, WelcomeBack's)
 	local registered = {}
-	for _, source in { sources.RobuxPerks, sources.RewardService } do
+	for _, source in { sources.RobuxPerks, sources.RewardService, sources.WelcomeBack } do
 		for kindName in string.gmatch(source, "Kinds%.(%w+) = {") do
 			registered[kindName] = true
 		end

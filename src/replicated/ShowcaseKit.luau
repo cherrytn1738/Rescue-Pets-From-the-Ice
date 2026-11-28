@@ -29,8 +29,18 @@ building raw Instances. Client only. Sizes in menu units.
                                 oversized picture poking out of its top and a big outlined label. With
                                 no image (nil or ""), the label grows to fill the button instead.
                                 button.Visual.Icon / .Label as UIKit.HudButton's.
+
+Picture-first screens (the Rebirth and Welcome Back screens: big icons and numbers, few words):
+  Picture(parent, name, key)    a picture from the icon set (UITheme.Icons[key]), fitted, centred (AnchorPoint 0.5);
+                                hidden while the key has no id. SetPicture(picture, key) changes it.
+  PopIn(object, delay?, from?)  pops an object in: it grows from `from` (0.3) with a little overshoot after `delay`
+                                seconds (a UIScale "PopScale"; give the object AnchorPoint 0.5, 0.5).
+  RobuxBadge(parent)            a small green price pill with the Robux icon. Returns the pill and set(price).
+  Rainbow(button)               turns a UIKit.Button's face into a slowly shimmering rainbow (a premium offer).
+  Tick(parent)                  the small green tick in a corner of a picture (UITheme.Icons.Tick).
 ]]
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
 
 local UIKit = require(ReplicatedStorage.UIKit)
 local UITheme = require(ReplicatedStorage.UITheme)
@@ -291,6 +301,94 @@ end
 function ShowcaseKit.SetSilhouette(picture: ImageLabel, on: boolean, tint: Color3?)
 	picture.ImageColor3 = if on then Colors.Silhouette else (tint or WHITE)
 	picture.ImageTransparency = if on then 0.15 else 0
+end
+
+-- Picture-first screens ----------------------------------------------------------------------------
+
+function ShowcaseKit.SetPicture(picture: ImageLabel, key: string?)
+	local image = if key then UIKit.IconImage(key) else nil
+	picture.Image = image or ""
+	picture.Visible = image ~= nil
+end
+
+function ShowcaseKit.Picture(parent: Instance, name: string, key: string?): ImageLabel
+	local picture = Instance.new("ImageLabel")
+	picture.Name = name
+	picture.BackgroundTransparency = 1
+	picture.ScaleType = Enum.ScaleType.Fit
+	picture.AnchorPoint = Vector2.new(0.5, 0.5)
+	picture.Parent = parent
+	ShowcaseKit.SetPicture(picture, key)
+	return picture
+end
+
+function ShowcaseKit.PopIn(object: GuiObject, delay: number?, from: number?)
+	local scale = object:FindFirstChild("PopScale") :: UIScale?
+	if not scale then
+		scale = Instance.new("UIScale")
+		scale.Name = "PopScale"
+		scale.Parent = object
+	end
+	local pop = scale :: UIScale
+	pop.Scale = from or 0.3
+	task.delay(delay or 0, function()
+		TweenService:Create(pop, TweenInfo.new(0.34, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Scale = 1 }):Play()
+	end)
+end
+
+function ShowcaseKit.RobuxBadge(parent: Instance): (Frame, (number) -> ())
+	local pill = Instance.new("Frame")
+	pill.Name = "RobuxBadge"
+	pill.BackgroundColor3 = WHITE
+	pill.Size = UDim2.fromOffset(92, 40)
+	pill.Parent = parent
+	UIKit.Corner(pill, 20)
+	UIKit.Stroke(pill, nil, 4)
+	UIKit.Gradient(pill, UITheme.Buttons.Buy[1], UITheme.Buttons.Buy[2])
+	local icon = Instance.new("ImageLabel")
+	icon.Name = "Robux"
+	icon.BackgroundTransparency = 1
+	icon.Image = UITheme.Assets.Robux
+	icon.ScaleType = Enum.ScaleType.Fit
+	icon.AnchorPoint = Vector2.new(0, 0.5)
+	icon.Position, icon.Size = UDim2.new(0, 7, 0.5, 0), UDim2.fromOffset(26, 26)
+	icon.Parent = pill
+	local price = UIKit.Label(pill, "Price", "", 26)
+	price.AnchorPoint = Vector2.new(0, 0.5)
+	price.Position, price.Size = UDim2.new(0, 36, 0.5, -1), UDim2.new(1, -40, 1, 0)
+	price.TextXAlignment = Enum.TextXAlignment.Center
+	price.TextTruncate = Enum.TextTruncate.None
+	price.Outline.Color = Colors.CaptionOutline
+	price.Outline.Thickness = 3
+	return pill, function(robux: number)
+		price.Text = tostring(robux)
+	end
+end
+
+local RAINBOW = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 80, 110)),
+	ColorSequenceKeypoint.new(0.18, Color3.fromRGB(255, 160, 50)),
+	ColorSequenceKeypoint.new(0.36, Color3.fromRGB(255, 225, 60)),
+	ColorSequenceKeypoint.new(0.54, Color3.fromRGB(90, 225, 110)),
+	ColorSequenceKeypoint.new(0.72, Color3.fromRGB(60, 190, 255)),
+	ColorSequenceKeypoint.new(0.88, Color3.fromRGB(120, 110, 255)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(215, 90, 255)),
+})
+
+function ShowcaseKit.Rainbow(button: TextButton)
+	local face = button.Visual:FindFirstChild("Face") :: UIGradient
+	face.Rotation = 0
+	face.Color = RAINBOW
+	face.Offset = Vector2.new(-0.15, 0)
+	TweenService:Create(face, TweenInfo.new(2.4, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), { Offset = Vector2.new(0.15, 0) }):Play()
+end
+
+function ShowcaseKit.Tick(parent: Instance): ImageLabel
+	local tick = ShowcaseKit.Picture(parent, "Tick", "Tick")
+	tick.AnchorPoint = Vector2.new(1, 1)
+	tick.Position, tick.Size = UDim2.new(1, 6, 1, 4), UDim2.fromScale(0.55, 0.55)
+	tick.ZIndex = 8
+	return tick
 end
 
 -- The HUD's buttons ---------------------------------------------------------------------------------

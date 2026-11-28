@@ -6,7 +6,8 @@
 What it creates (universe 10778596196, owned by group 921449746):
   * each game pass in docs/ROBUX_PRODUCTS.md ("Game passes" table) as a game pass;
   * each developer product ("Developer products" table) as a developer product;
-  * for every item, its gift twin: a developer product "Gift: <name>", same price, same icon.
+  * for every item, its gift twin: a developer product "Gift: <name>", same price, same icon; except an item whose
+    gift column in the doc says "(none: ...)" (Double Welcome Back: never giftable), which has no twin (GiftId 0).
 Name, store description and price come from the doc's tables; every price must match the item's ExpectedPrice
 in src/replicated/MonetizationConfig.luau (the script stops otherwise). The icon is store-assets/icons/<Key>.png.
 Everything is created on sale (isForSale = true).
@@ -86,8 +87,10 @@ def read_items():
             icon = os.path.join(ICONS, key + ".png")
             if not os.path.isfile(icon):
                 sys.exit(f"{key}: no icon at {icon}")
+            gift_cell = next((v for k, v in row.items() if k.startswith("Gift product")), "")
             items.append({"key": key, "kind": kind, "name": row["Name"], "price": price,
-                          "description": row["Store description"], "icon": icon})
+                          "description": row["Store description"], "icon": icon,
+                          "gift": not gift_cell.startswith("(none")})
     return items
 
 
@@ -183,7 +186,7 @@ def main():
 
     items = read_items()
     manifest = json.load(open(MANIFEST, encoding="utf-8")) if os.path.exists(MANIFEST) else {}
-    print(f"{len(items)} items, {len(items)} gift twins ({sum(i['kind'] == 'pass' for i in items)} passes)")
+    print(f"{len(items)} items, {sum(i['gift'] for i in items)} gift twins ({sum(i['kind'] == 'pass' for i in items)} passes)")
 
     try:
         passes = list_all(PASSES, "gamePasses", "gamePassId")
@@ -197,7 +200,7 @@ def main():
     try:
         for item in items:
             entry = manifest.setdefault(item["key"], {"Id": 0, "GiftId": 0})
-            for role in ("main", "gift"):
+            for role in ("main", "gift") if item["gift"] else ("main",):
                 if role == "main":
                     name, description, is_pass = item["name"], item["description"], item["kind"] == "pass"
                 else:
@@ -264,9 +267,10 @@ def main():
     wrong = 0
     print("as Roblox shows them now:")
     for item in items:
-        for name, found, description in (
-                (item["name"], (passes if item["kind"] == "pass" else products).get(item["name"]), item["description"]),
-                ("Gift: " + item["name"], products.get("Gift: " + item["name"]), GIFT_DESCRIPTION.format(name=item["name"]))):
+        checks = [(item["name"], (passes if item["kind"] == "pass" else products).get(item["name"]), item["description"])]
+        if item["gift"]:
+            checks.append(("Gift: " + item["name"], products.get("Gift: " + item["name"]), GIFT_DESCRIPTION.format(name=item["name"])))
+        for name, found, description in checks:
             price = found and found["price"]
             shown = found and found["description"]
             marks = []
@@ -281,7 +285,8 @@ def main():
         print(f"{wrong} prices or descriptions on Roblox don't match the doc")
         return 1
     json.dump(manifest, open(MANIFEST, "w", encoding="utf-8"), indent=1, sort_keys=True)
-    missing = [k for k, v in manifest.items() if not v["Id"] or not v["GiftId"]]
+    has_gift = {i["key"]: i["gift"] for i in items}
+    missing = [k for k, v in manifest.items() if not v["Id"] or (has_gift.get(k, True) and not v["GiftId"])]
     if missing:
         print("missing ids for:", ", ".join(missing))
         return 1

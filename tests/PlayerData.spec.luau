@@ -69,6 +69,7 @@ return function(sources)
 	local AnalyticsRules = loadShared("AnalyticsRules")
 	testReplicated.MonetizationRules = MonetizationRules
 	testReplicated.AnalyticsRules = AnalyticsRules
+	testReplicated.WelcomeBackRules = loadShared("WelcomeBackRules")
 	-- The game's real configs (the save checks ids against them).
 	for _, name in { "LayerConfig", "CreatureConfig", "BuildingConfig", "UpgradeConfig" } do
 		testReplicated[name] = loadShared(name)
@@ -678,6 +679,31 @@ return function(sources)
 	check(PlayerData.IsReady(cleaned) and gifted.VIP and gifted.RetiredPass and gifted.AutoPick == nil and gifted["Bad Key!"] == nil and gifted[5] == nil,
 		"gifted passes: unreadable entries are dropped; a pass no longer sold is kept")
 	leave(cleaned)
+
+	-- The Welcome Back screen's x2 offer (WelcomeBack = { Amount, At, Prompted? }): saved and loaded as it is; an
+	-- unreadable one is simply no offer (it can only ever pay a receipt for a purchase made on it).
+	local returning = join(126)
+	check(PlayerData.Get(returning).WelcomeBack == nil, "a new player has no welcome-back offer")
+	PlayerData.Edit(returning).WelcomeBack = { Amount = 1234.5, At = math.floor(now), Prompted = math.floor(now) }
+	leave(returning)
+	check(record(126).WelcomeBack.Amount == 1234.5 and record(126).WelcomeBack.Prompted == math.floor(now), "a prompted offer is saved")
+	returning = join(126)
+	local offer = PlayerData.Get(returning).WelcomeBack
+	check(offer and offer.Amount == 1234.5 and offer.At == math.floor(now) and offer.Prompted == math.floor(now), "...and loads again, amount and times exact")
+	check(PlayerData.ResetToNew(returning) and PlayerData.Get(returning).WelcomeBack ~= nil,
+		"a debug reset keeps an offer whose purchase may be on its way (prompted, recent)")
+	PlayerData.Edit(returning).WelcomeBack = { Amount = 50, At = math.floor(now) }
+	check(PlayerData.ResetToNew(returning) and PlayerData.Get(returning).WelcomeBack == nil, "...but drops one that was never prompted")
+	leave(returning)
+	for userId, broken in {
+		[127] = { Amount = "lots", At = 5 }, [128] = { Amount = 0 / 0, At = 5 }, [129] = { Amount = 10, At = -3 },
+		[130] = { Amount = 10, At = 5, Prompted = 1.5 }, [131] = "an offer", [132] = { Amount = math.huge, At = 5 },
+	} do
+		put(userId, { SchemaVersion = 1, WelcomeBack = broken })
+		local player = join(userId)
+		check(PlayerData.IsReady(player) and PlayerData.Get(player).WelcomeBack == nil, `an unreadable welcome-back offer loads as no offer ({userId})`)
+		leave(player)
+	end
 
 	-- Studio uses its own stores; live saves only on purpose.
 	inStudio = true

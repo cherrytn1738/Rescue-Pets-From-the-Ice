@@ -13,6 +13,7 @@ snowflakes) and a chunky outlined text badge. Composited at 1024 and downscaled 
 
     python tools/icons/compose_icons.py --ui --render         # the UI icons instead (store-assets/ui-icons/)
     python tools/icons/compose_icons.py --ui --render Pets Home
+    python tools/icons/compose_icons.py --ui Sunburst Tick ArrowRight   # the 2D-only ones (UI_FLAT: drawn here, no Blender)
 
 Writes store-assets/icons/<Name>.png (the 14 Robux items), store-assets/launch/icon_concept_<n>.png (the
 three game icon concepts, no text) and store-assets/icons/contact_sheet.png; with --ui, the in-game button and
@@ -89,6 +90,9 @@ SPECS = {
     'MythicBlock3': dict(title='Mythic Block x3', kind='product', bg=((150, 70, 230), (35, 8, 80)), rays=(255, 200, 255),
                          box=(90, 90, 934, 760), glow='rainbow', glow_radius=70,
                          badges=[('x3', 512, 835, 200, ((255, 255, 255), (255, 170, 255)), -6)], sparkles=9),
+    'DoubleWelcomeBack': dict(title='Double Welcome Back', kind='product', bg=((255, 220, 110), (150, 60, 215)), rays=(255, 245, 200),
+                              box=(80, 60, 930, 810), glow=(255, 240, 190), glow_radius=56, glints=0,
+                              badges=[('x2', 765, 790, 230, GOLD_TXT, -8)], sparkles=6, sparkle_colour=(255, 245, 190)),
     'icon_concept_1': dict(title='Game icon concept 1', kind='launch', bg=((255, 225, 110), (240, 90, 60)), rays=(255, 250, 210),
                            box=(40, 40, 984, 1024), anchor='bottom', glow=(255, 255, 230), sparkles=7),
     'icon_concept_2': dict(title='Game icon concept 2', kind='launch', bg=((255, 150, 230), (70, 30, 170)), rays=(255, 230, 255),
@@ -521,7 +525,8 @@ CARDS = {'Build': (255, 150, 50), 'Upgrades': (80, 200, 100), 'Pets': (255, 120,
 UI_BUILDINGS = ['IcePickPost', 'ChiselMill', 'IceDrill', 'HeatLamp', 'WreckingCrane', 'FlamethrowerTurret', 'LavaPump', 'SunMirrorTower']
 FROST = (215, 245, 255)
 # card: the colour it sits on (CARDS); glow: soft halo colour (or None); sparkles / glints: as for the store icons;
-# extras: 2D extras (snowflakes, streaks); box: where the subject goes, if not UI_BOX
+# extras: 2D extras (snowflakes, streaks); box: where the subject goes, if not UI_BOX; inner_ring: the outline width
+# round the layers after the first (default UI_RING - 10)
 UI_SPECS = {
     'Build': dict(card='Build', what='The tier-1 Ice Pick Post station with a chunky hammer', glow=(255, 240, 210), sparkles=2),
     'Upgrades': dict(card='Upgrades', what='The gold ice pick in front of a big green up-arrow', glow=(220, 255, 220), sparkles=2),
@@ -570,6 +575,38 @@ UI_SPECS.update({
     'FastSled': dict(card='Window', what='A wooden sled on metal runners carrying an ice block (a pet silhouette inside), speed streaks',
                      glow=(220, 240, 255), extras=['streaks'], box=(190, 110, 950, 914), sparkles=0),
     'UpgradeBadge': dict(card='Window', what='A green up-arrow, to overlay on a building icon for building upgrades', glow=None, sparkles=0),
+})
+# the Rebirth and Welcome Back screens
+UI_SPECS.update({
+    'RebirthBadge': dict(card='Rebirth', what='Two ice circular arrows chasing round a glowing faceted Frost Core', glow=(150, 225, 255),
+                         glow_layer='core', glow_radius=70, sparkles=2, glints=1),
+    'FrostCore': dict(card='Rebirth', what='The faceted glowing Frost Core with three tiny ice shards', glow=(150, 225, 255),
+                      glow_layer='core', glow_radius=70, sparkles=0, glints=1),
+})
+# rank badges: rank -> (what, glow, sparkles)
+RANK_BADGES = {0: ('no rank yet: a plain slate shield with a snowflake, no stars', None, 0),
+               1: ('a light blue shield, 1 gold star', (200, 235, 255), 0),
+               2: ('a teal shield, 2 gold stars', (180, 250, 240), 0),
+               3: ('a purple shield, 3 gold stars', (225, 200, 255), 0),
+               6: ('a gold shield, 4 white stars', (255, 240, 170), 1),
+               10: ('a rainbow shield, 5 white stars', (255, 235, 255), 2)}
+for _r, (_what, _glow, _sp) in RANK_BADGES.items():
+    UI_SPECS['Rank%d' % _r] = dict(card='Window', what='Rebirth rank %d badge: %s' % (_r, _what), glow=_glow, glow_radius=30, sparkles=_sp,
+                                   inner_ring=11)      # a thin outline round the stars, so they stay apart at 48 px
+UI_SPECS.update({
+    'UnlockPetSlot': dict(card='Rebirth', what='Arctic Fox Kit on a glowing ice pedestal, a green plus: a new pet slot opens',
+                          glow=(220, 245, 255), sparkles=1),
+    'UnlockLayer': dict(card='Rebirth', what='A stack of three ice layers (pale, deep blue, black ice with orange veins) and a green down-arrow',
+                        glow=(220, 240, 255), sparkles=0),
+    'IceBlock': dict(card='Window', what='A rounded ice block with a Snow Bunny silhouette inside: block level', glow=(200, 240, 255), sparkles=1),
+    'CrystalPile': dict(card='Window', what='A big heap of cyan crystals with a big one on top', glow=(170, 240, 255), sparkles=2, glints=2),
+    'RobuxItems': dict(card='Window', what='A purple gift box with a gold ribbon and bow', glow=(240, 225, 255), sparkles=2),
+    'WelcomeClock': dict(card='Window', what='An ice-blue alarm clock at 10:10 with gold bells and a snowflake badge', glow=(220, 245, 255),
+                         sparkles=1),
+    # 2D only (drawn here, no Blender: UI_FLAT below)
+    'Sunburst': dict(card='Window', what='16 white rays, long and short, fading out (512x512; tinted and turned in the game)', flat=True),
+    'Tick': dict(card='Window', what='A chunky green tick', flat=True),
+    'ArrowRight': dict(card='Window', what='A chunky white-blue arrow pointing right', flat=True),
 })
 UI_ORDER = list(UI_SPECS)
 
@@ -656,7 +693,7 @@ def compose_ui(work, key):
     canvas.alpha_composite(colour_layer(moved, (10, 10, 40), 0.35))
     for i, (n, im) in enumerate(layers):
         if n not in spec.get('no_outline', ()):
-            canvas.alpha_composite(colour_layer(outline_ring(alpha_of(im), UI_RING if i == 0 else UI_RING - 10), INK))
+            canvas.alpha_composite(colour_layer(outline_ring(alpha_of(im), UI_RING if i == 0 else spec.get('inner_ring', UI_RING - 10)), INK))
         canvas.alpha_composite(im)
     for x, y, rr in glint_spots(union, spec.get('glints', 0), sum(map(ord, key)) + 7):
         sparkle(canvas, x, y, rr * 1.3)
@@ -672,6 +709,86 @@ def compose_ui(work, key):
     path = os.path.join(OUT_UI, key + '.png')
     canvas.resize((UI_SIZE, UI_SIZE), Image.LANCZOS).save(path, optimize=True)
     return path
+
+
+# ------------------------------------------------------------------ 2D-only UI icons (no Blender)
+
+def chunky_flat(key, mask, top, bottom, side, depth=24):
+    """a flat chunky shape in the UI icons' style: a darker side under the face (a little 3D depth), a gradient
+    face (top -> bottom), a glossy band on its upper part, a heavy INK outline round both and a soft shadow;
+    composed at 1024, saved at 256"""
+    l, t, r, b = mask.getbbox()
+    side_m = Image.new('L', (S, S), 0)
+    side_m.paste(mask, (0, depth))
+    both = ImageChops.lighter(mask, side_m)
+    canvas = Image.new('RGBA', (S, S), (0, 0, 0, 0))
+    shadow = dilate(both, UI_RING).filter(ImageFilter.GaussianBlur(10))
+    moved = Image.new('L', (S, S), 0)
+    moved.paste(shadow, (0, 14))
+    canvas.alpha_composite(colour_layer(moved, (10, 10, 40), 0.35))
+    canvas.alpha_composite(colour_layer(dilate(both, UI_RING + 4), INK))
+    canvas.alpha_composite(colour_layer(side_m, side))
+    face = gradient((S, S), top, bottom, t, b)
+    face.putalpha(mask)
+    canvas.alpha_composite(face)
+    band = Image.new('L', (S, S), 0)
+    ImageDraw.Draw(band).rectangle((0, 0, S, t + (b - t) * 0.4), fill=80)
+    inner = mask.filter(ImageFilter.MinFilter(25)).filter(ImageFilter.GaussianBlur(6))
+    canvas.alpha_composite(colour_layer(ImageChops.multiply(band, inner), (255, 255, 255)))
+    os.makedirs(OUT_UI, exist_ok=True)
+    path = os.path.join(OUT_UI, key + '.png')
+    canvas.resize((UI_SIZE, UI_SIZE), Image.LANCZOS).save(path, optimize=True)
+    return path
+
+
+def flat_Tick():
+    m = Image.new('L', (S, S), 0)
+    d = ImageDraw.Draw(m)
+    w = 176
+    pts = [(225, 525), (420, 715), (805, 300)]
+    d.line(pts, fill=255, width=w, joint='curve')
+    for x, y in pts:
+        d.ellipse((x - w / 2, y - w / 2, x + w / 2, y + w / 2), fill=255)
+    return chunky_flat('Tick', m, (165, 250, 150), (50, 190, 75), (25, 120, 50))
+
+
+def flat_ArrowRight():
+    m = Image.new('L', (S, S), 0)
+    ImageDraw.Draw(m).polygon([(140, 405), (520, 405), (520, 185), (885, 500), (520, 815), (520, 595), (140, 595)], fill=255)
+    m = m.filter(ImageFilter.GaussianBlur(16)).point(lambda v: 255 if v > 128 else 0)    # rounded corners
+    m = m.filter(ImageFilter.GaussianBlur(1.2))
+    return chunky_flat('ArrowRight', m, (255, 255, 255), (175, 215, 255), (90, 140, 205))
+
+
+def flat_Sunburst():
+    """16 white wedge rays from the centre, long and short in turn, fading out towards the edges and a little at the
+    centre; 512x512, no outline (the game tints it and turns it slowly behind the crystal pile)"""
+    n = 1024
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float32)
+    dx, dy = (xx - n / 2 + 0.5) / (n / 2), (yy - n / 2 + 0.5) / (n / 2)
+    r = np.sqrt(dx * dx + dy * dy)
+    ang = np.arctan2(dy, dx)
+    step = 2 * np.pi / 16
+    k = np.round(ang / step)
+    off = np.abs(ang - k * step)                  # angle to the nearest ray's middle
+    long_ray = (k.astype(np.int32) % 2) == 0
+    half = np.where(long_ray, 0.11, 0.085)        # each wedge's half-width, radians
+    reach = np.where(long_ray, 0.99, 0.72)        # how far out it goes (1 = the frame's edge)
+    px = 1.5 / (r * n / 2 + 1.0)                  # about a pixel, in radians at this radius (soft edges)
+    edge = np.clip((half - off) / px + 0.5, 0, 1)
+    fade = np.clip(1 - r / reach, 0, 1) ** 0.85
+    centre = 0.5 + 0.5 * np.clip(r / 0.25, 0, 1)
+    a = edge * fade * centre
+    img = np.zeros((n, n, 4), np.uint8)
+    img[..., :3] = 255
+    img[..., 3] = np.clip(a * 255, 0, 255).astype(np.uint8)
+    os.makedirs(OUT_UI, exist_ok=True)
+    path = os.path.join(OUT_UI, 'Sunburst.png')
+    Image.fromarray(img, 'RGBA').resize((512, 512), Image.LANCZOS).save(path, optimize=True)
+    return path
+
+
+UI_FLAT = {'Sunburst': flat_Sunburst, 'Tick': flat_Tick, 'ArrowRight': flat_ArrowRight}
 
 
 def card_tile(colour, size):
@@ -781,10 +898,11 @@ if __name__ == '__main__':
             if n not in UI_SPECS:
                 raise SystemExit('unknown UI icon: %s (known: %s)' % (n, ', '.join(UI_ORDER)))
         if '--sheet-only' not in flags:
-            if '--render' in flags:
-                render(work, names, jobs, 'ui')
+            blender_names = [n for n in names if n not in UI_FLAT]     # the 2D-only ones are drawn here, not rendered
+            if '--render' in flags and blender_names:
+                render(work, blender_names, jobs, 'ui')
             for n in names:
-                print('composed', compose_ui(work, n))
+                print('composed', UI_FLAT[n]() if n in UI_FLAT else compose_ui(work, n))
         print('sheet', ui_contact_sheet())
         raise SystemExit(0)
     names = [a for a in args if not a.startswith('--')] or ORDER

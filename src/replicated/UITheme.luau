@@ -133,6 +133,24 @@ UITheme.Icons = {
 	CrystalYield = "rbxassetid://87468174560263",
 	FastSled = "rbxassetid://76695650631595",
 	UpgradeBadge = "rbxassetid://99395304409533",
+	-- the Rebirth and Welcome Back screens (tools/icons: compose_icons.py --ui ...)
+	RebirthBadge = "rbxassetid://107294862129002",
+	FrostCore = "rbxassetid://137088251726546",
+	Rank0 = "rbxassetid://111241988585148",
+	Rank1 = "rbxassetid://117570550955391",
+	Rank2 = "rbxassetid://130653910081354",
+	Rank3 = "rbxassetid://133571915098240",
+	Rank6 = "rbxassetid://99771145800838",
+	Rank10 = "rbxassetid://106787367322406",
+	UnlockPetSlot = "rbxassetid://134443140167323",
+	UnlockLayer = "rbxassetid://133114359505516",
+	IceBlock = "rbxassetid://114271909047905",
+	CrystalPile = "rbxassetid://71686926692598",
+	RobuxItems = "rbxassetid://92422350157527",
+	WelcomeClock = "rbxassetid://107922631064655",
+	Sunburst = "rbxassetid://104345534581209",
+	Tick = "rbxassetid://90966859049520",
+	ArrowRight = "rbxassetid://70392401434581",
 }
 
 -- Picture sheets (ShowcaseKit.SheetPicture): images of Cell x Cell cells, PerRow to a row, in the

@@ -947,6 +947,17 @@ def icon_concept_3():
     render_layers('icon_concept_3', [('block', block + picks), ('pets', pets)])
 
 
+def icon_DoubleWelcomeBack():
+    """the Welcome Back alarm clock (alarm_clock, below) behind a crystal pile"""
+    clock, _ = alarm_clock(badge=False)
+    move_group(clock, (-0.7, 0.9, 1.3 * 0.9 + 0.35), yaw=16, scale=0.9)
+    pile = gem_pile((0.15, -0.45, 0), 1.3, 0.8, 0.34, seed=81, density=1.1)
+    pile += [gem((0.2, -0.65, 1.2), 0.82, (math.radians(10), math.radians(-14), 0.3))]
+    pile += [gem((-1.25, -1.0, 0.12), 0.34, (0.3, 1.3, 0.2)), gem((1.55, -0.85, 0.1), 0.3, (1.2, 0.4, 0.8))]
+    camera(clock + pile, yaw=-12, pitch=16, lens=55, fill=0.92)
+    render_layers('DoubleWelcomeBack', [('clock', clock), ('pile', pile)])
+
+
 ICONS = {k if k.startswith('icon_concept') else k[5:]: v for k, v in globals().items() if k.startswith('icon_') and callable(v)}
 
 
@@ -1027,10 +1038,10 @@ def boxes(name, parts, mats, bevel=0.05):
     return finish_mesh(name, bm, mats, bevel)
 
 
-def slab(name, outline, depth, mat, round_edge=0.06, loc=(0, 0, 0), rot=(90, 0, 0), scale=1.0, tube=False, radii=None):
+def slab(name, outline, depth, mat, round_edge=0.06, loc=(0, 0, 0), rot=(90, 0, 0), scale=1.0, tube=False, radii=None, closed=False):
     """a chunky flat shape: the 2D outline (x, y points, counter-clockwise) filled and made `depth` thick with
     rounded edges (a filled curve, turned into a mesh). rot (degrees) stands it up: the default faces -Y.
-    tube=True instead runs a round tube of radius round_edge along the (open) outline."""
+    tube=True instead runs a round tube of radius round_edge along the outline (closed=True: a loop)."""
     cu = bpy.data.curves.new(name, 'CURVE')
     cu.dimensions = '3D' if tube else '2D'
     sp = cu.splines.new('POLY')
@@ -1044,6 +1055,7 @@ def slab(name, outline, depth, mat, round_edge=0.06, loc=(0, 0, 0), rot=(90, 0, 
         cu.bevel_depth = round_edge
         cu.bevel_resolution = 4
         cu.use_fill_caps = True
+        sp.use_cyclic_u = closed
     else:
         sp.use_cyclic_u = True
         cu.fill_mode = 'BOTH'
@@ -1550,6 +1562,388 @@ def ui_UpgradeBadge():
                  round_edge=0.13, rot=(90, 0, -14))
     camera([arrow], yaw=0, pitch=8, lens=60, fill=0.9)
     render_layers(ui_out('UpgradeBadge'), [('main', [arrow])])
+
+
+# ---------------------------------------------------------------- the Rebirth and Welcome Back screens
+
+def ice_gloss(name, deep=(110, 200, 250), pale=(240, 250, 255), emit=0.35, edge=0.3, rough=0.1, top=0.5, cloud=0.35):
+    """opaque glossy toy ice: `deep` where it faces the camera, whitening to `pale` towards its edges (fresnel), on
+    up-facing faces and in soft frosty clouds; a little self-light keeps it saturated under the bright lights"""
+    m = bpy.data.materials.new(name)
+    m.use_nodes = True
+    nt = m.node_tree
+    N, L = nt.nodes, nt.links
+    P = next(n for n in N if n.type == 'BSDF_PRINCIPLED')
+    lw = N.new('ShaderNodeLayerWeight')
+    lw.inputs['Blend'].default_value = edge
+    geo = N.new('ShaderNodeNewGeometry')
+    sep = N.new('ShaderNodeSeparateXYZ')
+    L.new(geo.outputs['Normal'], sep.inputs[0])
+    up = _math(nt, 'MULTIPLY', _math(nt, 'SUBTRACT', sep.outputs['Z'], 0.4, clamp=True), top * 1.7, clamp=True)
+    tc = N.new('ShaderNodeTexCoord')
+    noise = N.new('ShaderNodeTexNoise')
+    noise.inputs['Scale'].default_value = 2.5
+    L.new(tc.outputs['Object'], noise.inputs['Vector'])
+    fog = _math(nt, 'MULTIPLY', _math(nt, 'SUBTRACT', noise.outputs['Fac'], 0.5, clamp=True), cloud * 4, clamp=True)
+    white = _math(nt, 'MAXIMUM', _math(nt, 'MAXIMUM', _math(nt, 'MULTIPLY', lw.outputs['Facing'], 0.9), up), fog)
+    mix = N.new('ShaderNodeMix')
+    mix.data_type = 'RGBA'
+    mix.inputs[6].default_value = lin(deep)
+    mix.inputs[7].default_value = lin(pale)
+    L.new(white, mix.inputs['Factor'])
+    L.new(mix.outputs[2], P.inputs['Base Color'])
+    L.new(mix.outputs[2], P.inputs['Emission Color'])
+    P.inputs['Emission Strength'].default_value = emit
+    P.inputs['Roughness'].default_value = rough
+    for k, v in (('Coat Weight', 1.0), ('Coat Roughness', 0.05), ('Specular IOR Level', 0.7)):
+        if k in P.inputs:
+            P.inputs[k].default_value = v
+    return m
+
+
+def lava_ice_material(name='CoreIce'):
+    """the Frozen Core: glossy black ice with a network of glowing orange veins (Voronoi cell edges)"""
+    m = bpy.data.materials.new(name)
+    m.use_nodes = True
+    nt = m.node_tree
+    N, L = nt.nodes, nt.links
+    P = next(n for n in N if n.type == 'BSDF_PRINCIPLED')
+    tc = N.new('ShaderNodeTexCoord')
+    warp = N.new('ShaderNodeTexNoise')
+    warp.inputs['Scale'].default_value = 1.6
+    L.new(tc.outputs['Object'], warp.inputs['Vector'])
+    vec = N.new('ShaderNodeVectorMath')
+    vec.operation = 'ADD'
+    L.new(tc.outputs['Object'], vec.inputs[0])
+    sc = N.new('ShaderNodeVectorMath')
+    sc.operation = 'SCALE'
+    sc.inputs['Scale'].default_value = 0.35
+    L.new(warp.outputs['Color'], sc.inputs[0])
+    L.new(sc.outputs[0], vec.inputs[1])
+    vor = N.new('ShaderNodeTexVoronoi')
+    vor.feature = 'DISTANCE_TO_EDGE'
+    vor.inputs['Scale'].default_value = 2.6
+    L.new(vec.outputs[0], vor.inputs['Vector'])
+    vein = _math(nt, 'SUBTRACT', 1.0, _math(nt, 'DIVIDE', vor.outputs['Distance'], 0.07), clamp=True)
+    mix = N.new('ShaderNodeMix')
+    mix.data_type = 'RGBA'
+    mix.inputs[6].default_value = lin((26, 24, 44))
+    mix.inputs[7].default_value = lin((255, 120, 25))
+    L.new(vein, mix.inputs['Factor'])
+    L.new(mix.outputs[2], P.inputs['Base Color'])
+    P.inputs['Emission Color'].default_value = lin((255, 95, 15))
+    L.new(_math(nt, 'MULTIPLY', vein, 3.5), P.inputs['Emission Strength'])
+    P.inputs['Roughness'].default_value = 0.12
+    for k, v in (('Coat Weight', 1.0), ('Coat Roughness', 0.05)):
+        if k in P.inputs:
+            P.inputs[k].default_value = v
+    return m
+
+
+def rainbow_plastic(name, x0=-0.8, x1=0.8, rough=0.4, emit=0.3):
+    """a glossy plastic whose hue runs across it left to right, red at the object's own x0 to violet at x1"""
+    m = bpy.data.materials.new(name)
+    m.use_nodes = True
+    nt = m.node_tree
+    P = next(n for n in nt.nodes if n.type == 'BSDF_PRINCIPLED')
+    tc = nt.nodes.new('ShaderNodeTexCoord')
+    sg = nt.nodes.new('ShaderNodeSeparateXYZ')
+    nt.links.new(tc.outputs['Object'], sg.inputs[0])
+    fac = _math(nt, 'ADD', _math(nt, 'MULTIPLY', _math(nt, 'SUBTRACT', sg.outputs['X'], x0), 0.84 / (x1 - x0)), 0.0, clamp=True)
+    col = _rainbow_ramp(nt, fac)
+    dim = nt.nodes.new('ShaderNodeVectorMath')
+    dim.operation = 'SCALE'
+    dim.inputs['Scale'].default_value = 0.45
+    nt.links.new(col, dim.inputs[0])
+    nt.links.new(dim.outputs[0], P.inputs['Base Color'])
+    nt.links.new(col, P.inputs['Emission Color'])
+    P.inputs['Emission Strength'].default_value = emit
+    P.inputs['Roughness'].default_value = rough
+    if 'Coat Weight' in P.inputs:
+        P.inputs['Coat Weight'].default_value = 0.3
+    return m
+
+
+def frost_core(radius=0.78, loc=(0, 0, 0), rot=(0.3, 0.2, 0.4), base=(80, 180, 255), glow=(130, 220, 255), emit=0.6):
+    """the Frost Core: a faceted, glowing ice-blue gem ball (an icosphere, flat shaded)"""
+    bm = bmesh.new()
+    bmesh.ops.create_icosphere(bm, subdivisions=1, radius=radius)
+    core = finish_mesh('FrostCore', bm, [plastic('Core', base, 0.08, emit=emit, emit_colour=glow, coat=0.8)], smooth=False)
+    core.location, core.rotation_euler = loc, rot
+    return core
+
+
+def move_group(objs, loc=(0, 0, 0), yaw=0.0, scale=1.0):
+    """scale, turn (about Z) and move a group of objects together, round the origin"""
+    bpy.context.view_layer.update()
+    M = Matrix.Translation(Vector(loc)) @ Matrix.Rotation(math.radians(yaw), 4, 'Z') @ Matrix.Scale(scale, 4)
+    for o in objs:
+        if o.parent is None:
+            o.matrix_world = M @ o.matrix_world
+    bpy.context.view_layer.update()
+
+
+def ui_RebirthBadge():
+    """two ice circular arrows chasing round a glowing Frost Core"""
+    core = frost_core(0.8, base=(60, 165, 255), glow=(110, 210, 255), emit=0.75)
+    ice = ice_gloss('IceArrow', deep=(150, 222, 255), pale=(250, 253, 255), emit=0.45, edge=0.35)
+    arrows = [slab('RingA', ring_arrow_outline(1.32, 0.34, 15, 165, 0.78, 36), 0.4, ice, 0.12, loc=(0, 0.15, 0), rot=(90, 0, 0)),
+              slab('RingB', ring_arrow_outline(1.32, 0.34, 195, 345, 0.78, 36), 0.4, ice, 0.12, loc=(0, 0.15, 0), rot=(90, 0, 0))]
+    camera([core] + arrows, yaw=-8, pitch=10, lens=60, fill=0.92)
+    render_layers(ui_out('RebirthBadge'), [('arrows', arrows), ('core', [core])])
+
+
+def ui_FrostCore():
+    """the Frost Core alone, with three tiny ice shards floating round it"""
+    core = frost_core(0.8, base=(60, 165, 255), glow=(110, 210, 255), emit=0.75)
+    ice = ice_gloss('Shard', deep=(90, 200, 255), pale=(225, 248, 255), emit=0.45, edge=0.4)
+    shards = [shard((1.1, -0.2, 0.82), 0.5, 5, ice, stretch=1.5, rot=(0.3, 0.6, 0.5)),
+              shard((-1.15, -0.1, 0.42), 0.4, 8, ice, stretch=1.5, rot=(0.2, -0.5, 0.3)),
+              shard((0.95, -0.3, -0.85), 0.36, 11, ice, stretch=1.4, rot=(0.9, 0.4, 0.2))]
+    camera([core] + shards, yaw=-6, pitch=10, lens=60, fill=0.92)
+    render_layers(ui_out('FrostCore'), [('shards', shards), ('core', [core])])
+
+
+def shield_outline(W=1.0, top=1.0, arch=0.1, r=0.26, side_end=0.0, tip=-1.32):
+    """a chunky heater shield, counter-clockwise: a gently arched top, rounded corners, straight sides curving in
+    to a point at the bottom"""
+    right = []
+    p0, c, p1 = Vector((0, tip)), Vector((W * 0.92, tip + 0.62)), Vector((W, side_end))
+    for i in range(1, 17):                                   # the lower curve, tip -> side (a quadratic bezier)
+        t = i / 16
+        right.append(tuple((1 - t) ** 2 * p0 + 2 * (1 - t) * t * c + t * t * p1))
+    right.append((W, top - r))                                # the straight side
+    for i in range(1, 9):                                    # the rounded corner
+        a = math.radians(90 * i / 8)
+        right.append((W - r + math.cos(a) * r, top - r + math.sin(a) * r))
+    for i in range(1, 9):                                    # the arched top, corner -> middle
+        x = (W - r) * (1 - i / 8)
+        right.append((x, top + arch * (1 - (x / (W - r)) ** 2)))
+    left = [(-x, y) for x, y in reversed(right[:-1])]
+    return [(0.0, tip)] + right + left
+
+
+def star_outline(r=0.5, inner=0.5, n=5, rot=90.0):
+    return [(math.cos(math.radians(rot + i * 180 / n)) * (r if i % 2 == 0 else r * inner),
+             math.sin(math.radians(rot + i * 180 / n)) * (r if i % 2 == 0 else r * inner)) for i in range(n * 2)]
+
+
+# rank -> (shield colour or 'rainbow', star count); stars: (x, z, outer radius) on the face, by count
+RANK_LOOKS = {0: ((118, 134, 162), 0), 1: ((150, 215, 255), 1), 2: ((60, 210, 190), 2), 3: ((175, 110, 255), 3),
+              6: ((255, 205, 60), 4), 10: ('rainbow', 5)}
+STAR_LAYOUTS = {1: [(0, 0.05, 0.5)],
+                2: [(-0.37, 0.08, 0.3), (0.37, 0.08, 0.3)],
+                3: [(0, 0.38, 0.25), (-0.4, -0.13, 0.25), (0.4, -0.13, 0.25)],
+                4: [(-0.36, 0.4, 0.21), (0.36, 0.4, 0.21), (-0.36, -0.2, 0.21), (0.36, -0.2, 0.21)],
+                5: [(-0.52, 0.4, 0.17), (0, 0.5, 0.17), (0.52, 0.4, 0.17), (-0.27, -0.12, 0.17), (0.27, -0.12, 0.17)]}
+
+
+def _rank_badge(rank):
+    colour, count = RANK_LOOKS[rank]
+    outline = shield_outline()
+    cy = -0.16
+    if colour == 'rainbow':
+        face_mat, rim_col = rainbow_plastic('Face'), (245, 240, 255)
+    else:     # a darker base than the target colour: the icon lights are bright and would bleach it (gold less so)
+        k = 0.88 if rank == 6 else 0.72
+        face_mat = plastic('Face', tuple(int(c * k) for c in colour), 0.32, emit=0.14 if rank == 6 else 0.1, emit_colour=colour, coat=0.6)
+        rim_col = tuple(int(c + (255 - c) * 0.5) for c in colour)
+    back = slab('ShieldRim', outline, 0.36, plastic('Rim', rim_col, 0.25, emit=0.15, coat=0.9), round_edge=0.1)
+    inset = [(x * 0.79, cy + (y - cy) * 0.79) for x, y in outline]
+    face = slab('ShieldFace', inset, 0.3, face_mat, round_edge=0.09, loc=(0, -0.08, 0))
+    objs = [back, face]
+    front_y = -0.08 - 0.15 - 0.04
+    star_mat = plastic('Star', (255, 255, 255), 0.3, emit=0.12) if rank in (6, 10) else \
+        plastic('Star', (255, 212, 60), 0.25, metal=0.3, emit=0.15)
+    stars = [slab('Star', star_outline(r, 0.5), 0.14, star_mat, round_edge=0.045, loc=(x, front_y, z))
+             for x, z, r in STAR_LAYOUTS.get(count, [])]
+    if count:
+        flake = snowflake('Flake', 0.17, (0, front_y + 0.02, -0.7), plastic('Flake', (255, 255, 255), 0.3, emit=0.15), thick=0.06)
+    else:
+        flake = snowflake('Flake', 0.5, (0, front_y + 0.02, cy + 0.06), plastic('Flake', (205, 218, 238), 0.3, emit=0.12), thick=0.09)
+    objs.append(flake)
+    turn(objs + stars, -12)
+    camera(objs + stars, yaw=-4, pitch=6, lens=60, fill=0.92, points=world_points([back]))
+    render_layers(ui_out('Rank%d' % rank), [('shield', objs)] + ([('stars', stars)] if stars else []))
+
+
+for _r in RANK_LOOKS:
+    globals()['ui_Rank%d' % _r] = (lambda r: (lambda: _rank_badge(r)))(_r)
+
+
+def ice_pedestal(radius=0.8, height=0.34):
+    """a round ice pedestal with a glowing ring round its top"""
+    bm = bmesh.new()
+    cyl_into(bm, radius, height, (0, 0, height / 2), segments=48)
+    ped = finish_mesh('Pedestal', bm, [ice_gloss('Pedestal', deep=(55, 150, 240), pale=(170, 225, 255), emit=0.3, top=0.25, cloud=0.2)],
+                      bevel=0.08)
+    ring_pts = [(math.cos(a) * radius * 0.8, math.sin(a) * radius * 0.8, height + 0.01)
+                for a in (i / 48 * math.tau for i in range(48))]
+    ring = slab('GlowRing', ring_pts, 0, plastic('Glow', (150, 240, 255), 0.3, emit=3.0, emit_colour=(90, 225, 255)),
+                round_edge=0.06, rot=(0, 0, 0), tube=True, closed=True)
+    return [ped, ring]
+
+
+def ui_UnlockPetSlot():
+    """a pet on a glowing ice pedestal, a green plus: a new pet slot opens"""
+    ped = ice_pedestal(0.72, 0.3)
+    pet = add_pet('ArcticFoxKit', (0, 0, 0.3), yaw=-28, size=1.4, clip='Idle', frame=0)
+    plus = slab('Plus', plus_outline(0.55, 1.5), 0.4, plastic('PlusGreen', GREEN, 0.3, emit=0.12), round_edge=0.12,
+                loc=(1.0, -0.6, 1.45), rot=(90, 0, -14), scale=0.52)
+    camera(ped + [pet, plus], yaw=-10, pitch=16, lens=55, fill=0.92)
+    render_layers(ui_out('UnlockPetSlot'), [('main', ped + [pet]), ('plus', [plus])])
+
+
+def ui_UnlockLayer():
+    """a cut-away stack of three ice layers (pale, deep blue, the Frozen Core's black ice with orange veins) and a
+    green down-arrow: a deeper ice layer opens"""
+    W, D = 1.7, 1.3
+    mats = [lava_ice_material(), ice_gloss('MidIce', deep=(30, 100, 220), pale=(120, 185, 255), emit=0.3, cloud=0.25),
+            ice_gloss('TopIce', deep=(160, 220, 255), pale=(248, 252, 255), emit=0.3)]
+    layers, z = [], 0.0
+    for i, h in enumerate((0.58, 0.5, 0.46)):
+        inset = 0.0
+        bm = bmesh.new()
+        box_into(bm, (W - inset, D - inset, h), (0, 0, z + h / 2))
+        layers.append(finish_mesh('Layer%d' % i, bm, [mats[i]], bevel=0.07))
+        z += h + 0.035
+    arrow = [(x, -y) for x, y in reversed(arrow_outline(0.5, 1.2, 1.55, 0.7))]
+    arrow = slab('Down', arrow, 0.4, plastic('ArrowGreen', GREEN, 0.3, emit=0.12), round_edge=0.12,
+                 loc=(1.55, -0.55, 1.6), rot=(90, 0, 0))
+    turn(layers + [arrow], -28)
+    camera(layers + [arrow], yaw=-6, pitch=20, lens=55, fill=0.92)
+    render_layers(ui_out('UnlockLayer'), [('stack', layers), ('arrow', [arrow])])
+
+
+def ui_IceBlock():
+    """the rounded ice block with a creature silhouette inside: block level"""
+    block = ice_block((0, 0, 0), (1.1, 1.0, 1.1), cracks=0.3, seed=71, pet='SnowBunny', pet_size=0.8, pet_yaw=-24,
+                      pet_clip='Cheer', pet_frame=CHEER['SnowBunny'], orb=(140, 220, 255), orb_strength=5.0, view=(-24, 18))
+    bev = block[0].modifiers['Bevel']
+    bev.width, bev.segments = 0.17, 4
+    camera(block, yaw=-24, pitch=18, lens=55, fill=0.9)
+    render_layers(ui_out('IceBlock'), [('main', block)])
+
+
+def ui_CrystalPile():
+    """a big generous heap of crystals with a big one on top"""
+    pile = gem_pile((0, 0, 0), 1.15, 1.05, 0.36, seed=55, density=1.15)
+    pile += [gem((-0.05, -0.25, 1.55), 1.0, (math.radians(10), math.radians(-14), 0.3)),
+             gem((-0.55, -0.55, 0.95), 0.58, (math.radians(-14), math.radians(-32), 1.2)),
+             gem((0.58, -0.5, 0.88), 0.56, (math.radians(16), math.radians(30), 0.5)),
+             gem((-1.25, -0.8, 0.14), 0.34, (0.3, 1.3, 0.2)), gem((1.3, -0.7, 0.12), 0.32, (1.2, 0.4, 0.8))]
+    camera(pile, yaw=-16, pitch=20, lens=55, fill=0.92)
+    render_layers(ui_out('CrystalPile'), [('main', pile)])
+
+
+def ui_RobuxItems():
+    """a purple gift box with a gold ribbon and bow"""
+    purple, lid_purple = plastic('Box', (150, 70, 235), 0.3, emit=0.15), plastic('Lid', (175, 105, 250), 0.3, emit=0.15)
+    gold = plastic('Ribbon', GOLD, 0.28, metal=0.4, emit=0.14)
+    W, H, LH = 1.5, 1.05, 0.34
+    body = boxes('GiftBox', [((W, W, H), (0, 0, H / 2), (0, 0, 0), 0),
+                             ((0.32, W + 0.03, H), (0, 0, H / 2), (0, 0, 0), 1),
+                             ((W + 0.03, 0.32, H), (0, 0, H / 2), (0, 0, 0), 1)], [purple, gold], bevel=0.05)
+    lid = boxes('GiftLid', [((W + 0.14, W + 0.14, LH), (0, 0, H + LH / 2 - 0.02), (0, 0, 0), 0),
+                            ((0.34, W + 0.17, LH + 0.02), (0, 0, H + LH / 2 - 0.02), (0, 0, 0), 1),
+                            ((W + 0.17, 0.34, LH + 0.02), (0, 0, H + LH / 2 - 0.02), (0, 0, 0), 1)], [lid_purple, gold], bevel=0.05)
+    knot_z = H + LH + 0.06
+    loops = []
+    for ang in (35, 145):
+        pts = []
+        for i in range(40):
+            phi = -math.pi / 2 + math.pi * i / 40
+            rr = 0.78 * math.cos(phi)
+            u, v = rr * math.cos(phi), rr * math.sin(phi) * 0.6
+            a = math.radians(ang)
+            pts.append((u * math.cos(a) - v * math.sin(a), 0.0, u * math.sin(a) + v * math.cos(a)))
+        lp = slab('BowLoop', pts, 0, gold, round_edge=0.11, loc=(0, 0, knot_z), rot=(0, 0, 0), tube=True, closed=True)
+        lp.scale = (1, 2.1, 1)
+        loops.append(lp)
+    bm = bmesh.new()
+    ret = bmesh.ops.create_uvsphere(bm, u_segments=20, v_segments=12, radius=0.2)
+    bmesh.ops.scale(bm, vec=(1.0, 1.25, 0.95), verts=ret['verts'])
+    knot = finish_mesh('Knot', bm, [gold])
+    knot.location = (0, 0, knot_z)
+    objs = [body, lid, knot] + loops
+    turn(objs, -30)
+    camera(objs, yaw=-8, pitch=22, lens=55, fill=0.92)
+    render_layers(ui_out('RobuxItems'), [('main', objs)])
+
+
+def alarm_clock(badge=True):
+    """a round alarm clock, its face toward -Y and centred on the origin (body radius 1): an ice-blue body, a white
+    face with dark hands at 10:10, two gold bells on top, little feet; badge=True adds a snowflake badge over its
+    lower right. Returns (clock objects, badge objects)."""
+    body_mat = ice_gloss('ClockBody', deep=(80, 175, 250), pale=(215, 240, 255), emit=0.3, cloud=0.2)
+    face_mat = plastic('ClockFace', (252, 253, 255), 0.4, emit=0.18)
+    ink = plastic('ClockHands', (28, 32, 66), 0.4)
+    gold = plastic('ClockGold', GOLD, 0.3, metal=0.45, emit=0.12)
+    marks = plastic('ClockMarks', (70, 130, 210), 0.4, emit=0.1)
+    feet_mat = plastic('ClockFeet', (50, 110, 205), 0.35, emit=0.1)
+    bm = bmesh.new()
+    cyl_into(bm, 1.0, 0.62, (0, 0, 0), (90, 0, 0), segments=64)
+    body = finish_mesh('ClockBody', bm, [body_mat], bevel=0.15, segments=4)
+    bm = bmesh.new()
+    cyl_into(bm, 0.8, 0.08, (0, -0.3, 0), (90, 0, 0), segments=64)
+    face = finish_mesh('ClockFace', bm, [face_mat], bevel=0.02)
+    fy = -0.36
+    bm = bmesh.new()
+    for k in range(12):
+        a = math.radians(k * 30)
+        big = k % 3 == 0
+        cyl_into(bm, 0.075 if big else 0.042, 0.04, (math.sin(a) * 0.64, fy + 0.02, math.cos(a) * 0.64), (90, 0, 0), segments=16)
+    ticks = finish_mesh('ClockMarks', bm, [marks], bevel=0.01)
+    bm = bmesh.new()
+    for a_deg, length, width in ((305, 0.42, 0.13), (60, 0.6, 0.095)):         # 10:10, clockwise from 12
+        a = math.radians(a_deg)
+        box_into(bm, (length, 0.05, width), (math.sin(a) * length / 2, fy - 0.01, math.cos(a) * length / 2), (0, a_deg - 90, 0))
+    hands = finish_mesh('ClockHands', bm, [ink], bevel=0.02)
+    bm = bmesh.new()
+    cyl_into(bm, 0.1, 0.07, (0, fy - 0.05, 0), (90, 0, 0), segments=20)
+    cap = finish_mesh('ClockCap', bm, [gold], bevel=0.02)
+    parts = [body, face, ticks, hands, cap]
+    for s in (-1, 1):                                                            # the two bells, tilted outward
+        bm = bmesh.new()
+        bmesh.ops.create_uvsphere(bm, u_segments=28, v_segments=14, radius=0.42)
+        bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(0, 0, 0), plane_no=(0, 0, -1), clear_outer=True)
+        cyl_into(bm, 0.43, 0.06, (0, 0, 0.0), segments=28)                       # the bell's lip
+        cyl_into(bm, 0.07, 0.16, (0, 0, 0.46), segments=12)                      # the knob on top
+        bell = finish_mesh('Bell', bm, [gold], bevel=0.0)
+        a = math.radians(40)
+        bell.location = (s * math.sin(a) * 0.98, 0.04, math.cos(a) * 0.98)
+        bell.rotation_euler = (0, s * a, 0)
+        bell.scale = (1, 1, 0.9)
+        parts.append(bell)
+        bm = bmesh.new()                                                         # a little foot
+        a = math.radians(142)
+        d = Vector((s * math.sin(a), 0, math.cos(a)))
+        cyl_into(bm, 0.085, 0.34, tuple(d * 1.08), (0, math.degrees(s * a), 0), segments=12)
+        ret = bmesh.ops.create_uvsphere(bm, u_segments=16, v_segments=8, radius=0.15)
+        bmesh.ops.translate(bm, vec=tuple(d * 1.26), verts=ret['verts'])
+        parts.append(finish_mesh('Foot', bm, [feet_mat]))
+    bm = bmesh.new()                                                             # the striker between the bells
+    cyl_into(bm, 0.06, 0.26, (0, 0.04, 1.08), segments=12)
+    ret = bmesh.ops.create_uvsphere(bm, u_segments=16, v_segments=8, radius=0.11)
+    bmesh.ops.translate(bm, vec=(0, 0.04, 1.24), verts=ret['verts'])
+    parts.append(finish_mesh('Striker', bm, [gold]))
+    extra = []
+    if badge:
+        bx, by, bz = 0.78, -0.62, -0.72
+        bm = bmesh.new()
+        cyl_into(bm, 0.44, 0.18, (bx, by, bz), (90, 0, 0), segments=40)
+        disc = finish_mesh('Badge', bm, [plastic('BadgeCyan', (40, 185, 255), 0.25, emit=0.35, emit_colour=(80, 210, 255), coat=0.9)],
+                           bevel=0.06)
+        flake = snowflake('BadgeFlake', 0.3, (bx, by - 0.11, bz), plastic('BadgeFlake', (255, 255, 255), 0.3, emit=0.2), thick=0.06)
+        extra = [disc, flake]
+    bpy.context.view_layer.update()
+    return parts, extra
+
+
+def ui_WelcomeClock():
+    clock, badge = alarm_clock()
+    camera(clock + badge, yaw=-12, pitch=8, lens=60, fill=0.92)
+    render_layers(ui_out('WelcomeClock'), [('clock', clock), ('badge', badge)])
 
 
 UI_ICONS = {k[3:]: v for k, v in globals().items() if k.startswith('ui_') and k != 'ui_out' and k != 'ui_building' and callable(v)}

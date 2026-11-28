@@ -6,15 +6,17 @@ Every step you do by hand to launch Rescue Pets From the Ice, in order. Tick eac
 
 - [x] Merge the `overnight-launch-prep` branch into `main` (done in the launch fix pass). Pull, and make sure `rojo serve` is running and the Studio plugin is connected.
 - [ ] Save the place in Studio and keep a backup copy of the `.rbxl` (File > Save to File As...). The building, pick, plot and plaza templates, the world and the streaming settings live only in the place file.
-- [ ] Run every spec: `python tools/run_specs.py` (Studio open in Edit mode). All 21 must pass.
+- [ ] Merge the `overnight-retest` branch into `main` (2026-11-28: the new Rebirth and Welcome Back screens, Double Welcome Back, Unified Lighting, fixes from the re-test; `OVERNIGHT_RETEST_REPORT.md`).
+- [ ] Run every spec: `python tools/run_specs.py` (Studio open in Edit mode). All 26 must pass.
 - [x] Merge the `overnight-final` branch into `main` (merged 2026-11-26: soft shutdown, announcements, analytics, the visual review tools).
-- [ ] Workspace attributes: none of the Studio test switches may be set (`StudioFreshSave`, `StudioUseLiveSaves`, `StudioTimeAway`, `StudioPaidRandomRestricted`, `StudioIgnoreOwnedPasses`); on the client switches `StudioScreenSize`, `StudioGamepad` are never saved. Check Workspace > Attributes is empty of them.
+- [ ] Workspace attributes: none of the Studio test switches may be set (`StudioFreshSave`, `StudioUseLiveSaves`, `StudioTimeAway`, `StudioPaidRandomRestricted`, `StudioIgnoreOwnedPasses`), nor the day-night debug ones (`DayCycleLook`, a `DayCycleSpeed` other than 1: they are set by the server at start, never saved on purpose); the client switches `StudioScreenSize`, `StudioGamepad` are never saved. Check Workspace > Attributes is empty of them.
 - [ ] `ProximityPromptService.Enabled` is ticked (it is saved with the place; the UI kit turns it off while a window is open in Edit mode).
 
-## 2. Robux items (all 28 created)
+## 2. Robux items (all 29 created)
 
-- [x] All 28 items (6 passes, 8 products, 14 "Gift: <name>" products) were created on sale through Open Cloud by `python tools/create_products.py` on 2026-11-26 (the Giant Crystal Chest and the Mythic Block x3 later the same day), with the icons from `store-assets/icons/`. Their ids are in `src/replicated/MonetizationConfig.luau`, `docs/ROBUX_PRODUCTS.md` and `store-assets/icons/products_manifest.json`.
-- [x] Studio Play: `[PriceCheck] 28 items checked, 0 problems, 0 hidden`.
+- [x] All 29 items (6 passes, 9 products, 14 "Gift: <name>" products) were created on sale through Open Cloud by `python tools/create_products.py` on 2026-11-26 (the Giant Crystal Chest and the Mythic Block x3 later the same day; Double Welcome Back, 19, on 2026-11-28, with no gift twin), with the icons from `store-assets/icons/`. Their ids are in `src/replicated/MonetizationConfig.luau`, `docs/ROBUX_PRODUCTS.md` and `store-assets/icons/products_manifest.json`.
+- [x] Studio Play: `[PriceCheck] 29 items checked, 0 problems, 0 hidden`.
+- [ ] Double Welcome Back is sold only on the Welcome Back screen (not in the shop): check it once in a live server after being away (the x2 button with its 19 Robux badge, then Claim!).
 - [ ] Look at each item on the Creator Hub (Monetization > Passes / Developer Products): name, description, price, icon and On Sale as you want them. The script is safe to re-run; it never makes duplicates.
 - [ ] The VIP lounge is built only once the VIP pass has a real id (it now has): check it once in Play.
 - [x] Prices set from the research in `OVERNIGHT_FINAL_REPORT.md` (Phase 4), on Roblox through `tools/create_products.py` (2x Crystals 349, Auto Pick 199, Extra Pet Slot 399, Pet Squad 699, Crystal Sack 99, Shatter Now 29, gift twins the same). To change a price later: edit the table in `docs/ROBUX_PRODUCTS.md` and `ExpectedPrice` in `MonetizationConfig.luau`, run `python tools/create_products.py --dry-run`, then without `--dry-run`, then Play and check PriceCheck shows 0 problems.
@@ -36,7 +38,7 @@ Every step you do by hand to launch Rescue Pets From the Ice, in order. Tick eac
   Play once and walk in and out of your plot: the music crossfades. An empty id simply plays nothing.
 - [ ] Every audio file is approved: `python tools/upload_models.py --check --manifest store-assets/audio/upload_manifest.json`.
 - [ ] Every asset id the game uses is the group's and approved: `python tools/check_asset_ids.py` (on 2026-11-26: 160 ids, all group-owned and approved; it reads the configs and asks Open Cloud about each id).
-- [ ] Every UI icon is approved: `python tools/upload_models.py --check --manifest store-assets/ui-icons/upload_manifest.json` (27 images, all approved on 2026-11-25), and the leaderboard model: `--manifest store-assets/plaza/upload_manifest.json` (approved at upload).
+- [ ] Every UI icon is approved: `python tools/upload_models.py --check --manifest store-assets/ui-icons/upload_manifest.json` (62 images, all approved on 2026-11-28, the Rebirth and Welcome Back screens' 17 included), and the leaderboard model: `--manifest store-assets/plaza/upload_manifest.json` (approved at upload).
 
 ## 5. Codes
 
@@ -66,8 +68,8 @@ Every step you do by hand to launch Rescue Pets From the Ice, in order. Tick eac
 
 Your own account counts as owning every pass (you made them), so test the pass with a second account or a friend.
 
-- [ ] A **pass** (cheapest: Auto Pick, 149): buy it from the shop in the live game. It works at once (no rejoin): Auto Pick taps for you in your plot. Output in the Developer Console (F9 > Server): `[Purchase] <name> bought the Auto Pick pass`.
-- [ ] A **product** (cheapest: Shatter Now, 25): buy it with a block on your mound. The block shatters; the server log shows `[Purchase] <name> Shatter Now (<id>): PurchaseGranted, gave ...`.
+- [ ] A **pass** (cheapest: Auto Pick, 199): buy it from the shop in the live game. It works at once (no rejoin): Auto Pick taps for you in your plot. Output in the Developer Console (F9 > Server): `[Purchase] <name> bought the Auto Pick pass`.
+- [ ] A **product** (cheapest in the shop: Shatter Now or the Crystal Pouch, 29): buy it with a block on your mound. The block shatters; the server log shows `[Purchase] <name> Shatter Now (<id>): PurchaseGranted, gave ...`.
 - [ ] Rejoin: the product's crystals or rescue are still there; the pass still works.
 
 ## 9. The first hour live

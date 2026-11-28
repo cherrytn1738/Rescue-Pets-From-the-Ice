@@ -6,6 +6,7 @@ RemoteFunction; the server checks it, prepares what the receipt will need, and o
   ("BuyPass", passKey)                 a game pass the player doesn't own yet
   ("Buy", productKey)                  a developer product for themselves
   ("Gift", itemKey, recipientId)       a product or a pass for another player in this server (Gifting.Prepare)
+  ("CloseOffer", productKey)           the player closed an offer without buying (the Welcome Back screen's Claim!)
 -> { ok, message } for the window's feedback line. The client never sends a price, an amount or an
 id. Nothing here grants anything: receipts do (Receipts), and pass ownership (GamePasses).
 
@@ -42,8 +43,9 @@ local function reply(ok: boolean, message: string)
 	return { ok = ok, message = message }
 end
 
-local function simulatedNote(decision): string
-	return if decision == Enum.ProductPurchaseDecision.PurchaseGranted then "Studio: simulated purchase granted (no id yet)" else "Studio: simulated purchase NOT granted (see Output)"
+local function simulatedNote(decision, entry): string
+	local why = if MonetizationConfig.IsLive(entry) then "" else " (no id yet)"
+	return if decision == Enum.ProductPurchaseDecision.PurchaseGranted then `Studio: simulated purchase granted{why}` else "Studio: simulated purchase NOT granted (see Output)"
 end
 
 local actions = {}
@@ -72,31 +74,61 @@ function actions.BuyPass(player: Player, passKey)
 	return reply(true, "")
 end
 
+-- simulate: Studio's simulated purchase (an item without an id, or the debug menu's "Simulate a purchase").
+local function buyProduct(player: Player, product, simulate: boolean)
+	-- Don't take Robux for something that can't apply right now.
+	local ok, problem = PurchaseRewards.CanGive(player, product, { Prompting = true })
+	if not ok then
+		return reply(false, problem or "You can't buy that right now.")
+	end
+	if simulate or not MonetizationConfig.IsLive(product) then
+		if RunService:IsStudio() then
+			PurchaseRewards.Prompting(player, product)
+			local decision, note, purchaseId = Receipts.Simulate(player, product)
+			local granted = decision == Enum.ProductPurchaseDecision.PurchaseGranted
+			PurchaseRewards.PromptFinished(player, product, granted)
+			Analytics.RobuxPrompted(player, product.Key)
+			if granted then
+				Analytics.RobuxPurchased(player, product.Key)
+			end
+			local result = reply(granted, `{simulatedNote(decision, product)}: {note}`)
+			result.purchaseId = purchaseId -- (the debug menu's duplicate receipt replays it)
+			return result
+		end
+		return reply(false, "That isn't on sale yet.")
+	end
+	promptOpenUntil[player] = os.clock() + PROMPT_SECONDS
+	PurchaseRewards.Prompting(player, product)
+	MarketplaceService:PromptProductPurchase(player, product.Id)
+	Analytics.RobuxPrompted(player, product.Key)
+	return reply(true, "")
+end
+
 function actions.Buy(player: Player, productKey)
 	local product = MonetizationConfig.GetProduct(productKey)
 	if not product then
 		return reply(false, "Unknown item")
 	end
-	-- Don't take Robux for something that can't apply right now.
-	local ok, problem = PurchaseRewards.CanGive(player, product)
-	if not ok then
-		return reply(false, problem or "You can't buy that right now.")
+	return buyProduct(player, product, false)
+end
+
+function actions.CloseOffer(player: Player, productKey)
+	local product = MonetizationConfig.GetProduct(productKey)
+	if not product then
+		return reply(false, "Unknown item")
 	end
-	if not MonetizationConfig.IsLive(product) then
-		if RunService:IsStudio() then
-			local decision, note = Receipts.Simulate(player, product)
-			Analytics.RobuxPrompted(player, product.Key)
-			if decision == Enum.ProductPurchaseDecision.PurchaseGranted then
-				Analytics.RobuxPurchased(player, product.Key)
-			end
-			return reply(decision == Enum.ProductPurchaseDecision.PurchaseGranted, `{simulatedNote(decision)}: {note}`)
-		end
-		return reply(false, "That isn't on sale yet.")
+	local ok, message = PurchaseRewards.Close(player, product)
+	return reply(ok == true, message or "")
+end
+
+-- Studio only (the debug menu): the shop's purchase of a product as a simulated one, prompt hooks included,
+-- even for an item with a real id (Studio's own test prompt can't be clicked from a script).
+function RobuxShop.SimulatePurchase(player: Player, productKey)
+	local product = MonetizationConfig.GetProduct(productKey)
+	if not product or not RunService:IsStudio() then
+		return reply(false, "Studio only, and a known product")
 	end
-	promptOpenUntil[player] = os.clock() + PROMPT_SECONDS
-	MarketplaceService:PromptProductPurchase(player, product.Id)
-	Analytics.RobuxPrompted(player, product.Key)
-	return reply(true, "")
+	return buyProduct(player, product, true)
 end
 
 function actions.Gift(player: Player, productKey, recipientId)
@@ -133,7 +165,7 @@ function actions.Gift(player: Player, productKey, recipientId)
 		if decision == Enum.ProductPurchaseDecision.PurchaseGranted then
 			Analytics.RobuxPurchased(player, product.Key)
 		end
-		return reply(decision == Enum.ProductPurchaseDecision.PurchaseGranted, `{simulatedNote(decision)}: {note}`)
+		return reply(decision == Enum.ProductPurchaseDecision.PurchaseGranted, `{simulatedNote(decision, { Id = product.GiftId })}: {note}`)
 	end
 	if player.Parent == Players then
 		MarketplaceService:PromptProductPurchase(player, product.GiftId)
@@ -209,6 +241,8 @@ function RobuxShop.Start()
 		end
 		if kind == "Gift" then
 			Gifting.PromptFinished(player, product, purchased)
+		elseif kind == "Product" then
+			PurchaseRewards.PromptFinished(player, product, purchased)
 		end
 	end)
 	MarketplaceService.PromptGamePassPurchaseFinished:Connect(function(player, gamePassId, purchased)

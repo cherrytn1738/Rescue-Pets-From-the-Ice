@@ -544,7 +544,7 @@ Players share one world. Everyone can see each other's ice and what's glowing in
 
 ## Monetization
 
-Launch with 6 passes and 4 kinds of products. Prices were checked against 12 popular simulators on 2026-11-26 and set from that research (`OVERNIGHT_FINAL_REPORT.md`, Phase 4).
+Launch with 6 passes and 5 kinds of products. Prices were checked against 12 popular simulators on 2026-11-26 and set from that research (`OVERNIGHT_FINAL_REPORT.md`, Phase 4).
 
 | Item | Type | Price (Robux) | What it does |
 | --- | --- | --- | --- |
@@ -559,8 +559,9 @@ Launch with 6 passes and 4 kinds of products. Prices were checked against 12 pop
 | Server Frost Rush | Product | 99 | ×2 crystals for everyone in the server for 15 minutes, with your name announced |
 | Mythic Block | Product | 199 | Your next block rolls from a pool with better odds |
 | Mythic Block x3 | Product | 499 | Your next three blocks each roll like a Mythic Block |
+| Double Welcome Back | Product | 19 | On the Welcome Back screen only: the crystals earned while away, paid once more (x2) |
 
-- **Gifts:** every pass and product can be bought as a gift for another player, at the same price.
+- **Gifts:** every pass and product can be bought as a gift for another player, at the same price, except Double Welcome Back (the offer is the buyer's own).
 - **Mythic Block (and its 3-pack) is a paid random item:** show its odds behind an info button and check PolicyService on the server, as in Steal Safari Pets.
 - **Shatter Now sells best on a glowing block:** show its button bigger when a Rare or better creature is inside.
 - **Crystal bundles scale with income,** so they stay worth buying at every stage.
@@ -621,9 +622,9 @@ Every screen at launch, so the UI can be built from one list. All use the showca
 | Creature Book | Book button | Pages by rarity, silhouettes, rescue counts, page rewards, completion % |
 | Rescue reveal | Block shatters | Creature, name, rarity banner, "New!" badge, crystal burst total |
 | New layer banner | Every 10th level | Layer name and number, new ice preview, "Rarer creatures ahead" |
-| Rebirth | Rebirth button | Frost Cores you'd earn, what resets, what's kept, next layer opened, confirm |
+| Rebirth | Rebirth button | Pictures more than words: a rebirth badge over the corner; Before → After cards for the crystal bonus from Frost Cores (+0% → +1,670%) and the Frost Cores this rebirth gives (+334), and a smaller one for the rank (badge and name → the next, with its next unlock as an icon and "at Rebirth 6"); one red line "Resets crystals, buildings, upgrades and level!" with an icon for each; a "Kept" row of icons with green ticks (pets, Book, Frost Cores, rank, Robux items); a level bar (Level 31 / 31) that fills up to the rebirth level; a big green REBIRTH button, greyed until the bar is full |
 | Robux shop | Shop button | Passes, crystal bundles, Shatter Now, Frost Rush, Mythic Block with an odds info button, gifting |
-| Welcome back | Joining after time away | Offline crystals earned, a Collect button |
+| Welcome back | Joining after time away | A clock with a snowflake over the corner, a huge "Welcome Back!", one line ("Your buildings broke ice while you were away:"), a big crystal pile with slowly turning rays behind it, the amount in big gold numbers counting up (+1.2M CRYSTALS) and the time away under it; a rainbow x2 button with the doubled amount and a small Robux price badge (Double Welcome Back, 19), and a big green Claim! |
 | Codes | Codes board in the plaza | Code entry and result |
 | Settings | Gear button | Music, sound effects, reduced effects for low-end phones, auto-equip best pets, day/night cycle (on; off keeps the pink dusk) |
 
@@ -670,7 +671,7 @@ The server owns every number. The client sends tap counts and requests, and only
 - **Replication:** crystals, crystals per second, block HP and the block's rarity are attributes updated about 4 times a second. The client counts smoothly between updates.
 - **Saving:** PlayerData from Steal Safari Pets (session lock, schema version, separate Studio stores). It saves crystals, crystals earned this run and all time, buildings owned, upgrades, block level, the current block's creature, pets and equipped slots, Frost Cores, rebirths, creatures rescued and passes.
 - **Big numbers:** Luau numbers reach about 1e308, which is enough. Display uses suffixes (K, M, B, T, Qa, Qi, Sx, Sp, Oc, No, Dc, then Ud, Dd, Td, Qad, Qid, Sxd, Spd, Ocd, Nod, Vg, Uvg, Dvg, Tvg, Qavg, Qivg, Sxvg, Spvg, Ocvg, Novg, Tg); past Tg (1e93) a short exponent such as "1.82e96". Ice block HP passes Dc around level 200. Leaderboards store `math.floor(math.log10(total) * 1000)`, because OrderedDataStore only holds whole numbers up to about 9e18.
-- **Offline earnings:** building income only, at 50%, capped at 2 hours away, shown in a welcome-back popup ("You earn half your building income for up to 2 hours away." once the cap is reached).
+- **Offline earnings:** building income only, at 50%, capped at 2 hours away, shown on the Welcome Back screen. The crystals are paid when the player joins; the screen's x2 (Double Welcome Back, 19 Robux) pays the same amount once more while its offer is open (10 minutes), and Claim! closes it.
 - **Anti-cheat:** every RemoteEvent is rate-limited. The server computes all prices and checks every buy and equip. Auto Pick runs on the server, so autoclickers can never beat the 10-taps-a-second cap.
 - **Phones:** building animations, ice chips and crystal particles run on the client only. Each plot shows one model per building type with a count badge. Every building, tool and plot mesh uses RenderFidelity Automatic (Roblox's level of detail), not Precise.
 - **Streaming:** Workspace.StreamingEnabled is on, so distant plots stream out (target radius 240 studs, minimum 96, opportunistic stream-out). The plaza is a Persistent model (always loaded with its boards and chests); each station and the plot's own models are PersistentPerPlayer, always loaded for the plot's owner and streamed whole for everyone else. Plot models and their Block folders (the block's state) always reach every client, so ice blocks, beams, name tags and the Golden Glacier (drawn by the client) work at any distance.

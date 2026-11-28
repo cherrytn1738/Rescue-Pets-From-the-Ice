@@ -20,10 +20,10 @@ All 28 items were created through Open Cloud on 2026-11-26 by `python tools/crea
 4. **Gifts.** Every pass and every product can be bought for another player in the server, through a second **developer product** at the same price, named "Gift: <name>". Its id goes in the item's `GiftId` (passes too: a gifted pass is saved in the recipient's data, since Roblox has no record of it).
 5. Every item's `Reward.Kind` already has a handler (`src/server/RobuxPerks.luau`).
 6. The Mythic Block and the Mythic Block x3 are paid random items (`PaidRandom = true`, with `Odds`): the shop shows its odds behind an INFO button before purchase, and players where paid random items are restricted can't buy it or be gifted it (PolicyService).
-7. Start a Play in Studio: `[PriceCheck] 28 items checked, 0 problems, 0 hidden` in Output means every id and price matches (14 items and 14 gift products).
+7. Start a Play in Studio: `[PriceCheck] 29 items checked, 0 problems, 0 hidden` in Output means every id and price matches (15 items and 14 gift products; Double Welcome Back has no gift twin).
 8. Before launch: one real test purchase of a pass and of a product (`docs/LAUNCH_CHECKLIST.md`).
 
-## Items (28: 6 passes, 8 products, 14 gift products)
+## Items (29: 6 passes, 9 products, 14 gift products)
 
 Copy the name, description and price straight onto the Creator Hub. Paste each id into `MonetizationConfig.luau` (the Key column finds the entry).
 
@@ -50,6 +50,7 @@ Copy the name, description and price straight onto the Creator Hub. Paste each i
 | ServerFrostRush | Server Frost Rush | 99 | x2 crystals for everyone in the server for 15 minutes, with your name announced. | 3736501890 | Gift: Server Frost Rush | 3736501900 |
 | MythicBlock | Mythic Block | 199 | Your next ice block rolls with much better odds: 50% Rare, 30% Epic, 15% Legendary, 5% Mythic. | 3736501911 | Gift: Mythic Block | 3736501923 |
 | MythicBlock3 | Mythic Block x3 | 499 | Your next three ice blocks roll with much better odds, each: 50% Rare, 30% Epic, 15% Legendary, 5% Mythic. | 3736773813 | Gift: Mythic Block x3 | 3736773819 |
+| DoubleWelcomeBack | Double Welcome Back | 19 | Doubles the crystals your buildings earned while you were away. | 3737277177 | (none: not giftable) | 0 |
 
 Gift product description (the same for each): "A gift: <name> for another player in your server."
 
@@ -60,4 +61,5 @@ Gift product description (the same for each): "A gift: <name> for another player
 - **Crystal bundles** pay 10 min / 1 h / 6 h / 24 h of your income (Pouch, Sack, Chest, Giant Crystal Chest): the HUD's crystals per second with the permanent bonuses but no rushes, your taps counted at least 4 a second (`Economy.SteadyIncome`).
 - **Shatter Now** breaks the block on your mound. It can't be bought while the next block is still on its sled (the button hides then, and the server refuses). Its HUD button grows, turns gold and pulses when a Rare or better creature is inside.
 - **Server Frost Rush** gives x2 crystals to everyone in the server for 15 minutes and announces the buyer; another one while it runs adds 15 minutes. It isn't saved, so it ends if the server shuts down.
+- **Double Welcome Back** (19): only on the Welcome Back screen, while its offer is open (10 minutes after it appears). It pays the crystals your buildings earned while you were away once more, so you get x2 in all. The server saves the offer (the amount and the time) when it pays the offline earnings; the receipt pays exactly that saved amount, once, and only for an offer whose purchase prompt was opened (`WelcomeBackRules`). Claim! closes the offer. Not in the shop and not giftable.
 - **Mythic Block**: your next block rolls 50% Rare / 30% Epic / 15% Legendary / 5% Mythic, from the whole roster (so the odds hold on any layer). It waits in your save until your next block arrives. **Mythic Block x3** adds three waiting blocks, each rolled with the same odds, one after another.

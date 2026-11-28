@@ -21,6 +21,7 @@ circles on the Roblox site, so the badges stay inside the circle.
 | `ShatterNow.png` | Shatter Now (product) | Mini Yeti bursting out of a broken ice block, shards flying, the gold pick striking, "SHATTER!", red-orange background |
 | `ServerFrostRush.png` | Server Frost Rush (product) | Penguin Chick, Ice Wolf Pup and Seal Pup with snowflakes and a frost swirl, "x2" and "SERVER", electric-blue background |
 | `MythicBlock3.png` | Mythic Block x3 (product) | Three rainbow-glowing ice blocks with Aurora Fox, Snow Phoenix and Spirit Whale silhouettes, "x3", dark purple background |
+| `DoubleWelcomeBack.png` | Double Welcome Back (product, no gift twin) | An ice-blue alarm clock behind a big pile of cyan crystals, a big gold "x2", gold-to-purple background with rays and sparkles |
 | `MythicBlock.png` | Mythic Block (product) | An ice block with a rainbow glow and the dark Spirit Whale silhouette inside, rainbow halo, "?", dark purple background |
 | `../launch/icon_concept_1.png` | Game icon concept 1 | Snow Bunny bursting out of a cracked ice block, jagged ice, shards and crystals flying; no text |
 | `../launch/icon_concept_2.png` | Game icon concept 2 | Close-up: Polar Bear Cub peeking out of a glowing rainbow ice block; no text |

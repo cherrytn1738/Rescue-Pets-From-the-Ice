@@ -208,6 +208,10 @@ return function(sources)
 		Gifting = { Prepare = record("Prepare"), PromptFinished = record("PromptFinished") },
 		OfflineEarnings = { Pay = record("Pay") },
 		Receipts = { Simulate = record("Simulate") },
+		RobuxShop = { SimulatePurchase = function(player, key)
+			table.insert(calls, { name = "SimulatePurchase", args = { player, key } })
+			return { ok = true, message = "simulated" }
+		end },
 		IceBlockService = { Shatter = record("Shatter"), ForceNextCreature = record("ForceNextCreature"), Reroll = record("Reroll") },
 		PetService = { Give = record("Give"), Publish = record("Publish") },
 		PlotService = { SendHome = record("SendHome"), RefreshBuildings = record("RefreshBuildings"), FillDummies = function()
@@ -315,7 +319,7 @@ return function(sources)
 			end
 		end
 	end
-	for _, id in { "SaveNow", "ShowSave", "ResetSave", "OfflineEarningsNow", "AnalyticsProgress", "AnalyticsRestart", "AnalyticsFlush", "DailyChestYesterday", "SetBuilding", "SetBlockHp", "DataStoreRequests", "PreviewUpdateScreen", "PreviewRestartWarning", "ResetCodes", "GivePass", "RemovePass", "SimulateReceipt", "DuplicateReceipt", "FreshSave", "UseLiveSaves", "FakeTimeAway", "PaidRandomRestricted", "TeleportToPlayer", "SetWalkSpeed", "Respawn" } do
+	for _, id in { "SaveNow", "ShowSave", "ResetSave", "OfflineEarningsNow", "AnalyticsProgress", "AnalyticsRestart", "AnalyticsFlush", "DailyChestYesterday", "SetBuilding", "SetBlockHp", "DataStoreRequests", "PreviewUpdateScreen", "PreviewRestartWarning", "ResetCodes", "GivePass", "RemovePass", "SimulateReceipt", "SimulatePurchase", "DuplicateReceipt", "FreshSave", "UseLiveSaves", "FakeTimeAway", "PaidRandomRestricted", "TeleportToPlayer", "SetWalkSpeed", "Respawn" } do
 		check(ids[id] ~= nil, `the debug menu has {id}`)
 	end
 	check(ids.ResetSave.Confirm and ids.UseLiveSaves.Confirm, "resetting a save and switching to live saves both ask first")
@@ -328,6 +332,8 @@ return function(sources)
 	check(not ok and string.find(message, "no game passes yet", 1, true), "with no passes configured, giving one says so (and gives nothing)")
 	ok, message = run("SimulateReceipt", { Product = ids.SimulateReceipt.Params[1].Default, GiftTo = 0 })
 	check(not ok and string.find(message, "no products yet", 1, true), "with no products configured, simulating a receipt says so")
+	ok, message = run("SimulatePurchase", { Product = ids.SimulatePurchase.Params[1].Default })
+	check(not ok and string.find(message, "no products yet", 1, true), "...and simulating a purchase too")
 	check(#calls == 0, "...and neither touched the monetization systems")
 
 	check(ids.SetLightingPreset == nil, "the old lighting preset switch is gone (the day look replaced the golden sunset)")

@@ -8,6 +8,9 @@ OfflineEarnings: when a player rejoins, they earn for the time they were away. S
  - The player's OfflineEarnings attribute ({ Amount, Seconds, Capped, Label, At } as JSON) is what the
    "While you were away" popup shows (OfflineEarningsPopup.client). Display only.
 
+OnPaid(callback): callback(player, data, amount, secondsAway) after every payout, before the popup's attribute is set
+  (WelcomeBack saves its x2 offer there). It must not yield.
+
 SetEarner(earner): earner(player, data, secondsAway, settings) -> amount, label?
   data is the player's live save (PlayerData.Edit). The earner works out the amount with
   OfflineEarningsRules (Earnings or Plan, with `settings` = OfflineEarningsRules.Settings, so the cap
@@ -32,6 +35,7 @@ local OfflineEarnings = {}
 
 local SETTINGS = OfflineEarningsRules.Settings
 local earner = nil
+local paidListeners = {}
 
 local function studioLog(message: string)
 	if RunService:IsStudio() then
@@ -42,6 +46,11 @@ end
 -- Gameplay calls this once (before PlayerData.Start) with the function that pays for time away.
 function OfflineEarnings.SetEarner(callback)
 	earner = callback
+end
+
+-- callback(player, data, amount, secondsAway) after every payout (no yields).
+function OfflineEarnings.OnPaid(callback)
+	table.insert(paidListeners, callback)
 end
 
 -- Pays the player as if they had been away `secondsAway`. Returns the amount paid (0 for nothing).
@@ -65,6 +74,12 @@ function OfflineEarnings.Pay(player: Player, secondsAway: number): number
 		return 0
 	end
 	label = if type(label) == "string" then label else ""
+	for _, callback in paidListeners do
+		local okListener, problem = pcall(callback, player, data, amount, secondsAway)
+		if not okListener then
+			warn(`[Offline] a payout listener failed for {player.Name}: {problem}`)
+		end
+	end
 	PlayerData.MarkImportant(player)
 	PlayerData.Publish(player)
 	player:SetAttribute("OfflineEarnings", HttpService:JSONEncode({

@@ -38,6 +38,7 @@ local Gifting = require(script.Parent.Gifting)
 local OfflineEarnings = require(script.Parent.OfflineEarnings)
 local PlayerData = require(script.Parent.PlayerData)
 local Receipts = require(script.Parent.Receipts)
+local RobuxShop = require(script.Parent.RobuxShop)
 local RobuxPerks = require(script.Parent.RobuxPerks)
 local Economy = require(script.Parent.Economy)
 local EconomyRules = require(ReplicatedStorage.EconomyRules)
@@ -172,7 +173,8 @@ local function productOf(key: string)
 	if key == NONE then
 		fail("There are no products yet: add them to MonetizationConfig.Products")
 	end
-	return MonetizationConfig.GetGiftable(key)
+	-- (a product, a NoGift one too, or a pass: a pass's receipt is its gift product)
+	return MonetizationConfig.GetProduct(key) or MonetizationConfig.GetPass(key)
 end
 
 -- "PurchaseGranted: gave ... (PurchaseId Studio-1A2B...)" from a simulated receipt.
@@ -593,6 +595,22 @@ local ACTIONS = {
 			local decision, note, purchaseId = Receipts.Simulate(target, product, { gift = gift })
 			lastSimulated[target] = { product = product, gift = gift, purchaseId = purchaseId }
 			return receiptResult(decision, note, purchaseId)
+		end,
+	},
+	{
+		-- The shop's whole purchase (its checks, the prompt's hooks, then the receipt), simulated even for an item with a
+		-- real id: Studio's own test prompt can't be clicked from a script. Double Welcome Back needs this (its receipt
+		-- only pays an offer that was prompted); "Simulate a receipt" alone is a receipt with no prompt.
+		Id = "SimulatePurchase", Group = "Robux", Label = "Simulate a purchase from the shop (prompt, then receipt)",
+		Params = { productParam() },
+		Run = function(target, args)
+			studioOnly()
+			local product = productOf(args.Product)
+			local result = RobuxShop.SimulatePurchase(target, product.Key)
+			if result.purchaseId then
+				lastSimulated[target] = { product = product, gift = false, purchaseId = result.purchaseId }
+			end
+			return `{target.Name} {product.Name}: {if result.ok then "bought" else "refused"} ({result.message})`
 		end,
 	},
 	{

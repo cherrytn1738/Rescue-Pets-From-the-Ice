@@ -24,7 +24,12 @@ sold registers its own kind, for example:
 
 A product whose kind isn't registered can't be given: the shop refuses it and its receipt stays
 unresolved (NotProcessedYet), so no one pays for nothing.
-context: { giftFrom = the sender's name, for a gift; anything else the caller adds }.
+context: { giftFrom = the sender's name, for a gift; Prompting = true when the shop asks before opening Roblox's
+prompt (a receipt's CanGive has no Prompting); anything else the caller adds }.
+
+A kind may also have hooks the shop calls around Roblox's prompt (WelcomeBackDouble uses them: its offer is
+bound to the prompt): OnPrompt(player, reward) just before the prompt opens, OnPromptFinished(player, reward,
+purchased) when it closes, and OnClose(player, reward) -> (ok, message?) for the shop's "CloseOffer" request.
 ]]
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -56,6 +61,36 @@ function PurchaseRewards.CanGive(player: Player, product, context): (boolean, st
 		return kind.CanGive(player, reward, context or {})
 	end
 	return true
+end
+
+local function kindOf(product)
+	local reward = type(product) == "table" and product.Reward
+	return type(reward) == "table" and PurchaseRewards.Kinds[reward.Kind] or nil
+end
+
+-- The shop is opening Roblox's prompt for this product (after CanGive with { Prompting = true }).
+function PurchaseRewards.Prompting(player: Player, product)
+	local kind = kindOf(product)
+	if kind and kind.OnPrompt then
+		kind.OnPrompt(player, product.Reward)
+	end
+end
+
+-- Roblox's prompt for this product closed (purchased or not). Never grants: receipts do.
+function PurchaseRewards.PromptFinished(player: Player, product, purchased: boolean)
+	local kind = kindOf(product)
+	if kind and kind.OnPromptFinished then
+		kind.OnPromptFinished(player, product.Reward, purchased == true)
+	end
+end
+
+-- The player closed an offer without buying (only kinds with OnClose have offers).
+function PurchaseRewards.Close(player: Player, product): (boolean, string?)
+	local kind = kindOf(product)
+	if not kind or not kind.OnClose then
+		return false, "Nothing to close."
+	end
+	return kind.OnClose(player, product.Reward)
 end
 
 function PurchaseRewards.Give(player: Player, product, context): (string?, string?)

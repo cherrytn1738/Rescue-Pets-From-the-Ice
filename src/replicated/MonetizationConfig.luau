@@ -21,6 +21,9 @@ Fields:
    the real receipt handler, so the whole flow can be tested before the item exists.
  * GiftId (products only): a second developer product, at the same price, that buys this product
    for another player in the same server (Gifting). 0 = gifting this product isn't on sale yet.
+ * NoGift (products only): true for a product that can never be gifted (no gift twin; GiftId stays 0).
+ * ShopHidden (products only): true for a product the shop window doesn't list (sold from its own screen);
+   it has no Tab.
  * ExpectedPrice: the price set on the Creator Hub. Roblox charges the Hub's price, not this one: the
    shop shows the live price, and PriceCheck warns at server start when they differ.
  * Tab (products only): the shop section it is shown in (an Id from Shop.Tabs).
@@ -106,6 +109,11 @@ MonetizationConfig.Products = {
 		Description = "Your next three ice blocks roll with much better odds. Tap INFO for the odds.",
 		Reward = { Kind = "MythicBlock", Count = 3 }, PaidRandom = true,
 		Odds = MYTHIC_BLOCK_ODDS }, -- (each of the three rolls like a single Mythic Block)
+	-- Only on the Welcome Back screen, while its offer is open: pays the offline earnings just paid once more
+	-- (WelcomeBack, WelcomeBackRules). Not giftable: the offer is the buyer's own.
+	{ Key = "DoubleWelcomeBack", Name = "Double Welcome Back", ShopHidden = true, NoGift = true, Id = 3737277177, GiftId = 0, ExpectedPrice = 19,
+		Description = "Doubles the crystals your buildings earned while you were away.",
+		Reward = { Kind = "WelcomeBackDouble" } },
 }
 
 -- A crystal bundle (and the daily chest) pays Seconds of "your income": the HUD's crystals per second with
@@ -155,9 +163,13 @@ function MonetizationConfig.GetPass(key)
 	return type(key) == "string" and findByKey(MonetizationConfig.Passes, key) or nil
 end
 
--- Anything that can be bought as a gift: a product, or a pass (keys are unique across both lists).
+-- Anything that can be bought as a gift: a product (not a NoGift one), or a pass (keys are unique across both lists).
 function MonetizationConfig.GetGiftable(key)
-	return MonetizationConfig.GetProduct(key) or MonetizationConfig.GetPass(key)
+	local product = MonetizationConfig.GetProduct(key)
+	if product and product.NoGift then
+		return nil
+	end
+	return product or MonetizationConfig.GetPass(key)
 end
 
 function MonetizationConfig.GetPassById(gamePassId)
@@ -203,7 +215,9 @@ function MonetizationConfig.AllPriced()
 	end
 	for _, product in MonetizationConfig.Products do
 		add(product.Name, product.Id, "Product", product.ExpectedPrice)
-		add("Gift: " .. product.Name, product.GiftId, "Product", product.ExpectedPrice)
+		if not product.NoGift then
+			add("Gift: " .. product.Name, product.GiftId, "Product", product.ExpectedPrice)
+		end
 	end
 	for _, pass in MonetizationConfig.Passes do
 		add(pass.Name, pass.Id, "GamePass", pass.ExpectedPrice)
@@ -231,8 +245,13 @@ function MonetizationConfig.Validate(config)
 	end
 	for _, product in config.Products do
 		checkEntry(product)
-		assert(tabs[product.Tab], product.Key .. " needs a Tab from Shop.Tabs")
+		if product.ShopHidden then
+			assert(product.Tab == nil, product.Key .. " is ShopHidden: it has no Tab")
+		else
+			assert(tabs[product.Tab], product.Key .. " needs a Tab from Shop.Tabs")
+		end
 		assert(type(product.GiftId) == "number" and product.GiftId >= 0, product.Key .. " needs a GiftId (0 until it exists)")
+		assert(not product.NoGift or product.GiftId == 0, product.Key .. " is NoGift: its GiftId stays 0")
 		assert(type(product.Reward) == "table" and type(product.Reward.Kind) == "string", product.Key .. " needs a Reward with a Kind")
 		if product.PaidRandom then
 			assert(type(product.Odds) == "table" and #product.Odds > 0, product.Key .. " is a paid random item: list its Odds")

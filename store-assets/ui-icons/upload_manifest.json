@@ -1,5 +1,14 @@
 {
  "assets": {
+  "ArrowRight.png": {
+   "assetId": "70392401434581",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "498d03fa7a35660742cab6b5756d437b7c62116514fec96a5daae315d106750e",
+   "updated": "2026-11-28T11:45:50+00:00"
+  },
   "BiggerBurst.png": {
    "assetId": "101644423518291",
    "creator": {
@@ -108,6 +117,15 @@
    "sha256": "3bd405791ad5db46af0fa75c24203359bfcb1d9be4ea441ea36de96c56e20246",
    "updated": "2026-11-25T21:56:18+00:00"
   },
+  "CrystalPile.png": {
+   "assetId": "71686926692598",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "532d63df42da2e53122ac23e43d15cbda7ed2f7fb68fbbf3ac3bfe5908f71fe5",
+   "updated": "2026-11-28T11:45:52+00:00"
+  },
   "CrystalYield.png": {
    "assetId": "87468174560263",
    "creator": {
@@ -126,6 +144,15 @@
    "sha256": "e9e3b6b86480e21e993cd5cc2ea98d7009466ff215ca5195cde26a6ac209264d",
    "updated": "2026-11-25T21:56:22+00:00"
   },
+  "FrostCore.png": {
+   "assetId": "137088251726546",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "bfb30d8ec19d98949c978e8efa9a56056cf96997cb2299fccd0969c71fc9c3d4",
+   "updated": "2026-11-28T11:45:54+00:00"
+  },
   "FrostTouch.png": {
    "assetId": "83885185754286",
    "creator": {
@@ -143,6 +170,15 @@
    "moderationState": "Approved",
    "sha256": "e348e6e995dbd6780582a82abbcf668bbc5b3b84fc9508ce14e8200108a97941",
    "updated": "2026-11-25T21:56:26+00:00"
+  },
+  "IceBlock.png": {
+   "assetId": "114271909047905",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "65f65819c090f77ce7e53685571a33670e5452e1959a7e3b1492a652a76a0b7b",
+   "updated": "2026-11-28T11:45:56+00:00"
   },
   "Pets.png": {
    "assetId": "119156189567977",
@@ -213,6 +249,60 @@
    "sha256": "10d47027ddbabb813fa35d681ab89f48bc5b7468fd91aa39d76240c174c1957a",
    "updated": "2026-11-26T10:49:37+00:00"
   },
+  "Rank0.png": {
+   "assetId": "111241988585148",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "ecbba24c144662de27a83dbb40a11afc405a8560c69d34c3425ca79aed4124ce",
+   "updated": "2026-11-28T11:45:59+00:00"
+  },
+  "Rank1.png": {
+   "assetId": "117570550955391",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "e74eb20f0f782813ed70452bed2ee756463b6b699aa0dbc8bae7f8fa9361bd93",
+   "updated": "2026-11-28T11:46:01+00:00"
+  },
+  "Rank10.png": {
+   "assetId": "106787367322406",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "9347a0460ffce554a8b07f277621d4f3dadf5a3d2e0e1e77743711b1493cf769",
+   "updated": "2026-11-28T11:46:03+00:00"
+  },
+  "Rank2.png": {
+   "assetId": "130653910081354",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "e224d44198a5d986afd688cc342e46071496954390f3332bf481b50e1cf54a8f",
+   "updated": "2026-11-28T11:46:05+00:00"
+  },
+  "Rank3.png": {
+   "assetId": "133571915098240",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "ac3a38654a876d52c7da3c706f94e5e68b24c59644bd0f703be7b17ffdcb2943",
+   "updated": "2026-11-28T11:46:07+00:00"
+  },
+  "Rank6.png": {
+   "assetId": "99771145800838",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "5721feb6a5b2da54489cb3cd99687d38f52e71b360fe203ee8a85f2c40c07f1e",
+   "updated": "2026-11-28T11:46:09+00:00"
+  },
   "Rebirth.png": {
    "assetId": "119002750297089",
    "creator": {
@@ -222,6 +312,24 @@
    "sha256": "bf2e1bae0eb74a2623be6e27af4e047051ea4e39456d9a13a17719389ce17955",
    "updated": "2026-11-25T21:56:43+00:00"
   },
+  "RebirthBadge.png": {
+   "assetId": "107294862129002",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "8ff1cd38443fe27866eeccf0a5430d459eaf3e3bd85d614816d9ccd65db0bb0e",
+   "updated": "2026-11-28T11:46:11+00:00"
+  },
+  "RobuxItems.png": {
+   "assetId": "92422350157527",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "4f32a8b9a134f9ceb68f24fc696546a814a9296bddb4a66095afe1c8d4b0eddb",
+   "updated": "2026-11-28T11:46:13+00:00"
+  },
   "Shop.png": {
    "assetId": "120557887995853",
    "creator": {
@@ -230,6 +338,24 @@
    "moderationState": "Approved",
    "sha256": "2f0450eed9edbe6308c86dc75999b0cc7562abc7dd40925bacee0b935a6dac9f",
    "updated": "2026-11-25T21:56:45+00:00"
+  },
+  "Sunburst.png": {
+   "assetId": "104345534581209",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "f4dda01d5813cb3ca6ebebf6b0c9625876baf276eda7ee2619a134bea0b2ffa1",
+   "updated": "2026-11-28T11:46:15+00:00"
+  },
+  "Tick.png": {
+   "assetId": "90966859049520",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "c4c2ada790f471cd3f6d6b174e21f5a54238d860779d30545e3639a3f61a073c",
+   "updated": "2026-11-28T11:46:18+00:00"
   },
   "Tool1.png": {
    "assetId": "125367121542168",
@@ -393,6 +519,24 @@
    "sha256": "e272276d5fbc2841ad811ca04d02486e5f2e8bdc388111615626bd7391c7bd75",
    "updated": "2026-11-28T00:13:06+00:00"
   },
+  "UnlockLayer.png": {
+   "assetId": "133114359505516",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "ee300796f9a7846c83599e23f97706a8ed5078f6715c2dc1a0bca2416d088899",
+   "updated": "2026-11-28T11:46:20+00:00"
+  },
+  "UnlockPetSlot.png": {
+   "assetId": "134443140167323",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "922011e6b97aa868cd3e7251d59ec1c8da551b4d09e2f15208644879603bfac8",
+   "updated": "2026-11-28T11:46:22+00:00"
+  },
   "UpgradeBadge.png": {
    "assetId": "99395304409533",
    "creator": {
@@ -410,6 +554,15 @@
    "moderationState": "Approved",
    "sha256": "e932abae42c9573d6cae3eb9dfccd52aaae1da1c49d19a378b12b059ac74acab",
    "updated": "2026-11-25T21:56:49+00:00"
+  },
+  "WelcomeClock.png": {
+   "assetId": "107922631064655",
+   "creator": {
+    "groupId": "921449746"
+   },
+   "moderationState": "Approved",
+   "sha256": "c8079e9241dab8949f0eca2f77e1acd2d789169b001b7779f0c0363ccc7aff63",
+   "updated": "2026-11-28T11:46:24+00:00"
   }
  },
  "creator": {

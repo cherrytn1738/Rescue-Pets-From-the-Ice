@@ -40,6 +40,7 @@ local SettingsService = require(script.Parent.SettingsService)
 local ShopService = require(script.Parent.ShopService)
 local TapService = require(script.Parent.TapService)
 local TutorialService = require(script.Parent.TutorialService)
+local WelcomeBack = require(script.Parent.WelcomeBack)
 
 -- Robux: pass ownership, paid-random-item rules, the one ProcessReceipt handler (and gifts), the shop.
 PaidRandomPolicy.Start()
@@ -48,6 +49,7 @@ Receipts.Start() -- (also starts Gifting)
 RobuxShop.Start()
 
 OfflineEarnings.Start() -- pays for the time away (the earner is Economy's building income)
+WelcomeBack.Start() -- the Welcome Back screen's x2 offer (Double Welcome Back), made at each payout
 Analytics.Start() -- Roblox funnels (AnalyticsConfig); nothing is sent from Studio
 CodeService.Start() -- promo codes (CodesConfig, server only)
 

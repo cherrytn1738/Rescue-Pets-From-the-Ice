@@ -2930,6 +2930,24 @@ window.SHOTS = [
  },
  {
   "category": "ui",
+  "name": "window_rebirth_ready",
+  "file": "ui/window_rebirth_ready.jpg",
+  "before": null
+ },
+ {
+  "category": "ui",
+  "name": "window_rebirth_ready_667x375",
+  "file": "ui/window_rebirth_ready_667x375.jpg",
+  "before": null
+ },
+ {
+  "category": "ui",
+  "name": "window_rebirth_ready_844x390",
+  "file": "ui/window_rebirth_ready_844x390.jpg",
+  "before": null
+ },
+ {
+  "category": "ui",
   "name": "window_settings",
   "file": "ui/window_settings.jpg",
   "before": "../visual-review-before/ui/window_settings.jpg"
@@ -3035,6 +3053,96 @@ window.SHOTS = [
   "name": "window_upgrades_tab3_owned_844x390",
   "file": "ui/window_upgrades_tab3_owned_844x390.jpg",
   "before": "../visual-review-before/ui/window_upgrades_tab3_owned_844x390.jpg"
+ },
+ {
+  "category": "screens-redesign",
+  "name": "rebirth_667x375_1_before",
+  "file": "screens-redesign/rebirth_667x375_1_before.jpg",
+  "before": null
+ },
+ {
+  "category": "screens-redesign",
+  "name": "rebirth_667x375_2_after",
+  "file": "screens-redesign/rebirth_667x375_2_after.jpg",
+  "before": null
+ },
+ {
+  "category": "screens-redesign",
+  "name": "rebirth_667x375_3_after_no_cores_yet",
+  "file": "screens-redesign/rebirth_667x375_3_after_no_cores_yet.jpg",
+  "before": null
+ },
+ {
+  "category": "screens-redesign",
+  "name": "rebirth_844x390_1_before",
+  "file": "screens-redesign/rebirth_844x390_1_before.jpg",
+  "before": null
+ },
+ {
+  "category": "screens-redesign",
+  "name": "rebirth_844x390_2_after",
+  "file": "screens-redesign/rebirth_844x390_2_after.jpg",
+  "before": null
+ },
+ {
+  "category": "screens-redesign",
+  "name": "rebirth_844x390_3_after_no_cores_yet",
+  "file": "screens-redesign/rebirth_844x390_3_after_no_cores_yet.jpg",
+  "before": null
+ },
+ {
+  "category": "screens-redesign",
+  "name": "rebirth_desktop_1_before",
+  "file": "screens-redesign/rebirth_desktop_1_before.jpg",
+  "before": null
+ },
+ {
+  "category": "screens-redesign",
+  "name": "rebirth_desktop_2_after",
+  "file": "screens-redesign/rebirth_desktop_2_after.jpg",
+  "before": null
+ },
+ {
+  "category": "screens-redesign",
+  "name": "rebirth_desktop_3_after_no_cores_yet",
+  "file": "screens-redesign/rebirth_desktop_3_after_no_cores_yet.jpg",
+  "before": null
+ },
+ {
+  "category": "screens-redesign",
+  "name": "welcome_back_667x375_1_before",
+  "file": "screens-redesign/welcome_back_667x375_1_before.jpg",
+  "before": null
+ },
+ {
+  "category": "screens-redesign",
+  "name": "welcome_back_667x375_2_after",
+  "file": "screens-redesign/welcome_back_667x375_2_after.jpg",
+  "before": null
+ },
+ {
+  "category": "screens-redesign",
+  "name": "welcome_back_844x390_1_before",
+  "file": "screens-redesign/welcome_back_844x390_1_before.jpg",
+  "before": null
+ },
+ {
+  "category": "screens-redesign",
+  "name": "welcome_back_844x390_2_after",
+  "file": "screens-redesign/welcome_back_844x390_2_after.jpg",
+  "before": null
+ },
+ {
+  "category": "screens-redesign",
+  "name": "welcome_back_desktop_1_before",
+  "file": "screens-redesign/welcome_back_desktop_1_before.jpg",
+  "before": null
+ },
+ {
+  "category": "screens-redesign",
+  "name": "welcome_back_desktop_2_after",
+  "file": "screens-redesign/welcome_back_desktop_2_after.jpg",
+  "before": null
  },
  {
   "category": "book",

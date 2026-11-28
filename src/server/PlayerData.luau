@@ -33,6 +33,7 @@ local LayerConfig = require(ReplicatedStorage.LayerConfig)
 local MonetizationConfig = require(ReplicatedStorage.MonetizationConfig)
 local MonetizationRules = require(ReplicatedStorage.MonetizationRules)
 local UpgradeConfig = require(ReplicatedStorage.UpgradeConfig)
+local WelcomeBackRules = require(ReplicatedStorage.WelcomeBackRules)
 
 local LIVE_STORE = "IcePets_PlayerData"
 local STUDIO_STORE = "IcePets_PlayerData_Studio" -- Studio's default: test progress never reaches live saves
@@ -188,7 +189,8 @@ end
 --      Robux bookkeeping: Receipts ({ Id, Product, At, For }), PendingGifts ({ [product key] = intent }),
 --        GiftInbox (store only: gifts other players sent, not given yet), ReceivedGifts (gift ids given),
 --        GiftedPasses ({ [pass key] = true }: passes received as gifts; Roblox has no record of those, so
---        they are saved), MythicBlocks (Mythic Block products bought and not rolled yet);
+--        they are saved), MythicBlocks (Mythic Block products bought and not rolled yet); WelcomeBack (the
+--        Welcome Back screen's x2 offer, { Amount, At, Prompted? }, or none: WelcomeBackRules);
 --        Codes (redeemed promo codes, CodeRules.Normalize's form); Funnels (how far the one-time
 --        analytics funnels are logged: onboarding, and the progression funnels' Layers, Ranks and the
 --        player's funnel session ProgressId, AnalyticsRules); LeftAt (store only: the server's os.time() at
@@ -425,6 +427,9 @@ local function validate(record)
 		return nil, "invalid MythicBlocks"
 	end
 	data.MythicBlocks = data.MythicBlocks or 0
+	-- WelcomeBack: the x2 offer (WelcomeBackRules.Clean). One that can't be read is no offer: it only ever pays a
+	-- receipt for a purchase made on it, so dropping a broken one never pays anything twice.
+	data.WelcomeBack = WelcomeBackRules.Clean(data.WelcomeBack)
 
 	-- Codes: missing starts with none. It stops a code paying twice, so a field that isn't a list fails
 	-- closed; entries that aren't a code's saved form and repeats are dropped (a code taken out of
@@ -894,6 +899,10 @@ function PlayerData.ResetToNew(player): boolean
 	-- was paid for and not used up stays too (gifted passes, Mythic Blocks not rolled yet).
 	for _, field in { "Receipts", "PendingGifts", "ReceivedGifts", "GiftedPasses", "MythicBlocks" } do
 		fresh[field] = session.data[field]
+	end
+	-- (and an x2 offer whose purchase may be on its way)
+	if WelcomeBackRules.IsPending(session.data.WelcomeBack, os.time()) then
+		fresh.WelcomeBack = session.data.WelcomeBack
 	end
 	session.leftAt = nil -- a fresh save has never been away
 	table.clear(session.data)

@@ -34,3 +34,23 @@ on a checkerboard.
 | `CrystalYield.png` | Upgrades window, ice upgrade | A crystal pile with a green 3D plus |
 | `FastSled.png` | Upgrades window, ice upgrade | A wooden sled on metal runners carrying an ice block (a pet silhouette inside), speed streaks |
 | `UpgradeBadge.png` | Overlay on a building icon (building upgrades) | A green up-arrow |
+| `RebirthBadge.png` | Rebirth window, big corner picture (~170 px) | Two glossy ice circular arrows (pale cyan to white) chasing round a glowing faceted Frost Core |
+| `FrostCore.png` | Frost Cores (Rebirth window, rewards; reads at 40-90 px) | The faceted glowing ice-blue Frost Core with three tiny ice shards floating round it |
+| `Rank0.png` | Rebirth rank badge: no rank yet | A chunky slate grey-blue shield with a light rim and a pale snowflake, no stars |
+| `Rank1.png` | Rebirth rank badge: rank 1 | The same shield in light blue, one gold star, a small white snowflake by the point |
+| `Rank2.png` | Rebirth rank badge: rank 2 | Teal, two gold stars |
+| `Rank3.png` | Rebirth rank badge: rank 3 | Purple, three gold stars |
+| `Rank6.png` | Rebirth rank badge: rank 6 | Gold, four white stars, a sparkle |
+| `Rank10.png` | Rebirth rank badge: rank 10 | A rainbow shield (the hue runs across it), five white stars, sparkles |
+| `UnlockPetSlot.png` | Rebirth window: what a rank opens (a pet slot) | Arctic Fox Kit on a round glowing ice pedestal, a green 3D plus at the upper right |
+| `UnlockLayer.png` | Rebirth window: what a rank opens (an ice layer) | A stack of three ice layers (pale blue, deep blue, black ice with glowing orange veins: the Frozen Core) and a green down-arrow |
+| `IceBlock.png` | Block level | A rounded ice block with a Snow Bunny silhouette and a soft glow inside |
+| `CrystalPile.png` | Welcome Back screen, the hero picture (~200 px), and small in a row | A big heap of cyan crystals with a big crystal on top |
+| `RobuxItems.png` | Rebirth window: "your Robux purchases are kept" | A purple gift box with a gold ribbon and bow |
+| `WelcomeClock.png` | Welcome Back screen, big corner badge (~170 px) | An ice-blue alarm clock (white face, dark hands at 10:10, gold bells, little feet) with a cyan snowflake badge over its lower right |
+| `Sunburst.png` | Welcome Back screen, behind the crystal pile (tinted gold and turned slowly) | 512x512, 16 white rays, long and short in turn, fading out to the edges and a little at the centre; no outline (2D) |
+| `Tick.png` | Before/After and checklist ticks | A chunky green tick with a lighter top, thick dark outline (2D) |
+| `ArrowRight.png` | Between the "Before" and "After" cards | A chunky white to light blue arrow pointing right, thick dark outline (2D) |
+
+`Sunburst`, `Tick` and `ArrowRight` are drawn in Pillow (`UI_FLAT` in `compose_icons.py`, no Blender):
+`python tools/icons/compose_icons.py --ui Sunburst Tick ArrowRight`.
